@@ -84,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject current = obj.getJSONObject("current_weather");
                 double temp = current.getDouble("temperature");
                 double wind = current.getDouble("windspeed");
-                return "Temperatur: " + temp + "°C\nWind: " + wind + " km/h";
+                return "Tempreture: " + temp + "°C\nWind: " + wind + " km/h";
             } catch (Exception e) {
                 e.printStackTrace();
-                return "Fehler beim Abrufen der Wetterdaten.";
+                return "Error with getting of the Weatherdata.";
             }
         }
 
