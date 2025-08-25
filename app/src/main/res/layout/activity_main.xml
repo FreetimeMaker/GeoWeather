@@ -1,27 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="10dp"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F4F6F8">
 
-    <EditText
-        android:id="@+id/editCity"
-        android:hint="Enter City"
-        android:layout_width="390dp"
-        android:layout_height="50dp"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btnGetWeather"
-        android:text="Get Weather"
-        android:layout_width="390dp"
-        android:layout_height="50dp"/>
+        <!-- Eingabe für Stadt -->
+        <EditText
+            android:id="@+id/editCity"
+            android:hint="Enter City"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:padding="8dp"
+            android:background="@android:drawable/edit_text"
+            android:inputType="textCapWords"/>
 
-    <TextView
-        android:id="@+id/txtResult"
-        android:textSize="16sp"
-        android:paddingTop="16dp"
-        android:layout_width="390dp"
-        android:layout_height="50dp"/>
+        <!-- Button Wetter abrufen -->
+        <Button
+            android:id="@+id/btnGetWeather"
+            android:text="Get Weather"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFF"/>
 
-</LinearLayout>
+        <!-- Standortanzeige -->
+        <TextView
+            android:id="@+id/txtLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Location"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#333"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Wetter-Icon -->
+        <ImageView
+            android:id="@+id/imgWeatherIcon"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Temperatur -->
+        <TextView
+            android:id="@+id/txtTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20°C"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:textColor="#222"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Wetterbeschreibung -->
+        <TextView
+            android:id="@+id/txtDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sunny"
+            android:textSize="18sp"
+            android:textColor="#555"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Zusatzinfos in einer Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtWind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Wind: 12 km/h"
+                    android:textSize="16sp"
+                    android:textColor="#444" />
+
+                <TextView
+                    android:id="@+id/txtHumidity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Humidity: 65%"
+                    android:textColor="#444"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Ergebnis-Text (falls kein schickes Layout nötig) -->
+        <TextView
+            android:id="@+id/txtResult"
+            android:textSize="16sp"
+            android:paddingTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#333" />
+
+    </LinearLayout>
+</ScrollView>

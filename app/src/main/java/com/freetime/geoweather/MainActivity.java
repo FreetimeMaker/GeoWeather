@@ -1,118 +1,144 @@
 package com.freetime.geoweather;
 
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.AsyncTask;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.*;
-import org.json.JSONArray;
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import org.json.JSONObject;
-import java.io.*;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LocationListener {
 
-    EditText editCity;
-    Button btnGetWeather;
-    TextView txtResult;
+    private static final int REQ_CODE_LOCATION = 1001;
+    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editCity = findViewById(R.id.editCity);
-        btnGetWeather = findViewById(R.id.btnGetWeather);
-        txtResult = findViewById(R.id.txtResult);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        btnGetWeather.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String city = editCity.getText().toString().trim();
-                if (!city.isEmpty()) {
-                    new GetCoordinatesTask().execute(city);
-                } else {
-                    txtResult.setText("Please enter a City");
-                }
-            }
-        });
-    }
+        // Berechtigungen prüfen
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-    // 1. Schritt: Koordinaten über Geocoding API abrufen
-    private class GetCoordinatesTask extends AsyncTask<String, Void, double[]> {
-        @Override
-        protected double[] doInBackground(String... params) {
-            String city = params[0];
-            String urlString = "https://geocoding-api.open-meteo.com/v1/search?name=" + city;
-            try {
-                String json = downloadUrl(urlString);
-                JSONObject obj = new JSONObject(json);
-                JSONArray results = obj.getJSONArray("results");
-                if (results.length() > 0) {
-                    JSONObject first = results.getJSONObject(0);
-                    double lat = first.getDouble("latitude");
-                    double lon = first.getDouble("longitude");
-                    return new double[]{lat, lon};
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(double[] coords) {
-            if (coords != null) {
-                new GetWeatherTask().execute(coords[0], coords[1]);
-            } else {
-                txtResult.setText("City not found.");
-            }
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_CODE_LOCATION);
+        } else {
+            startLocationUpdates();
         }
     }
 
-    // 2. Schritt: Wetterdaten für Koordinaten abrufen
-    private class GetWeatherTask extends AsyncTask<Double, Void, String> {
-        @Override
-        protected String doInBackground(Double... params) {
-            double lat = params[0];
-            double lon = params[1];
-            String urlString = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&current_weather=true";
+    private void startLocationUpdates() {
+        try {
+            // Erst GPS versuchen, dann Netzwerk als Fallback
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        5000, // minTime in ms
+                        10,   // minDistance in Metern
+                        this);
+            }
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        10000,
+                        50,
+                        this);
+            }
+
+            // Letzten bekannten Standort abrufen
+            Location lastKnown = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnown == null) {
+                lastKnown = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+            if (lastKnown != null) {
+                handleLocation(lastKnown);
+            }
+
+        } catch (SecurityException e) {
+            Log.e("Location", "Permission error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_CODE_LOCATION && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startLocationUpdates();
+        }
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        handleLocation(location);
+    }
+
+    private void handleLocation(Location location) {
+        double lat = location.getLatitude();
+        double lon = location.getLongitude();
+
+        // URL für Open-Meteo mit aktuellem Wetter
+        String urlString = "https://api.open-meteo.com/v1/forecast?latitude=" + lat +
+                "&longitude=" + lon +
+                "&current_weather=true";
+
+        new Thread(() -> {
             try {
-                String json = downloadUrl(urlString);
-                JSONObject obj = new JSONObject(json);
+                URL url = new URL(urlString);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(5000);
+                conn.setReadTimeout(5000);
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder result = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+                reader.close();
+
+                JSONObject obj = new JSONObject(result.toString());
                 JSONObject current = obj.getJSONObject("current_weather");
                 double temp = current.getDouble("temperature");
                 double wind = current.getDouble("windspeed");
-                return "Tempreture: " + temp + "°C\nWind: " + wind + " km/h";
+
+                runOnUiThread(() -> {
+                    // Anzeige im UI – z. B. in einem TextView
+                    TextView txt = findViewById(R.id.txtResult);
+                    txt.setText("Temperature: " + temp + "°C\nWind: " + wind + " km/h");
+                });
+
             } catch (Exception e) {
                 e.printStackTrace();
-                return "Error with getting of the Weatherdata.";
+                runOnUiThread(() ->
+                        Toast.makeText(this, "Error with getting Weatherdata", Toast.LENGTH_SHORT).show()
+                );
             }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            txtResult.setText(result);
-        }
+        }).start();
     }
 
-    // Hilfsmethode für HTTP-Request
-    private String downloadUrl(String urlString) throws IOException {
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(10000);
-        conn.setConnectTimeout(15000);
-        conn.setRequestMethod("GET");
-        conn.connect();
-        InputStream in = conn.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        StringBuilder result = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            result.append(line);
-        }
-        reader.close();
-        return result.toString();
-    }
+
+    @Override public void onStatusChanged(String provider, int status, Bundle extras) {}
+    @Override public void onProviderEnabled(@NonNull String provider) {}
+    @Override public void onProviderDisabled(@NonNull String provider) {}
 }
