@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/editCity"
+        android:hint="Enter City"
+        android:layout_width="390dp"
+        android:layout_height="50dp"/>
+
+    <Button
+        android:id="@+id/btnGetWeather"
+        android:text="Get Weather"
+        android:layout_width="390dp"
+        android:layout_height="50dp"/>
+
+    <TextView
+        android:id="@+id/txtResult"
+        android:textSize="16sp"
+        android:paddingTop="16dp"
+        android:layout_width="390dp"
+        android:layout_height="50dp"/>
+
+</LinearLayout>
