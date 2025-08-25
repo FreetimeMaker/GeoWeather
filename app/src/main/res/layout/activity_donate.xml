@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="#F4F6F8">
+
+    <TextView
+        android:id="@+id/txtDonateTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Support my work"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#222"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:id="@+id/txtDonateDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="If you like the app, I would be happy about a little support ☕"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="#555"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btnDonateNow"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="☕ Donate now"
+        android:backgroundTint="#4CAF50"
+        android:textColor="#FFF"/>
+</LinearLayout>

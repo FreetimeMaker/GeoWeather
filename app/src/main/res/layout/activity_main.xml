@@ -107,14 +107,14 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Ergebnis-Text (falls kein schickes Layout nötig) -->
-        <TextView
-            android:id="@+id/txtResult"
-            android:textSize="16sp"
-            android:paddingTop="16dp"
+        <Button
+            android:id="@+id/btnOpenDonate"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#333" />
+            android:layout_height="50dp"
+            android:text="Support my Work"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#FF9800"
+            android:textColor="#FFF"/>
 
     </LinearLayout>
 </ScrollView>

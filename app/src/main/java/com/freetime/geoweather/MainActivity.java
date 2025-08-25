@@ -1,12 +1,14 @@
 package com.freetime.geoweather;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -123,9 +125,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 double wind = current.getDouble("windspeed");
 
                 runOnUiThread(() -> {
-                    // Anzeige im UI – z. B. in einem TextView
-                    TextView txt = findViewById(R.id.txtResult);
-                    txt.setText("Temperature: " + temp + "°C\nWind: " + wind + " km/h");
                 });
 
             } catch (Exception e) {
@@ -135,6 +134,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 );
             }
         }).start();
+
+        Button btnOpenDonate = findViewById(R.id.btnOpenDonate);
+        btnOpenDonate.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, DonateActivity.class);
+            startActivity(intent);
+        });
+
     }
 
 
