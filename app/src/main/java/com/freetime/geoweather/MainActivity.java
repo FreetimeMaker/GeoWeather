@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!city.isEmpty()) {
                     new GetCoordinatesTask().execute(city);
                 } else {
-                    txtResult.setText("Bitte einen Ort eingeben");
+                    txtResult.setText("Please enter a City");
                 }
             }
         });
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             if (coords != null) {
                 new GetWeatherTask().execute(coords[0], coords[1]);
             } else {
-                txtResult.setText("Ort nicht gefunden.");
+                txtResult.setText("City not found.");
             }
         }
     }
