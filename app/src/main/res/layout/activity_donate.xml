@@ -33,7 +33,7 @@
     android:layout_height="50dp"
     android:text="Donate now"
     android:textColor="#555"
-    android:drawableStart="@drawable/oxapay"
-    android:drawablePadding="8dp"
-    android:gravity="center_vertical"/>
+    app:icon="@drawable/oxapay"
+    app:iconPadding="8dp"
+    app:iconGravity="textStart"/>
 </LinearLayout>
