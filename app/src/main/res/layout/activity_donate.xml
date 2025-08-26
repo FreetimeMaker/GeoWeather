@@ -28,10 +28,12 @@
         android:layout_marginBottom="24dp"/>
 
     <Button
-        android:id="@+id/btnDonateNow"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="☕ Donate now"
-        android:backgroundTint="#4CAF50"
-        android:textColor="#FFF"/>
+    android:id="@+id/btnDonateNow"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:text="Donate now"
+    android:textColor="#555"
+    android:drawableStart="@drawable/oxapay"
+    android:drawablePadding="8dp"
+    android:gravity="center_vertical"/>
 </LinearLayout>
