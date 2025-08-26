@@ -14,10 +14,16 @@
         android:roundIcon="@mipmap/wetter_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GeoWeather">
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".DonateActivity" />
         <activity android:name=".OxaPayActivity" />
         <activity android:name=".CoinbaseActivity" />
+
     </application>
 
 </manifest>
