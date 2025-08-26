@@ -14,10 +14,9 @@
         android:roundIcon="@mipmap/wetter_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GeoWeather">
-        android:screenOrientation="portrait">
-
         <activity android:name=".MainActivity" />
         <activity android:name=".DonateActivity" />
+        <activity android:name=".OxaPayActivity" />
     </application>
 
 </manifest>
