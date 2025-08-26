@@ -24,6 +24,12 @@ public class DonateActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button btnDonateCoin = findViewById(R.id.btnDonateCoin);
+        btnDonateCoin.setOnClickListener(v -> {
+            Intent intent = new Intent(DonateActivity.this, CoinbaseActivity.class);
+            startActivity(intent);
+        });
+
         Button btnGoBack = findViewById(R.id.btnGoBack);
         btnGoBack.setOnClickListener(v -> {
             Intent intent = new Intent(DonateActivity.this, MainActivity.class);

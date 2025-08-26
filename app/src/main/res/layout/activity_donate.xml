@@ -32,9 +32,20 @@
         android:id="@+id/btnDonateOxa"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate now"
+        android:text="Donate now via OxaPay"
         android:textColor="#555"
         app:icon="@drawable/oxapay"
+        app:iconPadding="8dp"
+        app:iconGravity="textStart"
+        app:iconSize="24dp"/>
+
+    <Button
+        android:id="@+id/btnDonateCoin"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Donate now via Coinbase"
+        android:textColor="#555"
+        app:icon="@drawable/coinbase"
         app:iconPadding="8dp"
         app:iconGravity="textStart"
         app:iconSize="24dp"/>

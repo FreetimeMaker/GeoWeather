@@ -17,6 +17,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".DonateActivity" />
         <activity android:name=".OxaPayActivity" />
+        <activity android:name=".CoinbaseActivity" />
     </application>
 
 </manifest>
