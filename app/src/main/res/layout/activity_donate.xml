@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -28,12 +29,20 @@
         android:layout_marginBottom="24dp"/>
 
     <Button
-    android:id="@+id/btnDonateNow"
-    android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:text="Donate now"
-    android:textColor="#555"
-    app:icon="@drawable/oxapay"
-    app:iconPadding="8dp"
-    app:iconGravity="textStart"/>
+        android:id="@+id/btnDonateOxa"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Donate now"
+        android:textColor="#555"
+        app:icon="@drawable/oxapay"
+        app:iconPadding="8dp"
+        app:iconGravity="textStart"
+        app:iconSize="24dp"/>
+
+    <Button
+        android:id="@+id/btnGoBack"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Go Back to the Weather Dashboard"
+        android:textColor="#555"/>
 </LinearLayout>

@@ -18,11 +18,15 @@ public class DonateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donate);
 
-        Button btnDonate = findViewById(R.id.btnDonateNow);
-        btnDonate.setOnClickListener(v -> {
-            // Dein Spendenlink hier einsetzen
-            String url = "https://pay.oxapay.com/13038067";
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        Button btnDonateOxa = findViewById(R.id.btnDonateOxa);
+        btnDonateOxa.setOnClickListener(v -> {
+            Intent intent = new Intent(DonateActivity.this, OxaPayActivity.class);
+            startActivity(intent);
+        });
+
+        Button btnGoBack = findViewById(R.id.btnGoBack);
+        btnGoBack.setOnClickListener(v -> {
+            Intent intent = new Intent(DonateActivity.this, MainActivity.class);
             startActivity(intent);
         });
     }
