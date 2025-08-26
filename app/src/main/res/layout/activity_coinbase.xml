@@ -18,5 +18,5 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Go Back to the Support Page"
-        android:textColor="#555"/>
+        android:textColor="#FFFFFF"/>
 </LinearLayout>
