@@ -9,38 +9,128 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.preference.PreferenceManager;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.events.MapEventsReceiver;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.MapEventsOverlay;
+import org.osmdroid.views.overlay.Marker;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
     private static final int REQ_CODE_LOCATION = 1001;
+
     private LocationManager locationManager;
+    private EditText editCity;
+    private TextView txtLocation, txtTemperature, txtDescription, txtWind, txtHumidity;
+    private Button btnGetWeather, btnDonate;
+    private MapView map;
+
+    private static final Map<Integer, String> WEATHER_CODES = Map.ofEntries(
+            Map.entry(0, "Clear sky"),
+            Map.entry(1, "Mostly clear"),
+            Map.entry(2, "Partly cloudy"),
+            Map.entry(3, "Overcast"),
+            Map.entry(45, "Fog"),
+            Map.entry(48, "Depositing rime fog"),
+            Map.entry(51, "Light drizzle"),
+            Map.entry(53, "Moderate drizzle"),
+            Map.entry(55, "Dense drizzle"),
+            Map.entry(61, "Slight rain"),
+            Map.entry(63, "Moderate rain"),
+            Map.entry(65, "Heavy rain"),
+            Map.entry(71, "Slight snow"),
+            Map.entry(73, "Moderate snow"),
+            Map.entry(75, "Heavy snow")
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        editCity = findViewById(R.id.editCity);
+        txtLocation = findViewById(R.id.txtLocation);
+        txtTemperature = findViewById(R.id.txtTemperature);
+        txtDescription = findViewById(R.id.txtDescription);
+        txtWind = findViewById(R.id.txtWind);
+        txtHumidity = findViewById(R.id.txtHumidity);
+        btnGetWeather = findViewById(R.id.btnGetWeather);
+        btnDonate = findViewById(R.id.btnOpenDonate);
+        map = findViewById(R.id.map);
+
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        // Berechtigungen prüfen
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        btnGetWeather.setOnClickListener(v -> {
+            String city = editCity.getText().toString().trim();
+            if (!city.isEmpty()) {
+                fetchWeatherByCity(city);
+            } else {
+                requestLocationPermissionAndStart();
+            }
+        });
 
+        btnDonate.setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, DonateActivity.class))
+        );
+
+        requestLocationPermissionAndStart();
+
+        // --- MAP INIT ---
+        Configuration.getInstance().load(getApplicationContext(),
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+
+        map.setMultiTouchControls(true);
+        map.getController().setZoom(5.0);
+        map.getController().setCenter(new GeoPoint(47.0, 8.0));
+
+        // Tap-to-select overlay
+        MapEventsReceiver tapReceiver = new MapEventsReceiver() {
+            @Override
+            public boolean singleTapConfirmedHelper(GeoPoint p) {
+                Marker marker = new Marker(map);
+                marker.setPosition(p);
+                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                map.getOverlays().clear();
+                map.getOverlays().add(new MapEventsOverlay(this)); // keep listener
+                map.getOverlays().add(marker);
+                map.invalidate();
+
+                fetchWeatherByCoords(p.getLatitude(), p.getLongitude(),
+                        String.format("Lat %.4f, Lon %.4f", p.getLatitude(), p.getLongitude()));
+                return true;
+            }
+
+            @Override
+            public boolean longPressHelper(GeoPoint p) {
+                return false;
+            }
+        };
+        map.getOverlays().add(new MapEventsOverlay(tapReceiver));
+    }
+
+    private void requestLocationPermissionAndStart() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_CODE_LOCATION);
         } else {
@@ -50,21 +140,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private void startLocationUpdates() {
         try {
-            // Erst GPS versuchen, dann Netzwerk als Fallback
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                        5000, // minTime in ms
-                        10,   // minDistance in Metern
-                        this);
+                        5000, 10, this);
             }
             if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                        10000,
-                        50,
-                        this);
+                        10000, 50, this);
             }
-
-            // Letzten bekannten Standort abrufen
             Location lastKnown = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (lastKnown == null) {
                 lastKnown = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -72,79 +155,70 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             if (lastKnown != null) {
                 handleLocation(lastKnown);
             }
-
         } catch (SecurityException e) {
             Log.e("Location", "Permission error: " + e.getMessage());
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQ_CODE_LOCATION && grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            startLocationUpdates();
-        }
-    }
-
-    @Override
     public void onLocationChanged(@NonNull Location location) {
         handleLocation(location);
+        // Also move the map to the new location
+        map.getController().setZoom(10.0);
+        map.getController().setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
     }
 
     private void handleLocation(Location location) {
-        double lat = location.getLatitude();
-        double lon = location.getLongitude();
+        fetchWeatherByCoords(location.getLatitude(), location.getLongitude(), "Current location");
+    }
 
-        // URL für Open-Meteo mit aktuellem Wetter
-        String urlString = "https://api.open-meteo.com/v1/forecast?latitude=" + lat +
-                "&longitude=" + lon +
-                "&current_weather=true";
-
+    private void fetchWeatherByCity(String city) {
         new Thread(() -> {
             try {
-                URL url = new URL(urlString);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setConnectTimeout(5000);
-                conn.setReadTimeout(5000);
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder result = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    result.append(line);
+                String q = URLEncoder.encode(city, StandardCharsets.UTF_8.name());
+                String geoUrl = "https://nominatim.openstreetmap.org/search?q=" + q +
+                        "&format=json&limit=1";
+                String geoResp = httpGet(geoUrl, "GeoWeatherApp");
+                JSONArray geoArr = new JSONArray(geoResp);
+                if (geoArr.length() == 0) {
+                    showError("City not found");
+                    return;
                 }
-                reader.close();
+                JSONObject geo = geoArr.getJSONObject(0);
+                double lat = Double.parseDouble(geo.getString("lat"));
+                double lon = Double.parseDouble(geo.getString("lon"));
 
-                JSONObject obj = new JSONObject(result.toString());
-                JSONObject current = obj.getJSONObject("current_weather");
-                double temp = current.getDouble("temperature");
-                double wind = current.getDouble("windspeed");
-
-                runOnUiThread(() -> {
-                });
-
+                fetchWeatherByCoords(lat, lon, city);
             } catch (Exception e) {
                 e.printStackTrace();
-                runOnUiThread(() ->
-                        Toast.makeText(this, "Error with getting Weatherdata", Toast.LENGTH_SHORT).show()
-                );
+                showError("Error with geocoding");
             }
         }).start();
+    }
 
-        Button btnOpenDonate = findViewById(R.id.btnOpenDonate);
-        btnOpenDonate.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, DonateActivity.class);
-            startActivity(intent);
-        });
+    private void showError(String cityNotFound) {
+    }
+
+    private void fetchWeatherByCoords(double lat, double lon, String locationName) {
 
     }
 
+    private String httpGet(String urlString, String userAgent) throws Exception {
+        URL url = new URL(urlString);
+        HttpURLConnection c = (HttpURLConnection) url.openConnection();
+        c.setRequestProperty("User-Agent", userAgent);
+        c.setConnectTimeout(12000);
+        c.setReadTimeout(12000);
 
-    @Override public void onStatusChanged(String provider, int status, Bundle extras) {}
-    @Override public void onProviderEnabled(@NonNull String provider) {}
-    @Override public void onProviderDisabled(@NonNull String provider) {}
+        try (BufferedReader in = new BufferedReader(
+                new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8))) {
+
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = in.readLine()) != null) {
+                sb.append(line);
+            }
+            return sb.toString();
+        }
+    }
 }

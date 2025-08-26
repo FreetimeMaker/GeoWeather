@@ -30,6 +30,18 @@ public class DonateActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button btnDonateBTC = findViewById(R.id.btnDonateBTC);
+        btnDonateBTC.setOnClickListener(v -> {
+            Intent intent = new Intent(DonateActivity.this, BitcoinActivity.class);
+            startActivity(intent);
+        });
+
+        Button btnDonateETH = findViewById(R.id.btnDonateETH);
+        btnDonateETH.setOnClickListener(v -> {
+            Intent intent = new Intent(DonateActivity.this, EthereumActivity.class);
+            startActivity(intent);
+        });
+
         Button btnGoBack = findViewById(R.id.btnGoBack);
         btnGoBack.setOnClickListener(v -> {
             Intent intent = new Intent(DonateActivity.this, MainActivity.class);
