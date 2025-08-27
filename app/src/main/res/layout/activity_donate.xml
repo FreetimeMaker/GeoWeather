@@ -29,38 +29,52 @@
         android:textColor="#555"
         android:textSize="16sp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateOxa"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate now via OxaPay"
         android:textColor="#FFFFFF" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateCoin"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate now via Coinbase"
         android:textColor="#FFFFFF"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateBTC"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate Bitcoin"
         android:textColor="#FFFFFF"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateETH"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate Ethereum"
         android:textColor="#FFFFFF"/>
 
-    <Button
-        android:id="@+id/btnGoBack"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDonateUSDT"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:text="Donate Tether/USDT"
+        android:textColor="#FFFFFF"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDonateUSDC"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Donate USDC"
+        android:textColor="#FFFFFF"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGoBack"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         android:text="Go Back to the Weather Dashboard"
         android:textColor="#FFFFFF" />
 </LinearLayout>

@@ -24,7 +24,7 @@
             android:layout_marginBottom="12dp" />
 
         <!-- Get Weather -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGetWeather"
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -104,7 +104,7 @@
         </androidx.cardview.widget.CardView>
 
         <!-- Donate -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnOpenDonate"
             android:layout_width="match_parent"
             android:layout_height="48dp"

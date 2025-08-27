@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
 
     <application
         android:allowBackup="true"
@@ -18,6 +17,12 @@
         android:roundIcon="@mipmap/wetter_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GeoWeather">
+        <activity
+            android:name=".USDC_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".USDT_Activity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -32,7 +37,10 @@
         <activity android:name=".CoinbaseActivity" />
         <activity android:name=".EthereumActivity" />
         <activity android:name=".BitcoinActivity" />
-        <meta-data android:name="osmdroid.basePath" android:value="osmdroid" />
+
+        <meta-data
+            android:name="osmdroid.basePath"
+            android:value="osmdroid" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

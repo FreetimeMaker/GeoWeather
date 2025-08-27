@@ -42,6 +42,18 @@ public class DonateActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button btnDonateUSDT = findViewById(R.id.btnDonateUSDT);
+        btnDonateUSDT.setOnClickListener(v -> {
+            Intent intent = new Intent(DonateActivity.this, USDT_Activity.class);
+            startActivity(intent);
+        });
+
+        Button btnDonateUSDC = findViewById(R.id.btnDonateUSDC);
+        btnDonateUSDC.setOnClickListener(v -> {
+            Intent intent = new Intent(DonateActivity.this, USDC_Activity.class);
+            startActivity(intent);
+        });
+
         Button btnGoBack = findViewById(R.id.btnGoBack);
         btnGoBack.setOnClickListener(v -> {
             Intent intent = new Intent(DonateActivity.this, MainActivity.class);

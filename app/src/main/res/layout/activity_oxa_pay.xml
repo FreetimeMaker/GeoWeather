@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="570dp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGoBack"
         android:layout_width="match_parent"
         android:layout_height="50dp"
