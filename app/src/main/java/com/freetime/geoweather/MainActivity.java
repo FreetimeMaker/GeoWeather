@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         txtHumidity = findViewById(R.id.txtHumidity);
         btnGetWeather = findViewById(R.id.btnGetWeather);
         btnDonate = findViewById(R.id.btnOpenDonate);
-        map = findViewById(R.id.map);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -98,40 +97,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         btnDonate.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, DonateActivity.class))
         );
-
-        requestLocationPermissionAndStart();
-
-        // --- MAP INIT ---
-        Configuration.getInstance().load(getApplicationContext(),
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
-
-        map.setMultiTouchControls(true);
-        map.getController().setZoom(5.0);
-        map.getController().setCenter(new GeoPoint(47.0, 8.0));
-
-        // Tap-to-select overlay
-        MapEventsReceiver tapReceiver = new MapEventsReceiver() {
-            @Override
-            public boolean singleTapConfirmedHelper(GeoPoint p) {
-                Marker marker = new Marker(map);
-                marker.setPosition(p);
-                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                map.getOverlays().clear();
-                map.getOverlays().add(new MapEventsOverlay(this)); // keep listener
-                map.getOverlays().add(marker);
-                map.invalidate();
-
-                fetchWeatherByCoords(p.getLatitude(), p.getLongitude(),
-                        String.format("Lat %.4f, Lon %.4f", p.getLatitude(), p.getLongitude()));
-                return true;
-            }
-
-            @Override
-            public boolean longPressHelper(GeoPoint p) {
-                return false;
-            }
-        };
-        map.getOverlays().add(new MapEventsOverlay(tapReceiver));
 
         // Automatically check GitHub for a newer release
         checkAndUpdateFromGitHub();
@@ -235,9 +200,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             if (lastKnown == null) {
                 lastKnown = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             }
-            if (lastKnown != null) {
-                handleLocation(lastKnown);
-            }
         } catch (SecurityException e) {
             Log.e("Location", "Permission error: " + e.getMessage());
         }
@@ -245,14 +207,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        handleLocation(location);
         // Also move the map to the new location
         map.getController().setZoom(10.0);
         map.getController().setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
-    }
-
-    private void handleLocation(Location location) {
-        fetchWeatherByCoords(location.getLatitude(), location.getLongitude(), "Current location");
     }
 
     private void fetchWeatherByCity(String city) {
@@ -271,7 +228,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 double lat = Double.parseDouble(geo.getString("lat"));
                 double lon = Double.parseDouble(geo.getString("lon"));
 
-                fetchWeatherByCoords(lat, lon, city);
             } catch (Exception e) {
                 e.printStackTrace();
                 showError("Error with geocoding");
@@ -280,10 +236,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     private void showError(String cityNotFound) {
-    }
-
-    private void fetchWeatherByCoords(double lat, double lon, String locationName) {
-
     }
 
     private String httpGet(String urlString, String userAgent) throws Exception {

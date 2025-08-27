@@ -18,12 +18,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GeoWeather">
         <activity
-            android:name=".USDC_Activity"
-            android:exported="false" />
-        <activity
-            android:name=".USDT_Activity"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -37,6 +31,8 @@
         <activity android:name=".CoinbaseActivity" />
         <activity android:name=".EthereumActivity" />
         <activity android:name=".BitcoinActivity" />
+        <activity android:name=".USDT_Activity" />
+        <activity android:name=".USDC_Activity" />
 
         <meta-data
             android:name="osmdroid.basePath"
