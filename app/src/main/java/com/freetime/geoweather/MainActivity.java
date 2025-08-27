@@ -2,10 +2,12 @@ package com.freetime.geoweather;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.preference.PreferenceManager;
 
 import org.json.JSONArray;
@@ -28,6 +31,9 @@ import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -126,6 +132,83 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         };
         map.getOverlays().add(new MapEventsOverlay(tapReceiver));
+
+        // Automatically check GitHub for a newer release
+        checkAndUpdateFromGitHub();
+
+    }
+
+    private void checkAndUpdateFromGitHub() {
+        new Thread(() -> {
+            try {
+                // Replace with your actual username/repo
+                String apiUrl = "https://api.github.com/repos/FreetimeMaker/GeoWeather/releases/latest";
+                String json = httpGet(apiUrl, "GeoWeatherApp");
+
+                JSONObject release = new JSONObject(json);
+                String latestVersion = release.getString("tag_name").replace("v", "");
+                PackageInfo pInfo = getPackageManager()
+                        .getPackageInfo(getPackageName(), 0);
+                String currentVersion = pInfo.versionName;
+
+                if (latestVersion.equals(currentVersion)) {
+                    Log.d("Update", "Already up to date");
+                    return;
+                }
+
+                JSONArray assets = release.getJSONArray("assets");
+                if (assets.length() == 0) {
+                    Log.w("Update", "No APK asset found in latest release");
+                    return;
+                }
+
+                String apkUrl = assets.getJSONObject(0).getString("browser_download_url");
+
+                runOnUiThread(() -> Toast.makeText(this,
+                        "Downloading update " + latestVersion, Toast.LENGTH_SHORT).show());
+
+                File apkFile = downloadApk(apkUrl, "update.apk");
+                if (apkFile != null) {
+                    runOnUiThread(() -> installApk(apkFile));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private File downloadApk(String urlStr, String fileName) {
+        try {
+            URL url = new URL(urlStr);
+            HttpURLConnection c = (HttpURLConnection) url.openConnection();
+            c.connect();
+            File file = new File(getExternalFilesDir(null), fileName);
+            try (InputStream in = c.getInputStream();
+                 FileOutputStream out = new FileOutputStream(file)) {
+                byte[] buf = new byte[4096];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
+            return file;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void installApk(File apkFile) {
+        Uri apkUri = FileProvider.getUriForFile(
+                this,
+                getPackageName() + ".fileprovider",
+                apkFile
+        );
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private void requestLocationPermissionAndStart() {
