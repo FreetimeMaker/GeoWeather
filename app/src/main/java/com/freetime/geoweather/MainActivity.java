@@ -8,12 +8,14 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,7 +37,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public abstract class MainActivity extends AppCompatActivity implements LocationListener {
+public class MainActivity extends AppCompatActivity implements LocationListener {
 
     private static final int REQ_CODE_LOCATION = 1001;
 
@@ -63,6 +65,50 @@ public abstract class MainActivity extends AppCompatActivity implements Location
     );
 
     @Override
+    public void onLocationChanged(Location location) {
+        double lat = location.getLatitude();
+        double lon = location.getLongitude();
+        txtLocation.setText("Lat: " + lat + ", Lon: " + lon);
+        // You can call helper methods from here
+        requestLocationPermissionAndStart();
+    }
+
+    private void requestLocationPermissionAndStart() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_CODE_LOCATION);
+        } else {
+            startLocationUpdates();
+        }
+    }
+
+    private void startLocationUpdates() {
+        try {
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER, 5000, 10, this);
+            }
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestLocationUpdates(
+                        LocationManager.NETWORK_PROVIDER, 10000, 50, this);
+            }
+        } catch (SecurityException e) {
+            Log.e("Location", "Permission error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        // Called when GPS/network is turned ON
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        // Called when GPS/network is turned OFF
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -81,9 +127,7 @@ public abstract class MainActivity extends AppCompatActivity implements Location
         btnGetWeather.setOnClickListener(v -> {
             String city = editCity.getText().toString().trim();
             if (!city.isEmpty()) {
-                fetchWeatherByCity(city);
-            } else {
-                requestLocationPermissionAndStart();
+                fetchWeatherForCity(city);
             }
         });
 
@@ -169,57 +213,59 @@ public abstract class MainActivity extends AppCompatActivity implements Location
         startActivity(intent);
     }
 
-    private void requestLocationPermissionAndStart() {
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_CODE_LOCATION);
-        } else {
-            startLocationUpdates();
-        }
-    }
-
-    private void startLocationUpdates() {
-        try {
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                        5000, 10, this);
-            }
-            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                        10000, 50, this);
-            }
-            Location lastKnown = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (lastKnown == null) {
-                lastKnown = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            }
-        } catch (SecurityException e) {
-            Log.e("Location", "Permission error: " + e.getMessage());
-        }
-    }
-
     private void fetchWeatherByCity(String city) {
         new Thread(() -> {
             try {
-                String q = URLEncoder.encode(city, StandardCharsets.UTF_8.name());
-                String geoUrl = "https://nominatim.openstreetmap.org/search?q=" + q +
-                        "&format=json&limit=1";
-                String geoResp = httpGet(geoUrl, "GeoWeatherApp");
-                JSONArray geoArr = new JSONArray(geoResp);
-                if (geoArr.length() == 0) {
-                    showError("City not found");
+                // Step 1: Geocode the city to lat/lon
+                String geoUrl = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name="
+                            + URLEncoder.encode(city, StandardCharsets.UTF_8)
+                            + "&count=1&language=en&format=json";
+                }
+                String geoJson = httpGet(geoUrl, "GeoWeatherApp");
+                JSONObject geoObj = new JSONObject(geoJson);
+                JSONArray results = geoObj.optJSONArray("results");
+                if (results == null || results.length() == 0) {
+                    runOnUiThread(() ->
+                            Toast.makeText(this, "City not found", Toast.LENGTH_SHORT).show()
+                    );
                     return;
                 }
-                JSONObject geo = geoArr.getJSONObject(0);
-                double lat = Double.parseDouble(geo.getString("lat"));
-                double lon = Double.parseDouble(geo.getString("lon"));
+                JSONObject first = results.getJSONObject(0);
+                double lat = first.getDouble("latitude");
+                double lon = first.getDouble("longitude");
+                String resolvedName = first.getString("name");
 
             } catch (Exception e) {
                 e.printStackTrace();
-                showError("Error with geocoding");
+                runOnUiThread(() ->
+                        Toast.makeText(this, "Error getting city location", Toast.LENGTH_SHORT).show()
+                );
             }
         }).start();
     }
+
+    private void parseAndDisplayOpenMeteo(String json, String locationLabel) {
+        try {
+            JSONObject obj = new JSONObject(json).getJSONObject("current_weather");
+
+            double temp = obj.getDouble("temperature");
+            double windSpeed = obj.getDouble("windspeed");
+            int weatherCode = obj.getInt("weathercode");
+
+            txtLocation.setText(locationLabel);
+            txtTemperature.setText(String.format("%.1f°C", temp));
+            txtWind.setText(windSpeed + " km/h");
+            txtHumidity.setText("—"); // Humidity not in current_weather; needs extra param
+            txtDescription.setText(WEATHER_CODES.getOrDefault(weatherCode, "Unknown"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error reading weather data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void showError(String cityNotFound) {
     }
