@@ -23,12 +23,6 @@ import androidx.preference.PreferenceManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.osmdroid.config.Configuration;
-import org.osmdroid.events.MapEventsReceiver;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.MapEventsOverlay;
-import org.osmdroid.views.overlay.Marker;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,7 +35,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+public abstract class MainActivity extends AppCompatActivity implements LocationListener {
 
     private static final int REQ_CODE_LOCATION = 1001;
 
@@ -49,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private EditText editCity;
     private TextView txtLocation, txtTemperature, txtDescription, txtWind, txtHumidity;
     private Button btnGetWeather, btnDonate;
-    private MapView map;
 
     private static final Map<Integer, String> WEATHER_CODES = Map.ofEntries(
             Map.entry(0, "Clear sky"),
@@ -203,13 +196,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         } catch (SecurityException e) {
             Log.e("Location", "Permission error: " + e.getMessage());
         }
-    }
-
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        // Also move the map to the new location
-        map.getController().setZoom(10.0);
-        map.getController().setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
     }
 
     private void fetchWeatherByCity(String city) {

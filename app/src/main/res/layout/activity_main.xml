@@ -94,6 +94,7 @@
                     android:textSize="16sp"
                     android:textColor="#444" />
             </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- Donate -->
         <com.google.android.material.button.MaterialButton
