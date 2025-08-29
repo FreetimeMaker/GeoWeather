@@ -70,6 +70,13 @@
         android:layout_height="50dp"
         android:text="Donate USDC"
         android:textColor="#FFFFFF"/>
+        
+        <com.google.android.materiaö.button.MaterialButton
+        android:id="@+id/btnDonateSHIB"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Donate ShibaInu"
+        android:textColor="#FFFFFF"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGoBack"

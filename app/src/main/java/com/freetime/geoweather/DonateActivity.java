@@ -53,6 +53,12 @@ public class DonateActivity extends AppCompatActivity {
             Intent intent = new Intent(DonateActivity.this, USDC_Activity.class);
             startActivity(intent);
         });
+        
+        Button btnDonateSHIB = findViewById(R.id.btnDonateSHIB);
+        btnDonateSHIB.setOnClickListener(v -> {
+            Intent intent = new Intent(DonateActivity.this, Shib_Activity.class);
+            startActivity(intent);
+        });
 
         Button btnGoBack = findViewById(R.id.btnGoBack);
         btnGoBack.setOnClickListener(v -> {
