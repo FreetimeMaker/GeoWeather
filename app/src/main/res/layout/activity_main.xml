@@ -13,7 +13,7 @@
         android:padding="20dp">
 
         <!-- City Input -->
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editCity"
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -33,7 +33,7 @@
             android:textColor="#FFFFFF" />
 
         <!-- Location -->
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
             android:layout_marginTop="24dp" />
 
         <!-- Temperature -->
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtTemperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
             android:layout_marginTop="8dp" />
 
         <!-- Description -->
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/txtWind"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
                     android:textSize="16sp"
                     android:textColor="#444" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/txtHumidity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

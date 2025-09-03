@@ -56,7 +56,25 @@ public class DonateActivity extends AppCompatActivity {
         
         Button btnDonateSHIB = findViewById(R.id.btnDonateSHIB);
         btnDonateSHIB.setOnClickListener(v -> {
-            Intent intent = new Intent(DonateActivity.this, Shib_Activity.class);
+            Intent intent = new Intent(DonateActivity.this, ShibActivity.class);
+            startActivity(intent);
+        });
+
+        Button btnDonateDOGE = findViewById(R.id.btnDonateDOGE);
+        btnDonateDOGE.setOnClickListener(v -> {
+            Intent intent = new Intent(DonateActivity.this, DogeActivity.class);
+            startActivity(intent);
+        });
+
+        Button btnDonateTRON = findViewById(R.id.btnDonateTRON);
+        btnDonateTRON.setOnClickListener(v -> {
+            Intent intent = new Intent(DonateActivity.this, TronActivity.class);
+            startActivity(intent);
+        });
+
+        Button btnDonateLTC = findViewById(R.id.btnDonateLTC);
+        btnDonateLTC.setOnClickListener(v -> {
+            Intent intent = new Intent(DonateActivity.this, LTC_Activity.class);
             startActivity(intent);
         });
 
