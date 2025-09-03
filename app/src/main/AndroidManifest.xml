@@ -33,6 +33,10 @@
         <activity android:name=".BitcoinActivity" />
         <activity android:name=".USDT_Activity" />
         <activity android:name=".USDC_Activity" />
+        <activity android:name=".LTC_Activity" />
+        <activity android:name=".DogeActivity" />
+        <activity android:name=".ShibActivity" />
+        <activity android:name=".TronActivity" />
 
         <meta-data
             android:name="osmdroid.basePath"
