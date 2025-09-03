@@ -34,90 +34,70 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate now via OxaPay"
-        android:textColor="#FFFFFF"
-        app:icon="@drawable/oxa"
-        app:iconGravity="textStart" />
+        android:textColor="#FFFFFF" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateCoin"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate now via Coinbase"
-        android:textColor="#FFFFFF"
-        app:icon="@drawable/coinbase"
-        app:iconGravity="textStart"/>
+        android:textColor="#FFFFFF"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateBTC"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate Bitcoin"
-        android:textColor="#FFFFFF"
-        app:icon="@drawable/btc"
-        app:iconGravity="textStart"/>
+        android:textColor="#FFFFFF"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateETH"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate Ethereum"
-        android:textColor="#FFFFFF"
-        app:icon="@drawable/eth"
-        app:iconGravity="textStart"/>
+        android:textColor="#FFFFFF"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateUSDT"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate Tether/USDT"
-        android:textColor="#FFFFFF"
-        app:icon="@drawable/usdt"
-        app:iconGravity="textStart"/>
+        android:textColor="#FFFFFF"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateUSDC"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate USDC"
-        android:textColor="#FFFFFF"
-        app:icon="@drawable/usdc"
-        app:iconGravity="textStart"/>
+        android:textColor="#FFFFFF"/>
         
         <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateSHIB"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate ShibaInu"
-        android:textColor="#FFFFFF"
-        app:icon="@drawable/shib"
-        app:iconGravity="textStart"/>
+        android:textColor="#FFFFFF"/>
 
         <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateDOGE"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate Dogecoin"
-        android:textColor="#FFFFFF"
-        app:icon="@drawable/doge"
-        app:iconGravity="textStart"/>
+        android:textColor="#FFFFFF"/>
 
         <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateTRON"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate Tron"
-        android:textColor="#FFFFFF"
-        app:icon="@drawable/tron"
-        app:iconGravity="textStart"/>
+        android:textColor="#FFFFFF"/>
 
         <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateLTC"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Donate Litecoin"
-        android:textColor="#FFFFFF"
-        app:icon="@drawable/ltc"
-        app:iconGravity="textStart"/>
+        android:textColor="#FFFFFF"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGoBack"
