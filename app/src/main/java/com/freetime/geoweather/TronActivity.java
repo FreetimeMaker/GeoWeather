@@ -22,7 +22,7 @@ public class TronActivity extends AppCompatActivity {
 
         Button btnGoBack = findViewById(R.id.btnGoBack);
         btnGoBack.setOnClickListener(v -> {
-            Intent intent = new Intent(BitcoinActivity.this, DonateActivity.class);
+            Intent intent = new Intent(TronActivity.this, DonateActivity.class);
             startActivity(intent);
         });
     }

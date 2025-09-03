@@ -22,7 +22,7 @@ public class LTC_Activity extends AppCompatActivity {
 
         Button btnGoBack = findViewById(R.id.btnGoBack);
         btnGoBack.setOnClickListener(v -> {
-            Intent intent = new Intent(BitcoinActivity.this, DonateActivity.class);
+            Intent intent = new Intent(LTC_Activity.this, DonateActivity.class);
             startActivity(intent);
         });
     }

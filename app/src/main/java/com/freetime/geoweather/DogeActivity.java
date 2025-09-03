@@ -22,7 +22,7 @@ public class DogeActivity extends AppCompatActivity {
 
         Button btnGoBack = findViewById(R.id.btnGoBack);
         btnGoBack.setOnClickListener(v -> {
-            Intent intent = new Intent(BitcoinActivity.this, DonateActivity.class);
+            Intent intent = new Intent(DogeActivity.this, DonateActivity.class);
             startActivity(intent);
         });
     }
