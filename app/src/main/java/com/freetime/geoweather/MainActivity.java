@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         btnGetWeather.setOnClickListener(v -> {
             String city = editCity.getText().toString().trim();
             if (!city.isEmpty()) {
-                fetchWeatherForCity(city);
+                fetchWeatherByCity(city);
             }
         });
 
