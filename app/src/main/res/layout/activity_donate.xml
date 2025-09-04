@@ -75,7 +75,7 @@
         android:id="@+id/btnDonateSHIB"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate ShibaInu"
+        android:text="Donate Shib"
         android:textColor="#FFFFFF"/>
 
         <com.google.android.material.button.MaterialButton
