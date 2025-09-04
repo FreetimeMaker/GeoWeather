@@ -1,6 +1,7 @@
 package com.freetime.geoweather;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -286,6 +287,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 sb.append(line);
             }
             return sb.toString();
+        }
+    }
+
+    private static String getAppVersionName(Context context) {
+        try {
+            PackageManager pm = context.getPackageManager();
+            PackageInfo pInfo = pm.getPackageInfo(context.getPackageName(), 0);
+            return pInfo.versionName; // z. B. "1.2.3"
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return "0.0.0";
         }
     }
 }
