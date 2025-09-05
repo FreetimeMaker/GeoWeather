@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private void requestLocationPermissionAndStart() {
         if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_CODE_LOCATION);
         } else {
@@ -136,82 +136,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 startActivity(new Intent(MainActivity.this, DonateActivity.class))
         );
 
-        // Automatically check GitHub for a newer release
-        checkAndUpdateFromGitHub();
+        int currentVersionCode = BuildConfig.VERSION_CODE;
+        int latestVersionCode = fetchLatestVersionCodeFromServer(); // Your API call
 
-    }
-
-    private void checkAndUpdateFromGitHub() {
-        new Thread(() -> {
-            try {
-                // Replace with your actual username/repo
-                String apiUrl = "https://api.github.com/repos/FreetimeMaker/GeoWeather/releases/latest";
-                String json = httpGet(apiUrl, "GeoWeatherApp");
-
-                JSONObject release = new JSONObject(json);
-                String latestVersion = release.getString("tag_name").replace("v", "");
-                PackageInfo pInfo = getPackageManager()
-                        .getPackageInfo(getPackageName(), 0);
-                String currentVersion = pInfo.versionName;
-
-                if (latestVersion.equals(currentVersion)) {
-                    Log.d("Update", "Already up to date");
-                    return;
-                }
-
-                JSONArray assets = release.getJSONArray("assets");
-                if (assets.length() == 0) {
-                    Log.w("Update", "No APK asset found in latest release");
-                    return;
-                }
-
-                String apkUrl = assets.getJSONObject(0).getString("browser_download_url");
-
-                runOnUiThread(() -> Toast.makeText(this,
-                        "Downloading update " + latestVersion, Toast.LENGTH_SHORT).show());
-
-                File apkFile = downloadApk(apkUrl, "update.apk");
-                if (apkFile != null) {
-                    runOnUiThread(() -> installApk(apkFile));
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    private File downloadApk(String urlStr, String fileName) {
-        try {
-            URL url = new URL(urlStr);
-            HttpURLConnection c = (HttpURLConnection) url.openConnection();
-            c.connect();
-            File file = new File(getExternalFilesDir(null), fileName);
-            try (InputStream in = c.getInputStream();
-                 FileOutputStream out = new FileOutputStream(file)) {
-                byte[] buf = new byte[4096];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-            }
-            return file;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        if (latestVersionCode > currentVersionCode) {
+            launchUpdaterOrBrowser();
         }
-    }
 
-    private void installApk(File apkFile) {
-        Uri apkUri = FileProvider.getUriForFile(
-                this,
-                getPackageName() + ".fileprovider",
-                apkFile
-        );
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        UpdateManager.checkForUpdate(this);
     }
 
     private void fetchWeatherByCity(String city) {
@@ -287,17 +219,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 sb.append(line);
             }
             return sb.toString();
-        }
-    }
-
-    private static String getAppVersionName(Context context) {
-        try {
-            PackageManager pm = context.getPackageManager();
-            PackageInfo pInfo = pm.getPackageInfo(context.getPackageName(), 0);
-            return pInfo.versionName; // z. B. "1.2.3"
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            return "0.0.0";
         }
     }
 }
