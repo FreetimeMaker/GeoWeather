@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:text="Support my work"
+        android:text="@string/dono"
         android:textColor="#222"
         android:textSize="24sp"
         android:textStyle="bold" />
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:gravity="center"
-        android:text="If you like the app, I would be happy about a little support and if you are in my Discord then you can enter your Discord Name"
+        android:text="@string/dono_des"
         android:textColor="#555"
         android:textSize="16sp" />
 
@@ -33,76 +33,76 @@
         android:id="@+id/btnDonateOxa"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate now via OxaPay"
+        android:text="@string/dono_oxa"
         android:textColor="#FFFFFF" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateCoin"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate now via Coinbase"
+        android:text="@string/dono_coin"
         android:textColor="#FFFFFF"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateBTC"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate Bitcoin"
+        android:text="@string/dono_btc"
         android:textColor="#FFFFFF"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateETH"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate Ethereum"
+        android:text="@string/dono_eth"
         android:textColor="#FFFFFF"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateUSDT"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate Tether/USDT"
+        android:text="@string/dono_usdt"
         android:textColor="#FFFFFF"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateUSDC"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate USDC"
+        android:text="@string/dono_usdc"
         android:textColor="#FFFFFF"/>
         
         <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateSHIB"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate Shib"
+        android:text="@string/dono_shib"
         android:textColor="#FFFFFF"/>
 
         <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateDOGE"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate Dogecoin"
+        android:text="@string/dono_doge"
         android:textColor="#FFFFFF"/>
 
         <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateTRON"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate Tron"
+        android:text="@string/dono_tron"
         android:textColor="#FFFFFF"/>
 
         <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDonateLTC"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Donate Litecoin"
+        android:text="@string/dono_ltc"
         android:textColor="#FFFFFF"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGoBack"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="Go Back to the Weather Dashboard"
+        android:text="@string/gb_to_wd"
         android:textColor="#FFFFFF" />
 </LinearLayout>

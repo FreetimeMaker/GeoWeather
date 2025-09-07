@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GeoWeather</string>
+    <string name="ent_text_main">Gib eine Stadt ein</string>
+    <string name="get_weather_btn">Bekomme Wetter</string>
+    <string name="location">Dein Standort</string>
+    <string name="des">Beschreibung</string>
+    <string name="dono">Unterstütze meine Arbeit</string>
+    <string name="dono_des">Falls dir diese App gefällt, wäre ich froh um eine kleine Unterstützung und wenn du in meinem Discord bist kannst du deinen Discord Namen eingeben</string>
+    <string name="dono_oxa">Spende jetzt über OxaPay</string>
+    <string name="dono_coin">Spende jetzt über Coinbase</string>
+    <string name="dono_btc">Spende jetzt Bitcoin</string>
+    <string name="dono_eth">Spende jetzt Ethereum</string>
+    <string name="dono_usdt">Spende jetzt Tether/USDT</string>
+    <string name="dono_usdc">Spende jetzt USDC</string>
+    <string name="dono_shib">Spende SHIB</string>
+    <string name="dono_doge">Spende Dogecoin</string>
+    <string name="dono_tron">Spende Tron</string>
+    <string name="dono_ltc">Spende Litecoin</string>
+    <string name="gb_to_wd">Gehe zurück zum Wetter Amaturenbrett</string>
+</resources>
