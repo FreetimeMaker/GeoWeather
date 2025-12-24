@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="20dp"
+    android:background="#F4F6F8">
+
+    <!-- Location -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtLocationDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#333"
+        android:layout_marginTop="24dp" />
+
+    <!-- Temperature -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtTemperatureDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="--°C"
+        android:textSize="60sp"
+        android:textStyle="bold"
+        android:textColor="#222"
+        android:layout_marginTop="8dp" />
+
+    <!-- Description -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtDescriptionDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:textSize="20sp"
+        android:textColor="#555"
+        android:layout_marginTop="4dp" />
+
+    <!-- Weather Details Card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtWindDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wind: —"
+                android:textSize="16sp"
+                android:textColor="#444" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtHumidityDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Humidity: —"
+                android:textSize="16sp"
+                android:textColor="#444" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

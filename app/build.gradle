@@ -10,8 +10,8 @@ android {
         applicationId "com.freetime.geoweather"
         minSdk 24
         targetSdk 36
-        versionCode 5
-        versionName '1.0.4'
+        versionCode 6
+        versionName '1.0.5'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -26,19 +26,33 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.preference
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+
+    def room_version = "2.6.1"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.7.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0"
+    implementation "androidx.activity:activity-ktx:1.9.0"
+    implementation "androidx.fragment:fragment-ktx:1.6.2"
+
 }

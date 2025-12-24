@@ -1,110 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F4F6F8"
-    android:fillViewport="true">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvLocations"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAdd"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:padding="20dp">
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:contentDescription="Add"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
-        <!-- City Input -->
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editCity"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="@string/ent_text_main"
-            android:padding="8dp"
-            android:background="@android:drawable/edit_text"
-            android:inputType="textCapWords"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Get Weather -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnGetWeather"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="@string/get_weather_btn"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF" />
-
-        <!-- Location -->
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/txtLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/location"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#333"
-            android:layout_marginTop="24dp" />
-
-        <!-- Temperature -->
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/txtTemperature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="--°C"
-            android:textSize="48sp"
-            android:textStyle="bold"
-            android:textColor="#222"
-            android:layout_marginTop="8dp" />
-
-        <!-- Description -->
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/txtDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/des"
-            android:textSize="18sp"
-            android:textColor="#555"
-            android:layout_marginTop="4dp" />
-
-        <!-- Weather Details Card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            android:backgroundTint="#FFFFFF">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/txtWind"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Wind: —"
-                    android:textSize="16sp"
-                    android:textColor="#444" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/txtHumidity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Humidity: —"
-                    android:textSize="16sp"
-                    android:textColor="#444" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Donate -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnOpenDonate"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="@string/dono"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="#FF9800"
-            android:textColor="#FFFFFF" />
-
-    </LinearLayout>
-</ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import org.json.JSONArray;
@@ -144,6 +146,76 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
 
         UpdateManager.checkForUpdate(this);
+
+        // RecyclerView für Orte
+        RecyclerView rv = findViewById(R.id.rvLocations);
+        final LocationsAdapter adapter = new LocationsAdapter();
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setAdapter(adapter);
+
+        // ViewModel
+        LocationsViewModel vm = new ViewModelProvider(this).get(LocationsViewModel.class);
+        vm.locations.observe(this, adapter::setItems);
+
+        // Listener für das Löschen von Orten
+        adapter.setOnItemDeleteListener(vm::deleteLocation);
+
+        // Listener für das Klicken auf einen Ort, um das Wetter anzuzeigen
+        adapter.setOnItemClickListener(location -> {
+            Intent intent = new Intent(MainActivity.this, WeatherDetailActivity.class);
+            intent.putExtra("location_name", location.getName());
+            intent.putExtra("latitude", location.getLatitude());
+            intent.putExtra("longitude", location.getLongitude());
+            startActivity(intent);
+        });
+
+        // FloatingActionButton zum Hinzufügen
+        findViewById(R.id.fabAdd).setOnClickListener(v -> {
+            showAddLocationDialog(vm);
+        });
+    }
+
+    private void showAddLocationDialog(LocationsViewModel vm) {
+        // Einfacher AlertDialog mit EditText
+        final EditText inputName = new EditText(this);
+        inputName.setHint("Name des Ortes");
+
+        final EditText inputLat = new EditText(this);
+        inputLat.setHint("Breitengrad (z.B. 52.5)");
+        inputLat.setInputType(android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL | android.text.InputType.TYPE_CLASS_NUMBER);
+
+        final EditText inputLon = new EditText(this);
+        inputLon.setHint("Längengrad (z.B. 13.4)");
+        inputLon.setInputType(android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL | android.text.InputType.TYPE_CLASS_NUMBER);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(inputName);
+        layout.addView(inputLat);
+        layout.addView(inputLon);
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Ort hinzufügen")
+                .setView(layout)
+                .setPositiveButton("Hinzufügen", (dialog, which) -> {
+                    String name = inputName.getText().toString().trim();
+                    String latStr = inputLat.getText().toString().trim();
+                    String lonStr = inputLon.getText().toString().trim();
+
+                    if (!name.isEmpty() && !latStr.isEmpty() && !lonStr.isEmpty()) {
+                        try {
+                            double lat = Double.parseDouble(latStr);
+                            double lon = Double.parseDouble(lonStr);
+                            vm.addLocation(name, lat, lon);
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(MainActivity.this, "Ungültige Koordinaten", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, "Bitte alle Felder ausfüllen", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Abbrechen", null)
+                .show();
     }
 
     private void fetchWeatherByCity(String city) {
