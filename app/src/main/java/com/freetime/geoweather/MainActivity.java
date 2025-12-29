@@ -1,17 +1,15 @@
 package com.freetime.geoweather;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -19,26 +17,33 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.freetime.geoweather.ui.LocationsAdapter;
+import com.freetime.geoweather.ui.LocationsViewModel;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
@@ -71,14 +76,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onLocationChanged(Location location) {
         double lat = location.getLatitude();
         double lon = location.getLongitude();
+        if (txtLocation != null) {
         txtLocation.setText("Lat: " + lat + ", Lon: " + lon);
+        }
         // You can call helper methods from here
         requestLocationPermissionAndStart();
     }
 
     private void requestLocationPermissionAndStart() {
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_CODE_LOCATION);
         } else {
@@ -111,41 +118,72 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         // Called when GPS/network is turned OFF
     }
 
+    private void hideSystemUI() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Fullscreen-Modus aktivieren
+        hideSystemUI();
+        
         setContentView(R.layout.activity_main);
 
-        editCity = findViewById(R.id.editCity);
-        txtLocation = findViewById(R.id.txtLocation);
-        txtTemperature = findViewById(R.id.txtTemperature);
-        txtDescription = findViewById(R.id.txtDescription);
-        txtWind = findViewById(R.id.txtWind);
-        txtHumidity = findViewById(R.id.txtHumidity);
-        btnGetWeather = findViewById(R.id.btnGetWeather);
-        btnDonate = findViewById(R.id.btnOpenDonate);
+        // Note: These views don't exist in the current layout (activity_main.xml)
+        // They are commented out to avoid compilation errors
+        // If you need these views, add them to the layout file
+        // editCity = findViewById(R.id.editCity);
+        // txtLocation = findViewById(R.id.txtLocation);
+        // txtTemperature = findViewById(R.id.txtTemperature);
+        // txtDescription = findViewById(R.id.txtDescription);
+        // txtWind = findViewById(R.id.txtWind);
+        // txtHumidity = findViewById(R.id.txtHumidity);
+        // btnGetWeather = findViewById(R.id.btnGetWeather);
+        // btnDonate = findViewById(R.id.btnOpenDonate);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        if (btnGetWeather != null) {
         btnGetWeather.setOnClickListener(v -> {
+                if (editCity != null) {
             String city = editCity.getText().toString().trim();
             if (!city.isEmpty()) {
                 fetchWeatherByCity(city);
+                    }
             }
         });
+        }
 
+        if (btnDonate != null) {
         btnDonate.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, DonateActivity.class))
         );
-
-        int currentVersionCode = BuildConfig.VERSION_CODE;
-        int latestVersionCode = fetchLatestVersionCodeFromServer(); // Your API call
-
-        if (latestVersionCode > currentVersionCode) {
-            launchUpdaterOrBrowser();
         }
 
-        UpdateManager.checkForUpdate(this);
+        // Commented out update check - methods not implemented
+        // int currentVersionCode = BuildConfig.VERSION_CODE;
+        // int latestVersionCode = fetchLatestVersionCodeFromServer();
+        // if (latestVersionCode > currentVersionCode) {
+        //     launchUpdaterOrBrowser();
+        // }
+        // UpdateManager.checkForUpdate(this);
 
         // RecyclerView für Orte
         RecyclerView rv = findViewById(R.id.rvLocations);
@@ -175,47 +213,183 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         });
     }
 
+    // Einfache Klasse für Suchergebnisse
+    private static class LocationSearchResult {
+        String name;
+        String country;
+        String admin1; // Bundesland/Region
+        double latitude;
+        double longitude;
+
+        LocationSearchResult(String name, String country, String admin1, double lat, double lon) {
+            this.name = name;
+            this.country = country;
+            this.admin1 = admin1;
+            this.latitude = lat;
+            this.longitude = lon;
+        }
+
+        String getDisplayName() {
+            if (admin1 != null && !admin1.isEmpty()) {
+                return name + ", " + admin1 + ", " + country;
+            }
+            return name + ", " + country;
+        }
+    }
+
     private void showAddLocationDialog(LocationsViewModel vm) {
-        // Einfacher AlertDialog mit EditText
-        final EditText inputName = new EditText(this);
-        inputName.setHint("Name des Ortes");
+        // Layout für den Dialog erstellen
+        LinearLayout dialogLayout = new LinearLayout(this);
+        dialogLayout.setOrientation(LinearLayout.VERTICAL);
+        dialogLayout.setPadding(32, 16, 32, 16);
 
-        final EditText inputLat = new EditText(this);
-        inputLat.setHint("Breitengrad (z.B. 52.5)");
-        inputLat.setInputType(android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL | android.text.InputType.TYPE_CLASS_NUMBER);
+        // EditText für die Suche
+        final EditText inputSearch = new EditText(this);
+        inputSearch.setHint("Ortsname eingeben (z.B. Berlin, Paris, New York)");
+        inputSearch.setMinHeight(120);
+        dialogLayout.addView(inputSearch);
 
-        final EditText inputLon = new EditText(this);
-        inputLon.setHint("Längengrad (z.B. 13.4)");
-        inputLon.setInputType(android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL | android.text.InputType.TYPE_CLASS_NUMBER);
+        // RecyclerView für Ergebnisse
+        RecyclerView resultsRecyclerView = new RecyclerView(this);
+        resultsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        resultsRecyclerView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 600));
+        dialogLayout.addView(resultsRecyclerView);
 
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.addView(inputName);
-        layout.addView(inputLat);
-        layout.addView(inputLon);
+        // ProgressBar
+        ProgressBar progressBar = new ProgressBar(this);
+        progressBar.setVisibility(View.GONE);
+        dialogLayout.addView(progressBar);
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Ort hinzufügen")
-                .setView(layout)
-                .setPositiveButton("Hinzufügen", (dialog, which) -> {
-                    String name = inputName.getText().toString().trim();
-                    String latStr = inputLat.getText().toString().trim();
-                    String lonStr = inputLon.getText().toString().trim();
+        // Adapter für Suchergebnisse
+        List<LocationSearchResult> searchResults = new ArrayList<>();
+        
+        // Dialog-Variable für späteren Zugriff
+        final androidx.appcompat.app.AlertDialog[] dialogRef = new androidx.appcompat.app.AlertDialog[1];
+        
+        androidx.recyclerview.widget.RecyclerView.Adapter<LocationSearchViewHolder> resultsAdapter = 
+            new androidx.recyclerview.widget.RecyclerView.Adapter<LocationSearchViewHolder>() {
+            @Override
+            public LocationSearchViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(android.R.layout.simple_list_item_2, parent, false);
+                return new LocationSearchViewHolder(view);
+            }
 
-                    if (!name.isEmpty() && !latStr.isEmpty() && !lonStr.isEmpty()) {
-                        try {
-                            double lat = Double.parseDouble(latStr);
-                            double lon = Double.parseDouble(lonStr);
-                            vm.addLocation(name, lat, lon);
-                        } catch (NumberFormatException e) {
-                            Toast.makeText(MainActivity.this, "Ungültige Koordinaten", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(MainActivity.this, "Bitte alle Felder ausfüllen", Toast.LENGTH_SHORT).show();
+            @Override
+            public void onBindViewHolder(LocationSearchViewHolder holder, int position) {
+                LocationSearchResult result = searchResults.get(position);
+                holder.text1.setText(result.name);
+                String details = String.format("%s, %s (%.4f, %.4f)", 
+                    result.country, 
+                    result.admin1 != null ? result.admin1 : "",
+                    result.latitude, 
+                    result.longitude);
+                holder.text2.setText(details);
+                holder.itemView.setOnClickListener(v -> {
+                    vm.addLocation(result.name, result.latitude, result.longitude);
+                    if (dialogRef[0] != null) {
+                        dialogRef[0].dismiss();
                     }
-                })
+                    Toast.makeText(MainActivity.this, 
+                        result.getDisplayName() + " hinzugefügt", 
+                        Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public int getItemCount() {
+                return searchResults.size();
+            }
+        };
+        resultsRecyclerView.setAdapter(resultsAdapter);
+
+        // Button zum Suchen
+        Button searchButton = new Button(this);
+        searchButton.setText("Suchen");
+        dialogLayout.addView(searchButton);
+
+        // Suchfunktion
+        searchButton.setOnClickListener(v -> {
+            String searchQuery = inputSearch.getText().toString().trim();
+            if (searchQuery.isEmpty()) {
+                Toast.makeText(MainActivity.this, "Bitte einen Ortsnamen eingeben", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            progressBar.setVisibility(View.VISIBLE);
+            searchResults.clear();
+            resultsAdapter.notifyDataSetChanged();
+
+            new Thread(() -> {
+                try {
+                    String geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name="
+                            + URLEncoder.encode(searchQuery, StandardCharsets.UTF_8)
+                            + "&count=20&language=de&format=json";
+                    
+                    String geoJson = httpGet(geoUrl, "GeoWeatherApp");
+                    JSONObject geoObj = new JSONObject(geoJson);
+                    JSONArray results = geoObj.optJSONArray("results");
+
+                    runOnUiThread(() -> {
+                        progressBar.setVisibility(View.GONE);
+                        
+                        if (results == null || results.length() == 0) {
+                            Toast.makeText(MainActivity.this, 
+                                "Keine Orte gefunden", 
+                                Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        try {
+                            searchResults.clear();
+                            for (int i = 0; i < results.length(); i++) {
+                                JSONObject item = results.getJSONObject(i);
+                                String name = item.getString("name");
+                                String country = item.optString("country", "");
+                                String admin1 = item.optString("admin1", "");
+                                double lat = item.getDouble("latitude");
+                                double lon = item.getDouble("longitude");
+                                searchResults.add(new LocationSearchResult(name, country, admin1, lat, lon));
+                            }
+                            resultsAdapter.notifyDataSetChanged();
+                        } catch (org.json.JSONException e) {
+                            Toast.makeText(MainActivity.this, 
+                                "Fehler beim Verarbeiten der Ergebnisse: " + e.getMessage(), 
+                                Toast.LENGTH_SHORT).show();
+                            Log.e("LocationSearch", "Error parsing JSON results", e);
+                        }
+                    });
+                } catch (Exception e) {
+                    runOnUiThread(() -> {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(MainActivity.this, 
+                            "Fehler bei der Suche: " + e.getMessage(), 
+                            Toast.LENGTH_SHORT).show();
+                        Log.e("LocationSearch", "Error searching locations", e);
+                    });
+                }
+            }).start();
+        });
+
+        // Dialog erstellen
+        dialogRef[0] = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Ort suchen und hinzufügen")
+                .setView(dialogLayout)
                 .setNegativeButton("Abbrechen", null)
-                .show();
+                .create();
+        dialogRef[0].show();
+    }
+
+    // ViewHolder für Suchergebnisse
+    private static class LocationSearchViewHolder extends RecyclerView.ViewHolder {
+        TextView text1, text2;
+
+        LocationSearchViewHolder(View itemView) {
+            super(itemView);
+            text1 = itemView.findViewById(android.R.id.text1);
+            text2 = itemView.findViewById(android.R.id.text2);
+        }
     }
 
     private void fetchWeatherByCity(String city) {
@@ -259,11 +433,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             double windSpeed = obj.getDouble("windspeed");
             int weatherCode = obj.getInt("weathercode");
 
-            txtLocation.setText(locationLabel);
-            txtTemperature.setText(String.format("%.1f°C", temp));
-            txtWind.setText(windSpeed + " km/h");
-            txtHumidity.setText("—"); // Humidity not in current_weather; needs extra param
-            txtDescription.setText(WEATHER_CODES.getOrDefault(weatherCode, "Unknown"));
+            if (txtLocation != null) txtLocation.setText(locationLabel);
+            if (txtTemperature != null) txtTemperature.setText(String.format("%.1f°C", temp));
+            if (txtWind != null) txtWind.setText(windSpeed + " km/h");
+            if (txtHumidity != null) txtHumidity.setText("—"); // Humidity not in current_weather; needs extra param
+            if (txtDescription != null) txtDescription.setText(WEATHER_CODES.getOrDefault(weatherCode, "Unknown"));
 
         } catch (Exception e) {
             e.printStackTrace();

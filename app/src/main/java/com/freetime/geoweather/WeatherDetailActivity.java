@@ -1,8 +1,9 @@
 package com.freetime.geoweather;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 public class WeatherDetailActivity extends AppCompatActivity {
 
     private TextView txtLocationDetail, txtTemperatureDetail, txtDescriptionDetail, txtWindDetail, txtHumidityDetail;
+    private ImageButton btnBack;
 
     private static final Map<Integer, String> WEATHER_CODES = createWeatherCodes();
 
@@ -50,17 +52,49 @@ public class WeatherDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Fullscreen-Modus aktivieren
+        hideSystemUI();
+        
         setContentView(R.layout.activity_weather_detail);
 
+        btnBack = findViewById(R.id.btnBack);
         txtLocationDetail = findViewById(R.id.txtLocationDetail);
         txtTemperatureDetail = findViewById(R.id.txtTemperatureDetail);
         txtDescriptionDetail = findViewById(R.id.txtDescriptionDetail);
         txtWindDetail = findViewById(R.id.txtWindDetail);
         txtHumidityDetail = findViewById(R.id.txtHumidityDetail);
 
+        // Back-Button Listener
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
+
+        // Null-Checks für Views
+        if (txtLocationDetail == null || txtTemperatureDetail == null || 
+            txtDescriptionDetail == null || txtWindDetail == null || txtHumidityDetail == null) {
+            Log.e("WeatherDetailActivity", "Some views are null");
+            Toast.makeText(this, "Fehler beim Laden der Ansicht", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         String locationName = getIntent().getStringExtra("location_name");
         double latitude = getIntent().getDoubleExtra("latitude", 0.0);
         double longitude = getIntent().getDoubleExtra("longitude", 0.0);
+
+        // Validierung der Intent-Daten
+        if (locationName == null || locationName.isEmpty()) {
+            Toast.makeText(this, "Ungültiger Ortsname", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        if (latitude == 0.0 && longitude == 0.0) {
+            Toast.makeText(this, "Ungültige Koordinaten", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         txtLocationDetail.setText(locationName);
 
@@ -88,22 +122,41 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
     private void parseAndDisplayOpenMeteo(String json, String locationLabel) {
         try {
+            if (json == null || json.isEmpty()) {
+                throw new Exception("Empty JSON response");
+            }
+
             JSONObject root = new JSONObject(json);
+            if (!root.has("current_weather")) {
+                throw new Exception("No current_weather in response");
+            }
+
             JSONObject obj = root.getJSONObject("current_weather");
 
             double temp = obj.getDouble("temperature");
             double windSpeed = obj.getDouble("windspeed");
             int weatherCode = obj.getInt("weathercode");
 
-            txtLocationDetail.setText(locationLabel);
-            txtTemperatureDetail.setText(String.format(Locale.getDefault(), "%.1f°C", temp));
-            txtWindDetail.setText(String.format(Locale.getDefault(), "Wind: %.1f km/h", windSpeed));
-            txtHumidityDetail.setText("Humidity: —"); // Humidity not in current_weather; needs extra param
-            txtDescriptionDetail.setText(WEATHER_CODES.getOrDefault(weatherCode, "Unknown"));
+            if (txtLocationDetail != null) txtLocationDetail.setText(locationLabel);
+            if (txtTemperatureDetail != null) {
+                txtTemperatureDetail.setText(String.format(Locale.getDefault(), "%.1f°C", temp));
+            }
+            if (txtWindDetail != null) {
+                txtWindDetail.setText(String.format(Locale.getDefault(), "Wind: %.1f km/h", windSpeed));
+            }
+            if (txtHumidityDetail != null) {
+                txtHumidityDetail.setText("Humidity: —"); // Humidity not in current_weather; needs extra param
+            }
+            if (txtDescriptionDetail != null) {
+                txtDescriptionDetail.setText(WEATHER_CODES.getOrDefault(weatherCode, "Unknown"));
+            }
 
+        } catch (org.json.JSONException e) {
+            Log.e("WeatherDetailActivity", "parseAndDisplayOpenMeteo JSON error", e);
+            Toast.makeText(this, "Fehler beim Lesen der Wetterdaten: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Log.e("WeatherDetailActivity", "parseAndDisplayOpenMeteo failed", e);
-            Toast.makeText(this, "Error reading weather data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Fehler beim Lesen der Wetterdaten: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -130,6 +183,25 @@ public class WeatherDetailActivity extends AppCompatActivity {
             return sb.toString();
         } finally {
             c.disconnect();
+        }
+    }
+
+    private void hideSystemUI() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
         }
     }
 }
