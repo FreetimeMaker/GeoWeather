@@ -7,7 +7,7 @@ android {
     compileSdk 36
 
     defaultConfig {
-        applicationId "com.freetime.geoweather1"
+        applicationId "com.freetime.geoweather"
         minSdk 24
         targetSdk 36
         versionCode 5
@@ -48,11 +48,11 @@ dependencies {
 
     def room_version = "2.6.1"
 
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.7.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0"
-    implementation "androidx.activity:activity-ktx:1.9.0"
-    implementation "androidx.fragment:fragment-ktx:1.6.2"
+    implementation "androidx.room:room-runtime:2.8.4"
+    annotationProcessor "androidx.room:room-compiler:2.8.4"
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.10.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0'
+    implementation 'androidx.activity:activity-ktx:1.12.2'
+    implementation 'androidx.fragment:fragment-ktx:1.8.9'
 
 }

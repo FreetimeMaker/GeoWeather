@@ -1,20 +1,3 @@
 <resources>
     <string name="app_name">GeoWeather</string>
-    <string name="ent_text_main">Enter City</string>
-    <string name="get_weather_btn">Get Weather</string>
-    <string name="location">Your Location</string>
-    <string name="des">Description</string>
-    <string name="dono">Support my Work</string>
-    <string name="dono_des">If you like the app, I would be happy about a little support and if you are in my Discord then you can enter your Discord Name</string>
-    <string name="dono_oxa">Donate now via OxaPay</string>
-    <string name="dono_coin">Donate now via Coinbase</string>
-    <string name="dono_btc">Donate Bitcoin</string>
-    <string name="dono_eth">Donate Ethereum</string>
-    <string name="dono_usdt">Donate Tether/USDT</string>
-    <string name="dono_usdc">Donate USDC</string>
-    <string name="dono_shib">Donate SHIB</string>
-    <string name="dono_doge">Donate Dogecoin</string>
-    <string name="dono_tron">Donate Tron</string>
-    <string name="dono_ltc">Donate Litecoin</string>
-    <string name="gb_to_wd">Go Back to the Weather Dashboard</string>
 </resources>

@@ -74,7 +74,7 @@ public class WeatherDetailActivity extends AppCompatActivity {
         if (txtLocationDetail == null || txtTemperatureDetail == null || 
             txtDescriptionDetail == null || txtWindDetail == null || txtHumidityDetail == null) {
             Log.e("WeatherDetailActivity", "Some views are null");
-            Toast.makeText(this, "Fehler beim Laden der Ansicht", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error with loading of View", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -85,13 +85,13 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
         // Validierung der Intent-Daten
         if (locationName == null || locationName.isEmpty()) {
-            Toast.makeText(this, "Ungültiger Ortsname", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid City", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
         if (latitude == 0.0 && longitude == 0.0) {
-            Toast.makeText(this, "Ungültige Koordinaten", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid Coordinates", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -153,10 +153,10 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
         } catch (org.json.JSONException e) {
             Log.e("WeatherDetailActivity", "parseAndDisplayOpenMeteo JSON error", e);
-            Toast.makeText(this, "Fehler beim Lesen der Wetterdaten: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error with reading of Weatherdata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Log.e("WeatherDetailActivity", "parseAndDisplayOpenMeteo failed", e);
-            Toast.makeText(this, "Fehler beim Lesen der Wetterdaten: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error with reading of Weatherdata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

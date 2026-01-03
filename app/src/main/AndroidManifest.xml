@@ -40,20 +40,6 @@
         <activity android:name=".DogeActivity" />
         <activity android:name=".ShibActivity" />
         <activity android:name=".TronActivity" />
-
-        <meta-data
-            android:name="osmdroid.basePath"
-            android:value="osmdroid" />
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="com.freetime.geoweather.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
     </application>
 
 </manifest>

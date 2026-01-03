@@ -211,6 +211,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         findViewById(R.id.fabAdd).setOnClickListener(v -> {
             showAddLocationDialog(vm);
         });
+
+        findViewById(R.id.fabDono).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, DonateActivity.class);
+            startActivity(intent);
+        });
     }
 
     // Einfache Klasse für Suchergebnisse
@@ -245,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         // EditText für die Suche
         final EditText inputSearch = new EditText(this);
-        inputSearch.setHint("Ortsname eingeben (z.B. Berlin, Paris, New York)");
+        inputSearch.setHint("Enter City (For Example: Berlin, Paris, New York)");
         inputSearch.setMinHeight(120);
         dialogLayout.addView(inputSearch);
 
@@ -292,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         dialogRef[0].dismiss();
                     }
                     Toast.makeText(MainActivity.this, 
-                        result.getDisplayName() + " hinzugefügt", 
+                        result.getDisplayName() + " added",
                         Toast.LENGTH_SHORT).show();
                 });
             }
@@ -306,14 +311,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         // Button zum Suchen
         Button searchButton = new Button(this);
-        searchButton.setText("Suchen");
+        searchButton.setText("Search");
         dialogLayout.addView(searchButton);
 
         // Suchfunktion
         searchButton.setOnClickListener(v -> {
             String searchQuery = inputSearch.getText().toString().trim();
             if (searchQuery.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Bitte einen Ortsnamen eingeben", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Please enter a City", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -323,10 +328,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             new Thread(() -> {
                 try {
-                    String geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name="
-                            + URLEncoder.encode(searchQuery, StandardCharsets.UTF_8)
-                            + "&count=20&language=de&format=json";
-                    
+                    String geoUrl = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name="
+                                + URLEncoder.encode(searchQuery, StandardCharsets.UTF_8)
+                                + "&count=20&language=de&format=json";
+                    }
+
                     String geoJson = httpGet(geoUrl, "GeoWeatherApp");
                     JSONObject geoObj = new JSONObject(geoJson);
                     JSONArray results = geoObj.optJSONArray("results");
@@ -336,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         
                         if (results == null || results.length() == 0) {
                             Toast.makeText(MainActivity.this, 
-                                "Keine Orte gefunden", 
+                                "No Cities found",
                                 Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -355,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                             resultsAdapter.notifyDataSetChanged();
                         } catch (org.json.JSONException e) {
                             Toast.makeText(MainActivity.this, 
-                                "Fehler beim Verarbeiten der Ergebnisse: " + e.getMessage(), 
+                                "Error processing results: " + e.getMessage(),
                                 Toast.LENGTH_SHORT).show();
                             Log.e("LocationSearch", "Error parsing JSON results", e);
                         }
@@ -364,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     runOnUiThread(() -> {
                         progressBar.setVisibility(View.GONE);
                         Toast.makeText(MainActivity.this, 
-                            "Fehler bei der Suche: " + e.getMessage(), 
+                            "Error searching locations: " + e.getMessage(),
                             Toast.LENGTH_SHORT).show();
                         Log.e("LocationSearch", "Error searching locations", e);
                     });
@@ -374,9 +382,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         // Dialog erstellen
         dialogRef[0] = new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Ort suchen und hinzufügen")
+                .setTitle("Search for a City and Add it")
                 .setView(dialogLayout)
-                .setNegativeButton("Abbrechen", null)
+                .setNegativeButton("Cancel", null)
                 .create();
         dialogRef[0].show();
     }

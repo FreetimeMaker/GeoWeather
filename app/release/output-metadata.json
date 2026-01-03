@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.freetime.geoweather1",
+  "applicationId": "com.freetime.geoweather",
   "variantName": "release",
   "elements": [
     {
