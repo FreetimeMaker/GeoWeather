@@ -20,7 +20,7 @@
         android:contentDescription="Zurück"
         android:src="@android:drawable/ic_menu_revert"
         android:padding="8dp"
-        android:tint="#333" />
+        app:tint="#333" />
 
     <!-- Location -->
     <com.google.android.material.textview.MaterialTextView
