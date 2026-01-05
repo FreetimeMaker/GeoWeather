@@ -38,7 +38,7 @@
         android:id="@+id/txtTemperatureDetail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="--°C"
+
         android:textSize="60sp"
         android:textStyle="bold"
         android:textColor="#222"
@@ -86,5 +86,13 @@
                 android:textColor="#444" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <!-- 5-Day Forecast -->
+    <LinearLayout
+        android:id="@+id/forecastLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

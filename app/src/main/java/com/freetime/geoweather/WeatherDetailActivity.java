@@ -2,13 +2,16 @@ package com.freetime.geoweather;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -26,6 +29,7 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
     private TextView txtLocationDetail, txtTemperatureDetail, txtDescriptionDetail, txtWindDetail, txtHumidityDetail;
     private ImageButton btnBack;
+    private LinearLayout forecastLayout;
 
     private static final Map<Integer, String> WEATHER_CODES = createWeatherCodes();
 
@@ -64,48 +68,26 @@ public class WeatherDetailActivity extends AppCompatActivity {
         txtDescriptionDetail = findViewById(R.id.txtDescriptionDetail);
         txtWindDetail = findViewById(R.id.txtWindDetail);
         txtHumidityDetail = findViewById(R.id.txtHumidityDetail);
+        forecastLayout = findViewById(R.id.forecastLayout);
 
-        // Back-Button Listener
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> finish());
+
+        double lat = getIntent().getDoubleExtra("latitude", 0);
+        double lon = getIntent().getDoubleExtra("longitude", 0);
+        String name = getIntent().getStringExtra("name");
+
+        if (name != null && !name.isEmpty()) {
+            fetchWeather(lat, lon, name);
+        } else {
+            Toast.makeText(this, "Location data not available", Toast.LENGTH_SHORT).show();
         }
-
-        // Null-Checks für Views
-        if (txtLocationDetail == null || txtTemperatureDetail == null || 
-            txtDescriptionDetail == null || txtWindDetail == null || txtHumidityDetail == null) {
-            Log.e("WeatherDetailActivity", "Some views are null");
-            Toast.makeText(this, "Error with loading of View", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
-        String locationName = getIntent().getStringExtra("location_name");
-        double latitude = getIntent().getDoubleExtra("latitude", 0.0);
-        double longitude = getIntent().getDoubleExtra("longitude", 0.0);
-
-        // Validierung der Intent-Daten
-        if (locationName == null || locationName.isEmpty()) {
-            Toast.makeText(this, "Invalid City", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
-        if (latitude == 0.0 && longitude == 0.0) {
-            Toast.makeText(this, "Invalid Coordinates", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
-        txtLocationDetail.setText(locationName);
-
-        fetchWeather(latitude, longitude, locationName);
     }
 
     private void fetchWeather(double latitude, double longitude, String locationName) {
         new Thread(() -> {
             try {
                 String weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude="
-                        + latitude + "&longitude=" + longitude + "&current_weather=true&timezone=auto";
+                        + latitude + "&longitude=" + longitude + "&current_weather=true&timezone=auto&daily=weathercode,temperature_2m_max,temperature_2m_min";
 
                 final String weatherJson = httpGet(weatherUrl, "GeoWeatherApp");
 
@@ -131,32 +113,51 @@ public class WeatherDetailActivity extends AppCompatActivity {
                 throw new Exception("No current_weather in response");
             }
 
-            JSONObject obj = root.getJSONObject("current_weather");
+            JSONObject current = root.getJSONObject("current_weather");
 
-            double temp = obj.getDouble("temperature");
-            double windSpeed = obj.getDouble("windspeed");
-            int weatherCode = obj.getInt("weathercode");
+            double temp = current.getDouble("temperature");
+            double windSpeed = current.getDouble("windspeed");
+            int weatherCode = current.getInt("weathercode");
 
             if (txtLocationDetail != null) txtLocationDetail.setText(locationLabel);
-            if (txtTemperatureDetail != null) {
-                txtTemperatureDetail.setText(String.format(Locale.getDefault(), "%.1f°C", temp));
-            }
-            if (txtWindDetail != null) {
-                txtWindDetail.setText(String.format(Locale.getDefault(), "Wind: %.1f km/h", windSpeed));
-            }
-            if (txtHumidityDetail != null) {
-                txtHumidityDetail.setText("Humidity: —"); // Humidity not in current_weather; needs extra param
-            }
-            if (txtDescriptionDetail != null) {
-                txtDescriptionDetail.setText(WEATHER_CODES.getOrDefault(weatherCode, "Unknown"));
+            if (txtTemperatureDetail != null) txtTemperatureDetail.setText(String.format(Locale.getDefault(), "%.1f°C", temp));
+            if (txtDescriptionDetail != null) txtDescriptionDetail.setText(WEATHER_CODES.getOrDefault(weatherCode, "Unknown"));
+            if (txtWindDetail != null) txtWindDetail.setText(String.format(Locale.getDefault(), "Wind: %.1f km/h", windSpeed));
+
+            // Parse and display 5-day forecast
+            if (root.has("daily")) {
+                JSONObject daily = root.getJSONObject("daily");
+                JSONArray time = daily.getJSONArray("time");
+                JSONArray weathercode = daily.getJSONArray("weathercode");
+                JSONArray tempMax = daily.getJSONArray("temperature_2m_max");
+                JSONArray tempMin = daily.getJSONArray("temperature_2m_min");
+
+                forecastLayout.removeAllViews(); // Clear previous forecast views
+
+                for (int i = 1; i < time.length() && i <= 5; i++) { // Start from 1 for next days
+                    String date = time.getString(i);
+                    String code = WEATHER_CODES.getOrDefault(weathercode.getInt(i), "N/A");
+                    String max = String.format(Locale.getDefault(), "%.1f°C", tempMax.getDouble(i));
+                    String min = String.format(Locale.getDefault(), "%.1f°C", tempMin.getDouble(i));
+
+                    LayoutInflater inflater = LayoutInflater.from(this);
+                    View forecastItemView = inflater.inflate(R.layout.forecast_item, forecastLayout, false);
+
+                    TextView tvDate = forecastItemView.findViewById(R.id.tvDate);
+                    TextView tvDescription = forecastItemView.findViewById(R.id.tvDescription);
+                    TextView tvTemp = forecastItemView.findViewById(R.id.tvTemp);
+
+                    tvDate.setText(date);
+                    tvDescription.setText(code);
+                    tvTemp.setText(String.format("%s / %s", max, min));
+
+                    forecastLayout.addView(forecastItemView);
+                }
             }
 
-        } catch (org.json.JSONException e) {
-            Log.e("WeatherDetailActivity", "parseAndDisplayOpenMeteo JSON error", e);
-            Toast.makeText(this, "Error with reading of Weatherdata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Log.e("WeatherDetailActivity", "parseAndDisplayOpenMeteo failed", e);
-            Toast.makeText(this, "Error with reading of Weatherdata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("WeatherDetailActivity", "JSON parsing failed", e);
+            Toast.makeText(this, "Error parsing weather data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -165,9 +166,8 @@ public class WeatherDetailActivity extends AppCompatActivity {
         HttpURLConnection c = (HttpURLConnection) url.openConnection();
         c.setRequestMethod("GET");
         c.setRequestProperty("User-Agent", userAgent);
-        c.setConnectTimeout(12000);
-        c.setReadTimeout(12000);
-        c.connect();
+        c.setConnectTimeout(5000);
+        c.setReadTimeout(10000);
 
         int code = c.getResponseCode();
         InputStream stream = (code >= 200 && code < 400) ? c.getInputStream() : c.getErrorStream();
