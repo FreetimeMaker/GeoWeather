@@ -17,6 +17,7 @@
         android:id="@+id/btnGoBack"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:textSize="20sp"
         android:text="Go Back to the Support Page"
         android:textColor="#FFFFFF"/>
 </LinearLayout>

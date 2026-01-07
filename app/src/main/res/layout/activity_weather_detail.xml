@@ -17,7 +17,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Zurück"
+        android:contentDescription="Go Back"
         android:src="@android:drawable/ic_menu_revert"
         android:padding="8dp"
         app:tint="#333" />
