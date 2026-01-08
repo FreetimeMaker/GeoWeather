@@ -29,6 +29,9 @@ public class WeatherDetailActivity extends AppCompatActivity {
             txtWindDetail, txtHumidityDetail, txtForecastDetail;
     private ImageButton btnBack;
 
+    private RecyclerView rvForecast;
+    private ForecastAdapter forecastAdapter;
+
     private static final Map<Integer, String> WEATHER_CODES = createWeatherCodes();
 
     private static Map<Integer, String> createWeatherCodes() {
@@ -63,9 +66,10 @@ public class WeatherDetailActivity extends AppCompatActivity {
         txtDescriptionDetail = findViewById(R.id.txtDescriptionDetail);
         txtWindDetail = findViewById(R.id.txtWindDetail);
         txtHumidityDetail = findViewById(R.id.txtHumidityDetail);
-
-        // NEW: Forecast TextView
-        txtForecastDetail = findViewById(R.id.txtForecastDetail);
+        rvForecast = findViewById(R.id.rvForecast);
+        rvForecast.setLayoutManager(new LinearLayoutManager(this));
+        forecastAdapter = new ForecastAdapter();
+        rvForecast.setAdapter(forecastAdapter);
 
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
@@ -145,10 +149,7 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
     private void parseForecast(JSONObject root) {
         try {
-            if (!root.has("daily")) {
-                txtForecastDetail.setText("No forecast available");
-                return;
-            }
+            if (!root.has("daily")) return;
 
             JSONObject daily = root.getJSONObject("daily");
 
@@ -157,28 +158,21 @@ public class WeatherDetailActivity extends AppCompatActivity {
             JSONArray min = daily.getJSONArray("temperature_2m_min");
             JSONArray codes = daily.getJSONArray("weathercode");
 
-            StringBuilder sb = new StringBuilder();
-            sb.append("Forecast:\n\n");
+            List<ForecastAdapter.DailyForecast> list = new ArrayList<>();
 
             for (int i = 0; i < dates.length(); i++) {
-                String date = dates.getString(i);
-                double tMax = max.getDouble(i);
-                double tMin = min.getDouble(i);
-                int code = codes.getInt(i);
-
-                sb.append(date)
-                        .append(" → ")
-                        .append(String.format(Locale.getDefault(), "%.1f° / %.1f°", tMin, tMax))
-                        .append("  ")
-                        .append(WEATHER_CODES.getOrDefault(code, "Unknown"))
-                        .append("\n");
+                ForecastAdapter.DailyForecast f = new ForecastAdapter.DailyForecast();
+                f.date = dates.getString(i);
+                f.tempMax = max.getDouble(i);
+                f.tempMin = min.getDouble(i);
+                f.weatherCode = codes.getInt(i);
+                list.add(f);
             }
 
-            txtForecastDetail.setText(sb.toString());
+            forecastAdapter.setItems(list);
 
         } catch (Exception e) {
             Log.e("WeatherDetailActivity", "Forecast parse error", e);
-            txtForecastDetail.setText("Error loading forecast");
         }
     }
 

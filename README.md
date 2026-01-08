@@ -2,7 +2,7 @@
 GeoWeather is a WIP Android App (even if there are Releases right now. Because a new System is on the Way) so yeah. You can add Multiple Cities and look at the Weather. This App was inspired by MeteoSwiss a Swiss-Only Weather App.
 
 # GeoWeather Features
-Like I said in the [GeoWeather Informations](https://gitlab.com/FreetimeMaker/GeoWeather#GeoWeather-Informations) you can add Multiple Cities and look at the Weather and there are many more Features to come.
+Like I said in the [GeoWeather Informations](#geoweather-informations) you can add Multiple Cities and look at the Weather and there are many more Features to come.
 
 # GeoWeather Features Planned
 Planned Features are: 
@@ -12,4 +12,4 @@ Planned Features are:
 > Adding Screenshots and Videos to YouTube or other Providers for showing how the App Works.
 
 # Latest Release Download
-You can always download the Latest Release at [GitLab Releases of this App Repository](https://gitlab.com/FreetimeMaker/GeoWeather/releases/latest).
+You can always download the Latest Release at [GitLab Releases of this App Repository](https://gitlab.com/FreetimeMaker/GeoWeather/-/releases/v1.0.5).
