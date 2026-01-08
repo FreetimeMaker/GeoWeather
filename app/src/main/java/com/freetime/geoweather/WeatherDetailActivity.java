@@ -2,16 +2,14 @@ package com.freetime.geoweather;
 
 import android.os.Bundle;
 import android.util.Log;
-
 import android.view.View;
 import android.widget.ImageButton;
-
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -27,9 +25,9 @@ import java.util.Map;
 
 public class WeatherDetailActivity extends AppCompatActivity {
 
-    private TextView txtLocationDetail, txtTemperatureDetail, txtDescriptionDetail, txtWindDetail, txtHumidityDetail;
+    private TextView txtLocationDetail, txtTemperatureDetail, txtDescriptionDetail,
+            txtWindDetail, txtHumidityDetail, txtForecastDetail;
     private ImageButton btnBack;
-
 
     private static final Map<Integer, String> WEATHER_CODES = createWeatherCodes();
 
@@ -56,10 +54,7 @@ public class WeatherDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Fullscreen-Modus aktivieren
         hideSystemUI();
-
         setContentView(R.layout.activity_weather_detail);
 
         btnBack = findViewById(R.id.btnBack);
@@ -69,26 +64,17 @@ public class WeatherDetailActivity extends AppCompatActivity {
         txtWindDetail = findViewById(R.id.txtWindDetail);
         txtHumidityDetail = findViewById(R.id.txtHumidityDetail);
 
+        // NEW: Forecast TextView
+        txtForecastDetail = findViewById(R.id.txtForecastDetail);
 
-        // Back-Button Listener
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
-        }
-
-        // Null-Checks für Views
-        if (txtLocationDetail == null || txtTemperatureDetail == null ||
-                txtDescriptionDetail == null || txtWindDetail == null || txtHumidityDetail == null) {
-            Log.e("WeatherDetailActivity", "Some views are null");
-            Toast.makeText(this, "Error with loading of View", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
         }
 
         String locationName = getIntent().getStringExtra("location_name");
         double latitude = getIntent().getDoubleExtra("latitude", 0.0);
         double longitude = getIntent().getDoubleExtra("longitude", 0.0);
 
-        // Validierung der Intent-Daten
         if (locationName == null || locationName.isEmpty()) {
             Toast.makeText(this, "Invalid City", Toast.LENGTH_SHORT).show();
             finish();
@@ -109,8 +95,12 @@ public class WeatherDetailActivity extends AppCompatActivity {
     private void fetchWeather(double latitude, double longitude, String locationName) {
         new Thread(() -> {
             try {
-                String weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude="
-                        + latitude + "&longitude=" + longitude + "&current_weather=true&timezone=auto";
+                String weatherUrl =
+                        "https://api.open-meteo.com/v1/forecast?latitude=" + latitude +
+                        "&longitude=" + longitude +
+                        "&current_weather=true" +
+                        "&daily=temperature_2m_max,temperature_2m_min,weathercode" +
+                        "&timezone=auto";
 
                 final String weatherJson = httpGet(weatherUrl, "GeoWeatherApp");
 
@@ -119,7 +109,9 @@ public class WeatherDetailActivity extends AppCompatActivity {
             } catch (final Exception e) {
                 Log.e("WeatherDetailActivity", "fetchWeather failed", e);
                 runOnUiThread(() ->
-                        Toast.makeText(WeatherDetailActivity.this, "Error fetching weather: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(WeatherDetailActivity.this,
+                                "Error fetching weather: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show()
                 );
             }
         }).start();
@@ -127,43 +119,66 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
     private void parseAndDisplayOpenMeteo(String json, String locationLabel) {
         try {
-            if (json == null || json.isEmpty()) {
-                throw new Exception("Empty JSON response");
-            }
-
             JSONObject root = new JSONObject(json);
-            if (!root.has("current_weather")) {
-                throw new Exception("No current_weather in response");
-            }
 
+            // --- CURRENT WEATHER ---
             JSONObject obj = root.getJSONObject("current_weather");
 
             double temp = obj.getDouble("temperature");
             double windSpeed = obj.getDouble("windspeed");
             int weatherCode = obj.getInt("weathercode");
 
-            if (txtLocationDetail != null) txtLocationDetail.setText(locationLabel);
-            if (txtTemperatureDetail != null) {
-                txtTemperatureDetail.setText(String.format(Locale.getDefault(), "%.1f°C", temp));
-            }
-            if (txtWindDetail != null) {
-                txtWindDetail.setText(String.format(Locale.getDefault(), "Wind: %.1f km/h", windSpeed));
-            }
-            if (txtHumidityDetail != null) {
-                txtHumidityDetail.setText("Humidity: —"); // Humidity not in current_weather; needs extra param
-            }
-            if (txtDescriptionDetail != null) {
-                txtDescriptionDetail.setText(WEATHER_CODES.getOrDefault(weatherCode, "Unknown"));
+            txtLocationDetail.setText(locationLabel);
+            txtTemperatureDetail.setText(String.format(Locale.getDefault(), "%.1f°C", temp));
+            txtWindDetail.setText(String.format(Locale.getDefault(), "Wind: %.1f km/h", windSpeed));
+            txtHumidityDetail.setText("Humidity: —");
+            txtDescriptionDetail.setText(WEATHER_CODES.getOrDefault(weatherCode, "Unknown"));
 
+            // --- FORECAST ---
+            parseForecast(root);
 
-            }
-
-        } catch (org.json.JSONException e) {
-            Log.e("WeatherDetailActivity", "parseAndDisplayOpenMeteo JSON error", e);
-            Toast.makeText(this, "Error with reading of Weatherdata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Log.e("WeatherDetailActivity", "parseAndDisplayOpenMeteo failed", e);
-            Toast.makeText(this, "Error with reading of Weatherdata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("WeatherDetailActivity", "parse error", e);
+            Toast.makeText(this, "Error reading weather data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void parseForecast(JSONObject root) {
+        try {
+            if (!root.has("daily")) {
+                txtForecastDetail.setText("No forecast available");
+                return;
+            }
+
+            JSONObject daily = root.getJSONObject("daily");
+
+            JSONArray dates = daily.getJSONArray("time");
+            JSONArray max = daily.getJSONArray("temperature_2m_max");
+            JSONArray min = daily.getJSONArray("temperature_2m_min");
+            JSONArray codes = daily.getJSONArray("weathercode");
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Forecast:\n\n");
+
+            for (int i = 0; i < dates.length(); i++) {
+                String date = dates.getString(i);
+                double tMax = max.getDouble(i);
+                double tMin = min.getDouble(i);
+                int code = codes.getInt(i);
+
+                sb.append(date)
+                        .append(" → ")
+                        .append(String.format(Locale.getDefault(), "%.1f° / %.1f°", tMin, tMax))
+                        .append("  ")
+                        .append(WEATHER_CODES.getOrDefault(code, "Unknown"))
+                        .append("\n");
+            }
+
+            txtForecastDetail.setText(sb.toString());
+
+        } catch (Exception e) {
+            Log.e("WeatherDetailActivity", "Forecast parse error", e);
+            txtForecastDetail.setText("Error loading forecast");
         }
     }
 
@@ -207,8 +222,6 @@ public class WeatherDetailActivity extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            hideSystemUI();
-        }
+        if (hasFocus) hideSystemUI();
     }
 }
