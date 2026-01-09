@@ -12,4 +12,4 @@ Planned Features are:
 > Adding Screenshots and Videos to YouTube or other Providers for showing how the App Works.
 
 # Latest Release Download
-You can always download the Latest Release at [GitLab Releases of this App Repository](https://gitlab.com/FreetimeMaker/GeoWeather/-/releases/v1.0.5).
+You can always download the Latest Release at [GitHub Releases of this App Repository](https://github.com/FreetimeMaker/GeoWeather/releases/latest).
