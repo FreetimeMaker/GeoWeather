@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="#101010">
+    android:fillViewport="true">
 
     <LinearLayout
         android:orientation="vertical"
@@ -11,80 +11,97 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Back Button -->
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@android:color/transparent"
             android:src="@android:drawable/ic_media_previous"
-            android:tint="#FFFFFF" />
+            android:contentDescription="@string/app_name" />
 
-        <!-- Location Name -->
         <TextView
             android:id="@+id/txtLocationDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="City Name"
-            android:textColor="#FFFFFF"
-            android:textSize="28sp"
+            android:textSize="26sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp" />
 
-        <!-- Temperature -->
+        <ImageView
+            android:id="@+id/imgWeatherIcon"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@string/app_name" />
+
         <TextView
             android:id="@+id/txtTemperatureDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0°C"
-            android:textColor="#FFFFFF"
-            android:textSize="48sp"
+            android:textSize="40sp"
             android:textStyle="bold"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="8dp" />
 
-        <!-- Description -->
         <TextView
             android:id="@+id/txtDescriptionDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Clear sky"
-            android:textColor="#CCCCCC"
-            android:textSize="20sp"
-            android:layout_marginTop="8dp" />
+            android:textSize="18sp"
+            android:layout_marginTop="4dp" />
 
-        <!-- Wind -->
         <TextView
             android:id="@+id/txtWindDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Wind: 0 km/h"
-            android:textColor="#AAAAAA"
-            android:textSize="16sp"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="8dp" />
 
-        <!-- Humidity -->
         <TextView
             android:id="@+id/txtHumidityDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Humidity: —"
-            android:textColor="#AAAAAA"
-            android:textSize="16sp"
             android:layout_marginTop="4dp" />
 
-        <!-- Divider -->
+        <TextView
+            android:id="@+id/txtSunrise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sunrise: —"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/txtSunset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sunset: —"
+            android:layout_marginTop="2dp" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#333333"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="#CCCCCC" />
 
-        <!-- Forecast Block -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forecast"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvForecast"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp" />
+            android:nestedScrollingEnabled="false"
+            android:layout_marginTop="4dp" />
+
     </LinearLayout>
+
 </ScrollView>

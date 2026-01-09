@@ -4,10 +4,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.freetime.geoweather.ui.ForecastAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,41 +23,19 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 
 public class WeatherDetailActivity extends AppCompatActivity {
 
     private TextView txtLocationDetail, txtTemperatureDetail, txtDescriptionDetail,
-            txtWindDetail, txtHumidityDetail, txtForecastDetail;
+            txtWindDetail, txtHumidityDetail, txtSunrise, txtSunset;
+
+    private ImageView imgWeatherIcon;
     private ImageButton btnBack;
 
     private RecyclerView rvForecast;
     private ForecastAdapter forecastAdapter;
-
-    private static final Map<Integer, String> WEATHER_CODES = createWeatherCodes();
-
-    private static Map<Integer, String> createWeatherCodes() {
-        HashMap<Integer, String> m = new HashMap<>();
-        m.put(0, "Clear sky");
-        m.put(1, "Mostly clear");
-        m.put(2, "Partly cloudy");
-        m.put(3, "Overcast");
-        m.put(45, "Fog");
-        m.put(48, "Depositing rime fog");
-        m.put(51, "Light drizzle");
-        m.put(53, "Moderate drizzle");
-        m.put(55, "Dense drizzle");
-        m.put(61, "Slight rain");
-        m.put(63, "Moderate rain");
-        m.put(65, "Heavy rain");
-        m.put(71, "Slight snow");
-        m.put(73, "Moderate snow");
-        m.put(75, "Heavy snow");
-        return Collections.unmodifiableMap(m);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +49,16 @@ public class WeatherDetailActivity extends AppCompatActivity {
         txtDescriptionDetail = findViewById(R.id.txtDescriptionDetail);
         txtWindDetail = findViewById(R.id.txtWindDetail);
         txtHumidityDetail = findViewById(R.id.txtHumidityDetail);
+        txtSunrise = findViewById(R.id.txtSunrise);
+        txtSunset = findViewById(R.id.txtSunset);
+        imgWeatherIcon = findViewById(R.id.imgWeatherIcon);
+
         rvForecast = findViewById(R.id.rvForecast);
         rvForecast.setLayoutManager(new LinearLayoutManager(this));
         forecastAdapter = new ForecastAdapter();
         rvForecast.setAdapter(forecastAdapter);
 
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> finish());
-        }
+        btnBack.setOnClickListener(v -> finish());
 
         String locationName = getIntent().getStringExtra("location_name");
         double latitude = getIntent().getDoubleExtra("latitude", 0.0);
@@ -85,30 +70,24 @@ public class WeatherDetailActivity extends AppCompatActivity {
             return;
         }
 
-        if (latitude == 0.0 && longitude == 0.0) {
-            Toast.makeText(this, "Invalid Coordinates", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
         txtLocationDetail.setText(locationName);
 
-        fetchWeather(latitude, longitude, locationName);
+        fetchWeather(latitude, longitude);
     }
 
-    private void fetchWeather(double latitude, double longitude, String locationName) {
+    private void fetchWeather(double latitude, double longitude) {
         new Thread(() -> {
             try {
                 String weatherUrl =
                         "https://api.open-meteo.com/v1/forecast?latitude=" + latitude +
-                        "&longitude=" + longitude +
-                        "&current_weather=true" +
-                        "&daily=temperature_2m_max,temperature_2m_min,weathercode" +
-                        "&timezone=auto";
+                                "&longitude=" + longitude +
+                                "&current_weather=true" +
+                                "&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset" +
+                                "&timezone=auto";
 
                 final String weatherJson = httpGet(weatherUrl, "GeoWeatherApp");
 
-                runOnUiThread(() -> parseAndDisplayOpenMeteo(weatherJson, locationName));
+                runOnUiThread(() -> parseAndDisplay(weatherJson));
 
             } catch (final Exception e) {
                 Log.e("WeatherDetailActivity", "fetchWeather failed", e);
@@ -121,25 +100,42 @@ public class WeatherDetailActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void parseAndDisplayOpenMeteo(String json, String locationLabel) {
+    private void parseAndDisplay(String json) {
         try {
             JSONObject root = new JSONObject(json);
 
-            // --- CURRENT WEATHER ---
-            JSONObject obj = root.getJSONObject("current_weather");
+            // CURRENT WEATHER
+            JSONObject current = root.getJSONObject("current_weather");
 
-            double temp = obj.getDouble("temperature");
-            double windSpeed = obj.getDouble("windspeed");
-            int weatherCode = obj.getInt("weathercode");
+            double temp = current.getDouble("temperature");
+            double windSpeed = current.getDouble("windspeed");
+            int weatherCode = current.getInt("weathercode");
 
-            txtLocationDetail.setText(locationLabel);
             txtTemperatureDetail.setText(String.format(Locale.getDefault(), "%.1f°C", temp));
             txtWindDetail.setText(String.format(Locale.getDefault(), "Wind: %.1f km/h", windSpeed));
             txtHumidityDetail.setText("Humidity: —");
-            txtDescriptionDetail.setText(WEATHER_CODES.getOrDefault(weatherCode, "Unknown"));
 
-            // --- FORECAST ---
-            parseForecast(root);
+            txtDescriptionDetail.setText(
+                    WeatherCodes.getDescription(weatherCode)
+            );
+
+            // SUNRISE / SUNSET
+            JSONObject daily = root.getJSONObject("daily");
+
+            String sunrise = daily.getJSONArray("sunrise").getString(0);
+            String sunset = daily.getJSONArray("sunset").getString(0);
+
+            txtSunrise.setText("Sunrise: " + sunrise.replace("T", " "));
+            txtSunset.setText("Sunset: " + sunset.replace("T", " "));
+
+            WeatherIconMapper.setSunTimes(sunrise, sunset);
+
+            imgWeatherIcon.setImageResource(
+                    WeatherIconMapper.getWeatherIcon(weatherCode)
+            );
+
+            // FORECAST
+            parseForecast(daily);
 
         } catch (Exception e) {
             Log.e("WeatherDetailActivity", "parse error", e);
@@ -147,18 +143,14 @@ public class WeatherDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void parseForecast(JSONObject root) {
+    private void parseForecast(JSONObject daily) {
         try {
-            if (!root.has("daily")) return;
-
-            JSONObject daily = root.getJSONObject("daily");
-
             JSONArray dates = daily.getJSONArray("time");
             JSONArray max = daily.getJSONArray("temperature_2m_max");
             JSONArray min = daily.getJSONArray("temperature_2m_min");
             JSONArray codes = daily.getJSONArray("weathercode");
 
-            List<ForecastAdapter.DailyForecast> list = new ArrayList<>();
+            ArrayList<ForecastAdapter.DailyForecast> list = new ArrayList<>();
 
             for (int i = 0; i < dates.length(); i++) {
                 ForecastAdapter.DailyForecast f = new ForecastAdapter.DailyForecast();
