@@ -12,9 +12,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.freetime.geoweather.ui.ForecastAdapter;
-import com.freetime.geoweather.ui.HourlyAdapter;
 import com.freetime.geoweather.ui.DailyAdapter;
+import com.freetime.geoweather.ui.HourlyAdapter;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.Style;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,17 +40,21 @@ public class WeatherDetailActivity extends AppCompatActivity {
     private ImageView imgWeatherIcon;
     private ImageButton btnBack;
 
-    private RecyclerView rvForecastDaily;
-    private RecyclerView rvForecastHourly;
+    private RecyclerView rvHourly, rvDaily;
 
-    private ForecastAdapter forecastAdapter;
     private HourlyAdapter hourlyAdapter;
     private DailyAdapter dailyAdapter;
+
+    // MAP
+    private MapView mapView;
+    private MapboxMap mapboxMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hideSystemUI();
+
+        MapboxMapInitializer.init(this); // wichtig für MapLibre
+
         setContentView(R.layout.activity_weather_detail);
 
         btnBack = findViewById(R.id.btnBack);
@@ -59,52 +67,67 @@ public class WeatherDetailActivity extends AppCompatActivity {
         txtSunset = findViewById(R.id.txtSunset);
         imgWeatherIcon = findViewById(R.id.imgWeatherIcon);
 
-        rvForecastDaily = findViewById(R.id.rvForecastDaily);
-        rvForecastHourly = findViewById(R.id.rvForecastHourly);
+        rvHourly = findViewById(R.id.rvForecastHourly);
+        rvDaily = findViewById(R.id.rvForecastDaily);
 
-        rvForecastDaily.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        rvForecastHourly.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        rvHourly.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        rvDaily.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        forecastAdapter = new ForecastAdapter();
-        dailyAdapter = new DailyAdapter();
         hourlyAdapter = new HourlyAdapter();
+        dailyAdapter = new DailyAdapter();
 
-        rvForecastDaily.setAdapter(dailyAdapter);
-        rvForecastHourly.setAdapter(hourlyAdapter);
+        rvHourly.setAdapter(hourlyAdapter);
+        rvDaily.setAdapter(dailyAdapter);
 
         btnBack.setOnClickListener(v -> finish());
 
-        String locationName = getIntent().getStringExtra("location_name");
-        double latitude = getIntent().getDoubleExtra("latitude", 0.0);
-        double longitude = getIntent().getDoubleExtra("longitude", 0.0);
+        String name = getIntent().getStringExtra("location_name");
+        double lat = getIntent().getDoubleExtra("latitude", 0);
+        double lon = getIntent().getDoubleExtra("longitude", 0);
 
-        txtLocationDetail.setText(locationName);
+        txtLocationDetail.setText(name);
 
-        fetchWeather(latitude, longitude);
+        // MAP INIT
+        mapView = findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
+
+        mapView.getMapAsync(map -> {
+            mapboxMap = map;
+
+            mapboxMap.setStyle(new Style.Builder().fromUri("asset://map_style.json"), style -> {
+
+                // Karte auf den Ort zentrieren
+                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(lat, lon), 8
+                ));
+
+                // Radar-Layer hinzufügen
+                RadarTileSource.addRadarLayer(style);
+            });
+        });
+
+        fetchWeather(lat, lon);
     }
 
-    private void fetchWeather(double latitude, double longitude) {
+    private void fetchWeather(double lat, double lon) {
         new Thread(() -> {
             try {
-                String weatherUrl =
+                String url =
                         "https://api.open-meteo.com/v1/forecast"
-                                + "?latitude=" + latitude
-                                + "&longitude=" + longitude
+                                + "?latitude=" + lat
+                                + "&longitude=" + lon
                                 + "&current_weather=true"
                                 + "&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset"
                                 + "&hourly=temperature_2m,weathercode"
                                 + "&timezone=auto";
 
-                final String weatherJson = httpGet(weatherUrl, "GeoWeatherApp");
+                String json = httpGet(url);
 
-                runOnUiThread(() -> parseAndDisplay(weatherJson));
+                runOnUiThread(() -> parseAndDisplay(json));
 
-            } catch (final Exception e) {
-                Log.e("WeatherDetailActivity", "fetchWeather failed", e);
+            } catch (Exception e) {
                 runOnUiThread(() ->
-                        Toast.makeText(WeatherDetailActivity.this,
-                                "Error fetching weather: " + e.getMessage(),
-                                Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                 );
             }
         }).start();
@@ -114,34 +137,25 @@ public class WeatherDetailActivity extends AppCompatActivity {
         try {
             JSONObject root = new JSONObject(json);
 
-            // CURRENT WEATHER
             JSONObject current = root.getJSONObject("current_weather");
 
             double temp = current.getDouble("temperature");
-            double windSpeed = current.getDouble("windspeed");
-            int weatherCode = current.getInt("weathercode");
+            double wind = current.getDouble("windspeed");
+            int code = current.getInt("weathercode");
 
             txtTemperatureDetail.setText(String.format(Locale.getDefault(), "%.1f°C", temp));
-            txtWindDetail.setText(String.format(Locale.getDefault(), "Wind: %.1f km/h", windSpeed));
+            txtWindDetail.setText("Wind: " + wind + " km/h");
             txtHumidityDetail.setText("Humidity: —");
 
-            txtDescriptionDetail.setText(
-                    WeatherCodes.getDescription(weatherCode)
-            );
+            txtDescriptionDetail.setText(WeatherCodes.getDescription(code));
+            imgWeatherIcon.setImageResource(WeatherIconMapper.getWeatherIcon(code));
 
-            imgWeatherIcon.setImageResource(
-                    WeatherIconMapper.getWeatherIcon(weatherCode)
-            );
-
-            // DAILY FORECAST
             JSONObject daily = root.getJSONObject("daily");
             parseDaily(daily);
 
-            // HOURLY FORECAST
             JSONObject hourly = root.getJSONObject("hourly");
             parseHourly(hourly);
 
-            // SUNRISE / SUNSET
             String sunrise = daily.getJSONArray("sunrise").getString(0);
             String sunset = daily.getJSONArray("sunset").getString(0);
 
@@ -151,8 +165,7 @@ public class WeatherDetailActivity extends AppCompatActivity {
             WeatherIconMapper.setSunTimes(sunrise, sunset);
 
         } catch (Exception e) {
-            Log.e("WeatherDetailActivity", "parse error", e);
-            Toast.makeText(this, "Error reading weather data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("WeatherDetail", "parse error", e);
         }
     }
 
@@ -177,7 +190,7 @@ public class WeatherDetailActivity extends AppCompatActivity {
             dailyAdapter.setItems(list);
 
         } catch (Exception e) {
-            Log.e("WeatherDetailActivity", "Daily parse error", e);
+            Log.e("WeatherDetail", "daily parse error", e);
         }
     }
 
@@ -200,50 +213,35 @@ public class WeatherDetailActivity extends AppCompatActivity {
             hourlyAdapter.setItems(list);
 
         } catch (Exception e) {
-            Log.e("WeatherDetailActivity", "Hourly parse error", e);
+            Log.e("WeatherDetail", "hourly parse error", e);
         }
     }
 
-    private String httpGet(String urlString, String userAgent) throws Exception {
+    private String httpGet(String urlString) throws Exception {
         URL url = new URL(urlString);
         HttpURLConnection c = (HttpURLConnection) url.openConnection();
         c.setRequestMethod("GET");
-        c.setRequestProperty("User-Agent", userAgent);
         c.setConnectTimeout(12000);
         c.setReadTimeout(12000);
         c.connect();
 
-        int code = c.getResponseCode();
-        InputStream stream = (code >= 200 && code < 400) ? c.getInputStream() : c.getErrorStream();
+        InputStream stream = c.getInputStream();
+        BufferedReader in = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 
-        try (BufferedReader in = new BufferedReader(
-                new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+        StringBuilder sb = new StringBuilder();
+        String line;
 
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = in.readLine()) != null) {
-                sb.append(line);
-            }
-            return sb.toString();
-        } finally {
-            c.disconnect();
-        }
+        while ((line = in.readLine()) != null) sb.append(line);
+
+        c.disconnect();
+        return sb.toString();
     }
 
-    private void hideSystemUI() {
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) hideSystemUI();
-    }
+    // MAP LIFECYCLE
+    @Override protected void onStart() { super.onStart(); mapView.onStart(); }
+    @Override protected void onResume() { super.onResume(); mapView.onResume(); }
+    @Override protected void onPause() { super.onPause(); mapView.onPause(); }
+    @Override protected void onStop() { super.onStop(); mapView.onStop(); }
+    @Override protected void onDestroy() { super.onDestroy(); mapView.onDestroy(); }
+    @Override public void onLowMemory() { super.onLowMemory(); mapView.onLowMemory(); }
 }

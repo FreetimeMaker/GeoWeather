@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="24dp"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="24dp" >
 
     <ImageButton
         android:id="@+id/btnBack"
@@ -84,7 +88,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvForecastHourly"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:paddingBottom="8dp"
         android:clipToPadding="false" />
 
@@ -100,7 +104,25 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvForecastDaily"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="140dp"
         android:paddingBottom="8dp"
         android:clipToPadding="false" />
-</LinearLayout>
+    </LinearLayout>
+
+    <!-- MAPVIEW -->
+
+    <TextView
+        android:text="Weather Map"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="12dp" />
+
+</ScrollView>

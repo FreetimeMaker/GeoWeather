@@ -1,38 +1,53 @@
 package com.freetime.geoweather;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class WeatherCodes {
 
-    private static final Map<Integer, String> CODES = new HashMap<>();
-
-    static {
-        CODES.put(0, "Clear sky");
-        CODES.put(1, "Mainly clear");
-        CODES.put(2, "Partly cloudy");
-        CODES.put(3, "Overcast");
-        CODES.put(45, "Fog");
-        CODES.put(48, "Depositing rime fog");
-        CODES.put(51, "Light drizzle");
-        CODES.put(53, "Moderate drizzle");
-        CODES.put(55, "Dense drizzle");
-        CODES.put(61, "Slight rain");
-        CODES.put(63, "Moderate rain");
-        CODES.put(65, "Heavy rain");
-        CODES.put(71, "Slight snow");
-        CODES.put(73, "Moderate snow");
-        CODES.put(75, "Heavy snow");
-        CODES.put(80, "Rain showers");
-        CODES.put(81, "Moderate rain showers");
-        CODES.put(82, "Violent rain showers");
-        CODES.put(95, "Thunderstorm");
-        CODES.put(96, "Thunderstorm with slight hail");
-        CODES.put(99, "Thunderstorm with heavy hail");
-    }
-
     public static String getDescription(int code) {
-        String d = CODES.get(code);
-        return d != null ? d : "Unknown";
+        switch (code) {
+            case 0:
+                return "Clear sky";
+            case 1:
+            case 2:
+                return "Mainly clear";
+            case 3:
+                return "Overcast";
+            case 45:
+            case 48:
+                return "Fog";
+            case 51:
+            case 53:
+            case 55:
+                return "Drizzle";
+            case 56:
+            case 57:
+                return "Freezing drizzle";
+            case 61:
+            case 63:
+            case 65:
+                return "Rain";
+            case 66:
+            case 67:
+                return "Freezing rain";
+            case 71:
+            case 73:
+            case 75:
+                return "Snowfall";
+            case 77:
+                return "Snow grains";
+            case 80:
+            case 81:
+            case 82:
+                return "Rain showers";
+            case 85:
+            case 86:
+                return "Snow showers";
+            case 95:
+                return "Thunderstorm";
+            case 96:
+            case 99:
+                return "Thunderstorm with hail";
+            default:
+                return "Unknown";
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.freetime.geoweather;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -43,20 +45,29 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
-
+public class MainActivity extends AppCompatActivity implements LocationListener
+{
     private static final int REQ_CODE_LOCATION = 1001;
-
     private LocationManager locationManager;
+    private LocationsViewModel vm; // ← DAS HAT GEFELT
 
     @Override
     public void onLocationChanged(Location location) {
         double lat = location.getLatitude();
         double lon = location.getLongitude();
 
-        // Direkt zur Detailseite springen
+        // Reverse-Geocoding
+        String displayName = reverseGeocode(lat, lon);
+
+        // Beim ersten Start automatisch speichern
+        if (isFirstStart()) {
+            vm.addLocation(displayName, lat, lon);
+            setFirstStartDone();
+        }
+
+        // Detailseite öffnen
         Intent intent = new Intent(MainActivity.this, WeatherDetailActivity.class);
-        intent.putExtra("location_name", "Your Location");
+        intent.putExtra("location_name", displayName);
         intent.putExtra("latitude", lat);
         intent.putExtra("longitude", lon);
         startActivity(intent);
@@ -73,6 +84,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         } else {
             startLocationUpdates();
         }
+    }
+
+    private boolean isFirstStart() {
+        return getSharedPreferences("app_prefs", MODE_PRIVATE)
+                .getBoolean("first_start", true);
+    }
+
+    private void setFirstStartDone() {
+        getSharedPreferences("app_prefs", MODE_PRIVATE)
+                .edit()
+                .putBoolean("first_start", false)
+                .apply();
     }
 
     private void startLocationUpdates() {
@@ -119,6 +142,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         setContentView(R.layout.activity_main);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        // ViewModel initialisieren
+        vm = new ViewModelProvider(this).get(LocationsViewModel.class);
+
+        if (isFirstStart()) {
+            requestLocationPermissionAndStart();
+        }
 
         // RecyclerView für gespeicherte Orte
         RecyclerView rv = findViewById(R.id.rvLocations);
@@ -173,6 +203,35 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 return name + ", " + admin1 + ", " + country;
             return name + ", " + country;
         }
+    }
+
+    private String reverseGeocode(double lat, double lon) {
+        try {
+            String url = "https://geocoding-api.open-meteo.com/v1/reverse?latitude="
+                    + lat + "&longitude=" + lon + "&language=de";
+
+            String json = httpGet(url, "GeoWeatherApp");
+            JSONObject obj = new JSONObject(json);
+
+            JSONArray results = obj.optJSONArray("results");
+            if (results != null && results.length() > 0) {
+                JSONObject item = results.getJSONObject(0);
+
+                String name = item.optString("name", "");
+                String admin1 = item.optString("admin1", "");
+                String country = item.optString("country", "");
+
+                if (!admin1.isEmpty())
+                    return name + ", " + admin1 + ", " + country;
+                else
+                    return name + ", " + country;
+            }
+
+        } catch (Exception e) {
+            Log.e("ReverseGeocode", "Error: " + e.getMessage());
+        }
+
+        return "Unknown Location";
     }
 
     private void showAddLocationDialog(LocationsViewModel vm) {

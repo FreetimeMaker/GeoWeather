@@ -1,42 +1,50 @@
 package com.freetime.geoweather;
 
 import android.os.Build;
+import android.text.TextUtils;
+
+import com.freetime.geoweather.R;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class WeatherIconMapper {
 
-    private static LocalDateTime sunrise;
-    private static LocalDateTime sunset;
+    private static ZonedDateTime sunriseTime;
+    private static ZonedDateTime sunsetTime;
 
-    public static void setSunTimes(String sunriseStr, String sunsetStr) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            sunrise = LocalDateTime.parse(sunriseStr);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            sunset  = LocalDateTime.parse(sunsetStr);
+    public static void setSunTimes(String sunriseIso, String sunsetIso) {
+        try {
+            if (!TextUtils.isEmpty(sunriseIso)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    sunriseTime = ZonedDateTime.parse(sunriseIso + ":00Z")
+                            .withZoneSameInstant(ZoneId.systemDefault());
+                }
+            }
+            if (!TextUtils.isEmpty(sunsetIso)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    sunsetTime = ZonedDateTime.parse(sunsetIso + ":00Z")
+                            .withZoneSameInstant(ZoneId.systemDefault());
+                }
+            }
+        } catch (Exception e) {
+            sunriseTime = null;
+            sunsetTime = null;
         }
     }
 
-    private static boolean isNight() {
-        if (sunrise == null || sunset == null) {
-            // Fallback: Nacht zwischen 20:00 und 06:00
-            int hour = 0;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                hour = LocalDateTime.now().getHour();
-            }
-            return hour >= 20 || hour < 6;
-        }
-
-        LocalDateTime now = null;
+    private static boolean isDaytime() {
+        if (sunriseTime == null || sunsetTime == null) return true;
+        ZonedDateTime now = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            now = LocalDateTime.now();
+            now = ZonedDateTime.now(ZoneId.systemDefault());
         }
-        return now.isBefore(sunrise) || now.isAfter(sunset);
+        return now.isAfter(sunriseTime) && now.isBefore(sunsetTime);
     }
 
     public static int getWeatherIcon(int code) {
-        boolean night = isNight();
+        boolean night = isDaytime();
 
         switch (code) {
 
