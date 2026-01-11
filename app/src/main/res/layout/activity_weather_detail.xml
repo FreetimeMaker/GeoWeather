@@ -1,107 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="24dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:padding="24dp"
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_menu_revert" />
+
+    <TextView
+        android:id="@+id/txtLocationDetail"
+        android:text="City Name"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/imgWeatherIcon"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/txtTemperatureDetail"
+        android:text="0°C"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txtDescriptionDetail"
+        android:text="Clear sky"
+        android:textSize="18sp"
+        android:layout_marginTop="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txtWindDetail"
+        android:text="Wind: 0 km/h"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txtHumidityDetail"
+        android:text="Humidity: —"
+        android:layout_marginTop="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txtSunrise"
+        android:text="Sunrise: —"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txtSunset"
+        android:text="Sunset: —"
+        android:layout_marginTop="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <!-- HOURLY FORECAST -->
+    <TextView
+        android:text="Hourly Forecast"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvForecastHourly"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="100dp"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false" />
 
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@android:color/transparent"
-            android:src="@android:drawable/ic_media_previous"
-            android:contentDescription="@string/app_name" />
+    <!-- DAILY FORECAST -->
+    <TextView
+        android:text="Daily Forecast"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/txtLocationDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="City Name"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
-
-        <ImageView
-            android:id="@+id/imgWeatherIcon"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:layout_marginTop="16dp"
-            android:contentDescription="@string/app_name" />
-
-        <TextView
-            android:id="@+id/txtTemperatureDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0°C"
-            android:textSize="40sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp" />
-
-        <TextView
-            android:id="@+id/txtDescriptionDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Clear sky"
-            android:textSize="18sp"
-            android:layout_marginTop="4dp" />
-
-        <TextView
-            android:id="@+id/txtWindDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Wind: 0 km/h"
-            android:layout_marginTop="8dp" />
-
-        <TextView
-            android:id="@+id/txtHumidityDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Humidity: —"
-            android:layout_marginTop="4dp" />
-
-        <TextView
-            android:id="@+id/txtSunrise"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sunrise: —"
-            android:layout_marginTop="8dp" />
-
-        <TextView
-            android:id="@+id/txtSunset"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sunset: —"
-            android:layout_marginTop="2dp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            android:background="#CCCCCC" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Forecast"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvForecast"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginTop="4dp" />
-
-    </LinearLayout>
-
-</ScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvForecastDaily"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false" />
+</LinearLayout>

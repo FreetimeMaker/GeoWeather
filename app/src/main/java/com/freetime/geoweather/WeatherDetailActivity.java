@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.freetime.geoweather.ui.ForecastAdapter;
+import com.freetime.geoweather.ui.HourlyAdapter;
+import com.freetime.geoweather.ui.DailyAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,8 +36,12 @@ public class WeatherDetailActivity extends AppCompatActivity {
     private ImageView imgWeatherIcon;
     private ImageButton btnBack;
 
-    private RecyclerView rvForecast;
+    private RecyclerView rvForecastDaily;
+    private RecyclerView rvForecastHourly;
+
     private ForecastAdapter forecastAdapter;
+    private HourlyAdapter hourlyAdapter;
+    private DailyAdapter dailyAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,22 +59,24 @@ public class WeatherDetailActivity extends AppCompatActivity {
         txtSunset = findViewById(R.id.txtSunset);
         imgWeatherIcon = findViewById(R.id.imgWeatherIcon);
 
-        rvForecast = findViewById(R.id.rvForecast);
-        rvForecast.setLayoutManager(new LinearLayoutManager(this));
+        rvForecastDaily = findViewById(R.id.rvForecastDaily);
+        rvForecastHourly = findViewById(R.id.rvForecastHourly);
+
+        rvForecastDaily.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        rvForecastHourly.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
         forecastAdapter = new ForecastAdapter();
-        rvForecast.setAdapter(forecastAdapter);
+        dailyAdapter = new DailyAdapter();
+        hourlyAdapter = new HourlyAdapter();
+
+        rvForecastDaily.setAdapter(dailyAdapter);
+        rvForecastHourly.setAdapter(hourlyAdapter);
 
         btnBack.setOnClickListener(v -> finish());
 
         String locationName = getIntent().getStringExtra("location_name");
         double latitude = getIntent().getDoubleExtra("latitude", 0.0);
         double longitude = getIntent().getDoubleExtra("longitude", 0.0);
-
-        if (locationName == null || locationName.isEmpty()) {
-            Toast.makeText(this, "Invalid City", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
 
         txtLocationDetail.setText(locationName);
 
@@ -79,11 +87,13 @@ public class WeatherDetailActivity extends AppCompatActivity {
         new Thread(() -> {
             try {
                 String weatherUrl =
-                        "https://api.open-meteo.com/v1/forecast?latitude=" + latitude +
-                                "&longitude=" + longitude +
-                                "&current_weather=true" +
-                                "&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset" +
-                                "&timezone=auto";
+                        "https://api.open-meteo.com/v1/forecast"
+                                + "?latitude=" + latitude
+                                + "&longitude=" + longitude
+                                + "&current_weather=true"
+                                + "&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset"
+                                + "&hourly=temperature_2m,weathercode"
+                                + "&timezone=auto";
 
                 final String weatherJson = httpGet(weatherUrl, "GeoWeatherApp");
 
@@ -119,9 +129,19 @@ public class WeatherDetailActivity extends AppCompatActivity {
                     WeatherCodes.getDescription(weatherCode)
             );
 
-            // SUNRISE / SUNSET
-            JSONObject daily = root.getJSONObject("daily");
+            imgWeatherIcon.setImageResource(
+                    WeatherIconMapper.getWeatherIcon(weatherCode)
+            );
 
+            // DAILY FORECAST
+            JSONObject daily = root.getJSONObject("daily");
+            parseDaily(daily);
+
+            // HOURLY FORECAST
+            JSONObject hourly = root.getJSONObject("hourly");
+            parseHourly(hourly);
+
+            // SUNRISE / SUNSET
             String sunrise = daily.getJSONArray("sunrise").getString(0);
             String sunset = daily.getJSONArray("sunset").getString(0);
 
@@ -130,30 +150,23 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
             WeatherIconMapper.setSunTimes(sunrise, sunset);
 
-            imgWeatherIcon.setImageResource(
-                    WeatherIconMapper.getWeatherIcon(weatherCode)
-            );
-
-            // FORECAST
-            parseForecast(daily);
-
         } catch (Exception e) {
             Log.e("WeatherDetailActivity", "parse error", e);
             Toast.makeText(this, "Error reading weather data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void parseForecast(JSONObject daily) {
+    private void parseDaily(JSONObject daily) {
         try {
             JSONArray dates = daily.getJSONArray("time");
             JSONArray max = daily.getJSONArray("temperature_2m_max");
             JSONArray min = daily.getJSONArray("temperature_2m_min");
             JSONArray codes = daily.getJSONArray("weathercode");
 
-            ArrayList<ForecastAdapter.DailyForecast> list = new ArrayList<>();
+            ArrayList<DailyAdapter.DailyForecast> list = new ArrayList<>();
 
             for (int i = 0; i < dates.length(); i++) {
-                ForecastAdapter.DailyForecast f = new ForecastAdapter.DailyForecast();
+                DailyAdapter.DailyForecast f = new DailyAdapter.DailyForecast();
                 f.date = dates.getString(i);
                 f.tempMax = max.getDouble(i);
                 f.tempMin = min.getDouble(i);
@@ -161,10 +174,33 @@ public class WeatherDetailActivity extends AppCompatActivity {
                 list.add(f);
             }
 
-            forecastAdapter.setItems(list);
+            dailyAdapter.setItems(list);
 
         } catch (Exception e) {
-            Log.e("WeatherDetailActivity", "Forecast parse error", e);
+            Log.e("WeatherDetailActivity", "Daily parse error", e);
+        }
+    }
+
+    private void parseHourly(JSONObject hourly) {
+        try {
+            JSONArray times = hourly.getJSONArray("time");
+            JSONArray temps = hourly.getJSONArray("temperature_2m");
+            JSONArray codes = hourly.getJSONArray("weathercode");
+
+            ArrayList<HourlyAdapter.HourlyForecast> list = new ArrayList<>();
+
+            for (int i = 0; i < times.length(); i++) {
+                HourlyAdapter.HourlyForecast h = new HourlyAdapter.HourlyForecast();
+                h.time = times.getString(i);
+                h.temperature = temps.getDouble(i);
+                h.weatherCode = codes.getInt(i);
+                list.add(h);
+            }
+
+            hourlyAdapter.setItems(list);
+
+        } catch (Exception e) {
+            Log.e("WeatherDetailActivity", "Hourly parse error", e);
         }
     }
 

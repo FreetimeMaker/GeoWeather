@@ -6,10 +6,15 @@ Like I said in the [GeoWeather Informations](#geoweather-informations) you can a
 
 # GeoWeather Features Planned
 Planned Features are: 
-> More Weather Features like 5-Day Weather Forecast, showing Weather Icons, Hourly Weather Forecast and adding Multiple API's for a better Weather Forecast.
+> More Weather Features like Hourly Weather Forecast and adding Multiple API's for a better Weather Forecast.
 > One City always added based on the First Location where it was First Opened.
 > A Map where you can see other Weather Forecasts.
 > Adding Screenshots and Videos to YouTube or other Providers for showing how the App Works.
+
+# GeoWeather Features Done
+Features Done are:
+> 5-Day Weather Forecast
+> Showing Weather Icons
 
 # Latest Release Download
 You can always download the Latest Release at [GitHub Releases of this App Repository](https://github.com/FreetimeMaker/GeoWeather/releases/latest).
