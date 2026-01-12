@@ -85,26 +85,47 @@ public class WeatherDetailActivity extends AppCompatActivity {
         double lat = getIntent().getDoubleExtra("latitude", 0);
         double lon = getIntent().getDoubleExtra("longitude", 0);
 
+        if (name == null || name.trim().isEmpty()) {
+            name = "Unknown Location";
+        }
+
+        // Wenn ungültige Koordinaten übergeben wurden, abbrechen
+        if (lat == 0.0 && lon == 0.0) {
+            Toast.makeText(this, "Invalid location coordinates", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         txtLocationDetail.setText(name);
 
         // MAP INIT
         mapView = findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
+        if (mapView != null) {
+            try {
+                mapView.onCreate(savedInstanceState);
 
-        mapView.getMapAsync(map -> {
-            mapboxMap = map;
+                mapView.getMapAsync(map -> {
+                    mapboxMap = map;
 
-            mapboxMap.setStyle(new Style.Builder().fromUri("asset://map_style.json"), style -> {
+                    mapboxMap.setStyle(new Style.Builder().fromUri("asset://map_style.json"), style -> {
 
-                // Karte auf den Ort zentrieren
-                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(lat, lon), 8
-                ));
+                        // Karte auf den Ort zentrieren
+                        try {
+                            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(lat, lon), 8
+                            ));
 
-                // Radar-Layer hinzufügen
-                RadarTileSource.addRadarLayer(style);
-            });
-        });
+                            // Radar-Layer hinzufügen
+                            RadarTileSource.addRadarLayer(style);
+                        } catch (Exception ignored) {
+                        }
+                    });
+                });
+
+            } catch (Exception e) {
+                Log.e("WeatherDetail", "Map init failed", e);
+            }
+        }
 
         fetchWeather(lat, lon);
     }
