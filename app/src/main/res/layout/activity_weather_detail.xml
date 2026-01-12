@@ -88,9 +88,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvForecastHourly"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
         android:paddingBottom="8dp"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:nestedScrollingEnabled="false" />
 
     <!-- DAILY FORECAST -->
     <TextView
@@ -104,9 +105,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvForecastDaily"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="wrap_content"
         android:paddingBottom="8dp"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:nestedScrollingEnabled="false" />
 
     <!-- MAPVIEW -->
 

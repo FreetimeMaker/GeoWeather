@@ -79,6 +79,14 @@ public class WeatherDetailActivity extends AppCompatActivity {
         rvHourly.setAdapter(hourlyAdapter);
         rvDaily.setAdapter(dailyAdapter);
 
+        // Damit der RecyclerView innerhalb des ScrollView korrekt seine Höhe misst
+        rvDaily.setNestedScrollingEnabled(false);
+        rvDaily.setHasFixedSize(false);
+
+        // Für Konsistenz auch für Hourly deaktivieren
+        rvHourly.setNestedScrollingEnabled(false);
+        rvHourly.setHasFixedSize(false);
+
         btnBack.setOnClickListener(v -> finish());
 
         String name = getIntent().getStringExtra("location_name");
