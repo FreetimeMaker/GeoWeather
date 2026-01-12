@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener
             new Thread(() -> {
                 try {
                     String geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name="
-                            + URLEncoder.encode(searchQuery, StandardCharsets.UTF_8)
+                            + URLEncoder.encode(searchQuery, "UTF-8")
                             + "&count=20&language=de&format=json";
 
                     String geoJson = httpGet(geoUrl, "GeoWeatherApp");
