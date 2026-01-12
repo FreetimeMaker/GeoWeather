@@ -18,4 +18,8 @@ Features Done are:
 > Hourly Weather Forecast
 
 # Latest Release Download
-You can always download the Latest Release at [GitHub Releases of this App Repository](https://github.com/FreetimeMaker/GeoWeather/releases/latest).
+You can always download the Latest Release at [GitHub Releases of this App Repository](https://github.com/FreetimeMaker/GeoWeather/releases/latest) or on F-Droid.
+
+[<img src="https://f-droid.org/badge/get-it-on.png"
+    alt="Get it on F-Droid"
+    height="80">](https://f-droid.org/packages/com.freetime.geoweather)
