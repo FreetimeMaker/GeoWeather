@@ -13,6 +13,9 @@ public interface LocationDao {
     @Query("SELECT * FROM locations ORDER BY name ASC")
     LiveData<List<LocationEntity>> getAllLocations();
 
+    @Query("SELECT COUNT(*) FROM locations")
+    int getCount();
+
     @Insert
     void insertLocation(LocationEntity location);
 

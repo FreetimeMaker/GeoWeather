@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import com.freetime.geoweather.data.LocationDatabase;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -146,9 +147,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener
         // ViewModel initialisieren
         vm = new ViewModelProvider(this).get(LocationsViewModel.class);
 
-        if (isFirstStart()) {
-            requestLocationPermissionAndStart();
-        }
+        // Prüfen, ob bereits Orte gespeichert sind; nur beim echten ersten Start (keine Orte) GPS anfragen
+        LocationDatabase.databaseWriteExecutor.execute(() -> {
+            int count = LocationDatabase.getDatabase(getApplication()).locationDao().getCount();
+            if (count == 0 && isFirstStart()) {
+                runOnUiThread(this::requestLocationPermissionAndStart);
+            } else if (isFirstStart()) {
+                // Falls Orte bereits vorhanden sind, trotzdem als erledigt markieren, damit es nicht erneut ausgeführt wird
+                setFirstStartDone();
+            }
+        });
 
         // RecyclerView für gespeicherte Orte
         RecyclerView rv = findViewById(R.id.rvLocations);
