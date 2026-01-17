@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.freetime.geoweather"
-        minSdk 26
+        minSdk 24
         targetSdk 36
         versionCode 9
         versionName '1.0.8'

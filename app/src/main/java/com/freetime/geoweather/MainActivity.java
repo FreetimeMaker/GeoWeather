@@ -46,9 +46,78 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements LocationListener
 {
+    private static final int REQ_CODE_LOCATION = 1001;
     private LocationManager locationManager;
+    private LocationsViewModel vm; // ← DAS HAT GEFELT
+
+    @Override
+    public void onLocationChanged(Location location) {
+        double lat = location.getLatitude();
+        double lon = location.getLongitude();
+
+        // Reverse-Geocoding
+        String displayName = reverseGeocode(lat, lon);
+
+        // Beim ersten Start automatisch speichern
+        if (isFirstStart()) {
+            vm.addLocation(displayName, lat, lon);
+            setFirstStartDone();
+        }
+
+        // Detailseite öffnen
+        Intent intent = new Intent(MainActivity.this, WeatherDetailActivity.class);
+        intent.putExtra("location_name", displayName);
+        intent.putExtra("latitude", lat);
+        intent.putExtra("longitude", lon);
+        startActivity(intent);
+    }
+
+    private void requestLocationPermissionAndStart() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQ_CODE_LOCATION);
+
+        } else {
+            startLocationUpdates();
+        }
+    }
+
+    private boolean isFirstStart() {
+        return getSharedPreferences("app_prefs", MODE_PRIVATE)
+                .getBoolean("first_start", true);
+    }
+
+    private void setFirstStartDone() {
+        getSharedPreferences("app_prefs", MODE_PRIVATE)
+                .edit()
+                .putBoolean("first_start", false)
+                .apply();
+    }
+
+    private void startLocationUpdates() {
+        try {
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER, 5000, 10, this);
+            }
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestLocationUpdates(
+                        LocationManager.NETWORK_PROVIDER, 10000, 50, this);
+            }
+        } catch (SecurityException e) {
+            Log.e("Location", "Permission error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {}
+    @Override
+    public void onProviderDisabled(String provider) {}
 
     private void hideSystemUI() {
         View decorView = getWindow().getDecorView();
@@ -75,9 +144,18 @@ public class MainActivity extends AppCompatActivity
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        // ViewModel initialisieren
+        vm = new ViewModelProvider(this).get(LocationsViewModel.class);
+
         // Prüfen, ob bereits Orte gespeichert sind; nur beim echten ersten Start (keine Orte) GPS anfragen
         LocationDatabase.databaseWriteExecutor.execute(() -> {
             int count = LocationDatabase.getDatabase(getApplication()).locationDao().getCount();
+            if (count == 0 && isFirstStart()) {
+                runOnUiThread(this::requestLocationPermissionAndStart);
+            } else if (isFirstStart()) {
+                // Falls Orte bereits vorhanden sind, trotzdem als erledigt markieren, damit es nicht erneut ausgeführt wird
+                setFirstStartDone();
+            }
         });
 
         // RecyclerView für gespeicherte Orte
@@ -110,7 +188,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, DonateActivity.class))
         );
 
-        }
+    }
 
     // -----------------------------
     // LOCATION SEARCH DIALOG
@@ -331,3 +409,4 @@ public class MainActivity extends AppCompatActivity
         }
     }
 }
+

@@ -1,5 +1,6 @@
 package com.freetime.geoweather;
 
+import android.os.Build;
 import android.text.TextUtils;
 
 import com.freetime.geoweather.R;
@@ -16,12 +17,16 @@ public class WeatherIconMapper {
     public static void setSunTimes(String sunriseIso, String sunsetIso) {
         try {
             if (!TextUtils.isEmpty(sunriseIso)) {
-                sunriseTime = ZonedDateTime.parse(sunriseIso + ":00Z")
-                        .withZoneSameInstant(ZoneId.systemDefault());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    sunriseTime = ZonedDateTime.parse(sunriseIso + ":00Z")
+                            .withZoneSameInstant(ZoneId.systemDefault());
+                }
             }
             if (!TextUtils.isEmpty(sunsetIso)) {
-                sunsetTime = ZonedDateTime.parse(sunsetIso + ":00Z")
-                        .withZoneSameInstant(ZoneId.systemDefault());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    sunsetTime = ZonedDateTime.parse(sunsetIso + ":00Z")
+                            .withZoneSameInstant(ZoneId.systemDefault());
+                }
             }
         } catch (Exception e) {
             sunriseTime = null;
@@ -31,7 +36,10 @@ public class WeatherIconMapper {
 
     private static boolean isDaytime() {
         if (sunriseTime == null || sunsetTime == null) return true;
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
+        ZonedDateTime now = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            now = ZonedDateTime.now(ZoneId.systemDefault());
+        }
         return now.isAfter(sunriseTime) && now.isBefore(sunsetTime);
     }
 
