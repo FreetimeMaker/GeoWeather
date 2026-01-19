@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener
 {
     private static final int REQ_CODE_LOCATION = 1001;
     private LocationManager locationManager;
-    private LocationsViewModel vm;
+    private LocationsViewModel vm; // ← DAS HAT GEFELT
 
     @Override
     public void onLocationChanged(Location location) {
@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener
         rv.setAdapter(adapter);
 
         // ViewModel
+        LocationsViewModel vm = new ViewModelProvider(this).get(LocationsViewModel.class);
         vm.locations.observe(this, adapter::setItems);
 
         // Löschen
@@ -189,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener
 
     }
 
-    // ----------------------------
+    // -----------------------------
     // LOCATION SEARCH DIALOG
     // -----------------------------
 
@@ -408,3 +409,4 @@ public class MainActivity extends AppCompatActivity implements LocationListener
         }
     }
 }
+

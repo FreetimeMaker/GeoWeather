@@ -2,7 +2,7 @@ package com.freetime.geoweather;
 
 import android.content.Context;
 
-import com.mapbox.mapboxsdk.Mapbox;
+import org.maplibre.android.MapLibre;
 
 public class MapboxMapInitializer {
 
@@ -11,7 +11,7 @@ public class MapboxMapInitializer {
     public static void init(Context ctx) {
         if (!initialized) {
             // MapLibre benötigt KEINEN API-Key
-            Mapbox.getInstance(ctx);
+            MapLibre.getInstance(ctx);
             initialized = true;
         }
     }

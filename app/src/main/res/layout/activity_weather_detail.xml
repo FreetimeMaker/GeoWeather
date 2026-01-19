@@ -120,7 +120,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <com.mapbox.mapboxsdk.maps.MapView
+    <org.maplibre.android.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="300dp"

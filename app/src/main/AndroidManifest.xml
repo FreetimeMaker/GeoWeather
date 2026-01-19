@@ -29,17 +29,28 @@
         <activity
             android:name=".WeatherDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".DonateActivity" />
-        <activity android:name=".OxaPayActivity" />
-        <activity android:name=".CoinbaseActivity" />
-        <activity android:name=".EthereumActivity" />
-        <activity android:name=".BitcoinActivity" />
-        <activity android:name=".USDT_Activity" />
-        <activity android:name=".USDC_Activity" />
-        <activity android:name=".LTC_Activity" />
-        <activity android:name=".DogeActivity" />
-        <activity android:name=".ShibActivity" />
-        <activity android:name=".TronActivity" />
+        <activity android:name=".DonateActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".OxaPayActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".CoinbaseActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".EthereumActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".BitcoinActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".USDT_Activity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".USDC_Activity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".LTC_Activity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".DogeActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ShibActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".TronActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

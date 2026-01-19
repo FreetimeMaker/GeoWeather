@@ -1,5 +1,7 @@
 package com.freetime.geoweather;
 
+import static com.freetime.geoweather.RadarTileSource.addRadarLayer;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,11 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.freetime.geoweather.ui.DailyAdapter;
 import com.freetime.geoweather.ui.HourlyAdapter;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.Style;
+import org.maplibre.android.camera.CameraUpdateFactory;
+import org.maplibre.android.geometry.LatLng;
+import org.maplibre.android.maps.MapView;
+import org.maplibre.android.maps.MapLibreMap;
+import org.maplibre.android.maps.Style;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,7 +49,7 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
     // MAP
     private MapView mapView;
-    private MapboxMap mapboxMap;
+    private MapLibreMap mapLibreMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,18 +115,18 @@ public class WeatherDetailActivity extends AppCompatActivity {
                 mapView.onCreate(savedInstanceState);
 
                 mapView.getMapAsync(map -> {
-                    mapboxMap = map;
+                    mapLibreMap = map;
 
-                    mapboxMap.setStyle(new Style.Builder().fromUri("asset://map_style.json"), style -> {
+                    mapLibreMap.setStyle(new Style.Builder().fromUri("asset://map_style.json"), style -> {
 
                         // Karte auf den Ort zentrieren
                         try {
-                            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                            mapLibreMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(lat, lon), 8
                             ));
 
                             // Radar-Layer hinzufügen
-                            RadarTileSource.addRadarLayer(style);
+                            addRadarLayer(style);
                         } catch (Exception ignored) {
                         }
                     });

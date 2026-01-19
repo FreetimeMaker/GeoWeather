@@ -1,9 +1,9 @@
 package com.freetime.geoweather;
 
-import com.mapbox.mapboxsdk.style.layers.RasterLayer;
-import com.mapbox.mapboxsdk.style.sources.RasterSource;
-import com.mapbox.mapboxsdk.style.sources.TileSet;
-import com.mapbox.mapboxsdk.maps.Style;
+import org.maplibre.android.style.layers.RasterLayer;
+import org.maplibre.android.style.sources.RasterSource;
+import org.maplibre.android.style.sources.TileSet;
+import org.maplibre.android.maps.Style;
 
 public class RadarTileSource {
 
@@ -23,7 +23,7 @@ public class RadarTileSource {
 
         RasterLayer radarLayer = new RasterLayer("radar-layer", "radar-source");
         radarLayer.setProperties(
-                com.mapbox.mapboxsdk.style.layers.PropertyFactory.rasterOpacity(0.6f)
+                org.maplibre.android.style.layers.PropertyFactory.rasterOpacity(0.6f)
         );
 
         style.addLayerAbove(radarLayer, "osm-layer");
