@@ -15,13 +15,9 @@ public class LocationEntity {
     private double longitude;
 
     @Nullable
-    private Double temperature;
+    private String weatherData;
 
-    @Nullable
-    private Integer weatherCode;
-
-    @Nullable
-    private String weatherDescription;
+    private long lastUpdated;
 
     public LocationEntity(String name, double latitude, double longitude) {
         this.name = name;
@@ -42,14 +38,19 @@ public class LocationEntity {
     public void setLongitude(double longitude) { this.longitude = longitude; }
 
     @Nullable
-    public Double getTemperature() { return temperature; }
-    public void setTemperature(@Nullable Double temperature) { this.temperature = temperature; }
+    public String getWeatherData() {
+        return weatherData;
+    }
 
-    @Nullable
-    public Integer getWeatherCode() { return weatherCode; }
-    public void setWeatherCode(@Nullable Integer weatherCode) { this.weatherCode = weatherCode; }
+    public void setWeatherData(@Nullable String weatherData) {
+        this.weatherData = weatherData;
+    }
 
-    @Nullable
-    public String getWeatherDescription() { return weatherDescription; }
-    public void setWeatherDescription(@Nullable String weatherDescription) { this.weatherDescription = weatherDescription; }
+    public long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 }

@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -16,8 +17,14 @@ public interface LocationDao {
     @Query("SELECT COUNT(*) FROM locations")
     int getCount();
 
+    @Query("SELECT * FROM locations WHERE latitude = :lat AND longitude = :lon LIMIT 1")
+    LocationEntity findByCoordinates(double lat, double lon);
+
     @Insert
     void insertLocation(LocationEntity location);
+
+    @Update
+    void updateLocation(LocationEntity location);
 
     @Delete
     void deleteLocation(LocationEntity location);

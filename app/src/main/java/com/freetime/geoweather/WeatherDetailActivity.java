@@ -2,6 +2,9 @@ package com.freetime.geoweather;
 
 import static com.freetime.geoweather.RadarTileSource.addRadarLayer;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,16 +17,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.freetime.geoweather.data.LocationDatabase;
+import com.freetime.geoweather.data.LocationEntity;
 import com.freetime.geoweather.ui.DailyAdapter;
 import com.freetime.geoweather.ui.HourlyAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.maplibre.android.camera.CameraUpdateFactory;
 import org.maplibre.android.geometry.LatLng;
 import org.maplibre.android.maps.MapView;
 import org.maplibre.android.maps.MapLibreMap;
 import org.maplibre.android.maps.Style;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -50,6 +55,25 @@ public class WeatherDetailActivity extends AppCompatActivity {
     // MAP
     private MapView mapView;
     private MapLibreMap mapLibreMap;
+
+    private LocationEntity locationEntity;
+
+    private void hideSystemUI() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) hideSystemUI();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,11 +105,8 @@ public class WeatherDetailActivity extends AppCompatActivity {
         rvHourly.setAdapter(hourlyAdapter);
         rvDaily.setAdapter(dailyAdapter);
 
-        // Damit der RecyclerView innerhalb des ScrollView korrekt seine Höhe misst
         rvDaily.setNestedScrollingEnabled(false);
         rvDaily.setHasFixedSize(false);
-
-        // Für Konsistenz auch für Hourly deaktivieren
         rvHourly.setNestedScrollingEnabled(false);
         rvHourly.setHasFixedSize(false);
 
@@ -99,7 +120,6 @@ public class WeatherDetailActivity extends AppCompatActivity {
             name = "Unknown Location";
         }
 
-        // Wenn ungültige Koordinaten übergeben wurden, abbrechen
         if (lat == 0.0 && lon == 0.0) {
             Toast.makeText(this, "Invalid location coordinates", Toast.LENGTH_SHORT).show();
             finish();
@@ -108,36 +128,43 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
         txtLocationDetail.setText(name);
 
-        // MAP INIT
         mapView = findViewById(R.id.mapView);
         if (mapView != null) {
             try {
                 mapView.onCreate(savedInstanceState);
-
                 mapView.getMapAsync(map -> {
                     mapLibreMap = map;
-
                     mapLibreMap.setStyle(new Style.Builder().fromUri("asset://map_style.json"), style -> {
-
-                        // Karte auf den Ort zentrieren
                         try {
-                            mapLibreMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(lat, lon), 8
-                            ));
-
-                            // Radar-Layer hinzufügen
+                            mapLibreMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 8));
                             addRadarLayer(style);
                         } catch (Exception ignored) {
                         }
                     });
                 });
-
             } catch (Exception e) {
                 Log.e("WeatherDetail", "Map init failed", e);
             }
         }
 
-        fetchWeather(lat, lon);
+        loadWeather(lat, lon);
+    }
+
+    private void loadWeather(double lat, double lon) {
+        LocationDatabase.databaseWriteExecutor.execute(() -> {
+            locationEntity = LocationDatabase.getDatabase(getApplicationContext()).locationDao().findByCoordinates(lat, lon);
+
+            runOnUiThread(() -> {
+                if (locationEntity != null && locationEntity.getWeatherData() != null && !isCacheExpired(locationEntity.getLastUpdated())) {
+                    parseAndDisplay(locationEntity.getWeatherData());
+                    Toast.makeText(WeatherDetailActivity.this, "Loaded from cache", Toast.LENGTH_SHORT).show();
+                } else if (isNetworkAvailable()) {
+                    fetchWeather(lat, lon);
+                } else {
+                    Toast.makeText(WeatherDetailActivity.this, "No internet connection and no cache available", Toast.LENGTH_LONG).show();
+                }
+            });
+        });
     }
 
     private void fetchWeather(double lat, double lon) {
@@ -154,6 +181,14 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
                 String json = httpGet(url);
 
+                LocationDatabase.databaseWriteExecutor.execute(() -> {
+                    if (locationEntity != null) {
+                        locationEntity.setWeatherData(json);
+                        locationEntity.setLastUpdated(System.currentTimeMillis());
+                        LocationDatabase.getDatabase(getApplicationContext()).locationDao().updateLocation(locationEntity);
+                    }
+                });
+
                 runOnUiThread(() -> parseAndDisplay(json));
 
             } catch (Exception e) {
@@ -167,7 +202,6 @@ public class WeatherDetailActivity extends AppCompatActivity {
     private void parseAndDisplay(String json) {
         try {
             JSONObject root = new JSONObject(json);
-
             JSONObject current = root.getJSONObject("current_weather");
 
             double temp = current.getDouble("temperature");
@@ -268,11 +302,22 @@ public class WeatherDetailActivity extends AppCompatActivity {
         return sb.toString();
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private boolean isCacheExpired(long lastUpdated) {
+        // Cache expires after 1 hour
+        return (System.currentTimeMillis() - lastUpdated) > 3600 * 1000;
+    }
+
     // MAP LIFECYCLE
-    @Override protected void onStart() { super.onStart(); mapView.onStart(); }
-    @Override protected void onResume() { super.onResume(); mapView.onResume(); }
-    @Override protected void onPause() { super.onPause(); mapView.onPause(); }
-    @Override protected void onStop() { super.onStop(); mapView.onStop(); }
-    @Override protected void onDestroy() { super.onDestroy(); mapView.onDestroy(); }
-    @Override public void onLowMemory() { super.onLowMemory(); mapView.onLowMemory(); }
+    @Override protected void onStart() { super.onStart(); if(mapView != null) mapView.onStart(); }
+    @Override protected void onResume() { super.onResume(); if(mapView != null) mapView.onResume(); }
+    @Override protected void onPause() { super.onPause(); if(mapView != null) mapView.onPause(); }
+    @Override protected void onStop() { super.onStop(); if(mapView != null) mapView.onStop(); }
+    @Override protected void onDestroy() { super.onDestroy(); if(mapView != null) mapView.onDestroy(); }
+    @Override public void onLowMemory() { super.onLowMemory(); if(mapView != null) mapView.onLowMemory(); }
 }
