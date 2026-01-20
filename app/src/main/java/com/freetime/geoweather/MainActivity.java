@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener
         Resources res = getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
         Configuration conf = res.getConfiguration();
-        conf.locale = myLocale;
+        conf.setLocale(myLocale);
         res.updateConfiguration(conf, dm);
         SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
         editor.putString("My_Lang", lang);
@@ -240,7 +240,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener
         SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
         String language = prefs.getString("My_Lang", "");
         if (!language.isEmpty()) {
-            //setLocale(language);
+            Locale myLocale = new Locale(language);
+            Resources res = getResources();
+            DisplayMetrics dm = res.getDisplayMetrics();
+            Configuration conf = res.getConfiguration();
+            conf.setLocale(myLocale);
+            res.updateConfiguration(conf, dm);
         }
     }
 

@@ -36,8 +36,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class WeatherDetailActivity extends AppCompatActivity {
 
@@ -276,12 +279,20 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
             ArrayList<HourlyAdapter.HourlyForecast> list = new ArrayList<>();
 
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getDefault());
+            Date now = new Date();
+
             for (int i = 0; i < times.length(); i++) {
-                HourlyAdapter.HourlyForecast h = new HourlyAdapter.HourlyForecast();
-                h.time = times.getString(i);
-                h.temperature = temps.getDouble(i);
-                h.weatherCode = codes.getInt(i);
-                list.add(h);
+                String timeString = times.getString(i);
+                Date time = sdf.parse(timeString);
+                if (time != null && !time.before(now)) {
+                    HourlyAdapter.HourlyForecast h = new HourlyAdapter.HourlyForecast();
+                    h.time = timeString;
+                    h.temperature = temps.getDouble(i);
+                    h.weatherCode = codes.getInt(i);
+                    list.add(h);
+                }
             }
 
             hourlyAdapter.setItems(list);

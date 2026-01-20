@@ -13,7 +13,9 @@ import com.freetime.geoweather.R;
 import com.freetime.geoweather.WeatherCodes;
 import com.freetime.geoweather.WeatherIconMapper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,7 +47,15 @@ public class DailyAdapter extends RecyclerView.Adapter<DailyAdapter.VH> {
     public void onBindViewHolder(@NonNull VH h, int pos) {
         DailyForecast f = items.get(pos);
 
-        h.txtDate.setText(f.date.substring(5)); // "MM‑DD"
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date date = sdf.parse(f.date);
+            SimpleDateFormat dayFormat = new SimpleDateFormat("EEE, MMM dd", Locale.getDefault());
+            h.txtDate.setText(dayFormat.format(date));
+        } catch (Exception e) {
+            h.txtDate.setText(f.date.substring(5)); // "MM‑DD"
+        }
+
         h.txtTemp.setText(String.format(Locale.getDefault(), "%.0f° / %.0f°", f.tempMin, f.tempMax));
         h.txtDesc.setText(WeatherCodes.getDescription(f.weatherCode));
         h.imgIcon.setImageResource(WeatherIconMapper.getWeatherIcon(f.weatherCode));
