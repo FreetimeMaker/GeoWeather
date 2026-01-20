@@ -14,7 +14,7 @@
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
+        android.layout_gravity="end|bottom"
         android:layout_margin="16dp"
         android:contentDescription="Add"
         app:srcCompat="@android:drawable/ic_input_add" />
@@ -27,5 +27,14 @@
         android:layout_margin="16dp"
         android:contentDescription="Donate"
         app:srcCompat="@drawable/donation" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_margin="16dp"
+        android:contentDescription="Change Language"
+        app:srcCompat="@android:drawable/ic_menu_manage" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

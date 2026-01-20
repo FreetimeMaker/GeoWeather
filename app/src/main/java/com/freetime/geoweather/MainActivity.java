@@ -3,32 +3,40 @@ package com.freetime.geoweather;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-import com.freetime.geoweather.data.LocationDatabase;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.freetime.geoweather.data.LocationDatabase;
 import com.freetime.geoweather.ui.LocationsAdapter;
 import com.freetime.geoweather.ui.LocationsViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,10 +49,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 public class MainActivity extends AppCompatActivity implements LocationListener
 {
@@ -63,13 +71,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener
         // Reverse-Geocoding
         String displayName = reverseGeocode(lat, lon);
 
-        // Beim ersten Start automatisch speichern
+        // On first start, automatically save
         if (isFirstStart()) {
             vm.addLocation(displayName, lat, lon);
             setFirstStartDone();
         }
 
-        // Detailseite öffnen
+        // Open detail page
         Intent intent = new Intent(MainActivity.this, WeatherDetailActivity.class);
         intent.putExtra("location_name", displayName);
         intent.putExtra("latitude", lat);
@@ -142,26 +150,27 @@ public class MainActivity extends AppCompatActivity implements LocationListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadLocale(); // Load language
         hideSystemUI();
         setContentView(R.layout.activity_main);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        // ViewModel initialisieren
+        // Initialize ViewModel
         vm = new ViewModelProvider(this).get(LocationsViewModel.class);
 
-        // Prüfen, ob bereits Orte gespeichert sind; nur beim echten ersten Start (keine Orte) GPS anfragen
+        // Check if locations are already saved; only request GPS on the very first start (no locations)
         LocationDatabase.databaseWriteExecutor.execute(() -> {
             int count = LocationDatabase.getDatabase(getApplication()).locationDao().getCount();
             if (count == 0 && isFirstStart()) {
                 runOnUiThread(this::requestLocationPermissionAndStart);
             } else if (isFirstStart()) {
-                // Falls Orte bereits vorhanden sind, trotzdem als erledigt markieren, damit es nicht erneut ausgeführt wird
+                // If locations are already present, mark as done so it doesn't run again
                 setFirstStartDone();
             }
         });
 
-        // RecyclerView für gespeicherte Orte
+        // RecyclerView for saved locations
         RecyclerView rv = findViewById(R.id.rvLocations);
         final LocationsAdapter adapter = new LocationsAdapter();
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -170,10 +179,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener
         // ViewModel
         vm.locations.observe(this, adapter::setItems);
 
-        // Löschen
+        // Delete
         adapter.setOnItemDeleteListener(vm::deleteLocation);
 
-        // Klick → WeatherDetailActivity
+        // Click -> WeatherDetailActivity
         adapter.setOnItemClickListener(location -> {
             Intent intent = new Intent(MainActivity.this, WeatherDetailActivity.class);
             intent.putExtra("location_name", location.getName());
@@ -182,14 +191,57 @@ public class MainActivity extends AppCompatActivity implements LocationListener
             startActivity(intent);
         });
 
-        // FAB: Ort hinzufügen
+        // FAB: Add location
         findViewById(R.id.fabAdd).setOnClickListener(v -> showAddLocationDialog(vm));
 
-        // FAB: Spenden
+        // FAB: Donate
         findViewById(R.id.fabDono).setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, DonateActivity.class))
         );
 
+        // FAB: Change Language
+        FloatingActionButton fabLanguage = findViewById(R.id.fabLanguage);
+        fabLanguage.setOnClickListener(v -> showLanguageDialog());
+    }
+
+    private void showLanguageDialog() {
+        final String[] languages = getResources().getStringArray(R.array.languages_array);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose Language");
+        builder.setItems(languages, (dialog, which) -> {
+            String language = languages[which];
+            if (language.equals("English")) {
+                setLocale("en");
+            } else if (language.equals("German")) {
+                setLocale("de");
+            } else if (language.equals("Spanish")) {
+                setLocale("es");
+            }
+        });
+        builder.show();
+    }
+
+    private void setLocale(String lang) {
+        Locale myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
+        SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
+        editor.putString("My_Lang", lang);
+        editor.apply();
+        Intent refresh = new Intent(this, MainActivity.class);
+        finish();
+        startActivity(refresh);
+    }
+
+    public void loadLocale() {
+        SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
+        String language = prefs.getString("My_Lang", "");
+        if (!language.isEmpty()) {
+            //setLocale(language);
+        }
     }
 
     // -----------------------------
@@ -218,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener
     private String reverseGeocode(double lat, double lon) {
         try {
             String url = "https://geocoding-api.open-meteo.com/v1/reverse?latitude="
-                    + lat + "&longitude=" + lon + "&language=de";
+                    + lat + "&longitude=" + lon;
 
             String json = httpGet(url, "GeoWeatherApp");
             JSONObject obj = new JSONObject(json);
@@ -328,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener
                 try {
                     String geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name="
                             + URLEncoder.encode(searchQuery, "UTF-8")
-                            + "&count=20&language=de&format=json";
+                            + "&count=20&language=" + Locale.getDefault().getLanguage() + "&format=json";
 
                     String geoJson = httpGet(geoUrl, "GeoWeatherApp");
                     JSONObject geoObj = new JSONObject(geoJson);

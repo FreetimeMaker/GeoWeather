@@ -79,7 +79,7 @@ public class WeatherDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MapboxMapInitializer.init(this); // wichtig für MapLibre
+        MapboxMapInitializer.init(this); // important for MapLibre
 
         setContentView(R.layout.activity_weather_detail);
 
@@ -155,10 +155,19 @@ public class WeatherDetailActivity extends AppCompatActivity {
             locationEntity = LocationDatabase.getDatabase(getApplicationContext()).locationDao().findByCoordinates(lat, lon);
 
             runOnUiThread(() -> {
-                if (locationEntity != null && locationEntity.getWeatherData() != null && !isCacheExpired(locationEntity.getLastUpdated())) {
-                    parseAndDisplay(locationEntity.getWeatherData());
-                    Toast.makeText(WeatherDetailActivity.this, "Loaded from cache", Toast.LENGTH_SHORT).show();
-                } else if (isNetworkAvailable()) {
+                boolean networkAvailable = isNetworkAvailable();
+                if (locationEntity != null && locationEntity.getWeatherData() != null) {
+                    // data is in cache
+                    if (networkAvailable && isCacheExpired(locationEntity.getLastUpdated())) {
+                        // if network is available and cache is old, fetch new data
+                        fetchWeather(lat, lon);
+                    } else {
+                        // otherwise, use cached data (either because network is down or data is still fresh)
+                        parseAndDisplay(locationEntity.getWeatherData());
+                        Toast.makeText(WeatherDetailActivity.this, "Loaded from cache", Toast.LENGTH_SHORT).show();
+                    }
+                } else if (networkAvailable) {
+                    // if there's no data in cache, only try to fetch if network is available
                     fetchWeather(lat, lon);
                 } else {
                     Toast.makeText(WeatherDetailActivity.this, "No internet connection and no cache available", Toast.LENGTH_LONG).show();
