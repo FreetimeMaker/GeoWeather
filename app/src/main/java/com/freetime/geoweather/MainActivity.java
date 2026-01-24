@@ -150,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loadLocale(); // Load language
         hideSystemUI();
         setContentView(R.layout.activity_main);
 
@@ -198,55 +197,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener
         findViewById(R.id.fabDono).setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, DonateActivity.class))
         );
-
-        // FAB: Change Language
-        FloatingActionButton fabLanguage = findViewById(R.id.fabLanguage);
-        fabLanguage.setOnClickListener(v -> showLanguageDialog());
-    }
-
-    private void showLanguageDialog() {
-        final String[] languages = getResources().getStringArray(R.array.languages_array);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose Language");
-        builder.setItems(languages, (dialog, which) -> {
-            String language = languages[which];
-            if (language.equals("English")) {
-                setLocale("en");
-            } else if (language.equals("German")) {
-                setLocale("de");
-            } else if (language.equals("Spanish")) {
-                setLocale("es");
-            }
-        });
-        builder.show();
-    }
-
-    private void setLocale(String lang) {
-        Locale myLocale = new Locale(lang);
-        Resources res = getResources();
-        DisplayMetrics dm = res.getDisplayMetrics();
-        Configuration conf = res.getConfiguration();
-        conf.setLocale(myLocale);
-        res.updateConfiguration(conf, dm);
-        SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
-        editor.putString("My_Lang", lang);
-        editor.apply();
-        Intent refresh = new Intent(this, MainActivity.class);
-        finish();
-        startActivity(refresh);
-    }
-
-    public void loadLocale() {
-        SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
-        String language = prefs.getString("My_Lang", "");
-        if (!language.isEmpty()) {
-            Locale myLocale = new Locale(language);
-            Resources res = getResources();
-            DisplayMetrics dm = res.getDisplayMetrics();
-            Configuration conf = res.getConfiguration();
-            conf.setLocale(myLocale);
-            res.updateConfiguration(conf, dm);
-        }
     }
 
     // -----------------------------

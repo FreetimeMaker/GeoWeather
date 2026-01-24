@@ -10,36 +10,22 @@
         android:layout_height="match_parent"
         android:padding="8dp" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:padding="16dp">
-
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabDono"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="16dp"
             android:contentDescription="Donate"
             app:srcCompat="@drawable/donation" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabLanguage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:contentDescription="Change Language"
-            app:srcCompat="@android:drawable/ic_menu_manage" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
             android:contentDescription="Add"
             app:srcCompat="@android:drawable/ic_input_add" />
-
-    </RelativeLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
