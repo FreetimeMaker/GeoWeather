@@ -13,6 +13,7 @@ Planned Features are:
 > One City always added based on the First Location where it was First Opened.
 > A Map where you can see other Weather Forecasts.
 > Adding Screenshots and Videos to YouTube or other Providers for showing how the App Works.
+> Migrating to Jetpack Compose
 
 # Latest Release Download
 You can always download the Latest Release at [GitHub Releases of this App Repository](https://github.com/FreetimeMaker/GeoWeather/releases/latest) or on F-Droid.
