@@ -1,343 +1,204 @@
-package com.freetime.geoweather;
+package com.freetime.geoweather
 
-import static com.freetime.geoweather.RadarTileSource.addRadarLayer;
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.freetime.geoweather.data.LocationDatabase
+import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.freetime.geoweather.data.LocationDatabase;
-import com.freetime.geoweather.data.LocationEntity;
-import com.freetime.geoweather.ui.DailyAdapter;
-import com.freetime.geoweather.ui.HourlyAdapter;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.maplibre.android.camera.CameraUpdateFactory;
-import org.maplibre.android.geometry.LatLng;
-import org.maplibre.android.maps.MapView;
-import org.maplibre.android.maps.MapLibreMap;
-import org.maplibre.android.maps.Style;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-
-public class WeatherDetailActivity extends AppCompatActivity {
-
-    private TextView txtLocationDetail, txtTemperatureDetail, txtDescriptionDetail,
-            txtWindDetail, txtHumidityDetail, txtSunrise, txtSunset;
-
-    private ImageView imgWeatherIcon;
-    private ImageButton btnBack;
-
-    private RecyclerView rvHourly, rvDaily;
-
-    private HourlyAdapter hourlyAdapter;
-    private DailyAdapter dailyAdapter;
-
-    // MAP
-    private MapView mapView;
-    private MapLibreMap mapLibreMap;
-
-    private LocationEntity locationEntity;
-
-    private void hideSystemUI() {
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) hideSystemUI();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        MapboxMapInitializer.init(this); // important for MapLibre
-
-        setContentView(R.layout.activity_weather_detail);
-
-        btnBack = findViewById(R.id.btnBack);
-        txtLocationDetail = findViewById(R.id.txtLocationDetail);
-        txtTemperatureDetail = findViewById(R.id.txtTemperatureDetail);
-        txtDescriptionDetail = findViewById(R.id.txtDescriptionDetail);
-        txtWindDetail = findViewById(R.id.txtWindDetail);
-        txtHumidityDetail = findViewById(R.id.txtHumidityDetail);
-        txtSunrise = findViewById(R.id.txtSunrise);
-        txtSunset = findViewById(R.id.txtSunset);
-        imgWeatherIcon = findViewById(R.id.imgWeatherIcon);
-
-        rvHourly = findViewById(R.id.rvForecastHourly);
-        rvDaily = findViewById(R.id.rvForecastDaily);
-
-        rvHourly.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        rvDaily.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
-        hourlyAdapter = new HourlyAdapter();
-        dailyAdapter = new DailyAdapter();
-
-        rvHourly.setAdapter(hourlyAdapter);
-        rvDaily.setAdapter(dailyAdapter);
-
-        rvDaily.setNestedScrollingEnabled(false);
-        rvDaily.setHasFixedSize(false);
-        rvHourly.setNestedScrollingEnabled(false);
-        rvHourly.setHasFixedSize(false);
-
-        btnBack.setOnClickListener(v -> finish());
-
-        String name = getIntent().getStringExtra("location_name");
-        double lat = getIntent().getDoubleExtra("latitude", 0);
-        double lon = getIntent().getDoubleExtra("longitude", 0);
-
-        if (name == null || name.trim().isEmpty()) {
-            name = "Unknown Location";
-        }
-
-        if (lat == 0.0 && lon == 0.0) {
-            Toast.makeText(this, "Invalid location coordinates", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
-        txtLocationDetail.setText(name);
-
-        mapView = findViewById(R.id.mapView);
-        if (mapView != null) {
-            try {
-                mapView.onCreate(savedInstanceState);
-                mapView.getMapAsync(map -> {
-                    mapLibreMap = map;
-                    mapLibreMap.setStyle(new Style.Builder().fromUri("asset://map_style.json"), style -> {
-                        try {
-                            mapLibreMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 8));
-                            addRadarLayer(style);
-                        } catch (Exception ignored) {
-                        }
-                    });
-                });
-            } catch (Exception e) {
-                Log.e("WeatherDetail", "Map init failed", e);
+class WeatherDetailActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val name = intent.getStringExtra("name") ?: "Unknown"
+        val lat = intent.getDoubleExtra("lat", 0.0)
+        val lon = intent.getDoubleExtra("lon", 0.0)
+        
+        setContent {
+            GeoWeatherTheme {
+                WeatherDetailScreen(
+                    name = name,
+                    lat = lat,
+                    lon = lon,
+                    onBack = { finish() }
+                )
             }
         }
-
-        loadWeather(lat, lon);
     }
+}
 
-    private void loadWeather(double lat, double lon) {
-        LocationDatabase.databaseWriteExecutor.execute(() -> {
-            locationEntity = LocationDatabase.getDatabase(getApplicationContext()).locationDao().findByCoordinates(lat, lon);
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WeatherDetailScreen(
+    name: String,
+    lat: Double,
+    lon: Double,
+    onBack: () -> Unit
+) {
+    val scope = rememberCoroutineScope()
+    var weatherJson by remember { mutableStateOf<String?>(null) }
+    var forecastList by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
+    val db = LocationDatabase.getDatabase(LocalContext.current)
 
-            runOnUiThread(() -> {
-                boolean networkAvailable = isNetworkAvailable();
-                if (locationEntity != null && locationEntity.getWeatherData() != null) {
-                    // data is in cache
-                    if (networkAvailable && isCacheExpired(locationEntity.getLastUpdated())) {
-                        // if network is available and cache is old, fetch new data
-                        fetchWeather(lat, lon);
-                    } else {
-                        // otherwise, use cached data (either because network is down or data is still fresh)
-                        parseAndDisplay(locationEntity.getWeatherData());
-                        Toast.makeText(WeatherDetailActivity.this, "Loaded from cache", Toast.LENGTH_SHORT).show();
-                    }
-                } else if (networkAvailable) {
-                    // if there's no data in cache, only try to fetch if network is available
-                    fetchWeather(lat, lon);
-                } else {
-                    Toast.makeText(WeatherDetailActivity.this, "No internet connection and no cache available", Toast.LENGTH_LONG).show();
-                }
-            });
-        });
-    }
-
-    private void fetchWeather(double lat, double lon) {
-        new Thread(() -> {
-            try {
-                String url =
-                        "https://api.open-meteo.com/v1/forecast"
-                                + "?latitude=" + lat
-                                + "&longitude=" + lon
-                                + "&current_weather=true"
-                                + "&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset"
-                                + "&hourly=temperature_2m,weathercode"
-                                + "&timezone=auto";
-
-                String json = httpGet(url);
-
-                LocationDatabase.databaseWriteExecutor.execute(() -> {
-                    if (locationEntity != null) {
-                        locationEntity.setWeatherData(json);
-                        locationEntity.setLastUpdated(System.currentTimeMillis());
-                        LocationDatabase.getDatabase(getApplicationContext()).locationDao().updateLocation(locationEntity);
-                    }
-                });
-
-                runOnUiThread(() -> parseAndDisplay(json));
-
-            } catch (Exception e) {
-                runOnUiThread(() ->
-                        Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
-            }
-        }).start();
-    }
-
-    private void parseAndDisplay(String json) {
-        try {
-            JSONObject root = new JSONObject(json);
-            JSONObject current = root.getJSONObject("current_weather");
-
-            double temp = current.getDouble("temperature");
-            double wind = current.getDouble("windspeed");
-            int code = current.getInt("weathercode");
-
-            txtTemperatureDetail.setText(String.format(Locale.getDefault(), "%.1f°C", temp));
-            txtWindDetail.setText("Wind: " + wind + " km/h");
-            txtHumidityDetail.setText("Humidity: —");
-
-            txtDescriptionDetail.setText(WeatherCodes.getDescription(code));
-            imgWeatherIcon.setImageResource(WeatherIconMapper.getWeatherIcon(code));
-
-            JSONObject daily = root.getJSONObject("daily");
-            parseDaily(daily);
-
-            JSONObject hourly = root.getJSONObject("hourly");
-            parseHourly(hourly);
-
-            String sunrise = daily.getJSONArray("sunrise").getString(0);
-            String sunset = daily.getJSONArray("sunset").getString(0);
-
-            txtSunrise.setText("Sunrise: " + sunrise.replace("T", " "));
-            txtSunset.setText("Sunset: " + sunset.replace("T", " "));
-
-            WeatherIconMapper.setSunTimes(sunrise, sunset);
-
-        } catch (Exception e) {
-            Log.e("WeatherDetail", "parse error", e);
-        }
-    }
-
-    private void parseDaily(JSONObject daily) {
-        try {
-            JSONArray dates = daily.getJSONArray("time");
-            JSONArray max = daily.getJSONArray("temperature_2m_max");
-            JSONArray min = daily.getJSONArray("temperature_2m_min");
-            JSONArray codes = daily.getJSONArray("weathercode");
-
-            ArrayList<DailyAdapter.DailyForecast> list = new ArrayList<>();
-
-            for (int i = 0; i < dates.length(); i++) {
-                DailyAdapter.DailyForecast f = new DailyAdapter.DailyForecast();
-                f.date = dates.getString(i);
-                f.tempMax = max.getDouble(i);
-                f.tempMin = min.getDouble(i);
-                f.weatherCode = codes.getInt(i);
-                list.add(f);
-            }
-
-            dailyAdapter.setItems(list);
-
-        } catch (Exception e) {
-            Log.e("WeatherDetail", "daily parse error", e);
-        }
-    }
-
-    private void parseHourly(JSONObject hourly) {
-        try {
-            JSONArray times = hourly.getJSONArray("time");
-            JSONArray temps = hourly.getJSONArray("temperature_2m");
-            JSONArray codes = hourly.getJSONArray("weathercode");
-
-            ArrayList<HourlyAdapter.HourlyForecast> list = new ArrayList<>();
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault());
-            sdf.setTimeZone(TimeZone.getDefault());
-            Date now = new Date();
-
-            for (int i = 0; i < times.length(); i++) {
-                String timeString = times.getString(i);
-                Date time = sdf.parse(timeString);
-                if (time != null && !time.before(now)) {
-                    HourlyAdapter.HourlyForecast h = new HourlyAdapter.HourlyForecast();
-                    h.time = timeString;
-                    h.temperature = temps.getDouble(i);
-                    h.weatherCode = codes.getInt(i);
-                    list.add(h);
+    LaunchedEffect(Unit) {
+        scope.launch(Dispatchers.IO) {
+            val entity = db.locationDao().findByCoordinates(lat, lon)
+            if (entity?.weatherData != null) {
+                withContext(Dispatchers.Main) {
+                    weatherJson = entity.weatherData
+                    forecastList = parseForecastData(entity.weatherData)
                 }
             }
-
-            hourlyAdapter.setItems(list);
-
-        } catch (Exception e) {
-            Log.e("WeatherDetail", "hourly parse error", e);
         }
     }
 
-    private String httpGet(String urlString) throws Exception {
-        URL url = new URL(urlString);
-        HttpURLConnection c = (HttpURLConnection) url.openConnection();
-        c.setRequestMethod("GET");
-        c.setConnectTimeout(12000);
-        c.setReadTimeout(12000);
-        c.connect();
+    Column(
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextButton(onClick = onBack) {
+                Text("← Back")
+            }
+        }
+        Spacer(Modifier.height(16.dp))
+        if (weatherJson == null) {
+            CircularProgressIndicator()
+        } else {
+            val obj = JSONObject(weatherJson!!)
+            val current = obj.getJSONObject("current_weather")
+            val temp = current.getDouble("temperature")
+            val wind = current.getDouble("windspeed")
 
-        InputStream stream = c.getInputStream();
-        BufferedReader in = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-
-        StringBuilder sb = new StringBuilder();
-        String line;
-
-        while ((line = in.readLine()) != null) sb.append(line);
-
-        c.disconnect();
-        return sb.toString();
+            Text("Temperature: $temp°C", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(8.dp))
+            Text("Wind: $wind km/h", fontSize = 16.sp)
+            Spacer(Modifier.height(24.dp))
+            
+            Text("7-Day Forecast", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(16.dp))
+            
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(forecastList) { forecast ->
+                    ForecastItem(forecast = forecast)
+                }
+            }
+        }
     }
+}
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+data class DailyForecast(
+    val date: String,
+    val tempMax: Double,
+    val tempMin: Double,
+    val weatherCode: Int
+)
+
+@Composable
+fun ForecastItem(forecast: DailyForecast) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Weather Icon
+            androidx.compose.material3.Icon(
+                painter = painterResource(id = WeatherIconMapper.getWeatherIcon(forecast.weatherCode)),
+                contentDescription = null,
+                modifier = Modifier.size(40.dp),
+                tint = androidx.compose.ui.graphics.Color.Unspecified
+            )
+            
+            Spacer(modifier = Modifier.width(12.dp))
+            
+            // Date and Description
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = forecast.date,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = WeatherCodes.getDescription(forecast.weatherCode),
+                    fontSize = 14.sp
+                )
+            }
+            
+            // Temperature
+            Text(
+                text = String.format(Locale.getDefault(), "%.1f° / %.1f°", forecast.tempMin, forecast.tempMax),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
+}
 
-    private boolean isCacheExpired(long lastUpdated) {
-        // Cache expires after 1 hour
-        return (System.currentTimeMillis() - lastUpdated) > 3600 * 1000;
+fun parseForecastData(weatherJson: String): List<DailyForecast> {
+    val forecastList = mutableListOf<DailyForecast>()
+    
+    try {
+        val obj = JSONObject(weatherJson)
+        val daily = obj.getJSONObject("daily")
+        
+        val times = daily.getJSONArray("time")
+        val tempMax = daily.getJSONArray("temperature_2m_max")
+        val tempMin = daily.getJSONArray("temperature_2m_min")
+        val weatherCodes = daily.getJSONArray("weathercode")
+        
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
+        
+        for (i in 0 until times.length()) {
+            val dateStr = times.getString(i)
+            val date = dateFormat.parse(dateStr)
+            val formattedDate = outputFormat.format(date ?: Date())
+            
+            forecastList.add(
+                DailyForecast(
+                    date = formattedDate,
+                    tempMax = tempMax.getDouble(i),
+                    tempMin = tempMin.getDouble(i),
+                    weatherCode = weatherCodes.getInt(i)
+                )
+            )
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
-
-    // MAP LIFECYCLE
-    @Override protected void onStart() { super.onStart(); if(mapView != null) mapView.onStart(); }
-    @Override protected void onResume() { super.onResume(); if(mapView != null) mapView.onResume(); }
-    @Override protected void onPause() { super.onPause(); if(mapView != null) mapView.onPause(); }
-    @Override protected void onStop() { super.onStop(); if(mapView != null) mapView.onStop(); }
-    @Override protected void onDestroy() { super.onDestroy(); if(mapView != null) mapView.onDestroy(); }
-    @Override public void onLowMemory() { super.onLowMemory(); if(mapView != null) mapView.onLowMemory(); }
+    
+    return forecastList
 }

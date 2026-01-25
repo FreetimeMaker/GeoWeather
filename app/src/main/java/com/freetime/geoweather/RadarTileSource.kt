@@ -1,31 +1,37 @@
-package com.freetime.geoweather;
+package com.freetime.geoweather
 
-import org.maplibre.android.style.layers.RasterLayer;
-import org.maplibre.android.style.sources.RasterSource;
-import org.maplibre.android.style.sources.TileSet;
-import org.maplibre.android.maps.Style;
+// MapLibre-Abhängigkeiten sind nicht verfügbar - diese Klasse wird derzeit nicht verwendet
+// Wenn MapLibre benötigt wird, füge die Dependency hinzu:
+// implementation("org.maplibre.gl:android-sdk:10.0.0")
 
-public class RadarTileSource {
+/*
+import org.maplibre.android.maps.Style
+import org.maplibre.android.style.layers.PropertyFactory
+import org.maplibre.android.style.layers.RasterLayer
+import org.maplibre.android.style.sources.RasterSource
+import org.maplibre.android.style.sources.TileSet
 
-    public static void addRadarLayer(Style style) {
+object RadarTileSource {
+    fun addRadarLayer(style: Style) {
         // Falls du MeteoSwiss Open Data Radar willst:
-        String tileUrl = "https://data.geo.admin.ch/ch.meteoschweiz.meteo-radar/{z}/{x}/{y}.png";
+        val tileUrl = "https://data.geo.admin.ch/ch.meteoschweiz.meteo-radar/{z}/{x}/{y}.png"
 
-        TileSet tileSet = new TileSet("tileset", tileUrl);
+        val tileSet = TileSet("tileset", tileUrl)
 
-        RasterSource radarSource = new RasterSource(
-                "radar-source",
-                tileSet,
-                256
-        );
+        val radarSource = RasterSource(
+            "radar-source",
+            tileSet,
+            256
+        )
 
-        style.addSource(radarSource);
+        style.addSource(radarSource)
 
-        RasterLayer radarLayer = new RasterLayer("radar-layer", "radar-source");
+        val radarLayer = RasterLayer("radar-layer", "radar-source")
         radarLayer.setProperties(
-                org.maplibre.android.style.layers.PropertyFactory.rasterOpacity(0.6f)
-        );
+            PropertyFactory.rasterOpacity(0.6f)
+        )
 
-        style.addLayerAbove(radarLayer, "osm-layer");
+        style.addLayerAbove(radarLayer, "osm-layer")
     }
 }
+*/

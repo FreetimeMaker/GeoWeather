@@ -43,3 +43,6 @@ local.properties
 *.so
 */release/
 /app/release/
+.kotlin
+.vscode
+*.sh
