@@ -1,1 +1,2 @@
-Migrated from Java, XML and Groovy DSL to Kotlin, Jetpack Compose and Kotlin DSL
+- Migrated from Java, XML and Groovy DSL to Kotlin, Jetpack Compose and Kotlin DSL
+- I recommend to Screenshot the Location Screen because it is no more saved in the new database

@@ -7,10 +7,13 @@ import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
@@ -345,6 +348,38 @@ class TronActivity : ComponentActivity() {
     }
 }
 
+class DonatorActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        hideSystemUI()
+        setContent {
+            GeoWeatherTheme {
+                DonatorScreen(
+                    onBack = { finish() }
+                )
+            }
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemUI()
+        }
+    }
+
+    private fun hideSystemUI() {
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
+    }
+}
+
 @Composable
 fun WebViewScreen(
     url: String,
@@ -352,18 +387,7 @@ fun WebViewScreen(
 ) {
     val context = LocalContext.current
 
-    Scaffold(
-        bottomBar = {
-            Button(
-                onClick = onBack,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Go Back to the Support Page")
-            }
-        }
-    ) { padding ->
+    Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             factory = { ctx ->
                 WebView(ctx).apply {
@@ -372,9 +396,53 @@ fun WebViewScreen(
                     loadUrl(url)
                 }
             },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
+            modifier = Modifier.fillMaxSize()
         )
+        
+        Button(
+            onClick = onBack,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Text("Go Back to the Support Page")
+        }
+    }
+}
+
+@Composable
+fun DonatorScreen(
+    onBack: () -> Unit
+) {
+    val context = LocalContext.current
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Text(
+            textAlign = Center,
+            text = "Here are Supporters that help maintain this and many other Apps",
+        )
+
+        Text(
+            textAlign = Center,
+            modifier = Modifier.padding(16.dp),
+            text = "If you want to help maintain this and many other Apps simply make a Donation and E-Mail me Your Name and the Donation Provider you used and I will then list you Here."
+        )
+
+        Text(
+            textAlign = Center,
+            modifier = Modifier.padding(16.dp),
+            text = "No one made a Donation yet."
+        )
+
+        Button(
+            onClick = onBack,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Text("Go Back to the Support Page")
+        }
     }
 }

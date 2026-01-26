@@ -1,7 +1,8 @@
 package com.freetime.geoweather
 
+import android.os.Build
 import android.text.TextUtils
-import com.freetime.geoweather.R
+import androidx.annotation.RequiresApi
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -9,6 +10,7 @@ object WeatherIconMapper {
     private var sunriseTime: ZonedDateTime? = null
     private var sunsetTime: ZonedDateTime? = null
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun setSunTimes(sunriseIso: String?, sunsetIso: String?) {
         try {
             if (!TextUtils.isEmpty(sunriseIso)) {
@@ -25,12 +27,14 @@ object WeatherIconMapper {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun isDaytime(): Boolean {
         if (sunriseTime == null || sunsetTime == null) return true
         val now = ZonedDateTime.now(ZoneId.systemDefault())
         return now.isAfter(sunriseTime) && now.isBefore(sunsetTime)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getWeatherIcon(code: Int): Int {
         val isDay = isDaytime()
 

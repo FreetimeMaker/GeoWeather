@@ -1,34 +1,33 @@
 package com.freetime.geoweather
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
-import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import android.content.Intent
+import android.view.View
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -64,6 +63,24 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemUI()
+        }
+    }
+
+    private fun hideSystemUI() {
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
+    }
 }
 
 @Composable
@@ -81,63 +98,30 @@ fun MainScreen(
         .observeAsState(initial = emptyList())
 
     var showAddDialog by remember { mutableStateOf(false) }
+    var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (granted) {
-            startLocationUpdates(context) { lat, lon ->
-                scope.launch(Dispatchers.IO) {
-                    val name = reverseGeocode(lat, lon)
-                    db.locationDao().insertLocation(LocationEntity(name = name, latitude = lat, longitude = lon))
-                    withContext(Dispatchers.Main) {
-                        onOpenDetail(name, lat, lon)
-                    }
-                }
-            }
-        } else {
-            Toast.makeText(context, "GPS-Berechtigung verweigert", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    Scaffold(
-        floatingActionButton = {
-            Column(horizontalAlignment = Alignment.End) {
-                FloatingActionButton(onClick = {
-                    val fine = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                    if (fine == PackageManager.PERMISSION_GRANTED) {
-                        startLocationUpdates(context) { lat, lon ->
-                            scope.launch(Dispatchers.IO) {
-                                val name = reverseGeocode(lat, lon)
-                                db.locationDao().insertLocation(LocationEntity(name = name, latitude = lat, longitude = lon))
-                                withContext(Dispatchers.Main) {
-                                    onOpenDetail(name, lat, lon)
-                                }
-                            }
-                        }
-                    } else {
-                        permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                    }
-                }) {
-                    Text("+")
-                }
-                Spacer(Modifier.height(16.dp))
-                FloatingActionButton(onClick = { showAddDialog = true }) {
-                    Text("🔍")
-                }
-                Spacer(Modifier.height(16.dp))
-                FloatingActionButton(onClick = onOpenDonate) {
-                    Text("♥")
-                }
-            }
-        }
-    ) { padding ->
-        LazyColumn(modifier = Modifier.padding(padding)) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp)
+        ) {
             items(locations) { loc ->
                 ListItem(
                     headlineContent = { Text(loc.name) },
                     supportingContent = {
                         Text("Lat: ${loc.latitude}, Lon: ${loc.longitude}")
+                    },
+                    trailingContent = {
+                        IconButton(
+                            onClick = {
+                                locationToDelete = loc
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete location",
+                                tint = Color.Red
+                            )
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -146,6 +130,23 @@ fun MainScreen(
                         }
                 )
                 HorizontalDivider()
+            }
+        }
+
+        // Floating Action Buttons
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.End
+        ) {
+            Spacer(Modifier.height(16.dp))
+            FloatingActionButton(onClick = { showAddDialog = true }) {
+                Text("🔍")
+            }
+            Spacer(Modifier.height(16.dp))
+            FloatingActionButton(onClick = onOpenDonate) {
+                Text("♥")
             }
         }
     }
@@ -163,47 +164,33 @@ fun MainScreen(
             }
         )
     }
-}
 
-private fun startLocationUpdates(
-    context: Context,
-    onLocation: (Double, Double) -> Unit
-) {
-    val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    val fine = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-    val coarse = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
-    if (fine == PackageManager.PERMISSION_GRANTED || coarse == PackageManager.PERMISSION_GRANTED) {
-        lm.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
-            5000,
-            10f,
-            object : LocationListener {
-                override fun onLocationChanged(loc: Location) {
-                    onLocation(loc.latitude, loc.longitude)
-                    lm.removeUpdates(this)
+    // Delete confirmation dialog
+    locationToDelete?.let { location ->
+        AlertDialog(
+            onDismissRequest = { locationToDelete = null },
+            title = { Text("Delete location") },
+            text = { Text("Are you sure you want to delete ${location.name}?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch(Dispatchers.IO) {
+                            db.locationDao().deleteLocation(location)
+                            withContext(Dispatchers.Main) {
+                                locationToDelete = null
+                            }
+                        }
+                    }
+                ) {
+                    Text("Delete", color = Color.Red)
                 }
             },
-            Looper.getMainLooper()
+            dismissButton = {
+                TextButton(onClick = { locationToDelete = null }) {
+                    Text("Cancel")
+                }
+            }
         )
-    }
-}
-
-private fun reverseGeocode(lat: Double, lon: Double): String {
-    return try {
-        val url = "https://geocoding-api.open-meteo.com/v1/reverse?latitude=$lat&longitude=$lon"
-        val json = httpGet(url)
-        val obj = JSONObject(json)
-        val results = obj.optJSONArray("results")
-        if (results != null && results.length() > 0) {
-            val item = results.getJSONObject(0)
-            val name = item.optString("name", "")
-            val admin1 = item.optString("admin1", "")
-            val country = item.optString("country", "")
-            if (admin1.isNotEmpty()) "$name, $admin1, $country"
-            else "$name, $country"
-        } else "Unknown Location"
-    } catch (e: Exception) {
-        "Error: ${e.message}"
     }
 }
 
@@ -278,6 +265,9 @@ fun AddLocationDialog(
                 ) {
                     Text("Search")
                 }
+                Text(
+                    text = "Click on the City you want to add"
+                )
                 Spacer(Modifier.height(12.dp))
                 if (loading) {
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
