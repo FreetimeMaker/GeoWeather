@@ -1,6 +1,5 @@
 package com.freetime.geoweather
 
-import android.view.View
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.freetime.geoweather.data.LocationDatabase
+import com.freetime.geoweather.ui.hideSystemUI
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,6 +29,7 @@ import java.util.*
 class WeatherDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        hideSystemUI(window)
         val name = intent.getStringExtra("name") ?: "Unknown"
         val lat = intent.getDoubleExtra("lat", 0.0)
         val lon = intent.getDoubleExtra("lon", 0.0)
@@ -43,24 +44,6 @@ class WeatherDetailActivity : ComponentActivity() {
                 )
             }
         }
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            hideSystemUI()
-        }
-    }
-
-    private fun hideSystemUI() {
-        window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                )
     }
 }
 
@@ -88,48 +71,56 @@ fun WeatherDetailScreen(
         }
     }
 
-    Column(
-        modifier = Modifier.padding(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
-            Button(
-                onClick = onBack,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Blue,
-                    contentColor = Color.White
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("← Back")
-            }
-        }
-        Spacer(Modifier.height(16.dp))
-        if (weatherJson == null) {
-            CircularProgressIndicator()
-        } else {
-            val obj = JSONObject(weatherJson!!)
-            val current = obj.getJSONObject("current_weather")
-            val temp = current.getDouble("temperature")
-            val wind = current.getDouble("windspeed")
-
-            Text("Temperature: $temp°C", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(8.dp))
-            Text("Wind: $wind km/h", fontSize = 16.sp)
-            Spacer(Modifier.height(24.dp))
-            
-            Text("7-Day Forecast", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(16.dp))
-            
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(forecastList) { forecast ->
-                    ForecastItem(forecast = forecast)
+                Button(
+                    onClick = onBack,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Blue,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("← Back")
                 }
             }
+            Spacer(Modifier.height(16.dp))
+            if (weatherJson != null) {
+                val obj = JSONObject(weatherJson!!)
+                val current = obj.getJSONObject("current_weather")
+                val temp = current.getDouble("temperature")
+                val wind = current.getDouble("windspeed")
+
+                Text("Temperature: $temp°C", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(8.dp))
+                Text("Wind: $wind km/h", fontSize = 16.sp)
+                Spacer(Modifier.height(24.dp))
+                
+                Text("7-Day Forecast", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(16.dp))
+                
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(forecastList) { forecast ->
+                        ForecastItem(forecast = forecast)
+                    }
+                }
+            }
+        }
+        if (weatherJson == null) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(64.dp)
+                    .align(Alignment.Center),
+                strokeWidth = 6.dp
+            )
         }
     }
 }
