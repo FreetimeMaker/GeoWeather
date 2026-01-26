@@ -46,3 +46,4 @@ local.properties
 .kotlin
 .vscode
 *.sh
+*.apk.idsig
