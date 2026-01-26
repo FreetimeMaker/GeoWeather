@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name"></string>
+    <string name="language"></string>
+    <string name="add_location"></string>
+    <string name="search_hint"></string>
+    <string name="search"></string>
+    <string name="no_cities_found"></string>
+    <string name="location_added"></string>
+    <string name="invalid_location_coordinates"></string>
+    <string name="loaded_from_cache"></string>
+    <string name="no_internet_connection_and_no_cache_available"></string>
+    <string name="error_processing_results"></string>
+    <string name="error_searching_locations"></string>
+    <string name="sunrise"></string>
+    <string name="sunset"></string>
+    <string name="wind"></string>
+    <string name="humidity"></string>
+</resources>
