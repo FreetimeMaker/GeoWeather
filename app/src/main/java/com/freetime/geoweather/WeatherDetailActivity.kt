@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -13,9 +15,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.freetime.geoweather.data.LocationDatabase
@@ -31,6 +37,8 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 class WeatherDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -191,16 +199,56 @@ fun WeatherDetailScreen(
                         ForecastItem(forecast = forecast)
                     }
                 }
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularWavyProgressIndicator(modifier = Modifier.size(100.dp))
+                }
             }
         }
-        if (weatherJson == null) {
-            CircularWavyProgressIndicator(
-                wavelength = 24.dp,
-                stroke = stroke,
-                trackStroke = stroke,
-                modifier = progressModifier,
-            )
+    }
+}
+
+@Composable
+fun CircularWavyProgressIndicator(
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.primary,
+    strokeWidth: Dp = 4.dp,
+    waveAmplitude: Dp = 4.dp,
+    waveFrequency: Float = 2f
+) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    Canvas(modifier = modifier) {
+        val radius = size.minDimension / 2 - strokeWidth.toPx() / 2
+        val path = Path()
+        for (i in 0..360) {
+            val angleRad = Math.toRadians(i.toDouble() + angle).toFloat()
+            val currentRadius = radius + sin(Math.toRadians(i.toDouble() * waveFrequency).toFloat() * 10) * waveAmplitude.toPx()
+            val x = center.x + currentRadius * cos(angleRad)
+            val y = center.y + currentRadius * sin(angleRad)
+            if (i == 0) {
+                path.moveTo(x, y)
+            } else {
+                path.lineTo(x, y)
+            }
         }
+        path.close()
+        drawPath(
+            path = path,
+            color = color,
+            style = Stroke(width = strokeWidth.toPx())
+        )
     }
 }
 
