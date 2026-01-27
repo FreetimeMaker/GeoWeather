@@ -29,7 +29,6 @@ local.properties
 *.swp
 *~
 *.keystore
-*.jks
 *.apk
 *.ap_k
 *.aab
@@ -45,5 +44,4 @@ local.properties
 /app/release/
 .kotlin
 .vscode
-*.sh
 *.apk.idsig
