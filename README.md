@@ -3,13 +3,16 @@ GeoWeather is a WIP Android App (even if there are Releases right now. Because a
 
 # GeoWeather Features
 Like I said in the [GeoWeather Informations](#geoweather-informations) you can add Multiple Cities and look at the Weather and there are many more Features to come.
-> 5-Day Weather Forecast
+Current Features are:
+
+> 7-Day Weather Forecast
 > Showing Weather Icons
 > Hourly Weather Forecast
-> Migrating to Jetpack Compose
+> Migrating to Jetpack Compose, Kotlin and Kotlin DSL
 
 # GeoWeather Features Planned
-Planned Features are: 
+Planned Features are:
+
 > More Weather Features like Adding Multiple API's for a better Weather Forecast.
 > Adding Screenshots and Videos to YouTube or other Providers for showing how the App Works.
 

@@ -2,6 +2,7 @@ package com.freetime.geoweather
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.freetime.geoweather.data.LocationDatabase
@@ -80,11 +82,22 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun hideSystemUI() {
-        WindowCompat.getInsetsController(window, window.decorView).apply {
-            hide(androidx.core.view.WindowInsetsCompat.Type.systemBars())
-            systemBarsBehavior = androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemUI()
         }
+    }
+
+    private fun hideSystemUI() {
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
     }
 }
 
@@ -236,9 +249,9 @@ fun AddLocationDialog(
                         loading = true
                         results = emptyList()
                         val url = "https://geocoding-api.open-meteo.com/v1/search?name=" +
-                            URLEncoder.encode(query, "UTF-8") +
-                            "&count=20&language=" + Locale.getDefault().language +
-                            "&format=json"
+                                URLEncoder.encode(query, "UTF-8") +
+                                "&count=20&language=" + Locale.getDefault().language +
+                                "&format=json"
                         scope.launch(Dispatchers.IO) {
                             try {
                                 val json = httpGet(url)
@@ -268,7 +281,9 @@ fun AddLocationDialog(
                     Text("Search")
                 }
                 Text(
-                    text = "Click on the City you want to add"
+                    text = "Click on the City you want to add",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.height(12.dp))
                 if (loading) {

@@ -1,0 +1,1 @@
+Hidden System UI so even the Namebar is not Showing Anymore except when you open any Activity
