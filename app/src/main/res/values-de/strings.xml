@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GeoWeather</string>
+    <string name="language">Sprache</string>
+    <string name="add_location">Ort hinzufügen</string>
+    <string name="search_hint">Geben Sie einen Ort ein (Berlin, Paris, New York)</string>
+    <string name="search">Suchen</string>
+    <string name="no_cities_found">Keine Orte gefunden</string>
+    <string name="location_added">%1$s hinzugefügt</string>
+    <string name="invalid_location_coordinates">Ungültige Orts Koordinaten</string>
+    <string name="loaded_from_cache">Von Cache geladen</string>
+    <string name="no_internet_connection_and_no_cache_available">Keine Internetverbindung und kein Cache verfügbar</string>
+    <string name="error_processing_results">Fehler beim Verarbeiten der Ergebnisse: %1$s</string>
+    <string name="error_searching_locations">Fehler beim Suchen von Orten: %1$s</string>
+    <string name="sunrise">Sonnenaufgang: %1$s</string>
+    <string name="sunset">Sonnenuntergang: %1$s</string>
+    <string name="wind">Wind: %1$s km/h</string>
+    <string name="humidity">Luftfeuchtigkeit: —</string>
+</resources>
