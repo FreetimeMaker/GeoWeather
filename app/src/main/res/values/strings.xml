@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">GeoWeather</string>
+    <string name="language">Language</string>
+    <string name="add_location">Add Location</string>
+    <string name="search_hint">Enter City (Berlin, Paris, New York)</string>
+    <string name="search">Search</string>
+    <string name="no_cities_found">No Cities found</string>
+    <string name="location_added">%1$s added</string>
+    <string name="invalid_location_coordinates">Invalid location coordinates</string>
+    <string name="loaded_from_cache">Loaded from cache</string>
+    <string name="no_internet_connection_and_no_cache_available">No internet connection and no cache available</string>
+    <string name="error_processing_results">Error processing results: %1$s</string>
+    <string name="error_searching_locations">Error searching locations: %1$s</string>
+    <string name="sunrise">Sunrise: %1$s</string>
+    <string name="sunset">Sunset: %1$s</string>
+    <string name="wind">Wind: %1$s km/h</string>
+    <string name="humidity">Humidity: —</string>
 </resources>
