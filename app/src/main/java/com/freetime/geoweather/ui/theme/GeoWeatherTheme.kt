@@ -15,9 +15,9 @@ private val LightColors = lightColorScheme(
 )
 
 private val DarkColors = darkColorScheme(
-    primary = GeoBlue,
+    primary = GeoDarkBlue,
     onPrimary = White,
-    secondary = GeoOrange,
+    secondary = GeoDarkOrange,
     onSecondary = White,
     background = GeoDarkBackground,
     onBackground = GeoDarkText,

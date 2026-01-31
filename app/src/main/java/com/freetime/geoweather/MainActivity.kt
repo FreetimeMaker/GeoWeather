@@ -40,10 +40,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
+import androidx.compose.ui.res.stringResource
+import com.freetime.geoweather.R
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
+import com.freetime.geoweather.de.DE_MainActivity
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -135,7 +136,7 @@ fun MainScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = "Delete location",
+                                contentDescription = stringResource(R.string.DelLoc),
                                 tint = Color.Red
                             )
                         }
@@ -184,8 +185,8 @@ fun MainScreen(
     locationToDelete?.let { location ->
         AlertDialog(
             onDismissRequest = { locationToDelete = null },
-            title = { Text("Delete location") },
-            text = { Text("Are you sure you want to delete ${location.name}?") },
+            title = { Text(stringResource(R.string.DelLoc)) },
+            text = { Text(stringResource(R.string.DelLocConAsk).replace("${location.name}", location.name)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -197,12 +198,12 @@ fun MainScreen(
                         }
                     }
                 ) {
-                    Text("Delete", color = Color.Red)
+                    Text(stringResource(R.string.DelTXT), color = Color.Red)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { locationToDelete = null }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.CancelTXT))
                 }
             }
         )
@@ -234,13 +235,13 @@ fun AddLocationDialog(
     var loading by remember { mutableStateOf(false) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Search for a City") },
+        title = { Text(stringResource(R.string.SearchForCity)) },
         text = {
             Column {
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it },
-                    label = { Text("City name") },
+                    label = { Text(stringResource(R.string.CityName)) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(12.dp))
@@ -278,10 +279,10 @@ fun AddLocationDialog(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Search")
+                    Text(stringResource(R.string.SearchBTNTXT))
                 }
                 Text(
-                    text = "Click on the City you want to add",
+                    text = stringResource(R.string.ClickOnCityToAddTXT),
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
@@ -310,7 +311,7 @@ fun AddLocationDialog(
         },
         confirmButton = { },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.CancelTXT)) }
         }
     )
 }

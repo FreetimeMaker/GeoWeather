@@ -7,7 +7,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.freetime.geoweather.R
 
 @Composable
 fun DonateScreen(onBack: () -> Unit) {
@@ -22,48 +23,48 @@ fun DonateScreen(onBack: () -> Unit) {
     ) {
         Button(onClick = {
             context.startActivity(Intent(context, OxaPayActivity::class.java))
-        }) { Text("Donate via OxaPay") }
+        }) { Text(stringResource(R.string.DonViaOxaPay)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, CoinbaseActivity::class.java))
-        }) { Text("Donate via Coinbase") }
+        }) { Text(stringResource(R.string.DonViaCoin)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, BitcoinActivity::class.java))
-        }) { Text("Donate via Bitcoin") }
+        }) { Text(stringResource(R.string.DonViaBTC)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, EthereumActivity::class.java))
-        }) { Text("Donate via Ethereum") }
+        }) { Text(stringResource(R.string.DonViaETH)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, USDT_Activity::class.java))
-        }) { Text("Donate via USDT") }
+        }) { Text(stringResource(R.string.DonViaUSDT)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, USDC_Activity::class.java))
-        }) { Text("Donate via USDC") }
+        }) { Text(stringResource(R.string.DonViaUSDC)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, ShibActivity::class.java))
-        }) { Text("Donate via SHIB") }
+        }) { Text(stringResource(R.string.DonViaSHIB)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, DogeActivity::class.java))
-        }) { Text("Donate via DOGE") }
+        }) { Text(stringResource(R.string.DonViaDOGE)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, TronActivity::class.java))
-        }) { Text("Donate via TRON") }
+        }) { Text(stringResource(R.string.DonateViaTRON)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, LTC_Activity::class.java))
-        }) { Text("Donate via LTC") }
+        }) { Text(stringResource(R.string.DonViaLTC)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, DonatorActivity::class.java))
-        }) { Text("View Supporters") }
+        }) { Text(stringResource(R.string.ViewSup)) }
 
-        Button(onClick = onBack) { Text("Back") }
+        Button(onClick = onBack) { Text(stringResource(R.string.BackToWeaDash)) }
     }
 }

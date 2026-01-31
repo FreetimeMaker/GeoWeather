@@ -3,7 +3,11 @@ package com.freetime.geoweather.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val GeoBlue = Color(0xFF2196F3)
+
+val GeoDarkBlue = Color(0xFF3F51B5)
 val GeoOrange = Color(0xFFFF9800)
+
+val GeoDarkOrange = Color(0xFFFF5722)
 
 val GeoBackground = Color(0xFFF5F5F5)
 val GeoText = Color(0xFF212121)

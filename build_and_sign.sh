@@ -3,12 +3,18 @@ set -e
 
 ### CONFIG ###
 APP_ID="com.freetime.geoweather"
-TAG="v1.1.3"   # <-- HIER deine Version eintragen
+TAG="v1.1.4"   # <-- HIER deine Version eintragen
 KEYSTORE="$HOME/AndroidStudioProjects/GeoWeather/GeoWeather-KeyStore.jks"
 KEY_ALIAS="alle"
 KEY_PASS="KKKKKK"
 OUT_APK="GeoWeather-$TAG.apk"
 ################
+
+echo "==> Erstelle Tag $TAG"
+git tag "$TAG"
+
+echo "==> Pushe Tag $TAG auf GitHub"
+git push origin "$TAG"
 
 echo "==> Hole Tags von GitHub"
 git fetch --tags

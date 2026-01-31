@@ -23,7 +23,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.freetime.geoweather.R
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import kotlinx.coroutines.Dispatchers
@@ -151,7 +152,7 @@ fun WeatherDetailScreen(
                         contentColor = Color.White
                     )
                 ) {
-                    Text("← Back")
+                    Text(stringResource(R.string.BackBTNTXT))
                 }
             }
             Spacer(Modifier.height(16.dp))
@@ -170,13 +171,13 @@ fun WeatherDetailScreen(
                         tint = Color.Unspecified
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text("Temperature: $temp°C", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.TempTXT).replace("$temp", temp.toString()), fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(Modifier.height(8.dp))
-                Text("Wind: $wind km/h", fontSize = 16.sp)
+                Text(stringResource(R.string.WindSpeedTXT).replace("$wind", wind.toString()), fontSize = 16.sp)
                 Spacer(Modifier.height(24.dp))
 
-                Text("Hourly Forecast", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.HourlyForecastTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(16.dp))
 
                 LazyRow(
@@ -189,7 +190,7 @@ fun WeatherDetailScreen(
 
                 Spacer(Modifier.height(24.dp))
 
-                Text("7-Day Forecast", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.SevenDayForecastTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(16.dp))
 
                 LazyColumn(

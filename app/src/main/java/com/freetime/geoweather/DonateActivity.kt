@@ -1,5 +1,8 @@
 package com.freetime.geoweather
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
@@ -17,10 +20,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.view.WindowCompat
+import androidx.compose.ui.res.stringResource
+import com.freetime.geoweather.R
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
 class DonateActivity : ComponentActivity() {
@@ -439,14 +443,15 @@ fun WebViewScreen(
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            Text("Go Back to the Support Page")
+            Text(stringResource(R.string.backToSupPag))
         }
     }
 }
 
 @Composable
 fun DonatorScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    context: Context = LocalContext.current
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -458,18 +463,27 @@ fun DonatorScreen(
         ) {
             Text(
                 textAlign = TextAlign.Center,
-                text = "Here are Supporters that help maintain this and many other Apps"
+                text = stringResource(R.string.DonTXT1)
             )
 
             Text(
                 textAlign = TextAlign.Center,
-                text = "If you want to help maintain this and many other Apps simply make a Donation and E-Mail me Your Name and the Donation Provider you used and I will then list you Here."
+                text = stringResource(R.string.DonTXT2)
             )
 
             Text(
                 textAlign = TextAlign.Center,
-                text = "No one made a Donation yet."
+                text = stringResource(R.string.DonPers)
             )
+
+            Button(
+                onClick = {
+                    openDiscordInvite(context)
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.JoiOffDisSer))
+            }
         }
 
         Button(
@@ -479,7 +493,15 @@ fun DonatorScreen(
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            Text("Go Back to the Support Page")
+            Text(stringResource(R.string.backToSupPag))
         }
     }
+}
+
+fun openDiscordInvite(context: Context) {
+    val webIntent = Intent(
+        Intent.ACTION_VIEW,
+        Uri.parse("https://discord.gg/zPFvwK9pNh")
+    )
+    context.startActivity(webIntent)
 }
