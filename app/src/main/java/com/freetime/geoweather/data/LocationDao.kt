@@ -12,6 +12,9 @@ interface LocationDao {
     @Query("SELECT * FROM locations ORDER BY name ASC")
     fun getAllLocations(): LiveData<List<LocationEntity>>
 
+    @Query("SELECT * FROM locations ORDER BY name ASC")
+    suspend fun getAllLocationsSync(): List<LocationEntity>
+
     @Query("SELECT COUNT(*) FROM locations")
     fun getCount(): Int
 

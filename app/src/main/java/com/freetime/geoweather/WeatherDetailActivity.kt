@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -106,6 +109,9 @@ fun WeatherDetailScreen(
     var weatherJson by remember { mutableStateOf<String?>(null) }
     var forecastList by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
     var hourlyForecastList by remember { mutableStateOf<List<HourlyForecast>>(emptyList()) }
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullToRefreshState = rememberPullToRefreshState()
+    val listState = rememberLazyListState()
     val db = LocationDatabase.getDatabase(LocalContext.current)
 
     LaunchedEffect(Unit) {
@@ -137,7 +143,38 @@ fun WeatherDetailScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier.fillMaxSize().pullToRefresh(pullToRefreshState)
+    ) {
+        if (pullToRefreshState.isRefreshing) {
+            LaunchedEffect(true) {
+                isRefreshing = true
+                scope.launch(Dispatchers.IO) {
+                    try {
+                        val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto"
+                        val json = httpGet(url)
+                        val entity = db.locationDao().findByCoordinates(lat, lon)
+                        val updatedEntity = entity?.copy(weatherData = json)
+                        if (updatedEntity != null) {
+                            db.locationDao().updateLocation(updatedEntity)
+                        }
+                        withContext(Dispatchers.Main) {
+                            weatherJson = json
+                            forecastList = parseForecastData(json)
+                            hourlyForecastList = parseHourlyForecastData(json)
+                            isRefreshing = false
+                            pullToRefreshState.endRefresh()
+                        }
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            isRefreshing = false
+                            pullToRefreshState.endRefresh()
+                        }
+                    }
+                }
+            }
+        }
+        
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
@@ -172,10 +209,10 @@ fun WeatherDetailScreen(
                         tint = Color.Unspecified
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(stringResource(R.string.TempTXT).replace("$temp", temp.toString()), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.TempTXT, temp.toString()), fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(Modifier.height(8.dp))
-                Text(stringResource(R.string.WindSpeedTXT).replace("$wind", wind.toString()), fontSize = 16.sp)
+                Text(stringResource(R.string.WindSpeedTXT, wind.toString()), fontSize = 16.sp)
                 Spacer(Modifier.height(24.dp))
 
                 Text(stringResource(R.string.HourlyForecastTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
@@ -210,6 +247,11 @@ fun WeatherDetailScreen(
                 }
             }
         }
+        
+        PullToRefreshContainer(
+            state = pullToRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
 }
 
@@ -398,18 +440,25 @@ fun parseHourlyForecastData(weatherJson: String): List<HourlyForecast> {
 
         val now = Calendar.getInstance(TimeZone.getTimeZone(timezone))
         val currentHour = now.get(Calendar.HOUR_OF_DAY)
-
+        val currentMinute = now.get(Calendar.MINUTE)
+        
+        // Start from current hour and show next 24 hours
+        var hoursShown = 0
         for (i in 0 until times.length()) {
+            if (hoursShown >= 24) break
+            
             val timeStr = times.getString(i)
             val date = inputFormat.parse(timeStr)
 
-            val calendar = Calendar.getInstance()
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone(timezone))
             if (date != null) {
                 calendar.time = date
             }
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
-
-            if (hour >= currentHour && hourlyForecastList.size < 24) {
+            val minute = calendar.get(Calendar.MINUTE)
+            
+            // Show hours from current time onwards (including current hour if we haven't passed it yet)
+            if ((hour > currentHour) || (hour == currentHour && minute >= currentMinute)) {
                 val formattedTime = outputFormat.format(date ?: Date())
                 hourlyForecastList.add(
                     HourlyForecast(
@@ -418,6 +467,7 @@ fun parseHourlyForecastData(weatherJson: String): List<HourlyForecast> {
                         weatherCode = weatherCodes.getInt(i)
                     )
                 )
+                hoursShown++
             }
         }
     } catch (e: Exception) {

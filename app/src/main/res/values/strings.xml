@@ -3,8 +3,8 @@
     <string name="backToSupPag">Go Back to the Support Page</string>
     <string name="JoiOffDisSer">Join the Official Discord Server</string>
     <string name="DonPers">No one made a Donation yet.</string>
-    <string name="DonTXT2">If you want to help maintain this and many other Apps simply make a Donation and make a Ticket in my Discord Server with Your Name and the Donation Provider you used and I will then list you Here.</string>
-    <string name="DonTXT1">Here are Supporters that help maintain this and many other Apps.</string>
+    <string name="DonTXT2">If you want to help maintain this and many other Apps simply make a Donation and make a Ticket in my Discord Server with Your Name and the Donation Provider you used and I will then list you here.</string>
+    <string name="DonTXT1">Here are supporters that help maintain this and many other Apps.</string>
     <string name="DonViaOxaPay">Donate via OxaPay</string>
     <string name="DonViaCoin">Donate via Coinbase</string>
     <string name="DonViaBTC">Donate via Bitcoin</string>
@@ -18,16 +18,16 @@
     <string name="ViewSup">View Supporters</string>
     <string name="BackToWeaDash">Go Back to the Weather Dashboard</string>
     <string name="DelLoc">Delete location</string>
-    <string name="DelLocConAsk">Are you sure you want to delete ${location.name}?</string>
+    <string name="DelLocConAsk">Are you sure you want to delete %1$s?</string>
     <string name="DelTXT">Delete</string>
     <string name="CancelTXT">Cancel</string>
     <string name="SearchForCity">Search for a City</string>
     <string name="CityName">City name</string>
     <string name="SearchBTNTXT">Search</string>
-    <string name="ClickOnCityToAddTXT">Click on the City you want to add</string>
+    <string name="ClickOnCityToAddTXT">Click on the city you want to add</string>
     <string name="BackBTNTXT">← Back</string>
-    <string name="TempTXT">Temperature: $temp°C</string>
-    <string name="WindSpeedTXT">Wind: $wind km/h</string>
+    <string name="TempTXT">Temperature: %1$s°C</string>
+    <string name="WindSpeedTXT">Wind: %1$s km/h</string>
     <string name="HourlyForecastTXT">Hourly Forecast</string>
     <string name="SevenDayForecastTXT">7-Day Forecast</string>
 </resources>
