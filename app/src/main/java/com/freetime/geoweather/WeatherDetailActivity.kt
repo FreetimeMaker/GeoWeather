@@ -318,8 +318,10 @@ fun WeatherDetailScreen(
                 }
                 Spacer(Modifier.height(16.dp))
 
-                // Weather Map Card
+                // Get context for notifications
                 val context = LocalContext.current
+
+                // Weather Map Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
