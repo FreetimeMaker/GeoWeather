@@ -1,0 +1,3 @@
+- Updated Strings
+- Added Strings
+- Updated the Errors on Weather Listings Stuck or Incomplete
