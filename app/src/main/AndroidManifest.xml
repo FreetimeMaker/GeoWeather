@@ -55,34 +55,6 @@
             android:screenOrientation="portrait" />
         <activity android:name=".DonatorActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_MainActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_BitcoinActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_CoinbaseActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_DogeActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_DonateActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_DonatorActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_EthereumActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_LTC_Activity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_OxaPayActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_ShibActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_TronActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_USDC_Activity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_USDT_Activity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".de.DE_WeatherDetailActivity"
-            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
