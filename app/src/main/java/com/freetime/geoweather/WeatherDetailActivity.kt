@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -32,9 +33,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import androidx.work.*
 import com.freetime.geoweather.R
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -340,9 +344,15 @@ fun WeatherDetailScreen(
                 Spacer(Modifier.height(16.dp))
 
                 // Weather Notifications Card
-                var notificationsEnabled by remember { mutableStateOf(false) }
-                var notificationTime by remember { mutableStateOf("08:00") }
-                val notificationContext = LocalContext.current
+                val sharedPreferences = remember { context.getSharedPreferences("weather_notifications", Context.MODE_PRIVATE) }
+                var notificationsEnabled by remember { mutableStateOf(sharedPreferences.getBoolean("notifications_enabled", false)) }
+                var notificationTime by remember { mutableStateOf(sharedPreferences.getString("notification_time", "08:00") ?: "08:00") }
+                var showTimePicker by remember { mutableStateOf(false) }
+                val coroutineScope = rememberCoroutineScope()
+                
+                // Weather Change Alerts
+                var changeAlertsEnabled by remember { mutableStateOf(sharedPreferences.getBoolean("change_alerts_enabled", false)) }
+                var selectedInterval by remember { mutableStateOf(sharedPreferences.getString("change_interval", "3") ?: "3") }
                 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -352,6 +362,7 @@ fun WeatherDetailScreen(
                         Text(stringResource(R.string.NotificationsTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(12.dp))
                         
+                        // Daily Weather Updates
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -360,7 +371,18 @@ fun WeatherDetailScreen(
                             Text(stringResource(R.string.EnableNotificationsTXT), fontSize = 14.sp)
                             Switch(
                                 checked = notificationsEnabled,
-                                onCheckedChange = { notificationsEnabled = it }
+                                onCheckedChange = { 
+                                    notificationsEnabled = it
+                                    sharedPreferences.edit()
+                                        .putBoolean("notifications_enabled", it)
+                                        .apply()
+                                    
+                                    if (it) {
+                                        scheduleDailyWeatherNotification(context, name, lat, lon, notificationTime)
+                                    } else {
+                                        cancelWeatherNotifications(context)
+                                    }
+                                }
                             )
                         }
                         
@@ -372,14 +394,99 @@ fun WeatherDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(stringResource(R.string.NotificationTimeTXT), fontSize = 14.sp)
-                                Text(notificationTime, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                Button(
+                                    onClick = { showTimePicker = true },
+                                    modifier = Modifier.padding(horizontal = 8.dp)
+                                ) {
+                                    Text(notificationTime, fontSize = 14.sp)
+                                }
                             }
-                            
+                        }
+                        
+                        Spacer(Modifier.height(16.dp))
+                        
+                        // Weather Change Alerts
+                        Text(stringResource(R.string.WeatherChangeAlertsTXT), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(8.dp))
+                        
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(stringResource(R.string.EnableChangeAlertsTXT), fontSize = 14.sp)
+                            Switch(
+                                checked = changeAlertsEnabled,
+                                onCheckedChange = { 
+                                    changeAlertsEnabled = it
+                                    sharedPreferences.edit()
+                                        .putBoolean("change_alerts_enabled", it)
+                                        .apply()
+                                    
+                                    if (it) {
+                                        scheduleWeatherChangeAlerts(context, selectedInterval)
+                                    } else {
+                                        cancelWeatherChangeAlerts(context)
+                                    }
+                                }
+                            )
+                        }
+                        
+                        if (changeAlertsEnabled) {
+                            Spacer(Modifier.height(12.dp))
+                            Text(stringResource(R.string.ChangeAlertIntervalTXT), fontSize = 14.sp)
                             Spacer(Modifier.height(8.dp))
+                            
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                listOf("2", "3", "6").forEach { hours ->
+                                    Button(
+                                        onClick = {
+                                            selectedInterval = hours
+                                            sharedPreferences.edit()
+                                                .putString("change_interval", hours)
+                                                .apply()
+                                            scheduleWeatherChangeAlerts(context, hours)
+                                        },
+                                        modifier = Modifier.weight(1f),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = if (selectedInterval == hours) 
+                                                MaterialTheme.colorScheme.primary 
+                                            else 
+                                                MaterialTheme.colorScheme.surface
+                                        )
+                                    ) {
+                                        Text(
+                                            text = when (hours) {
+                                                "2" -> stringResource(R.string.Interval2HoursTXT)
+                                                "3" -> stringResource(R.string.Interval3HoursTXT)
+                                                "6" -> stringResource(R.string.Interval6HoursTXT)
+                                                else -> "$hours hours"
+                                            },
+                                            fontSize = 12.sp,
+                                            color = if (selectedInterval == hours) 
+                                                MaterialTheme.colorScheme.onPrimary 
+                                            else 
+                                                MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (notificationsEnabled || changeAlertsEnabled) {
+                            Spacer(Modifier.height(12.dp))
                             Button(
                                 onClick = {
-                                    // Save notification settings
-                                    scheduleWeatherNotification(notificationContext, name, lat, lon, notificationTime)
+                                    // Save all notification settings
+                                    if (notificationsEnabled) {
+                                        scheduleDailyWeatherNotification(context, name, lat, lon, notificationTime)
+                                    }
+                                    if (changeAlertsEnabled) {
+                                        scheduleWeatherChangeAlerts(context, selectedInterval)
+                                    }
                                 },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
@@ -387,6 +494,20 @@ fun WeatherDetailScreen(
                             }
                         }
                     }
+                }
+                
+                if (showTimePicker) {
+                    TimePickerDialog(
+                        onTimeSelected = { time ->
+                            notificationTime = time
+                            sharedPreferences.edit()
+                                .putString("notification_time", time)
+                                .apply()
+                            showTimePicker = false
+                        },
+                        onDismiss = { showTimePicker = false },
+                        initialTime = notificationTime
+                    )
                 }
                 Spacer(Modifier.height(16.dp))
 
@@ -826,7 +947,57 @@ fun calculateWeatherAlerts(
     return alerts
 }
 
-fun scheduleWeatherNotification(
+@Composable
+fun TimePickerDialog(
+    onTimeSelected: (String) -> Unit,
+    onDismiss: () -> Unit,
+    initialTime: String
+) {
+    val (hour, minute) = initialTime.split(":").map { it.toInt() }
+    var selectedHour by remember { mutableStateOf(hour) }
+    var selectedMinute by remember { mutableStateOf(minute) }
+    
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Select Time") },
+        text = {
+            Column {
+                Text("Hour: $selectedHour")
+                Slider(
+                    value = selectedHour.toFloat(),
+                    onValueChange = { selectedHour = it.toInt() },
+                    valueRange = 0f..23f,
+                    steps = 22
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Minute: $selectedMinute")
+                Slider(
+                    value = selectedMinute.toFloat(),
+                    onValueChange = { selectedMinute = it.toInt() },
+                    valueRange = 0f..59f,
+                    steps = 58
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val time = String.format("%02d:%02d", selectedHour, selectedMinute)
+                    onTimeSelected(time)
+                }
+            ) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+fun scheduleDailyWeatherNotification(
     context: Context,
     locationName: String,
     lat: Double,
@@ -834,43 +1005,91 @@ fun scheduleWeatherNotification(
     time: String
 ) {
     try {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val workManager = WorkManager.getInstance(context)
         
-        // Create notification channel
-        val channel = NotificationChannel(
-            "weather_notifications",
-            "Weather Updates",
-            NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            description = "Daily weather notifications"
+        // Save location data for worker
+        val sharedPreferences = context.getSharedPreferences("weather_notifications", Context.MODE_PRIVATE)
+        sharedPreferences.edit()
+            .putString("location_name", locationName)
+            .putFloat("location_lat", lat.toFloat())
+            .putFloat("location_lon", lon.toFloat())
+            .apply()
+        
+        // Parse time
+        val (hour, minute) = time.split(":").map { it.toInt() }
+        
+        // Calculate delay until next scheduled time
+        val now = Calendar.getInstance()
+        val scheduled = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
         }
-        notificationManager.createNotificationChannel(channel)
         
-        // Show immediate notification for demo
-        val intent = Intent(context, WeatherDetailActivity::class.java).apply {
-            putExtra("name", locationName)
-            putExtra("lat", lat)
-            putExtra("lon", lon)
+        if (scheduled.before(now)) {
+            scheduled.add(Calendar.DAY_OF_MONTH, 1)
         }
         
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
+        val delay = scheduled.timeInMillis - now.timeInMillis
         
-        val notification = androidx.core.app.NotificationCompat.Builder(context, "weather_notifications")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(context.getString(R.string.DailyWeatherUpdateTXT))
-            .setContentText(String.format(context.getString(R.string.WeatherNotificationTXT), locationName, "15", "Partly Cloudy"))
-            .setPriority(androidx.core.app.NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
+        // Create work request
+        val workRequest = PeriodicWorkRequestBuilder<WeatherNotificationWorker>(1, TimeUnit.DAYS)
+            .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+            .addTag("weather_notification")
             .build()
         
-        notificationManager.notify(1, notification)
+        // Schedule the work
+        workManager.enqueueUniquePeriodicWork(
+            "weather_notification",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            workRequest
+        )
         
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun cancelWeatherNotifications(context: Context) {
+    try {
+        val workManager = WorkManager.getInstance(context)
+        workManager.cancelUniqueWork("weather_notification")
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun scheduleWeatherChangeAlerts(
+    context: Context,
+    intervalHours: String
+) {
+    try {
+        val workManager = WorkManager.getInstance(context)
+        
+        // Parse interval
+        val interval = intervalHours.toLong()
+        
+        // Create periodic work request
+        val workRequest = PeriodicWorkRequestBuilder<WeatherChangeWorker>(interval, TimeUnit.HOURS)
+            .addTag("weather_change_alert")
+            .build()
+        
+        // Schedule the work
+        workManager.enqueueUniquePeriodicWork(
+            "weather_change_alert",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            workRequest
+        )
+        
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun cancelWeatherChangeAlerts(context: Context) {
+    try {
+        val workManager = WorkManager.getInstance(context)
+        workManager.cancelUniqueWork("weather_change_alert")
     } catch (e: Exception) {
         e.printStackTrace()
     }

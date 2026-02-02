@@ -62,4 +62,15 @@
     <string name="SaveSettingsTXT">Einstellungen speichern</string>
     <string name="DailyWeatherUpdateTXT">Tägliche Wetter-Update</string>
     <string name="WeatherNotificationTXT">Wetter in %1$s: %2$s°C, %3$s</string>
+    <string name="WeatherChangeAlertsTXT">Wetteränderungs-Warnungen</string>
+    <string name="EnableChangeAlertsTXT">Wetteränderungs-Erkennung aktivieren</string>
+    <string name="ChangeAlertIntervalTXT">Prüfintervall</string>
+    <string name="Interval2HoursTXT">Alle 2 Stunden</string>
+    <string name="Interval3HoursTXT">Alle 3 Stunden</string>
+    <string name="Interval6HoursTXT">Alle 6 Stunden</string>
+    <string name="WeatherChangeTXT">Wetteränderungs-Warnung</string>
+    <string name="TempChangeTXT">Temperatur geändert von %1$s°C auf %2$s°C</string>
+    <string name="WindChangeTXT">Wind erhöht auf %1$s km/h</string>
+    <string name="PrecipitationChangeTXT">Niederschlagswahrscheinlichkeit erhöht auf %1$s%%</string>
+    <string name="ConditionChangeTXT">Wetterbedingung geändert von %1$s auf %2$s</string>
 </resources>
