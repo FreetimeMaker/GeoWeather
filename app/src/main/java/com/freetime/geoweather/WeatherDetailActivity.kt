@@ -1,21 +1,28 @@
 package com.freetime.geoweather
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +39,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import org.json.JSONArray
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -104,6 +112,7 @@ fun WeatherDetailScreen(
 ) {
     val scope = rememberCoroutineScope()
     var weatherJson by remember { mutableStateOf<String?>(null) }
+    var aqiJson by remember { mutableStateOf<String?>(null) }
     var forecastList by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
     var hourlyForecastList by remember { mutableStateOf<List<HourlyForecast>>(emptyList()) }
     val db = LocationDatabase.getDatabase(LocalContext.current)
@@ -118,15 +127,18 @@ fun WeatherDetailScreen(
                     hourlyForecastList = parseHourlyForecastData(entity.weatherData)
                 }
             } else {
-                val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto"
+                val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&timezone=auto"
+                val aqiUrl = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
                 try {
                     val json = httpGet(url)
+                    val aqiJsonResponse = try { httpGet(aqiUrl) } catch (e: Exception) { null }
                     val updatedEntity = entity?.copy(weatherData = json)
                     if (updatedEntity != null) {
                         db.locationDao().updateLocation(updatedEntity)
                     }
                     withContext(Dispatchers.Main) {
                         weatherJson = json
+                        aqiJson = aqiJsonResponse
                         forecastList = parseForecastData(json)
                         hourlyForecastList = parseHourlyForecastData(json)
                     }
@@ -143,7 +155,7 @@ fun WeatherDetailScreen(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(
@@ -155,6 +167,13 @@ fun WeatherDetailScreen(
                 ) {
                     Text(stringResource(R.string.BackBTNTXT))
                 }
+                Text(
+                    text = name,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(modifier = Modifier.width(80.dp)) // Balance the back button
             }
             Spacer(Modifier.height(16.dp))
             if (weatherJson != null) {
@@ -163,6 +182,20 @@ fun WeatherDetailScreen(
                 val temp = current.getDouble("temperature")
                 val wind = current.getDouble("windspeed")
                 val weatherCode = current.getInt("weathercode")
+                
+                // Get hourly data for current conditions
+                val hourly = obj.getJSONObject("hourly")
+                val currentHourIndex = getCurrentHourIndex(hourly.getJSONArray("time"))
+                val humidity = if (currentHourIndex >= 0) hourly.getJSONArray("relativehumidity_2m").getDouble(currentHourIndex) else 0.0
+                val pressure = if (currentHourIndex >= 0) hourly.getJSONArray("pressure_msl").getDouble(currentHourIndex) else 0.0
+                val feelsLike = if (currentHourIndex >= 0) hourly.getJSONArray("apparent_temperature").getDouble(currentHourIndex) else temp
+                
+                // Get daily data
+                val daily = obj.getJSONObject("daily")
+                val sunrise = daily.getJSONArray("sunrise").getString(0)
+                val sunset = daily.getJSONArray("sunset").getString(0)
+                val precipitation = daily.getJSONArray("precipitation_probability_max").getDouble(0)
+                val maxWind = daily.getJSONArray("windspeed_10m_max").getDouble(0)
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -172,11 +205,190 @@ fun WeatherDetailScreen(
                         tint = Color.Unspecified
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(stringResource(R.string.TempTXT).replace("$temp", temp.toString()), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text(String.format(Locale.getDefault(), stringResource(R.string.TempTXT), temp.toString()), fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(Modifier.height(8.dp))
-                Text(stringResource(R.string.WindSpeedTXT).replace("$wind", wind.toString()), fontSize = 16.sp)
-                Spacer(Modifier.height(24.dp))
+                Text(String.format(Locale.getDefault(), stringResource(R.string.WindSpeedTXT), wind.toString()), fontSize = 16.sp)
+                Text(String.format(Locale.getDefault(), stringResource(R.string.FeelsLikeTXT), feelsLike.toString()), fontSize = 16.sp)
+                Spacer(Modifier.height(16.dp))
+                
+                // Weather Details Card
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.WeatherDetailsTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(12.dp))
+                        
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Column {
+                                Text(String.format(Locale.getDefault(), stringResource(R.string.HumidityTXT), humidity.toInt()), fontSize = 14.sp)
+                                Text(String.format(Locale.getDefault(), stringResource(R.string.PressureTXT), pressure.toInt()), fontSize = 14.sp)
+                            }
+                            Column(horizontalAlignment = Alignment.End) {
+                                Text(String.format(Locale.getDefault(), stringResource(R.string.PrecipitationTXT), precipitation.toInt()), fontSize = 14.sp)
+                                Text(String.format(Locale.getDefault(), stringResource(R.string.MaxWindTXT), maxWind.toInt()), fontSize = 14.sp)
+                            }
+                        }
+                        Spacer(Modifier.height(12.dp))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text(formatTime(sunrise), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.SunriseTXT), fontSize = 14.sp, color = Color(0xFFFFA500))
+                            Text(stringResource(R.string.SunsetText), fontSize = 14.sp, color = Color(0xFFFF6B35))
+                            Text(formatTime(sunset), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                        }
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+
+                // Air Quality Index Card
+                aqiJson?.let { aqiData ->
+                    val aqiInfo = calculateAQI(aqiData, LocalContext.current)
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(stringResource(R.string.AirQualityTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Spacer(Modifier.height(12.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "AQI: ${aqiInfo.value}",
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = aqiInfo.color
+                                )
+                                Text(
+                                    text = aqiInfo.description,
+                                    fontSize = 16.sp,
+                                    color = aqiInfo.color
+                                )
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(16.dp))
+                }
+
+                // Weather Alerts Card
+                val weatherAlerts = calculateWeatherAlerts(temp, wind, precipitation, weatherCode, feelsLike, context = LocalContext.current)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.WeatherAlertsTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(12.dp))
+                        if (weatherAlerts.isEmpty()) {
+                            Text(
+                                text = stringResource(R.string.NoAlertsTXT),
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                        } else {
+                            weatherAlerts.forEach { alert ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(8.dp)
+                                            .background(alert.color, CircleShape)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = alert.message,
+                                        fontSize = 14.sp,
+                                        color = alert.color,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+
+                // Weather Map Card
+                val context = LocalContext.current
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.WeatherMapTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(12.dp))
+                        Button(
+                            onClick = {
+                                val intent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("https://www.windy.com/?${lat},${lon},5")
+                                )
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(stringResource(R.string.OpenMapTXT))
+                        }
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+
+                // Weather Notifications Card
+                var notificationsEnabled by remember { mutableStateOf(false) }
+                var notificationTime by remember { mutableStateOf("08:00") }
+                val notificationContext = LocalContext.current
+                
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.NotificationsTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(12.dp))
+                        
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(stringResource(R.string.EnableNotificationsTXT), fontSize = 14.sp)
+                            Switch(
+                                checked = notificationsEnabled,
+                                onCheckedChange = { notificationsEnabled = it }
+                            )
+                        }
+                        
+                        if (notificationsEnabled) {
+                            Spacer(Modifier.height(12.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(stringResource(R.string.NotificationTimeTXT), fontSize = 14.sp)
+                                Text(notificationTime, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                            }
+                            
+                            Spacer(Modifier.height(8.dp))
+                            Button(
+                                onClick = {
+                                    // Save notification settings
+                                    scheduleWeatherNotification(notificationContext, name, lat, lon, notificationTime)
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(stringResource(R.string.SaveSettingsTXT))
+                            }
+                        }
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
 
                 Text(stringResource(R.string.HourlyForecastTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(16.dp))
@@ -265,6 +477,19 @@ data class HourlyForecast(
     val time: String,
     val temp: Double,
     val weatherCode: Int
+)
+
+data class AQIInfo(
+    val value: Int,
+    val description: String,
+    val color: Color
+)
+
+data class WeatherAlert(
+    val type: String,
+    val message: String,
+    val severity: String,
+    val color: Color
 )
 
 @Composable
@@ -403,7 +628,7 @@ fun parseHourlyForecastData(weatherJson: String): List<HourlyForecast> {
             val timeStr = times.getString(i)
             val date = inputFormat.parse(timeStr)
 
-            val calendar = Calendar.getInstance()
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone(timezone))
             if (date != null) {
                 calendar.time = date
             }
@@ -425,4 +650,228 @@ fun parseHourlyForecastData(weatherJson: String): List<HourlyForecast> {
     }
 
     return hourlyForecastList
+}
+
+fun getCurrentHourIndex(timesArray: JSONArray): Int {
+    val now = Calendar.getInstance()
+    val currentHour = now.get(Calendar.HOUR_OF_DAY)
+    val currentMinute = now.get(Calendar.MINUTE)
+    
+    for (i in 0 until timesArray.length()) {
+        val timeStr = timesArray.getString(i)
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())
+        val date = inputFormat.parse(timeStr)
+        
+        if (date != null) {
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+            
+            if (hour == currentHour && currentMinute < 30) return i
+            if (hour == currentHour - 1 && currentMinute >= 30) return i
+        }
+    }
+    return 0
+}
+
+fun formatTime(timeString: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val date = inputFormat.parse(timeString)
+        outputFormat.format(date ?: Date())
+    } catch (e: Exception) {
+        timeString.substring(11, 16) // Fallback to HH:mm format
+    }
+}
+
+fun calculateAQI(aqiJson: String, context: android.content.Context): AQIInfo {
+    return try {
+        val obj = JSONObject(aqiJson)
+        val hourly = obj.getJSONObject("hourly")
+        val pm25Array = hourly.getJSONArray("pm2_5")
+        val pm10Array = hourly.getJSONArray("pm10")
+        
+        // Get current hour index
+        val currentIndex = getCurrentHourIndex(hourly.getJSONArray("time"))
+        val pm25 = if (currentIndex >= 0 && currentIndex < pm25Array.length()) pm25Array.getDouble(currentIndex) else 0.0
+        val pm10 = if (currentIndex >= 0 && currentIndex < pm10Array.length()) pm10Array.getDouble(currentIndex) else 0.0
+        
+        // Calculate AQI based on PM2.5 (primary pollutant)
+        val aqiValue = calculateUSAQI(pm25)
+        
+        val resources = context.resources
+        when {
+            aqiValue <= 50 -> AQIInfo(aqiValue, resources.getString(R.string.AQIGoodTXT), Color(0xFF00E400))
+            aqiValue <= 100 -> AQIInfo(aqiValue, resources.getString(R.string.AQIModerateTXT), Color(0xFFFFD700))
+            aqiValue <= 150 -> AQIInfo(aqiValue, resources.getString(R.string.AQIUnhealthySensitiveTXT), Color(0xFFFF7E00))
+            aqiValue <= 200 -> AQIInfo(aqiValue, resources.getString(R.string.AQIUnhealthyTXT), Color(0xFFFF0000))
+            aqiValue <= 300 -> AQIInfo(aqiValue, resources.getString(R.string.AQIVeryUnhealthyTXT), Color(0xFF8F3F97))
+            else -> AQIInfo(aqiValue, resources.getString(R.string.AQIHazardousTXT), Color(0xFF7E0023))
+        }
+    } catch (e: Exception) {
+        AQIInfo(0, "Unknown", Color.Gray)
+    }
+}
+
+fun calculateUSAQI(pm25: Double): Int {
+    return when {
+        pm25 <= 12.0 -> (pm25 / 12.0 * 50).toInt()
+        pm25 <= 35.4 -> ((pm25 - 12.0) / (35.4 - 12.0) * 50 + 50).toInt()
+        pm25 <= 55.4 -> ((pm25 - 35.4) / (55.4 - 35.4) * 50 + 100).toInt()
+        pm25 <= 150.4 -> ((pm25 - 55.4) / (150.4 - 55.4) * 50 + 150).toInt()
+        pm25 <= 250.4 -> ((pm25 - 150.4) / (250.4 - 150.4) * 100 + 200).toInt()
+        else -> ((pm25 - 250.4) / (500.4 - 250.4) * 100 + 300).toInt()
+    }
+}
+
+fun calculateWeatherAlerts(
+    temp: Double,
+    wind: Double,
+    precipitation: Double,
+    weatherCode: Int,
+    feelsLike: Double,
+    context: android.content.Context
+): List<WeatherAlert> {
+    val alerts = mutableListOf<WeatherAlert>()
+    val resources = context.resources
+    
+    // Wind alerts
+    if (wind > 50) {
+        alerts.add(
+            WeatherAlert(
+                type = "wind",
+                message = String.format(resources.getString(R.string.WindAlertTXT), wind.toInt()),
+                severity = "high",
+                color = Color(0xFFFF0000)
+            )
+        )
+    } else if (wind > 35) {
+        alerts.add(
+            WeatherAlert(
+                type = "wind",
+                message = String.format(resources.getString(R.string.WindAlertTXT), wind.toInt()),
+                severity = "medium",
+                color = Color(0xFFFFA500)
+            )
+        )
+    }
+    
+    // Precipitation alerts
+    if (precipitation > 70) {
+        alerts.add(
+            WeatherAlert(
+                type = "rain",
+                message = String.format(resources.getString(R.string.RainAlertTXT), precipitation.toInt()),
+                severity = "high",
+                color = Color(0xFF0000FF)
+            )
+        )
+    } else if (precipitation > 50) {
+        alerts.add(
+            WeatherAlert(
+                type = "rain",
+                message = String.format(resources.getString(R.string.RainAlertTXT), precipitation.toInt()),
+                severity = "medium",
+                color = Color(0xFF0080FF)
+            )
+        )
+    }
+    
+    // Temperature alerts
+    if (temp > 35 || temp < -10) {
+        alerts.add(
+            WeatherAlert(
+                type = "temperature",
+                message = String.format(resources.getString(R.string.TemperatureAlertTXT), temp.toInt(), feelsLike.toInt()),
+                severity = "high",
+                color = Color(0xFFFF00FF)
+            )
+        )
+    } else if (temp > 30 || temp < -5) {
+        alerts.add(
+            WeatherAlert(
+                type = "temperature",
+                message = String.format(resources.getString(R.string.TemperatureAlertTXT), temp.toInt(), feelsLike.toInt()),
+                severity = "medium",
+                color = Color(0xFF800080)
+            )
+        )
+    }
+    
+    // Storm alerts (based on weather codes)
+    if (weatherCode in 95..99 || weatherCode in 45..48) {
+        alerts.add(
+            WeatherAlert(
+                type = "storm",
+                message = resources.getString(R.string.StormAlertTXT),
+                severity = "high",
+                color = Color(0xFF8B0000)
+            )
+        )
+    }
+    
+    // Snow alerts
+    if (weatherCode in 71..79) {
+        alerts.add(
+            WeatherAlert(
+                type = "snow",
+                message = resources.getString(R.string.SnowAlertTXT),
+                severity = "medium",
+                color = Color(0xFF87CEEB)
+            )
+        )
+    }
+    
+    return alerts
+}
+
+fun scheduleWeatherNotification(
+    context: Context,
+    locationName: String,
+    lat: Double,
+    lon: Double,
+    time: String
+) {
+    try {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        
+        // Create notification channel
+        val channel = NotificationChannel(
+            "weather_notifications",
+            "Weather Updates",
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = "Daily weather notifications"
+        }
+        notificationManager.createNotificationChannel(channel)
+        
+        // Show immediate notification for demo
+        val intent = Intent(context, WeatherDetailActivity::class.java).apply {
+            putExtra("name", locationName)
+            putExtra("lat", lat)
+            putExtra("lon", lon)
+        }
+        
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        
+        val notification = androidx.core.app.NotificationCompat.Builder(context, "weather_notifications")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(context.getString(R.string.DailyWeatherUpdateTXT))
+            .setContentText(String.format(context.getString(R.string.WeatherNotificationTXT), locationName, "15", "Partly Cloudy"))
+            .setPriority(androidx.core.app.NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+        
+        notificationManager.notify(1, notification)
+        
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
