@@ -828,7 +828,18 @@ fun formatTime(timeString: String): String {
         val date = inputFormat.parse(timeString)
         outputFormat.format(date ?: Date())
     } catch (e: Exception) {
-        timeString.substring(11, 16) // Fallback to HH:mm format
+        // Safe fallback with bounds checking
+        try {
+            if (timeString.length >= 16) {
+                timeString.substring(11, 16) // Extract HH:mm from format like "2024-01-01T12:30"
+            } else if (timeString.length >= 5) {
+                timeString.takeLast(5) // Take last 5 characters
+            } else {
+                timeString // Return as-is if very short
+            }
+        } catch (e: Exception) {
+            "N/A" // Ultimate fallback
+        }
     }
 }
 
