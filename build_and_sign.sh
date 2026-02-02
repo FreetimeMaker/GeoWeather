@@ -3,7 +3,7 @@ set -e
 
 ### CONFIG ###
 APP_ID="com.freetime.geoweather"
-TAG="v1.1.8"   # <-- HIER deine Version eintragen
+TAG="v1.1.9"   # <-- HIER deine Version eintragen
 KEYSTORE="$HOME/AndroidStudioProjects/GeoWeather/GeoWeather-KeyStore.jks"
 KEY_ALIAS="alle"
 KEY_PASS="KKKKKK"

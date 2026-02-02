@@ -187,19 +187,43 @@ fun WeatherDetailScreen(
                 val wind = current.getDouble("windspeed")
                 val weatherCode = current.getInt("weathercode")
                 
-                // Get hourly data for current conditions
-                val hourly = obj.getJSONObject("hourly")
-                val currentHourIndex = getCurrentHourIndex(hourly.getJSONArray("time"))
-                val humidity = if (currentHourIndex >= 0) hourly.getJSONArray("relativehumidity_2m").getDouble(currentHourIndex) else 0.0
-                val pressure = if (currentHourIndex >= 0) hourly.getJSONArray("pressure_msl").getDouble(currentHourIndex) else 0.0
-                val feelsLike = if (currentHourIndex >= 0) hourly.getJSONArray("apparent_temperature").getDouble(currentHourIndex) else temp
+                // Get hourly data for current conditions with error handling
+                var humidity: Double
+                var pressure: Double
+                var feelsLike: Double
+                var precipitation: Double
                 
-                // Get daily data
-                val daily = obj.getJSONObject("daily")
-                val sunrise = daily.getJSONArray("sunrise").getString(0)
-                val sunset = daily.getJSONArray("sunset").getString(0)
-                val precipitation = daily.getJSONArray("precipitation_probability_max").getDouble(0)
-                val maxWind = daily.getJSONArray("windspeed_10m_max").getDouble(0)
+                try {
+                    val hourly = obj.getJSONObject("hourly")
+                    val currentHourIndex = getCurrentHourIndex(hourly.getJSONArray("time"))
+                    humidity = if (currentHourIndex >= 0) hourly.getJSONArray("relativehumidity_2m").getDouble(currentHourIndex) else 0.0
+                    pressure = if (currentHourIndex >= 0) hourly.getJSONArray("pressure_msl").getDouble(currentHourIndex) else 0.0
+                    feelsLike = if (currentHourIndex >= 0) hourly.getJSONArray("apparent_temperature").getDouble(currentHourIndex) else temp
+                    precipitation = if (currentHourIndex >= 0) hourly.getJSONArray("precipitation_probability_max").getDouble(currentHourIndex) else 0.0
+                } catch (e: Exception) {
+                    // Fallback values if hourly data is missing
+                    humidity = 0.0
+                    pressure = 0.0
+                    feelsLike = temp
+                    precipitation = 0.0
+                }
+                
+                // Get daily data with error handling
+                var sunrise: String
+                var sunset: String
+                var maxWind: Double
+                
+                try {
+                    val daily = obj.getJSONObject("daily")
+                    sunrise = daily.getJSONArray("sunrise").getString(0)
+                    sunset = daily.getJSONArray("sunset").getString(0)
+                    maxWind = daily.getJSONArray("windspeed_10m_max").getDouble(0)
+                } catch (e: Exception) {
+                    // Fallback values if daily data is missing
+                    sunrise = "N/A"
+                    sunset = "N/A"
+                    maxWind = 0.0
+                }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
