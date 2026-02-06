@@ -5,9 +5,9 @@ GeoWeather is a WIP Android App (even if there are Releases right now. Because a
 <h1>Release numbers</h1>
 </div>
 
-[![Latest release](https://img.shields.io/github/v/release/mostafaalagamy/Metrolist?style=for-the-badge)](https://github.com/mostafaalagamy/Metrolist/releases)
-[![GitHub license](https://img.shields.io/github/license/mostafaalagamy/metrolist?style=for-the-badge)](https://github.com/mostafaalagamy/Metrolist/blob/main/LICENSE)
-[![Downloads](https://img.shields.io/github/downloads/mostafaalagamy/Metrolist/total?style=for-the-badge)](https://github.com/mostafaalagamy/Metrolist/releases)
+[![Latest release](https://img.shields.io/github/v/release/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
+[![GitHub license](https://img.shields.io/github/license/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/blob/main/LICENSE)
+[![Downloads](https://img.shields.io/github/downloads/FreetimeMaker/GeoWeather/total?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
 </div>
 
 # GeoWeather Features
