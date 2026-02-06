@@ -122,34 +122,34 @@ fun WeatherDetailScreen(
     val db = LocationDatabase.getDatabase(LocalContext.current)
 
     LaunchedEffect(Unit) {
-        scope.launch(Dispatchers.IO) {
-            val entity = db.locationDao().findByCoordinates(lat, lon)
-            if (entity?.weatherData != null) {
-                withContext(Dispatchers.Main) {
-                    weatherJson = entity.weatherData
-                    forecastList = parseForecastData(entity.weatherData)
-                    hourlyForecastList = parseHourlyForecastData(entity.weatherData)
-                }
-            } else {
-                val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&timezone=auto"
-                val aqiUrl = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
-                try {
-                    val json = httpGet(url)
-                    val aqiJsonResponse = try { httpGet(aqiUrl) } catch (e: Exception) { null }
-                    val updatedEntity = entity?.copy(weatherData = json)
-                    if (updatedEntity != null) {
-                        db.locationDao().updateLocation(updatedEntity)
-                    }
-                    withContext(Dispatchers.Main) {
-                        weatherJson = json
-                        aqiJson = aqiJsonResponse
-                        forecastList = parseForecastData(json)
-                        hourlyForecastList = parseHourlyForecastData(json)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+        val entity = withContext(Dispatchers.IO) {
+            db.locationDao().findByCoordinates(lat, lon)
+        }
+
+        if (entity?.weatherData != null) {
+            weatherJson = entity.weatherData
+            forecastList = parseForecastData(entity.weatherData)
+            hourlyForecastList = parseHourlyForecastData(entity.weatherData)
+        } else {
+            val url =
+                "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&timezone=auto"
+
+            val aqiUrl =
+                "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
+
+            val json = withContext(Dispatchers.IO) { httpGet(url) }
+            val aqiJsonResponse = withContext(Dispatchers.IO) {
+                try { httpGet(aqiUrl) } catch (e: Exception) { null }
             }
+
+            entity?.copy(weatherData = json)?.let {
+                withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
+            }
+
+            weatherJson = json
+            aqiJson = aqiJsonResponse
+            forecastList = parseForecastData(json)
+            hourlyForecastList = parseHourlyForecastData(json)
         }
     }
 
