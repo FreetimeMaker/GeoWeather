@@ -1,6 +1,7 @@
 package com.freetime.geoweather
 
 import android.app.NotificationChannel
+import androidx.compose.foundation.layout.*
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -15,10 +16,13 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -158,9 +162,10 @@ fun WeatherDetailScreen(
             modifier = Modifier.padding(16.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Button(
                     onClick = onBack,
@@ -262,8 +267,8 @@ fun WeatherDetailScreen(
                         Spacer(Modifier.height(12.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text(formatTime(sunrise), fontSize = 14.sp, fontWeight = FontWeight.Medium)
-                            Text(stringResource(R.string.SunriseTXT), fontSize = 14.sp, color = Color(0xFFFFA500))
-                            Text(stringResource(R.string.SunsetText), fontSize = 14.sp, color = Color(0xFFFF6B35))
+                            Text(String.format(Locale.getDefault(), stringResource(R.string.SunriseTXT), if (sunrise != "N/A") sunrise.toInt() else 0), fontSize = 14.sp, color = Color(0xFFFFA500))
+                            Text(String.format(Locale.getDefault(), stringResource(R.string.SunsetText), if (sunset != "N/A") sunset.toInt() else 0), fontSize = 14.sp, color = Color(0xFFFF6B35))
                             Text(formatTime(sunset), fontSize = 14.sp, fontWeight = FontWeight.Medium)
                         }
                     }
