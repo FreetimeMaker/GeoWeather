@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.work.*
 import com.freetime.geoweather.R
@@ -848,7 +849,7 @@ fun formatTime(timeString: String): String {
     }
 }
 
-fun calculateAQI(aqiJson: String, context: android.content.Context): AQIInfo {
+fun calculateAQI(aqiJson: String, context: Context): AQIInfo {
     return try {
         val obj = JSONObject(aqiJson)
         val hourly = obj.getJSONObject("hourly")
@@ -894,7 +895,7 @@ fun calculateWeatherAlerts(
     precipitation: Double,
     weatherCode: Int,
     feelsLike: Double,
-    context: android.content.Context
+    context: Context
 ): List<WeatherAlert> {
     val alerts = mutableListOf<WeatherAlert>()
     val resources = context.resources
