@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.work.*
 import com.freetime.geoweather.R
 import com.freetime.geoweather.data.LocationDatabase
+import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -160,11 +161,12 @@ fun WeatherDetailScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -348,7 +350,7 @@ fun WeatherDetailScreen(
                 }
                 Spacer(Modifier.height(16.dp))
 
-                // Get context for notifications
+                // Get context for map and notifications
                 val context = LocalContext.current
 
                 // Weather Map Card
@@ -376,170 +378,171 @@ fun WeatherDetailScreen(
                 Spacer(Modifier.height(16.dp))
 
                 // Weather Notifications Card
-                val sharedPreferences = remember { context.getSharedPreferences("weather_notifications", Context.MODE_PRIVATE) }
-                var notificationsEnabled by remember { mutableStateOf(sharedPreferences.getBoolean("notifications_enabled", false)) }
-                var notificationTime by remember { mutableStateOf(sharedPreferences.getString("notification_time", "08:00") ?: "08:00") }
+                val scope = rememberCoroutineScope()
                 var showTimePicker by remember { mutableStateOf(false) }
-                val coroutineScope = rememberCoroutineScope()
                 
-                // Weather Change Alerts
-                var changeAlertsEnabled by remember { mutableStateOf(sharedPreferences.getBoolean("change_alerts_enabled", false)) }
-                var selectedInterval by remember { mutableStateOf(sharedPreferences.getString("change_interval", "3") ?: "3") }
+                // Get location entity for notification settings
+                var locationEntity by remember { mutableStateOf<LocationEntity?>(null) }
                 
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(stringResource(R.string.NotificationsTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Spacer(Modifier.height(12.dp))
-                        
-                        // Daily Weather Updates
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(stringResource(R.string.EnableNotificationsTXT), fontSize = 14.sp)
-                            Switch(
-                                checked = notificationsEnabled,
-                                onCheckedChange = { 
-                                    notificationsEnabled = it
-                                    sharedPreferences.edit()
-                                        .putBoolean("notifications_enabled", it)
-                                        .apply()
-                                    
-                                    if (it) {
-                                        scheduleDailyWeatherNotification(context, name, lat, lon, notificationTime)
-                                    } else {
-                                        cancelWeatherNotifications(context)
-                                    }
-                                }
-                            )
-                        }
-                        
-                        if (notificationsEnabled) {
+                LaunchedEffect(Unit) {
+                    locationEntity = withContext(Dispatchers.IO) {
+                        db.locationDao().findByCoordinates(lat, lon)
+                    }
+                }
+                
+                locationEntity?.let { location ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(stringResource(R.string.NotificationsTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
                             Spacer(Modifier.height(12.dp))
+                            
+                            // Daily Weather Updates
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(stringResource(R.string.NotificationTimeTXT), fontSize = 14.sp)
-                                Button(
-                                    onClick = { showTimePicker = true },
-                                    modifier = Modifier.padding(horizontal = 8.dp)
-                                ) {
-                                    Text(notificationTime, fontSize = 14.sp)
-                                }
+                                Text(stringResource(R.string.EnableNotificationsTXT), fontSize = 14.sp)
+                                Switch(
+                                    checked = location.notificationsEnabled,
+                                    onCheckedChange = { 
+                                        val updatedLocation = location.copy(notificationsEnabled = it)
+                                        scope.launch {
+                                            withContext(Dispatchers.IO) {
+                                                db.locationDao().updateLocation(updatedLocation)
+                                            }
+                                            locationEntity = updatedLocation
+                                        }
+                                        
+                                        if (it) {
+                                            scheduleDailyWeatherNotification(context, location.notificationTime)
+                                        } else {
+                                            cancelWeatherNotifications(context)
+                                        }
+                                    }
+                                )
                             }
-                        }
-                        
-                        Spacer(Modifier.height(16.dp))
-                        
-                        // Weather Change Alerts
-                        Text(stringResource(R.string.WeatherChangeAlertsTXT), fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                        Spacer(Modifier.height(8.dp))
-                        
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(stringResource(R.string.EnableChangeAlertsTXT), fontSize = 14.sp)
-                            Switch(
-                                checked = changeAlertsEnabled,
-                                onCheckedChange = { 
-                                    changeAlertsEnabled = it
-                                    sharedPreferences.edit()
-                                        .putBoolean("change_alerts_enabled", it)
-                                        .apply()
-                                    
-                                    if (it) {
-                                        scheduleWeatherChangeAlerts(context, selectedInterval)
-                                    } else {
-                                        cancelWeatherChangeAlerts(context)
+                            
+                            if (location.notificationsEnabled) {
+                                Spacer(Modifier.height(12.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(stringResource(R.string.NotificationTimeTXT), fontSize = 14.sp)
+                                    Button(
+                                        onClick = { showTimePicker = true },
+                                        modifier = Modifier.padding(horizontal = 8.dp)
+                                    ) {
+                                        Text(location.notificationTime, fontSize = 14.sp)
                                     }
                                 }
-                            )
-                        }
-                        
-                        if (changeAlertsEnabled) {
-                            Spacer(Modifier.height(12.dp))
-                            Text(stringResource(R.string.ChangeAlertIntervalTXT), fontSize = 14.sp)
+                            }
+                            
+                            Spacer(Modifier.height(16.dp))
+                            
+                            // Weather Change Alerts
+                            Text(stringResource(R.string.WeatherChangeAlertsTXT), fontSize = 16.sp, fontWeight = FontWeight.Bold)
                             Spacer(Modifier.height(8.dp))
                             
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                listOf("2", "3", "6").forEach { hours ->
-                                    Button(
-                                        onClick = {
-                                            selectedInterval = hours
-                                            sharedPreferences.edit()
-                                                .putString("change_interval", hours)
-                                                .apply()
-                                            scheduleWeatherChangeAlerts(context, hours)
-                                        },
-                                        modifier = Modifier.weight(1f),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = if (selectedInterval == hours) 
-                                                MaterialTheme.colorScheme.primary 
-                                            else 
-                                                MaterialTheme.colorScheme.surface
-                                        )
-                                    ) {
-                                        Text(
-                                            text = when (hours) {
-                                                "2" -> stringResource(R.string.Interval2HoursTXT)
-                                                "3" -> stringResource(R.string.Interval3HoursTXT)
-                                                "6" -> stringResource(R.string.Interval6HoursTXT)
-                                                else -> "$hours hours"
+                                Text(stringResource(R.string.EnableChangeAlertsTXT), fontSize = 14.sp)
+                                Switch(
+                                    checked = location.changeAlertsEnabled,
+                                    onCheckedChange = { 
+                                        val updatedLocation = location.copy(changeAlertsEnabled = it)
+                                        scope.launch {
+                                            withContext(Dispatchers.IO) {
+                                                db.locationDao().updateLocation(updatedLocation)
+                                            }
+                                            locationEntity = updatedLocation
+                                        }
+                                        
+                                        if (it) {
+                                            scheduleWeatherChangeAlerts(context, location.changeAlertInterval)
+                                        } else {
+                                            cancelWeatherChangeAlerts(context)
+                                        }
+                                    }
+                                )
+                            }
+                            
+                            if (location.changeAlertsEnabled) {
+                                Spacer(Modifier.height(12.dp))
+                                Text(stringResource(R.string.ChangeAlertIntervalTXT), fontSize = 14.sp)
+                                Spacer(Modifier.height(8.dp))
+                                
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    listOf("2", "3", "6").forEach { hours ->
+                                        Button(
+                                            onClick = {
+                                                val updatedLocation = location.copy(changeAlertInterval = hours)
+                                                scope.launch {
+                                                    withContext(Dispatchers.IO) {
+                                                        db.locationDao().updateLocation(updatedLocation)
+                                                    }
+                                                    locationEntity = updatedLocation
+                                                }
+                                                scheduleWeatherChangeAlerts(context, hours)
                                             },
-                                            fontSize = 12.sp,
-                                            color = if (selectedInterval == hours) 
-                                                MaterialTheme.colorScheme.onPrimary 
-                                            else 
-                                                MaterialTheme.colorScheme.onSurface
-                                        )
+                                            modifier = Modifier.weight(1f),
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = if (location.changeAlertInterval == hours) 
+                                                    MaterialTheme.colorScheme.primary 
+                                                else 
+                                                    MaterialTheme.colorScheme.surface
+                                            )
+                                        ) {
+                                            Text(
+                                                text = when (hours) {
+                                                    "2" -> stringResource(R.string.Interval2HoursTXT)
+                                                    "3" -> stringResource(R.string.Interval3HoursTXT)
+                                                    "6" -> stringResource(R.string.Interval6HoursTXT)
+                                                    else -> "$hours hours"
+                                                },
+                                                fontSize = 12.sp,
+                                                color = if (location.changeAlertInterval == hours) 
+                                                    MaterialTheme.colorScheme.onPrimary 
+                                                else 
+                                                    MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
-                        
-                        if (notificationsEnabled || changeAlertsEnabled) {
-                            Spacer(Modifier.height(12.dp))
-                            Button(
-                                onClick = {
-                                    // Save all notification settings
-                                    if (notificationsEnabled) {
-                                        scheduleDailyWeatherNotification(context, name, lat, lon, notificationTime)
-                                    }
-                                    if (changeAlertsEnabled) {
-                                        scheduleWeatherChangeAlerts(context, selectedInterval)
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(stringResource(R.string.SaveSettingsTXT))
-                            }
-                        }
                     }
-                }
-                
-                if (showTimePicker) {
-                    TimePickerDialog(
-                        onTimeSelected = { time ->
-                            notificationTime = time
-                            sharedPreferences.edit()
-                                .putString("notification_time", time)
-                                .apply()
-                            showTimePicker = false
-                        },
-                        onDismiss = { showTimePicker = false },
-                        initialTime = notificationTime
-                    )
+                    
+                    if (showTimePicker) {
+                        TimePickerDialog(
+                            onTimeSelected = { time ->
+                                val updatedLocation = location.copy(notificationTime = time)
+                                scope.launch {
+                                    withContext(Dispatchers.IO) {
+                                        db.locationDao().updateLocation(updatedLocation)
+                                    }
+                                    locationEntity = updatedLocation
+                                }
+                                if (location.notificationsEnabled) {
+                                    scheduleDailyWeatherNotification(context, time)
+                                }
+                                showTimePicker = false
+                            },
+                            onDismiss = { showTimePicker = false },
+                            initialTime = location.notificationTime
+                        )
+                    }
                 }
                 Spacer(Modifier.height(16.dp))
 
@@ -1042,21 +1045,10 @@ fun TimePickerDialog(
 
 fun scheduleDailyWeatherNotification(
     context: Context,
-    locationName: String,
-    lat: Double,
-    lon: Double,
     time: String
 ) {
     try {
         val workManager = WorkManager.getInstance(context)
-        
-        // Save location data for worker
-        val sharedPreferences = context.getSharedPreferences("weather_notifications", Context.MODE_PRIVATE)
-        sharedPreferences.edit()
-            .putString("location_name", locationName)
-            .putFloat("location_lat", lat.toFloat())
-            .putFloat("location_lon", lon.toFloat())
-            .apply()
         
         // Parse time
         val (hour, minute) = time.split(":").map { it.toInt() }

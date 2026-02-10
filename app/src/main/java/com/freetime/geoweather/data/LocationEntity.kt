@@ -11,7 +11,11 @@ data class LocationEntity(
     val latitude: Double,
     val longitude: Double,
     val weatherData: String? = null,
-    val lastUpdated: Long = 0
+    val lastUpdated: Long = 0,
+    val notificationsEnabled: Boolean = false,
+    val notificationTime: String = "08:00",
+    val changeAlertsEnabled: Boolean = false,
+    val changeAlertInterval: String = "3"
 ) {
     val currentTemp: String?
         get() {

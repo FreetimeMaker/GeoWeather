@@ -9,6 +9,7 @@ import android.content.SharedPreferences
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.freetime.geoweather.data.LocationDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -23,26 +24,27 @@ class WeatherNotificationWorker(
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            val sharedPreferences = applicationContext.getSharedPreferences("weather_notifications", Context.MODE_PRIVATE)
-            val notificationsEnabled = sharedPreferences.getBoolean("notifications_enabled", false)
+            val db = LocationDatabase.getDatabase(applicationContext)
+            val locations = db.locationDao().getAllLocationsSync()
             
-            if (!notificationsEnabled) {
-                return@withContext Result.success()
+            for (location in locations) {
+                if (location.notificationsEnabled) {
+                    // Fetch current weather data for this location
+                    val weatherData = fetchWeatherData(location.latitude, location.longitude)
+                    val temp = weatherData.getDouble("temp")
+                    val weatherCode = weatherData.getInt("weather_code")
+                    val weatherDescription = getWeatherDescription(weatherCode)
+
+                    // Send notification for this location
+                    sendWeatherNotification(
+                        applicationContext, 
+                        location.name, 
+                        temp, 
+                        weatherDescription,
+                        location.id
+                    )
+                }
             }
-
-            // Get saved location
-            val locationName = sharedPreferences.getString("location_name", "Current Location") ?: "Current Location"
-            val lat = sharedPreferences.getFloat("location_lat", 52.5200f).toDouble()
-            val lon = sharedPreferences.getFloat("location_lon", 13.4050f).toDouble()
-
-            // Fetch current weather data
-            val weatherData = fetchWeatherData(lat, lon)
-            val temp = weatherData.getDouble("temp")
-            val weatherCode = weatherData.getInt("weather_code")
-            val weatherDescription = getWeatherDescription(weatherCode)
-
-            // Send notification
-            sendWeatherNotification(applicationContext, locationName, temp, weatherDescription)
             
             Result.success()
         } catch (e: Exception) {
@@ -80,7 +82,8 @@ class WeatherNotificationWorker(
         context: Context,
         locationName: String,
         temperature: Double,
-        weatherDescription: String
+        weatherDescription: String,
+        locationId: Long
     ) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
@@ -94,14 +97,17 @@ class WeatherNotificationWorker(
         }
         notificationManager.createNotificationChannel(channel)
         
-        // Create intent for opening app
-        val intent = Intent(context, MainActivity::class.java).apply {
+        // Create intent for opening app with specific location
+        val intent = Intent(context, WeatherDetailActivity::class.java).apply {
+            putExtra("name", locationName)
+            putExtra("lat", 0.0) // These will be fetched from DB in the activity
+            putExtra("lon", 0.0)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         
         val pendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            locationId.toInt(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -120,6 +126,7 @@ class WeatherNotificationWorker(
             .setAutoCancel(true)
             .build()
         
-        notificationManager.notify(System.currentTimeMillis().toInt(), notification)
+        // Use location ID for unique notification ID
+        notificationManager.notify(locationId.toInt(), notification)
     }
 }

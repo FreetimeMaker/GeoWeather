@@ -9,6 +9,7 @@ import android.content.SharedPreferences
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.freetime.geoweather.data.LocationDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -31,40 +32,35 @@ class WeatherChangeWorker(
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            val sharedPreferences = applicationContext.getSharedPreferences("weather_notifications", Context.MODE_PRIVATE)
-            val changeAlertsEnabled = sharedPreferences.getBoolean("change_alerts_enabled", false)
+            val db = LocationDatabase.getDatabase(applicationContext)
+            val locations = db.locationDao().getAllLocationsSync()
             
-            if (!changeAlertsEnabled) {
-                return@withContext Result.success()
-            }
+            for (location in locations) {
+                if (location.changeAlertsEnabled) {
+                    // Fetch current weather data for this location
+                    val currentWeather = fetchCurrentWeatherData(location.latitude, location.longitude)
+                    val currentSnapshot = WeatherSnapshot(
+                        temperature = currentWeather.getDouble("temp"),
+                        windSpeed = currentWeather.getDouble("windspeed"),
+                        precipitation = currentWeather.getDouble("precipitation"),
+                        weatherCode = currentWeather.getInt("weather_code"),
+                        timestamp = System.currentTimeMillis()
+                    )
 
-            // Get saved location
-            val locationName = sharedPreferences.getString("location_name", "Current Location") ?: "Current Location"
-            val lat = sharedPreferences.getFloat("location_lat", 52.5200f).toDouble()
-            val lon = sharedPreferences.getFloat("location_lon", 13.4050f).toDouble()
+                    // Get last saved weather snapshot for this location
+                    val lastSnapshot = getLastWeatherSnapshot(applicationContext, location.id)
 
-            // Fetch current weather data
-            val currentWeather = fetchCurrentWeatherData(lat, lon)
-            val currentSnapshot = WeatherSnapshot(
-                temperature = currentWeather.getDouble("temp"),
-                windSpeed = currentWeather.getDouble("windspeed"),
-                precipitation = currentWeather.getDouble("precipitation"),
-                weatherCode = currentWeather.getInt("weather_code"),
-                timestamp = System.currentTimeMillis()
-            )
+                    if (lastSnapshot != null) {
+                        val changes = detectWeatherChanges(lastSnapshot, currentSnapshot)
+                        if (changes.isNotEmpty()) {
+                            sendWeatherChangeAlert(applicationContext, location.name, changes, location.id)
+                        }
+                    }
 
-            // Get last saved weather snapshot
-            val lastSnapshot = getLastWeatherSnapshot(sharedPreferences)
-
-            if (lastSnapshot != null) {
-                val changes = detectWeatherChanges(lastSnapshot, currentSnapshot)
-                if (changes.isNotEmpty()) {
-                    sendWeatherChangeAlert(applicationContext, locationName, changes)
+                    // Save current snapshot for this location
+                    saveWeatherSnapshot(applicationContext, currentSnapshot, location.id)
                 }
             }
-
-            // Save current snapshot
-            saveWeatherSnapshot(sharedPreferences, currentSnapshot)
             
             Result.success()
         } catch (e: Exception) {
@@ -99,8 +95,9 @@ class WeatherChangeWorker(
         return currentWeather
     }
 
-    private fun getLastWeatherSnapshot(sharedPreferences: SharedPreferences): WeatherSnapshot? {
+    private fun getLastWeatherSnapshot(context: Context, locationId: Long): WeatherSnapshot? {
         return try {
+            val sharedPreferences = context.getSharedPreferences("weather_change_$locationId", Context.MODE_PRIVATE)
             val temp = sharedPreferences.getFloat("last_temp", Float.NaN).toDouble()
             val wind = sharedPreferences.getFloat("last_wind", Float.NaN).toDouble()
             val precip = sharedPreferences.getFloat("last_precip", Float.NaN).toDouble()
@@ -117,7 +114,8 @@ class WeatherChangeWorker(
         }
     }
 
-    private fun saveWeatherSnapshot(sharedPreferences: SharedPreferences, snapshot: WeatherSnapshot) {
+    private fun saveWeatherSnapshot(context: Context, snapshot: WeatherSnapshot, locationId: Long) {
+        val sharedPreferences = context.getSharedPreferences("weather_change_$locationId", Context.MODE_PRIVATE)
         sharedPreferences.edit()
             .putFloat("last_temp", snapshot.temperature.toFloat())
             .putFloat("last_wind", snapshot.windSpeed.toFloat())
@@ -178,7 +176,8 @@ class WeatherChangeWorker(
     private fun sendWeatherChangeAlert(
         context: Context,
         locationName: String,
-        changes: List<String>
+        changes: List<String>,
+        locationId: Long
     ) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
@@ -192,14 +191,17 @@ class WeatherChangeWorker(
         }
         notificationManager.createNotificationChannel(channel)
         
-        // Create intent for opening app
-        val intent = Intent(context, MainActivity::class.java).apply {
+        // Create intent for opening app with specific location
+        val intent = Intent(context, WeatherDetailActivity::class.java).apply {
+            putExtra("name", locationName)
+            putExtra("lat", 0.0) // These will be fetched from DB in the activity
+            putExtra("lon", 0.0)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         
         val pendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            locationId.toInt() + 1000, // Use different offset to avoid conflicts
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -218,6 +220,7 @@ class WeatherChangeWorker(
             .setContentIntent(pendingIntent)
             .build()
         
-        notificationManager.notify(System.currentTimeMillis().toInt(), notification)
+        // Use location ID + offset for unique notification ID
+        notificationManager.notify(locationId.toInt() + 1000, notification)
     }
 }
