@@ -26,7 +26,7 @@ Current Features are:
 - [x] Showing Weather Icons
 - [x] Hourly Weather Forecast
 - [x] Migrating to Jetpack Compose, Kotlin and Kotlin DSL
-- [ ] Adding Notifications
+- [x] Adding Notifications
 - [ ] More Weather Features like Adding Multiple API's for a better Weather Forecast.
 - [ ] Adding Screenshots and Videos to YouTube or other Providers for showing how the App Works.
 
