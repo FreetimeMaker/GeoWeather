@@ -18,6 +18,10 @@
     <string name="DonViaLTC">Spenden Sie über LTC</string>
     <string name="DonViaWallet">Mit Wallet-App spenden</string>
     <string name="DonViaUSD">USD zu Crypto spenden</string>
+    <string name="WalletTitle">Wählen Sie Ihre Wallet-App</string>
+    <string name="WalletDescription">Unterstützte Wallets: Trust Wallet, MetaMask, Coinbase, Binance, Exodus, Atomic Wallet und mehr.</string>
+    <string name="USDTitle">USD zu Kryptowährung Spende</string>
+    <string name="USDDescription">Zahlen Sie mit USD und wir konvertieren es automatisch in die von Ihnen gewählte Kryptowährung.</string>
     <string name="ViewSup">Spender anschauen</string>
     <string name="BackToWeaDash">Gehen Sie zurück zum Wetter Dashboard</string>
     <string name="DelLoc">Ort löschen</string>

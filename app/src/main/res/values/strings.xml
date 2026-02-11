@@ -17,6 +17,10 @@
     <string name="DonViaLTC">Donate via LTC</string>
     <string name="DonViaWallet">Donate with Wallet App</string>
     <string name="DonViaUSD">USD to Crypto Donation</string>
+    <string name="WalletTitle">Choose Your Wallet App</string>
+    <string name="WalletDescription">Supported Wallets: Trust Wallet, MetaMask, Coinbase, Binance, Exodus, Atomic Wallet and more.</string>
+    <string name="USDTitle">USD to Crypto Donation</string>
+    <string name="USDDescription">Pay with USD and we will automatically convert it to your chosen cryptocurrency.</string>
     <string name="ViewSup">View Supporters</string>
     <string name="BackToWeaDash">Go Back to the Weather Dashboard</string>
     <string name="DelLoc">Delete location</string>
