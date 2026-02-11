@@ -8,6 +8,7 @@ Current Features are:
 - Hourly Weather Forecast
 - Migrating to Jetpack Compose, Kotlin and Kotlin DSL
 - Adding Notifications
+- Adding FreetimeSDK (My Own PaymentSDK even for Games) for Donations
 
 Planned Features are:
 
