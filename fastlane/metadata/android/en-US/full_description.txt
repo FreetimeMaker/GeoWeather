@@ -1,16 +1,42 @@
-Inspired by MeteoSwiss a Swiss-Only Weather App.
+GeoWeather - Your Modern Weather App for Android
 
-Current Features are:
+Experience an intuitive weather application inspired by the Swiss MeteoSwiss app. GeoWeather provides you with precise weather information for multiple cities with an elegant user interface.
 
-- You can add Multiple Cities and look at the Weather and there are many more Features to come.
-- 7-Day Weather Forecast
-- Showing Weather Icons
-- Hourly Weather Forecast
-- Migrating to Jetpack Compose, Kotlin and Kotlin DSL
-- Adding Notifications
-- Adding FreetimeSDK (My Own PaymentSDK even for Games) for Donations
+🌟 KEY FEATURES:
 
-Planned Features are:
+🏙️ MULTIPLE CITIES
+- Add unlimited cities to your list
+- Quick switching between different locations
+- Personal favorites list
 
-- More Weather Features like adding Multiple API's for a better Weather Forecast.
-- Adding Screenshots and Videos to YouTube or other Providers for showing how the App Works.
+📅 7-DAY FORECAST
+- Detailed weather predictions for the entire week
+- Temperature trends and precipitation probability
+- Wind speed and humidity information
+
+⏰ HOURLY UPDATES
+- Precise weather data on an hourly basis
+- Optimal planning for your day
+- Real-time updates for weather changes
+
+🎨 VISUAL REPRESENTATION
+- Beautiful weather icons for every condition
+- Clear and comprehensive graphics
+- Modern Material Design interface
+
+🔔 SMART NOTIFICATIONS
+- Weather alerts for your locations
+- Personal notification settings
+- Daily weather summaries
+
+💳 DONATION FEATURE
+- Support continued development
+- Integrated FreetimeSDK for secure payments
+- Voluntary support for open source
+
+🛠️ MODERN TECHNOLOGY
+- Developed with Jetpack Compose for smooth performance
+- Native Android development with Kotlin
+- Regular updates and new features
+
+Perfect for daily weather checks, travel planning, or simply staying informed. Download GeoWeather now and experience weather in a whole new way!

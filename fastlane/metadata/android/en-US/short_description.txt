@@ -1,1 +1,1 @@
-A Weather App that is so good, WIP (Work In Progress) and has many Features.
+Modern weather app with 7-day forecast for multiple cities
