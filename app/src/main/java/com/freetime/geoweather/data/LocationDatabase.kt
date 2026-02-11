@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-@Database(entities = [LocationEntity::class], version = 3, exportSchema = false)
+@Database(entities = [LocationEntity::class], version = 4, exportSchema = false)
 abstract class LocationDatabase : RoomDatabase() {
 
     abstract fun locationDao(): LocationDao
