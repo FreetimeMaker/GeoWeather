@@ -63,6 +63,14 @@ fun DonateScreen(onBack: () -> Unit) {
         }) { Text(stringResource(R.string.DonViaLTC)) }
 
         Button(onClick = {
+            context.startActivity(Intent(context, WalletSelectionActivity::class.java))
+        }) { Text(stringResource(R.string.DonViaWallet)) }
+
+        Button(onClick = {
+            context.startActivity(Intent(context, USDGatewayActivity::class.java))
+        }) { Text(stringResource(R.string.DonViaUSD)) }
+
+        Button(onClick = {
             context.startActivity(Intent(context, DonatorActivity::class.java))
         }) { Text(stringResource(R.string.ViewSup)) }
 

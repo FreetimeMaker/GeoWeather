@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -230,7 +231,7 @@ class USDC_Activity : ComponentActivity() {
         setContent {
             GeoWeatherTheme {
                 WebViewScreen(
-                    url = "https.ncwallet.net/pay/15snog",
+                    url = "https://ncwallet.net/pay/15snog",
                     onBack = { finish() }
                 )
             }
@@ -420,6 +421,70 @@ class DonatorActivity : ComponentActivity() {
     }
 }
 
+class WalletSelectionActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        hideSystemUI()
+        setContent {
+            GeoWeatherTheme {
+                WalletSelectionScreen(
+                    onBack = { finish() }
+                )
+            }
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemUI()
+        }
+    }
+
+    private fun hideSystemUI() {
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
+    }
+}
+
+class USDGatewayActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        hideSystemUI()
+        setContent {
+            GeoWeatherTheme {
+                USDGatewayScreen(
+                    onBack = { finish() }
+                )
+            }
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemUI()
+        }
+    }
+
+    private fun hideSystemUI() {
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
+    }
+}
+
 @Composable
 fun WebViewScreen(
     url: String,
@@ -505,4 +570,100 @@ fun openDiscordInvite(context: Context) {
         Uri.parse("https://discord.gg/zPFvwK9pNh")
     )
     context.startActivity(webIntent)
+}
+
+@Composable
+fun WalletSelectionScreen(
+    onBack: () -> Unit,
+    context: Context = LocalContext.current
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 48.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                textAlign = TextAlign.Center,
+                text = "Wählen Sie Ihre Wallet-App",
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Text(
+                textAlign = TextAlign.Center,
+                text = "Unterstützte Wallets: Trust Wallet, MetaMask, Coinbase, Binance, Exodus, Atomic Wallet und mehr.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Button(
+                onClick = {
+                    // TODO: Implement FreetimeSDK wallet selection
+                    openDiscordInvite(context)
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Wallet-Auswahl starten")
+            }
+        }
+
+        Button(
+            onClick = onBack,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(stringResource(R.string.backToSupPag))
+        }
+    }
+}
+
+@Composable
+fun USDGatewayScreen(
+    onBack: () -> Unit,
+    context: Context = LocalContext.current
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 48.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                textAlign = TextAlign.Center,
+                text = "USD zu Kryptowährung Spende",
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Text(
+                textAlign = TextAlign.Center,
+                text = "Zahlen Sie mit USD und wir konvertieren es automatisch in die von Ihnen gewählte Kryptowährung.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Button(
+                onClick = {
+                    // TODO: Implement FreetimeSDK USD gateway
+                    openDiscordInvite(context)
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("USD Spende starten")
+            }
+        }
+
+        Button(
+            onClick = onBack,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(stringResource(R.string.backToSupPag))
+        }
+    }
 }

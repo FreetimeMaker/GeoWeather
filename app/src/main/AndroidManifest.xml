@@ -41,6 +41,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".BitcoinActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".TronActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".USDT_Activity"
             android:screenOrientation="portrait" />
         <activity android:name=".USDC_Activity"
@@ -51,7 +53,9 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ShibActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".TronActivity"
+        <activity android:name=".WalletSelectionActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".USDGatewayActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".DonatorActivity"
             android:screenOrientation="portrait" />
