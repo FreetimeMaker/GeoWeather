@@ -48,16 +48,16 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     // Lifecycle Compose (observeAsState)
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.10.0")
     implementation("androidx.compose.runtime:runtime-livedata")
 
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.9.6")
 
     // Lifecycle KTX
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.7.0")
