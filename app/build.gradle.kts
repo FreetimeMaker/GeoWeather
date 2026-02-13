@@ -52,7 +52,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata")
 
     // Navigation Compose
-    implementation("androidx.navigation:navigation-compose:2.9.6")
+    implementation("androidx.navigation:navigation-compose:2.9.7")
 
     // Lifecycle KTX
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
