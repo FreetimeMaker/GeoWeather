@@ -6,7 +6,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-      time: "11:08"
+      time: "11:10"
     open-pull-requests-limit: 0
     versioning-strategy: "auto"
     commit-message:
