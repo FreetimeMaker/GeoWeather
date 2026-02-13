@@ -6,9 +6,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-      time: "11:10"
+      time: "11:14"
     open-pull-requests-limit: 0
-    versioning-strategy: "auto"
     commit-message:
       prefix: "chore"
       include: "scope"
