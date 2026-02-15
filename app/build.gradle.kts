@@ -20,9 +20,6 @@ android {
         compose = true
     }
 
-    // AGP 9: Compose compiler is built-in → remove composeOptions
-    // composeOptions { }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
