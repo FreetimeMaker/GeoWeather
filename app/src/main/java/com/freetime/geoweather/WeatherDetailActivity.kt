@@ -125,37 +125,54 @@ fun WeatherDetailScreen(
     var aqiJson by remember { mutableStateOf<String?>(null) }
     var forecastList by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
     var hourlyForecastList by remember { mutableStateOf<List<HourlyForecast>>(emptyList()) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     val db = LocationDatabase.getDatabase(LocalContext.current)
 
     LaunchedEffect(Unit) {
-        val entity = withContext(Dispatchers.IO) {
-            db.locationDao().findByCoordinates(lat, lon)
-        }
-
-        if (entity?.weatherData != null) {
-            weatherJson = entity.weatherData
-            forecastList = parseForecastData(entity.weatherData)
-            hourlyForecastList = parseHourlyForecastData(entity.weatherData)
-        } else {
-            val url =
-                "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&timezone=auto"
-
-            val aqiUrl =
-                "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
-
-            val json = withContext(Dispatchers.IO) { httpGet(url) }
-            val aqiJsonResponse = withContext(Dispatchers.IO) {
-                try { httpGet(aqiUrl) } catch (e: Exception) { null }
+        try {
+            val entity = withContext(Dispatchers.IO) {
+                db.locationDao().findByCoordinates(lat, lon)
             }
 
-            entity?.copy(weatherData = json)?.let {
-                withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
-            }
+            if (entity?.weatherData != null) {
+                weatherJson = entity.weatherData
+                try {
+                    forecastList = parseForecastData(entity.weatherData)
+                    hourlyForecastList = parseHourlyForecastData(entity.weatherData)
+                } catch (e: Exception) {
+                    errorMessage = "Error parsing weather data"
+                    e.printStackTrace()
+                }
+            } else {
+                val url =
+                    "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&timezone=auto"
 
-            weatherJson = json
-            aqiJson = aqiJsonResponse
-            forecastList = parseForecastData(json)
-            hourlyForecastList = parseHourlyForecastData(json)
+                val aqiUrl =
+                    "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
+
+                val json = withContext(Dispatchers.IO) { httpGet(url) }
+                val aqiJsonResponse = withContext(Dispatchers.IO) {
+                    try { httpGet(aqiUrl) } catch (e: Exception) { null }
+                }
+
+                entity?.copy(weatherData = json)?.let {
+                    withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
+                }
+
+                weatherJson = json
+                aqiJson = aqiJsonResponse
+                
+                try {
+                    forecastList = parseForecastData(json)
+                    hourlyForecastList = parseHourlyForecastData(json)
+                } catch (e: Exception) {
+                    errorMessage = e.message ?: "Error parsing weather data"
+                    e.printStackTrace()
+                }
+            }
+        } catch (e: Exception) {
+            errorMessage = e.message ?: "Error loading weather"
+            e.printStackTrace()
         }
     }
 
@@ -188,13 +205,35 @@ fun WeatherDetailScreen(
                 Spacer(modifier = Modifier.width(80.dp)) // Balance the back button
             }
             Spacer(Modifier.height(16.dp))
-            if (weatherJson != null) {
-                try {
-                    val obj = JSONObject(weatherJson!!)
-                    val current = obj.getJSONObject("current_weather")
-                    val temp = current.getDouble("temperature")
-                    val wind = current.getDouble("windspeed")
-                    val weatherCode = current.getInt("weathercode")
+            
+            if (errorMessage != null) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.ErrorFetchingWeatherTXT),
+                            fontSize = 16.sp,
+                            color = Color.Red,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = errorMessage ?: "",
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            } else if (weatherJson != null) {
+                val obj = JSONObject(weatherJson!!)
+                val current = obj.getJSONObject("current_weather")
+                val temp = current.getDouble("temperature")
+                val wind = current.getDouble("windspeed")
+                val weatherCode = current.getInt("weathercode")
                 
                 // Get hourly data for current conditions with error handling
                 var humidity: Double
@@ -568,29 +607,6 @@ fun WeatherDetailScreen(
                 ) {
                     items(forecastList) { forecast ->
                         ForecastItem(forecast = forecast)
-                    }
-                }
-                } catch (e: Exception) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.ErrorFetchingWeatherTXT),
-                                fontSize = 16.sp,
-                                color = Color.Red
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = e.message ?: "Unknown error",
-                                fontSize = 12.sp,
-                                color = Color.Gray
-                            )
-                        }
                     }
                 }
             } else {
