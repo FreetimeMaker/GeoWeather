@@ -189,11 +189,12 @@ fun WeatherDetailScreen(
             }
             Spacer(Modifier.height(16.dp))
             if (weatherJson != null) {
-                val obj = JSONObject(weatherJson!!)
-                val current = obj.getJSONObject("current_weather")
-                val temp = current.getDouble("temperature")
-                val wind = current.getDouble("windspeed")
-                val weatherCode = current.getInt("weathercode")
+                try {
+                    val obj = JSONObject(weatherJson!!)
+                    val current = obj.getJSONObject("current_weather")
+                    val temp = current.getDouble("temperature")
+                    val wind = current.getDouble("windspeed")
+                    val weatherCode = current.getInt("weathercode")
                 
                 // Get hourly data for current conditions with error handling
                 var humidity: Double
@@ -567,6 +568,29 @@ fun WeatherDetailScreen(
                 ) {
                     items(forecastList) { forecast ->
                         ForecastItem(forecast = forecast)
+                    }
+                }
+                } catch (e: Exception) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.ErrorFetchingWeatherTXT),
+                                fontSize = 16.sp,
+                                color = Color.Red
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                text = e.message ?: "Unknown error",
+                                fontSize = 12.sp,
+                                color = Color.Gray
+                            )
+                        }
                     }
                 }
             } else {

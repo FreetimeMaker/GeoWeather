@@ -2,6 +2,8 @@ package com.freetime.geoweather
 
 import android.content.Intent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,8 +20,9 @@ fun DonateScreen(onBack: () -> Unit) {
     Column(
         modifier = Modifier
             .padding(16.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
