@@ -3,6 +3,8 @@
 <p><i>A modern weather app for Android, inspired by MeteoSwiss</i></p>
 </div>
 
+[![Übersetzungsstatus](https://hosted.weblate.org/widget/geoweather/svg-badge.svg)](https://hosted.weblate.org/engage/geoweather/)
+
 
 <div align="center">
 <h1>Release numbers</h1>
