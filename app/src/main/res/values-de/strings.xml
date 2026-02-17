@@ -79,4 +79,5 @@
     <string name="WindChangeTXT">Wind erhöht auf %1$s km/h</string>
     <string name="PrecipitationChangeTXT">Niederschlagswahrscheinlichkeit erhöht auf %1$s%%</string>
     <string name="ConditionChangeTXT">Wetterbedingung geändert von %1$s auf %2$s</string>
+    <string name="ErrorFetchingWeatherTXT">Fehler beim holen der Wetterdaten. Bitte versuchen Sie es erneut.</string>
 </resources>
