@@ -310,8 +310,8 @@ fun WeatherDetailScreen(
                         Spacer(Modifier.height(12.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text(formatTime(sunrise), fontSize = 14.sp, fontWeight = FontWeight.Medium)
-                            Text(String.format(Locale.getDefault(), stringResource(R.string.SunriseTXT), if (sunrise != "N/A") sunrise.toInt() else 0), fontSize = 14.sp, color = Color(0xFFFFA500))
-                            Text(String.format(Locale.getDefault(), stringResource(R.string.SunsetText), if (sunset != "N/A") sunset.toInt() else 0), fontSize = 14.sp, color = Color(0xFFFF6B35))
+                            Text(String.format(Locale.getDefault(), stringResource(R.string.SunriseTXT), extractHourAsInt(sunrise)), fontSize = 14.sp, color = Color(0xFFFFA500))
+                            Text(String.format(Locale.getDefault(), stringResource(R.string.SunsetText), extractHourAsInt(sunset)), fontSize = 14.sp, color = Color(0xFFFF6B35))
                             Text(formatTime(sunset), fontSize = 14.sp, fontWeight = FontWeight.Medium)
                         }
                     }
@@ -889,6 +889,23 @@ fun formatTime(timeString: String): String {
         } catch (e: Exception) {
             "N/A" // Ultimate fallback
         }
+    }
+}
+
+fun extractHourAsInt(timeString: String): Int {
+    return try {
+        if (timeString == "N/A") {
+            0
+        } else {
+            // Extract hour from ISO format "YYYY-MM-DDTHH:mm"
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())
+            val date = inputFormat.parse(timeString)
+            val calendar = Calendar.getInstance()
+            calendar.time = date ?: Date()
+            calendar.get(Calendar.HOUR_OF_DAY)
+        }
+    } catch (e: Exception) {
+        0 // Fallback to 0 on error
     }
 }
 

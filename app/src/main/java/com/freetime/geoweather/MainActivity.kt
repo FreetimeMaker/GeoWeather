@@ -187,7 +187,7 @@ fun MainScreen(
         AlertDialog(
             onDismissRequest = { locationToDelete = null },
             title = { Text(stringResource(R.string.DelLoc)) },
-            text = { Text(stringResource(R.string.DelLocConAsk).replace("${location.name}", location.name)) },
+            text = { Text(String.format(stringResource(R.string.DelLocConAsk), location.name)) },
             confirmButton = {
                 TextButton(
                     onClick = {
