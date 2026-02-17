@@ -311,11 +311,68 @@ fun WeatherDetailScreen(
                             }
                         }
                         Spacer(Modifier.height(12.dp))
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(formatTime(sunrise), fontSize = 14.sp, fontWeight = FontWeight.Medium)
-                            Text(String.format(Locale.getDefault(), stringResource(R.string.SunriseTXT), extractHourAsInt(sunrise)), fontSize = 14.sp, color = Color(0xFFFFA500))
-                            Text(String.format(Locale.getDefault(), stringResource(R.string.SunsetText), extractHourAsInt(sunset)), fontSize = 14.sp, color = Color(0xFFFF6B35))
-                            Text(formatTime(sunset), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                        // Sonnenaufgang und Sonnenuntergang
+                        Column {
+                            Text(
+                                text = "☀️ Sonnenaufgang & Sonnenuntergang",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Text(
+                                        text = "🌅",
+                                        fontSize = 20.sp
+                                    )
+                                    Column {
+                                        Text(
+                                            text = formatTime(sunrise),
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = Color(0xFFFFA500)
+                                        )
+                                        Text(
+                                            text = "Sonnenaufgang",
+                                            fontSize = 12.sp,
+                                            color = Color.Gray
+                                        )
+                                    }
+                                }
+                                
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Column(
+                                        horizontalAlignment = Alignment.End
+                                    ) {
+                                        Text(
+                                            text = formatTime(sunset),
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = Color(0xFFFF6B35)
+                                        )
+                                        Text(
+                                            text = "Sonnenuntergang",
+                                            fontSize = 12.sp,
+                                            color = Color.Gray
+                                        )
+                                    }
+                                    Text(
+                                        text = "🌇",
+                                        fontSize = 20.sp
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -606,8 +663,10 @@ fun WeatherDetailScreen(
                 Spacer(Modifier.height(16.dp))
                 }
 
-                items(forecastList) { forecast ->
+                items(forecastList, key = { forecast -> forecast.date }) { forecast ->
+                    Spacer(Modifier.height(12.dp))
                     ForecastItem(forecast = forecast)
+                    Spacer(Modifier.height(12.dp))
                 }
             } else {
                 item {
