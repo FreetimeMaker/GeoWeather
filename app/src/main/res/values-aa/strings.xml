@@ -1,3 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    </resources>
+    <string name="DelTXT">Dug</string>
+    <string name="CancelTXT">Bayis</string>
+    <string name="SearchForCity">Mandar goranto</string>
+    <string name="SearchBTNTXT">Goranto</string>
+    <string name="DelLocConAsk">A \"%1\" magaq le tekko dugtuh digga litoo?</string>
+    <string name="BackBTNTXT">Derre</string>
+</resources>
