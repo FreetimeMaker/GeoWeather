@@ -17,6 +17,12 @@
         android:roundIcon="@mipmap/icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GeoWeather">
+        
+        <!-- WorkManager Worker -->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync" />
+            
         <activity
             android:name=".MainActivity"
             android:exported="true"

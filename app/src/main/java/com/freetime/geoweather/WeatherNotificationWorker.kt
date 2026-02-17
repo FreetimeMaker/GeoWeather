@@ -1,12 +1,16 @@
 package com.freetime.geoweather
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.freetime.geoweather.data.LocationDatabase
@@ -24,6 +28,11 @@ class WeatherNotificationWorker(
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
+            // Check notification permissions first
+            if (!hasNotificationPermission()) {
+                return@withContext Result.failure()
+            }
+            
             val db = LocationDatabase.getDatabase(applicationContext)
             val locations = db.locationDao().getAllLocationsSync()
             
@@ -31,14 +40,16 @@ class WeatherNotificationWorker(
                 if (location.notificationsEnabled) {
                     // Fetch current weather data for this location
                     val weatherData = fetchWeatherData(location.latitude, location.longitude)
-                    val temp = weatherData.getDouble("temp")
-                    val weatherCode = weatherData.getInt("weather_code")
+                    val temp = weatherData.getDouble("temperature")
+                    val weatherCode = weatherData.getInt("weathercode")
                     val weatherDescription = getWeatherDescription(weatherCode)
 
                     // Send notification for this location
                     sendWeatherNotification(
                         applicationContext, 
                         location.name, 
+                        location.latitude,
+                        location.longitude,
                         temp, 
                         weatherDescription,
                         location.id
@@ -56,8 +67,18 @@ class WeatherNotificationWorker(
     private suspend fun fetchWeatherData(lat: Double, lon: Double): JSONObject {
         val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&timezone=auto"
         val response = URL(url).readText()
-        val json = JSONObject(response)
-        return json.getJSONObject("current_weather")
+        return JSONObject(response)
+    }
+    
+    private fun hasNotificationPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true // Notifications are automatically granted on older versions
+        }
     }
 
     private fun getWeatherDescription(weatherCode: Int): String {
@@ -81,10 +102,16 @@ class WeatherNotificationWorker(
     private fun sendWeatherNotification(
         context: Context,
         locationName: String,
+        latitude: Double,
+        longitude: Double,
         temperature: Double,
         weatherDescription: String,
         locationId: Long
     ) {
+        if (!hasNotificationPermission()) {
+            return
+        }
+        
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
         // Create notification channel
@@ -100,8 +127,8 @@ class WeatherNotificationWorker(
         // Create intent for opening app with specific location
         val intent = Intent(context, WeatherDetailActivity::class.java).apply {
             putExtra("name", locationName)
-            putExtra("lat", 0.0) // These will be fetched from DB in the activity
-            putExtra("lon", 0.0)
+            putExtra("lat", latitude)
+            putExtra("lon", longitude)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         
