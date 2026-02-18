@@ -155,15 +155,26 @@ fun WeatherDetailScreen(
     var forecastList by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
     var hourlyForecastList by remember { mutableStateOf<List<HourlyForecast>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isRefreshing by remember { mutableStateOf(false) }
     val db = LocationDatabase.getDatabase(LocalContext.current)
-
-    LaunchedEffect(Unit) {
+    
+    // Function to fetch fresh weather data
+    suspend fun refreshWeatherData(forceRefresh: Boolean = false) {
         try {
+            isRefreshing = true
             val entity = withContext(Dispatchers.IO) {
                 db.locationDao().findByCoordinates(lat, lon)
             }
 
-            if (entity?.weatherData != null) {
+            val currentTime = System.currentTimeMillis()
+            val dataAgeMinutes = if (entity?.lastUpdated != null) {
+                (currentTime - (entity?.lastUpdated ?: 0)) / (1000 * 60)
+            } else {
+                Long.MAX_VALUE
+            }
+            
+            // Use cached data if it's less than 30 minutes old and not forcing refresh
+            if (!forceRefresh && entity?.weatherData != null && dataAgeMinutes < 30) {
                 weatherJson = entity.weatherData
                 try {
                     forecastList = parseForecastData(entity.weatherData)
@@ -173,6 +184,7 @@ fun WeatherDetailScreen(
                     e.printStackTrace()
                 }
             } else {
+                // Fetch fresh data
                 val url =
                     "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&timezone=auto"
 
@@ -184,7 +196,11 @@ fun WeatherDetailScreen(
                     try { httpGet(aqiUrl) } catch (e: Exception) { null }
                 }
 
-                entity?.copy(weatherData = json)?.let {
+                // Update entity with fresh data and timestamp
+                entity?.copy(
+                    weatherData = json,
+                    lastUpdated = currentTime
+                )?.let {
                     withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
                 }
 
@@ -202,7 +218,13 @@ fun WeatherDetailScreen(
         } catch (e: Exception) {
             errorMessage = e.message ?: "Error loading weather"
             e.printStackTrace()
+        } finally {
+            isRefreshing = false
         }
+    }
+
+    LaunchedEffect(Unit) {
+        refreshWeatherData()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -215,22 +237,50 @@ fun WeatherDetailScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Button(
-                        onClick = onBack,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Blue,
-                            contentColor = Color.White
-                        )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(stringResource(R.string.BackBTNTXT))
+                        Button(
+                            onClick = onBack,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Blue,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text(stringResource(R.string.BackBTNTXT))
+                        }
+                        
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    refreshWeatherData(forceRefresh = true)
+                                }
+                            },
+                            enabled = !isRefreshing,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Green,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            if (isRefreshing) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    color = Color.White,
+                                    strokeWidth = 2.dp
+                                )
+                            } else {
+                                Text("🔄")
+                            }
+                        }
                     }
+                    
                     Text(
                         text = name,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
-                    Spacer(modifier = Modifier.width(80.dp)) // Balance the back button
                 }
                 Spacer(Modifier.height(16.dp))
             }
