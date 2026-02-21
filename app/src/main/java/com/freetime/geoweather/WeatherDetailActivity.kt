@@ -43,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.work.*
 import com.freetime.geoweather.R
 import com.freetime.geoweather.data.LocationDatabase
@@ -85,7 +86,17 @@ class WeatherDetailActivity : ComponentActivity() {
         val lon = intent.getDoubleExtra("lon", 0.0)
 
         setContent {
-            GeoWeatherTheme {
+            val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
+            val useSystemTheme = remember { sharedPreferences.getBoolean("use_system_theme", true) }
+            val darkModeEnabled = remember { sharedPreferences.getBoolean("dark_mode_enabled", false) }
+            
+            val darkTheme = if (useSystemTheme) {
+                isSystemInDarkTheme()
+            } else {
+                darkModeEnabled
+            }
+            
+            GeoWeatherTheme(darkTheme = darkTheme) {
                 WeatherDetailScreen(
                     name = name,
                     lat = lat,

@@ -39,6 +39,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".DonateActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".SettingsActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".OxaPayActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".CoinbaseActivity"

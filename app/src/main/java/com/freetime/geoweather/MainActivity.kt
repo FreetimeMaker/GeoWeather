@@ -48,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.compose.foundation.isSystemInDarkTheme
 import com.freetime.geoweather.R
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
@@ -82,7 +83,17 @@ class MainActivity : ComponentActivity() {
         checkNotificationPermission()
         
         setContent {
-            GeoWeatherTheme {
+            val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
+            val useSystemTheme = remember { sharedPreferences.getBoolean("use_system_theme", true) }
+            val darkModeEnabled = remember { sharedPreferences.getBoolean("dark_mode_enabled", false) }
+            
+            val darkTheme = if (useSystemTheme) {
+                isSystemInDarkTheme()
+            } else {
+                darkModeEnabled
+            }
+            
+            GeoWeatherTheme(darkTheme = darkTheme) {
                 MainScreen(
                     onOpenDetail = { name, lat, lon ->
                         val intent = Intent(this, WeatherDetailActivity::class.java).apply {
@@ -188,6 +199,13 @@ fun MainScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.End
         ) {
+            Spacer(Modifier.height(16.dp))
+            FloatingActionButton(onClick = { 
+                val intent = Intent(this@MainActivity, SettingsActivity::class.java)
+                startActivity(intent)
+            }) {
+                Text("⚙")
+            }
             Spacer(Modifier.height(16.dp))
             FloatingActionButton(onClick = { showAddDialog = true }) {
                 Text("🔍")

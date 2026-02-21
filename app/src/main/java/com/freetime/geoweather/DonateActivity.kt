@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.foundation.isSystemInDarkTheme
 import com.freetime.geoweather.R
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
@@ -34,7 +35,17 @@ class DonateActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         hideSystemUI()
         setContent {
-            GeoWeatherTheme {
+            val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
+            val useSystemTheme = remember { sharedPreferences.getBoolean("use_system_theme", true) }
+            val darkModeEnabled = remember { sharedPreferences.getBoolean("dark_mode_enabled", false) }
+            
+            val darkTheme = if (useSystemTheme) {
+                isSystemInDarkTheme()
+            } else {
+                darkModeEnabled
+            }
+            
+            GeoWeatherTheme(darkTheme = darkTheme) {
                 DonateScreen(onBack = { finish() })
             }
         }
