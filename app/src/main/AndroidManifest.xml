@@ -71,6 +71,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".freetimesdk.WalletConnectionActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".freetimesdk.USDConversionActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

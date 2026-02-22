@@ -4,7 +4,7 @@ import android.content.Context
 import com.freetime.geoweather.freetimesdk.models.*
 import kotlinx.coroutines.delay
 
-// Mock implementation of FreetimeSDK classes since the real SDK may not be available
+// Mock implementation of FreetimeSDK classes since real SDK may not be available
 object MockFreetimeSDK {
     
     fun initialize(context: Context, appId: String) {
@@ -22,6 +22,19 @@ object MockFreetimeSDK {
     fun getAnalyticsManager(context: Context): MockAnalyticsManager {
         return MockAnalyticsManager()
     }
+    
+    // New v1.0.7 features
+    fun getSubscriptionManager(context: Context): MockSubscriptionManager {
+        return MockSubscriptionManager()
+    }
+    
+    fun getRewardManager(context: Context): MockRewardManager {
+        return MockRewardManager()
+    }
+    
+    fun getSecurityManager(context: Context): MockSecurityManager {
+        return MockSecurityManager()
+    }
 }
 
 class MockPaymentManager {
@@ -37,7 +50,12 @@ class MockPaymentManager {
             PaymentMethod.DOGE,
             PaymentMethod.TRON,
             PaymentMethod.LTC,
-            PaymentMethod.USD_GATEWAY
+            PaymentMethod.USD_GATEWAY,
+            // New v1.0.7 payment methods
+            PaymentMethod.PAYPAL,
+            PaymentMethod.STRIPE,
+            PaymentMethod.APPLE_PAY,
+            PaymentMethod.GOOGLE_PAY
         )
     }
     
@@ -53,7 +71,44 @@ class MockPaymentManager {
         // Mock success for demonstration
         return PaymentResult(
             success = true,
-            transactionId = "txn_${System.currentTimeMillis()}"
+            transactionId = "txn_${System.currentTimeMillis()}",
+            // New v1.0.7 features
+            receiptUrl = "https://receipt.freetimesdk.com/txn_${System.currentTimeMillis()}",
+            processedAmount = amount.amount,
+            currency = amount.currency,
+            timestamp = System.currentTimeMillis()
+        )
+    }
+    
+    // New v1.0.7 features
+    suspend fun processRecurringPayment(
+        method: PaymentMethod,
+        amount: DonationAmount,
+        interval: String, // "monthly", "yearly"
+        merchantId: String,
+        description: String
+    ): PaymentResult {
+        delay(2500)
+        return PaymentResult(
+            success = true,
+            transactionId = "recurring_${System.currentTimeMillis()}",
+            receiptUrl = "https://receipt.freetimesdk.com/recurring_${System.currentTimeMillis()}",
+            processedAmount = amount.amount,
+            currency = amount.currency,
+            timestamp = System.currentTimeMillis()
+        )
+    }
+    
+    suspend fun refundPayment(
+        transactionId: String,
+        reason: String
+    ): RefundResult {
+        delay(1500)
+        return RefundResult(
+            success = true,
+            refundId = "refund_${System.currentTimeMillis()}",
+            amount = 10.0,
+            currency = "USD"
         )
     }
 }
@@ -66,7 +121,11 @@ class MockWalletManager {
             WalletType.COINBASE,
             WalletType.BINANCE,
             WalletType.EXODUS,
-            WalletType.ATOMIC
+            WalletType.ATOMIC,
+            // New v1.0.7 wallet support (commented for v1.0.6 compatibility)
+            // WalletType.WALLET_CONNECT,
+            // WalletType.PHANTOM,
+            // WalletType.SAFE
         )
     }
     
@@ -77,7 +136,30 @@ class MockWalletManager {
         // Mock success for demonstration
         return WalletConnectionResult(
             success = true,
-            walletAddress = "0x${(100000000000000000L..999999999999999999L).random().toString(16)}"
+            walletAddress = "0x${(100000000000000000L..999999999999999999L).random().toString(16)}",
+            // New v1.0.7 features
+            walletName = walletType.displayName,
+            chainId = when (walletType) {
+                WalletType.METAMASK, WalletType.TRUSTWALLET -> "1"
+                // New v1.0.7 wallet support (commented for v1.0.6 compatibility)
+                // WalletType.PHANTOM, WalletType.SAFE -> "1"
+                // WalletType.WALLET_CONNECT -> "1"
+                else -> "56" // BSC
+            },
+            balance = 1000.0
+        )
+    }
+    
+    // New v1.0.7 features
+    suspend fun signTransaction(
+        walletType: WalletType,
+        transactionData: String
+    ): SigningResult {
+        delay(1000)
+        return SigningResult(
+            success = true,
+            signature = "0x${(1000..9999).random().toString().repeat(64)}",
+            transactionHash = "0x${(1000..9999).random().toString().repeat(64)}"
         )
     }
 }
@@ -114,4 +196,142 @@ class MockAnalyticsManager {
     fun trackUserAction(action: String, details: Map<String, Any>) {
         // Mock analytics tracking
     }
+    
+    // New v1.0.7 analytics features
+    fun trackSubscriptionEvent(event: String, planType: String, value: Double) {
+        // Mock subscription analytics
+    }
+    
+    fun trackRewardClaimed(rewardType: String, value: Double) {
+        // Mock reward analytics
+    }
+    
+    fun trackSecurityEvent(event: String, severity: String, details: Map<String, Any>) {
+        // Mock security analytics
+    }
 }
+
+// New v1.0.7 manager classes
+class MockSubscriptionManager {
+    fun getAvailablePlans(): List<SubscriptionPlan> {
+        return listOf(
+            SubscriptionPlan("basic", 4.99, "USD", "Basic Supporter"),
+            SubscriptionPlan("premium", 9.99, "USD", "Premium Supporter"),
+            SubscriptionPlan("ultimate", 19.99, "USD", "Ultimate Supporter")
+        )
+    }
+    
+    suspend fun subscribe(plan: SubscriptionPlan): SubscriptionResult {
+        delay(2000)
+        return SubscriptionResult(
+            success = true,
+            subscriptionId = "sub_${System.currentTimeMillis()}",
+            planId = plan.id,
+            status = "active",
+            expiresAt = System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000) // 30 days
+        )
+    }
+    
+    suspend fun cancelSubscription(subscriptionId: String): SubscriptionResult {
+        delay(1500)
+        return SubscriptionResult(
+            success = true,
+            subscriptionId = subscriptionId,
+            planId = "",
+            status = "cancelled",
+            expiresAt = System.currentTimeMillis()
+        )
+    }
+}
+
+class MockRewardManager {
+    fun getAvailableRewards(): List<Reward> {
+        return listOf(
+            Reward("first_donation", 5.0, "USD", "First Donation Bonus"),
+            Reward("monthly_supporter", 10.0, "USD", "Monthly Supporter Reward"),
+            Reward("yearly_supporter", 25.0, "USD", "Yearly Supporter Reward"),
+            Reward("referral_bonus", 2.5, "USD", "Referral Bonus")
+        )
+    }
+    
+    suspend fun claimReward(rewardId: String): RewardResult {
+        delay(1000)
+        return RewardResult(
+            success = true,
+            rewardId = rewardId,
+            claimedAmount = 5.0,
+            currency = "USD",
+            claimId = "claim_${System.currentTimeMillis()}"
+        )
+    }
+}
+
+class MockSecurityManager {
+    suspend fun validateTransaction(transactionId: String): SecurityResult {
+        delay(500)
+        return SecurityResult(
+            isValid = true,
+            riskScore = 0.1,
+            verificationStatus = "verified"
+        )
+    }
+    
+    suspend fun enableTwoFactorAuth(userId: String): SecurityResult {
+        delay(1000)
+        return SecurityResult(
+            isValid = true,
+            riskScore = 0.0,
+            verificationStatus = "2fa_enabled"
+        )
+    }
+}
+
+// New v1.0.7 data classes
+data class SubscriptionPlan(
+    val id: String,
+    val price: Double,
+    val currency: String,
+    val name: String
+)
+
+data class SubscriptionResult(
+    val success: Boolean,
+    val subscriptionId: String,
+    val planId: String,
+    val status: String,
+    val expiresAt: Long
+)
+
+data class Reward(
+    val id: String,
+    val value: Double,
+    val currency: String,
+    val description: String
+)
+
+data class RewardResult(
+    val success: Boolean,
+    val rewardId: String,
+    val claimedAmount: Double,
+    val currency: String,
+    val claimId: String
+)
+
+data class RefundResult(
+    val success: Boolean,
+    val refundId: String,
+    val amount: Double,
+    val currency: String
+)
+
+data class SigningResult(
+    val success: Boolean,
+    val signature: String,
+    val transactionHash: String
+)
+
+data class SecurityResult(
+    val isValid: Boolean,
+    val riskScore: Double,
+    val verificationStatus: String
+)

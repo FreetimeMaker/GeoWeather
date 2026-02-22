@@ -15,6 +15,7 @@ import com.freetime.geoweather.R
 import com.freetime.geoweather.freetimesdk.FreetimeSDKManager
 import com.freetime.geoweather.freetimesdk.PaymentActivity
 import com.freetime.geoweather.freetimesdk.WalletConnectionActivity
+import com.freetime.geoweather.freetimesdk.USDConversionActivity
 
 @Composable
 fun DonateScreen(onBack: () -> Unit) {
@@ -92,8 +93,10 @@ fun DonateScreen(onBack: () -> Unit) {
         }) { Text(stringResource(R.string.DonViaWallet)) }
 
         Button(onClick = {
-            context.startActivity(Intent(context, USDGatewayActivity::class.java))
-        }) { Text(stringResource(R.string.DonViaUSD)) }
+            context.startActivity(Intent(context, USDConversionActivity::class.java))
+        }) { 
+            Text(stringResource(R.string.DonViaUSD)) 
+        }
 
         Button(onClick = {
             context.startActivity(Intent(context, DonatorActivity::class.java))

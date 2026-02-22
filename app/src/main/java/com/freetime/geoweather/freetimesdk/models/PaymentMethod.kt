@@ -12,5 +12,10 @@ enum class PaymentMethod(val displayName: String) {
     TRON("TRON"),
     LTC("LTC"),
     USD_GATEWAY("USD Gateway"),
-    WALLET("Wallet App")
+    WALLET("Wallet App"),
+    // New v1.0.7 payment methods with API-integrated USD conversion
+    PAYPAL("PayPal"),
+    STRIPE("Stripe"),
+    APPLE_PAY("Apple Pay"),
+    GOOGLE_PAY("Google Pay")
 }
