@@ -1,6 +1,7 @@
 package com.freetime.geoweather
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -33,6 +34,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +55,7 @@ import com.freetime.geoweather.R
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+import com.freetime.geoweather.freetimesdk.FreetimeSDKManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -78,6 +81,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         hideSystemUI()
+        
+        // Initialize FreetimeSDK
+        FreetimeSDKManager.initialize(this@MainActivity)
         
         // Check and request notification permission
         checkNotificationPermission()
@@ -152,6 +158,7 @@ fun MainScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val db = remember { LocationDatabase.getDatabase(context) }
+    val sdkManager = remember { FreetimeSDKManager.getInstance(context) }
 
     val locations: List<LocationEntity> by db.locationDao()
         .getAllLocations()
@@ -159,6 +166,11 @@ fun MainScreen(
 
     var showAddDialog by remember { mutableStateOf(false) }
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
+
+    // Track app usage
+    LaunchedEffect(Unit) {
+        sdkManager.trackAppUsage("main_screen")
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -174,6 +186,9 @@ fun MainScreen(
                         IconButton(
                             onClick = {
                                 locationToDelete = loc
+                                sdkManager.trackUserInteraction("location_delete_initiated", mapOf(
+                                    "location_name" to loc.name
+                                ))
                             }
                         ) {
                             Icon(
@@ -186,6 +201,11 @@ fun MainScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            sdkManager.trackUserInteraction("location_selected", mapOf(
+                                "location_name" to loc.name,
+                                "latitude" to loc.latitude,
+                                "longitude" to loc.longitude
+                            ))
                             onOpenDetail(loc.name, loc.latitude, loc.longitude)
                         }
                 )
@@ -201,17 +221,24 @@ fun MainScreen(
         ) {
             Spacer(Modifier.height(16.dp))
             FloatingActionButton(onClick = { 
-                val intent = Intent(this@MainActivity, SettingsActivity::class.java)
-                startActivity(intent)
+                sdkManager.trackUserInteraction("settings_opened")
+                val intent = Intent(context, SettingsActivity::class.java)
+                context.startActivity(intent)
             }) {
                 Text("⚙")
             }
             Spacer(Modifier.height(16.dp))
-            FloatingActionButton(onClick = { showAddDialog = true }) {
+            FloatingActionButton(onClick = { 
+                sdkManager.trackUserInteraction("search_dialog_opened")
+                showAddDialog = true 
+            }) {
                 Text("🔍")
             }
             Spacer(Modifier.height(16.dp))
-            FloatingActionButton(onClick = onOpenDonate) {
+            FloatingActionButton(onClick = { 
+                sdkManager.trackUserInteraction("donate_screen_opened")
+                onOpenDonate() 
+            }) {
                 Text("♥")
             }
         }

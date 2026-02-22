@@ -67,6 +67,10 @@
             android:screenOrientation="portrait" />
         <activity android:name=".DonatorActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".freetimesdk.PaymentActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".freetimesdk.WalletConnectionActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

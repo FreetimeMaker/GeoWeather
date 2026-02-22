@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -622,9 +623,7 @@ fun WalletSelectionScreen(
 
             Button(
                 onClick = {
-                    // FreetimeSDK wallet selection simulation
-                    // In real implementation, this would use FreetimeSDK classes
-                    // For now, open wallet apps based on user selection
+                    // Original hardcoded wallet app deep links
                     val walletApps = listOf(
                         "trust://",
                         "metamask://", 
@@ -688,11 +687,9 @@ fun USDGatewayScreen(
 
             Button(
                 onClick = {
-                    // FreetimeSDK USD gateway simulation
-                    // In real implementation, this would use FreetimeSDK USD conversion
-                    // For now, open a payment URL with USD conversion
+                    // Original hardcoded USD gateway URL
                     try {
-                        val paymentUrl = "https://ncwallet.net/pay/usd_conversion"
+                        val paymentUrl = "https://ncwallet.net/pay/19tacit" // USDT payment URL as USD gateway
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
                         context.startActivity(intent)
                     } catch (e: Exception) {

@@ -18,6 +18,13 @@
     <string name="DonViaLTC">Donate via LTC</string>
     <string name="DonViaWallet">Donate with Wallet App</string>
     <string name="DonViaUSD">USD to Crypto Donation</string>
+    <string name="DonViaFreetimeSDK">Donate via FreetimeSDK</string>
+    <string name="select_donation_amount">Select Donation Amount</string>
+    <string name="select_payment_method">Select Payment Method</string>
+    <string name="wallet_connected">Wallet Connected Successfully</string>
+    <string name="processing_payment">Processing Payment...</string>
+    <string name="payment_successful">Payment Successful!</string>
+    <string name="payment_failed">Payment Failed</string>
     <string name="WalletTitle">Choose Your Wallet App</string>
     <string name="WalletDescription">Supported Wallets: Trust Wallet, MetaMask, Coinbase, Binance, Exodus, Atomic Wallet and more.</string>
     <string name="USDTitle">USD to Crypto Donation</string>
