@@ -28,10 +28,6 @@ object MockFreetimeSDK {
         return MockSubscriptionManager()
     }
     
-    fun getRewardManager(context: Context): MockRewardManager {
-        return MockRewardManager()
-    }
-    
     fun getSecurityManager(context: Context): MockSecurityManager {
         return MockSecurityManager()
     }
