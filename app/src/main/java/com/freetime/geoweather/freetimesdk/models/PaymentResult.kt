@@ -4,7 +4,6 @@ data class PaymentResult(
     val success: Boolean,
     val errorMessage: String? = null,
     val transactionId: String? = null,
-    // New v1.0.7 features
     val receiptUrl: String? = null,
     val processedAmount: Double? = null,
     val currency: String? = null,
@@ -17,13 +16,11 @@ data class WalletConnectionResult(
     val success: Boolean,
     val walletAddress: String? = null,
     val errorMessage: String? = null,
-    // New v1.0.7 features
     val walletName: String? = null,
     val chainId: String? = null,
     val balance: Double? = null
 )
 
-// New v1.0.7 data classes for USD conversion API
 data class ConversionRate(
     val fromCurrency: String,
     val toCurrency: String,

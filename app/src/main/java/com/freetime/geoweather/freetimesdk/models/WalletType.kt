@@ -6,5 +6,5 @@ enum class WalletType(val displayName: String) {
     COINBASE("Coinbase Wallet"),
     BINANCE("Binance Wallet"),
     EXODUS("Exodus"),
-    ATOMIC("Atomic Wallet")
+    ATOMIC("Atomic Wallet"),
 }

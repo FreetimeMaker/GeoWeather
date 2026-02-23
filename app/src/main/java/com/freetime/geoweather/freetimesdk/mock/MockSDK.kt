@@ -51,11 +51,6 @@ class MockPaymentManager {
             PaymentMethod.TRON,
             PaymentMethod.LTC,
             PaymentMethod.USD_GATEWAY,
-            // New v1.0.7 payment methods
-            PaymentMethod.PAYPAL,
-            PaymentMethod.STRIPE,
-            PaymentMethod.APPLE_PAY,
-            PaymentMethod.GOOGLE_PAY
         )
     }
     
@@ -72,7 +67,6 @@ class MockPaymentManager {
         return PaymentResult(
             success = true,
             transactionId = "txn_${System.currentTimeMillis()}",
-            // New v1.0.7 features
             receiptUrl = "https://receipt.freetimesdk.com/txn_${System.currentTimeMillis()}",
             processedAmount = amount.amount,
             currency = amount.currency,
@@ -122,10 +116,6 @@ class MockWalletManager {
             WalletType.BINANCE,
             WalletType.EXODUS,
             WalletType.ATOMIC,
-            // New v1.0.7 wallet support (commented for v1.0.6 compatibility)
-            // WalletType.WALLET_CONNECT,
-            // WalletType.PHANTOM,
-            // WalletType.SAFE
         )
     }
     
@@ -137,20 +127,15 @@ class MockWalletManager {
         return WalletConnectionResult(
             success = true,
             walletAddress = "0x${(100000000000000000L..999999999999999999L).random().toString(16)}",
-            // New v1.0.7 features
             walletName = walletType.displayName,
             chainId = when (walletType) {
                 WalletType.METAMASK, WalletType.TRUSTWALLET -> "1"
-                // New v1.0.7 wallet support (commented for v1.0.6 compatibility)
-                // WalletType.PHANTOM, WalletType.SAFE -> "1"
-                // WalletType.WALLET_CONNECT -> "1"
                 else -> "56" // BSC
             },
             balance = 1000.0
         )
     }
     
-    // New v1.0.7 features
     suspend fun signTransaction(
         walletType: WalletType,
         transactionData: String
@@ -197,7 +182,6 @@ class MockAnalyticsManager {
         // Mock analytics tracking
     }
     
-    // New v1.0.7 analytics features
     fun trackSubscriptionEvent(event: String, planType: String, value: Double) {
         // Mock subscription analytics
     }
@@ -211,7 +195,6 @@ class MockAnalyticsManager {
     }
 }
 
-// New v1.0.7 manager classes
 class MockSubscriptionManager {
     fun getAvailablePlans(): List<SubscriptionPlan> {
         return listOf(
@@ -244,28 +227,6 @@ class MockSubscriptionManager {
     }
 }
 
-class MockRewardManager {
-    fun getAvailableRewards(): List<Reward> {
-        return listOf(
-            Reward("first_donation", 5.0, "USD", "First Donation Bonus"),
-            Reward("monthly_supporter", 10.0, "USD", "Monthly Supporter Reward"),
-            Reward("yearly_supporter", 25.0, "USD", "Yearly Supporter Reward"),
-            Reward("referral_bonus", 2.5, "USD", "Referral Bonus")
-        )
-    }
-    
-    suspend fun claimReward(rewardId: String): RewardResult {
-        delay(1000)
-        return RewardResult(
-            success = true,
-            rewardId = rewardId,
-            claimedAmount = 5.0,
-            currency = "USD",
-            claimId = "claim_${System.currentTimeMillis()}"
-        )
-    }
-}
-
 class MockSecurityManager {
     suspend fun validateTransaction(transactionId: String): SecurityResult {
         delay(500)
@@ -286,7 +247,6 @@ class MockSecurityManager {
     }
 }
 
-// New v1.0.7 data classes
 data class SubscriptionPlan(
     val id: String,
     val price: Double,
@@ -300,13 +260,6 @@ data class SubscriptionResult(
     val planId: String,
     val status: String,
     val expiresAt: Long
-)
-
-data class Reward(
-    val id: String,
-    val value: Double,
-    val currency: String,
-    val description: String
 )
 
 data class RewardResult(

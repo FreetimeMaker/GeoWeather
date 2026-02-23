@@ -12,8 +12,8 @@ android {
         applicationId = "com.freetime.geoweather"
         minSdk = 26
         targetSdk = 36
-        versionCode = 26
-        versionName = "1.2.5"
+        versionCode = 27
+        versionName = "1.2.6"
     }
 
     buildFeatures {
@@ -32,7 +32,7 @@ android {
 
 dependencies {
     // FreetimeSDK for more Donation Options
-    implementation("com.github.FreetimeMaker:FreetimeSDK:v1.0.9")
+    implementation("com.github.FreetimeMaker:FreetimeSDK:v1.1.5")
 
     // Compose BOM
     implementation(platform("androidx.compose:compose-bom:2026.02.00"))

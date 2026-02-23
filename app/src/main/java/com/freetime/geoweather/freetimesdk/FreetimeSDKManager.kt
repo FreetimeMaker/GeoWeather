@@ -43,7 +43,7 @@ class FreetimeSDKManager private constructor(private val context: Context) {
         
         fun initialize(context: Context) {
             MockFreetimeSDK.initialize(context, "geoweather-app")
-            Log.d("FreetimeSDK", "SDK v1.0.6 initialized for GeoWeather with API-integrated USD conversion (v1.0.7 preview)")
+            Log.d("FreetimeSDK", "SDK v1.1.5 initialized for GeoWeather with API-integrated USD conversion and enhanced wallet support")
         }
     }
     
