@@ -83,4 +83,8 @@
     <string name="DonViaFreetimeSDK">Spende über FreetimeSDK</string>
     <string name="processing_payment">Zahlung wird bearbeitet...</string>
     <string name="select_donation_amount">Spenden anzahl auswählen</string>
+    <string name="payment_failed">Zahlung fehlgeschlagen</string>
+    <string name="payment_successful">Bezahlung erfolgreich!</string>
+    <string name="select_payment_method">Zahlungsmethode auswählen</string>
+    <string name="wallet_connected">Erfolgreich verbunden</string>
 </resources>
