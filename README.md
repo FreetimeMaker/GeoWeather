@@ -5,7 +5,7 @@
 
 <div align="center">
 
-[![Übersetzungsstatus](https://hosted.weblate.org/widget/geoweather/svg-badge.svg)](https://hosted.weblate.org/engage/geoweather/)
+[![Translation status](https://hosted.weblate.org/widget/geoweather/svg-badge.svg)](https://hosted.weblate.org/engage/geoweather/)
 </div>
 
 <div align="center">
@@ -78,6 +78,22 @@ This project is licensed under the [Apache-2.0 License](LICENSE).
 Contributions are welcome! Feel free to open issues or submit pull requests.
 
 ---
+
+## 🤝 Donations
+
+If you like GeoWeather, I'd appreciate a small donation — thank you! Below are some common cryptocurrency options.
+
+<div align="center">
+
+[![Bitcoin](https://img.shields.io/badge/Bitcoin-BTC-FF9900?style=for-the-badge&logo=bitcoin&logoColor=white)](bitcoin:1DsCAVrzvGokrzXpe6YR33QuTo5EppiKRE)
+[![Litecoin](https://img.shields.io/badge/Litecoin-LTC-345D9D?style=for-the-badge&logo=litecoin&logoColor=white)](litecoin:LU2ERRXKTeKnzpuieQcpsBteViEY7ff5Wg)
+
+</div>
+
+Alternatively, you can also display the addresses directly (replace the placeholders):
+
+- Bitcoin (BTC): `1DsCAVrzvGokrzXpe6YR33QuTo5EppiKRE`
+- Litecoin (LTC): `LU2ERRXKTeKnzpuieQcpsBteViEY7ff5Wg`
 
 <div align="center">
 <p><i>Developed with ❤️ by FreetimeMaker</i></p>
