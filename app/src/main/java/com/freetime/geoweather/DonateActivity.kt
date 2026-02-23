@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
@@ -621,30 +622,69 @@ fun WalletSelectionScreen(
                 style = MaterialTheme.typography.bodyMedium
             )
 
+            // Enhanced wallet app detection with availability status
+            val walletApps = listOf(
+                Triple("Trust Wallet", "com.trustwallet", "trust://"),
+                Triple("MetaMask", "io.metamask", "metamask://"),
+                Triple("Coinbase Wallet", "io.coinbase.android", "cbwallet://"),
+                Triple("Binance Wallet", "com.binance.dev", "binance://"),
+                Triple("Exodus", "exodusmobile", "exodus://"),
+                Triple("Atomic Wallet", "com.atomicwallet", "atomic://")
+            )
+            
+            val packageManager = context.packageManager
+            
+            walletApps.forEach { (walletName, packageName, deepLink) ->
+                val isInstalled = try {
+                    packageManager.getPackageInfo(packageName, 0)
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+                
+                Button(
+                    onClick = {
+                        if (isInstalled) {
+                            try {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(deepLink))
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                // Fallback to Discord invite
+                                openDiscordInvite(context)
+                            }
+                        } else {
+                            // Open app store for installation
+                            try {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName"))
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                // Fallback to Play Store web
+                                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName"))
+                                context.startActivity(webIntent)
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isInstalled) 
+                            MaterialTheme.colorScheme.primary 
+                        else 
+                            MaterialTheme.colorScheme.secondary
+                    )
+                ) {
+                    Text(if (isInstalled) "Open $walletName" else "Install $walletName")
+                }
+            }
+            
+            // Fallback option if no wallets are available
             Button(
                 onClick = {
-                    // Original hardcoded wallet app deep links
-                    val walletApps = listOf(
-                        "trust://",
-                        "metamask://", 
-                        "cbwallet://",
-                        "binance://",
-                        "exodus://",
-                        "atomic://"
-                    )
-                    
-                    // Try to open first available wallet
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(walletApps[0]))
-                        context.startActivity(intent)
-                    } catch (e: Exception) {
-                        // Fallback to Discord invite
-                        openDiscordInvite(context)
-                    }
+                    openDiscordInvite(context)
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.DonViaWallet))
+                Text("Get Help on Discord")
             }
         }
 

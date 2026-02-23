@@ -127,7 +127,7 @@ fun USDConversionScreen(onBack: () -> Unit) {
             }
         }
         
-        // Amount input
+        // Amount input with validation
         Text(
             text = "USD Amount:",
             style = MaterialTheme.typography.titleMedium
@@ -136,11 +136,31 @@ fun USDConversionScreen(onBack: () -> Unit) {
         OutlinedTextField(
             value = selectedAmount.toString(),
             onValueChange = { 
-                selectedAmount = it.toDoubleOrNull() ?: 0.0
+                val newAmount = it.toDoubleOrNull()
+                if (newAmount != null && newAmount >= 0) {
+                    selectedAmount = newAmount
+                }
             },
-            label = { Text("Enter USD amount") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Enter USD amount (min $1.00)") },
+            modifier = Modifier.fillMaxWidth(),
+            isError = selectedAmount > 0 && selectedAmount < 1.0
         )
+        
+        if (selectedAmount > 0 && selectedAmount < 1.0) {
+            Text(
+                text = "Minimum amount is $1.00 USD",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+        
+        if (selectedAmount > 10000) {
+            Text(
+                text = "Maximum amount is $10,000 USD",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
         
         // Quick amount buttons
         Row(
@@ -197,7 +217,7 @@ fun USDConversionScreen(onBack: () -> Unit) {
             }
         }
         
-        // Conversion result
+        // Conversion result with enhanced fee breakdown
         conversionResult?.let { result ->
             Card(
                 colors = CardDefaults.cardColors(
@@ -210,39 +230,51 @@ fun USDConversionScreen(onBack: () -> Unit) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Conversion Result:",
+                        text = "Conversion Summary:",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     
                     Text(
-                        text = "$${String.format("%.2f", result.fromAmount)} USD = ${String.format("%.6f", result.toAmount)} ${result.toCurrency}",
+                        text = "You Send: $${String.format("%.2f", result.fromAmount)} USD",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     
                     Text(
-                        text = "Rate: 1 USD = ${String.format("%.6f", result.rate)} ${result.toCurrency}",
+                        text = "Processing Fees: $${String.format("%.2f", result.fees)} USD",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     
                     Text(
-                        text = "Fees: $${String.format("%.2f", result.fees)} USD",
+                        text = "Net Amount: $${String.format("%.2f", result.fromAmount - result.fees)} USD",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    
+                    Text(
+                        text = "The Developer Receives: ${String.format("%.6f", result.toAmount)} ${result.toCurrency}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    
+                    Text(
+                        text = "Exchange Rate: 1 USD = ${String.format("%.6f", result.rate)} ${result.toCurrency}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     
                     Button(
                         onClick = {
-                            // In real implementation, this would proceed with the conversion
+                            // In real implementation, this would proceed with the actual conversion
                             sdkManager.trackUserInteraction("conversion_proceed", mapOf(
                                 "result" to result
                             ))
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Proceed with Conversion")
+                        Text("Proceed to Payment")
                     }
                 }
             }
