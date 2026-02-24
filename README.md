@@ -77,6 +77,16 @@ This project is licensed under the [Apache-2.0 License](LICENSE).
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
 
+## 🌟 Star History
+
+<a href="https://www.star-history.com/#FreetimeMaker/GeoWeather&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=FreetimeMaker/GeoWeather&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=FreetimeMaker/GeoWeather&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=FreetimeMaker/GeoWeather&type=date&legend=top-left" />
+ </picture>
+</a>
+
 ---
 
 ## 🤝 Donations
