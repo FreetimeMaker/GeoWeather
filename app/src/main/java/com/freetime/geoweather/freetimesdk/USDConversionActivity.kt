@@ -55,29 +55,39 @@ fun USDConversionScreen(onBack: () -> Unit) {
             isLoading = true
             errorMessage = null
             
-            sdkManager.convertUSDtoCrypto(
-                usdAmount = selectedAmount,
-                targetCrypto = selectedCrypto,
-                onSuccess = { result ->
-                    isLoading = false
-                    conversionResult = result
-                    sdkManager.trackUserInteraction("conversion_completed", mapOf(
-                        "usd_amount" to selectedAmount,
-                        "crypto" to selectedCrypto,
-                        "converted_amount" to result.toAmount,
-                        "rate" to result.rate
-                    ))
-                },
-                onError = { error ->
-                    isLoading = false
-                    errorMessage = error
-                    sdkManager.trackUserInteraction("conversion_failed", mapOf(
-                        "usd_amount" to selectedAmount,
-                        "crypto" to selectedCrypto,
-                        "error" to error
-                    ))
-                }
-            )
+            try {
+                sdkManager.convertUSDtoCrypto(
+                    usdAmount = selectedAmount,
+                    targetCrypto = selectedCrypto,
+                    onSuccess = { result ->
+                        isLoading = false
+                        conversionResult = result
+                        sdkManager.trackUserInteraction("conversion_completed", mapOf(
+                            "usd_amount" to selectedAmount,
+                            "crypto" to selectedCrypto,
+                            "converted_amount" to result.toAmount,
+                            "rate" to result.rate
+                        ))
+                    },
+                    onError = { error ->
+                        isLoading = false
+                        errorMessage = error
+                        sdkManager.trackUserInteraction("conversion_failed", mapOf(
+                            "usd_amount" to selectedAmount,
+                            "crypto" to selectedCrypto,
+                            "error" to error
+                        ))
+                    }
+                )
+            } catch (e: Exception) {
+                isLoading = false
+                errorMessage = "Conversion failed: ${e.message}"
+                sdkManager.trackUserInteraction("conversion_crashed", mapOf(
+                    "usd_amount" to selectedAmount,
+                    "crypto" to selectedCrypto,
+                    "error" to (e.message ?: "Unknown error")
+                ))
+            }
         }
     }
     
@@ -112,17 +122,25 @@ fun USDConversionScreen(onBack: () -> Unit) {
                     style = MaterialTheme.typography.titleMedium
                 )
                 
-                conversionRates.take(4).forEach { rate ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text("1 USD = ${rate.rate} ${rate.toCurrency}")
-                        Text(
-                            text = "Updated: ${java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date(rate.timestamp))}",
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                if (conversionRates.isNotEmpty()) {
+                    conversionRates.take(4).forEach { rate ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("1 USD = ${rate.rate} ${rate.toCurrency}")
+                            Text(
+                                text = "Updated: ${java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date(rate.timestamp))}",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     }
+                } else {
+                    Text(
+                        text = "Loading exchange rates...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }

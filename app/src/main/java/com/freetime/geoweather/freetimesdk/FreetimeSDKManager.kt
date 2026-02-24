@@ -200,14 +200,27 @@ class FreetimeSDKManager private constructor(private val context: Context) {
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
+                Log.d("FreetimeSDK", "Starting USD to Crypto conversion: $usdAmount USD to $targetCrypto")
+                
                 // Validate input
                 if (usdAmount <= 0) {
-                    onError("Invalid amount. Please enter a positive value.")
+                    val errorMsg = "Invalid amount. Please enter a positive value."
+                    Log.w("FreetimeSDK", errorMsg)
+                    onError(errorMsg)
                     return@launch
                 }
                 
                 if (usdAmount > 10000) {
-                    onError("Amount exceeds maximum limit of $10,000 USD")
+                    val errorMsg = "Amount exceeds maximum limit of $10,000 USD"
+                    Log.w("FreetimeSDK", errorMsg)
+                    onError(errorMsg)
+                    return@launch
+                }
+                
+                if (targetCrypto.isBlank()) {
+                    val errorMsg = "Invalid cryptocurrency selected"
+                    Log.w("FreetimeSDK", errorMsg)
+                    onError(errorMsg)
                     return@launch
                 }
                 
@@ -222,7 +235,13 @@ class FreetimeSDKManager private constructor(private val context: Context) {
                 
                 // Get conversion rates
                 val rates = getConversionRates()
-                val rate = rates[targetCrypto] ?: 1.0
+                val rate = rates[targetCrypto]
+                if (rate == null) {
+                    val errorMsg = "Unsupported cryptocurrency: $targetCrypto"
+                    Log.w("FreetimeSDK", errorMsg)
+                    onError(errorMsg)
+                    return@launch
+                }
                 
                 // Calculate fees (2.9% + $0.30 fixed fee)
                 val percentageFee = usdAmount * 0.029
@@ -230,7 +249,9 @@ class FreetimeSDKManager private constructor(private val context: Context) {
                 val totalFees = percentageFee + fixedFee
                 
                 if (totalFees >= usdAmount) {
-                    onError("Amount too small to cover processing fees")
+                    val errorMsg = "Amount too small to cover processing fees"
+                    Log.w("FreetimeSDK", errorMsg)
+                    onError(errorMsg)
                     return@launch
                 }
                 
@@ -248,21 +269,27 @@ class FreetimeSDKManager private constructor(private val context: Context) {
                     timestamp = System.currentTimeMillis()
                 )
                 
+                Log.d("FreetimeSDK", "Conversion successful: $usdAmount USD -> $convertedAmount $targetCrypto")
+                
                 // Track analytics
-                (analyticsManager as com.freetime.geoweather.freetimesdk.mock.MockAnalyticsManager).trackUserAction(
-                    "usd_to_crypto_conversion", 
-                    mapOf(
-                        "usd_amount" to usdAmount,
-                        "target_crypto" to targetCrypto,
-                        "rate" to rate,
-                        "fees" to totalFees
+                try {
+                    (analyticsManager as com.freetime.geoweather.freetimesdk.mock.MockAnalyticsManager).trackUserAction(
+                        "usd_to_crypto_conversion", 
+                        mapOf(
+                            "usd_amount" to usdAmount,
+                            "target_crypto" to targetCrypto,
+                            "rate" to rate,
+                            "fees" to totalFees
+                        )
                     )
-                )
+                } catch (e: Exception) {
+                    Log.w("FreetimeSDK", "Analytics tracking failed", e)
+                }
                 
                 onSuccess(result)
             } catch (e: Exception) {
                 Log.e("FreetimeSDK", "USD to Crypto conversion failed", e)
-                onError("Conversion failed: ${e.message}")
+                onError("Conversion failed: ${e.message ?: "Unknown error"}")
             }
         }
     }
