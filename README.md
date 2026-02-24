@@ -85,15 +85,15 @@ If you like GeoWeather, I'd appreciate a small donation — thank you! Below are
 
 <div align="center">
 
-[![Bitcoin](https://img.shields.io/badge/Bitcoin-BTC-FF9900?style=for-the-badge&logo=bitcoin&logoColor=white)](bitcoin:1DsCAVrzvGokrzXpe6YR33QuTo5EppiKRE)
-[![Litecoin](https://img.shields.io/badge/Litecoin-LTC-345D9D?style=for-the-badge&logo=litecoin&logoColor=white)](litecoin:LU2ERRXKTeKnzpuieQcpsBteViEY7ff5Wg)
+[![Bitcoin](https://img.shields.io/badge/Bitcoin-BTC-FF9900?style=for-the-badge&logo=bitcoin&logoColor=white)](https://blockchair.com/bitcoin/address/1DsCAVrzvGokrzXpe6YR33QuTo5EppiKRE)
+[![Litecoin](https://img.shields.io/badge/Litecoin-LTC-345D9D?style=for-the-badge&logo=litecoin&logoColor=white)](https://blockchair.com/litecoin/address/LU2ERRXKTeKnzpuieQcpsBteViEY7ff5Wg)
 
 </div>
 
-Alternatively, you can also display the addresses directly (replace the placeholders):
+Alternatively, you can also display the addresses directly:
 
-- Bitcoin (BTC): `1DsCAVrzvGokrzXpe6YR33QuTo5EppiKRE`
-- Litecoin (LTC): `LU2ERRXKTeKnzpuieQcpsBteViEY7ff5Wg`
+- Bitcoin (BTC): `1DsCAVrzvGokrzXpe6YR33QuTo5EppiKRE` — or open in block explorer by clicking the badge above
+- Litecoin (LTC): `LU2ERRXKTeKnzpuieQcpsBteViEY7ff5Wg` — or open in block explorer by clicking the badge above
 
 <div align="center">
 <p><i>Developed with ❤️ by FreetimeMaker</i></p>
