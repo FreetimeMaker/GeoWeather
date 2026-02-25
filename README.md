@@ -5,7 +5,7 @@
 
 <div align="center">
 
-[![Translation status](https://hosted.weblate.org/widget/geoweather/svg-badge.svg)](https://hosted.weblate.org/engage/geoweather/)
+[![Translation status](https://hosted.weblate.org/widget/geoweather/geoweather/287x66-grey.png)](https://hosted.weblate.org/engage/geoweather/)
 </div>
 
 <div align="center">
