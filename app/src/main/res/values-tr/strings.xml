@@ -80,4 +80,11 @@
     <string name="PrecipitationChangeTXT">Precipitation chance increased to %1$s%%</string>
     <string name="ConditionChangeTXT">Weather condition changed from %1$s to %2$s</string>
     <string name="ErrorFetchingWeatherTXT">Error loading weather data. Please try again.</string>
+    <string name="DonViaFreetimeSDK">FreetimeSDK üzerinden bağış yapın</string>
+    <string name="select_donation_amount">Bağış Tutarını Seçin</string>
+    <string name="select_payment_method">Ödeme Yöntemi Seçin</string>
+    <string name="wallet_connected">Cüzdan Başarıyla Bağlandı</string>
+    <string name="processing_payment">Ödeme İşleniyor...</string>
+    <string name="payment_successful">Ödeme Başarılı!</string>
+    <string name="payment_failed">Ödeme Başarısız Oldu</string>
 </resources>
