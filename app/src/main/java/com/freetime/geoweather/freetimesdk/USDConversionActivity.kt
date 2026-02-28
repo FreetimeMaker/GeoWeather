@@ -5,8 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -201,11 +199,11 @@ fun USDConversionScreen(onBack: () -> Unit) {
             style = MaterialTheme.typography.titleMedium
         )
         
-        LazyColumn(
+        Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            items(availableCryptos) { crypto ->
+            availableCryptos.forEach { crypto ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
