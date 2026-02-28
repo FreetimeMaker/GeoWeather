@@ -227,7 +227,22 @@ fun WeatherDetailScreen(
                 }
             }
         } catch (e: Exception) {
-            errorMessage = e.message ?: "Error loading weather"
+            // Network failed – fall back to cached data if available
+            val cached = withContext(Dispatchers.IO) {
+                db.locationDao().findByCoordinates(lat, lon)
+            }
+            if (cached?.weatherData != null) {
+                weatherJson = cached.weatherData
+                try {
+                    forecastList = parseForecastData(cached.weatherData)
+                    hourlyForecastList = parseHourlyForecastData(cached.weatherData)
+                } catch (parseEx: Exception) {
+                    errorMessage = parseEx.message ?: "Error parsing cached data"
+                    parseEx.printStackTrace()
+                }
+            } else {
+                errorMessage = e.message ?: "Error loading weather"
+            }
             e.printStackTrace()
         } finally {
             isRefreshing = false
