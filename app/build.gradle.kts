@@ -35,7 +35,7 @@ dependencies {
     implementation("com.github.FreetimeMaker:FreetimeSDK:v1.1.5")
 
     // Compose BOM
-    implementation(platform("androidx.compose:compose-bom:2026.02.00"))
+    implementation(platform("androidx.compose:compose-bom:2026.02.01"))
 
     // Compose UI
     implementation("androidx.compose.ui:ui:1.10.4")
