@@ -81,6 +81,10 @@ fun SettingsScreen(onBack: () -> Unit) {
             Button(onClick = onBack) {
                 Text("← Back")
             }
+
+            Button(OnClick = {
+            context.startActivity(Intent(context, WhatsNewActivity::class.java))
+        }) { Text("Open Change Log") })
         }
         
         // Dark Mode Settings

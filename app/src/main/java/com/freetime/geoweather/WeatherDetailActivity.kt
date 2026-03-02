@@ -197,7 +197,7 @@ fun WeatherDetailScreen(
             } else {
                 // Fetch fresh data
                 val url =
-                    "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&timezone=auto"
+                    "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max,moon_phase&timezone=auto"
 
                 val aqiUrl =
                     "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
@@ -368,17 +368,21 @@ fun WeatherDetailScreen(
                 var sunrise: String
                 var sunset: String
                 var maxWind: Double
-                
+                var moonPhase: Double
+
                 try {
                     val daily = obj.getJSONObject("daily")
                     sunrise = daily.getJSONArray("sunrise").getString(0)
                     sunset = daily.getJSONArray("sunset").getString(0)
                     maxWind = daily.getJSONArray("windspeed_10m_max").getDouble(0)
+                    // moon_phase is a value between 0.0 (new) and 1.0 (next new)
+                    moonPhase = daily.getJSONArray("moon_phase").getDouble(0)
                 } catch (e: Exception) {
                     // Fallback values if daily data is missing
                     sunrise = "N/A"
                     sunset = "N/A"
                     maxWind = 0.0
+                    moonPhase = 0.0
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -478,10 +482,36 @@ fun WeatherDetailScreen(
                                     )
                                 }
                             }
+
+                            // aktuelle Mondphase direkt bei Sonnenzeiten
+                            Spacer(Modifier.height(12.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "🌙",
+                                    fontSize = 20.sp
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Column {
+                                    Text(
+                                        text = getMoonPhaseDescription(moonPhase),
+                                        fontSize = 16.sp
+                                    )
+                                    Text(
+                                        text = String.format(Locale.getDefault(), "%.2f", moonPhase),
+                                        fontSize = 12.sp,
+                                        color = Color.Gray
+                                    )
+                                }
+                            }
                         }
                     }
                 }
                 Spacer(Modifier.height(16.dp))
+
+
 
                 // Air Quality Index Card
                 aqiJson?.let { aqiData ->
@@ -832,7 +862,8 @@ data class DailyForecast(
     val date: String,
     val tempMax: Double,
     val tempMin: Double,
-    val weatherCode: Int
+    val weatherCode: Int,
+    val moonPhase: Double? = null // optional for tracking lunar cycle
 )
 
 data class HourlyForecast(
@@ -888,19 +919,15 @@ fun ForecastItem(forecast: DailyForecast) {
                     text = WeatherCodes.getDescription(forecast.weatherCode),
                     fontSize = 14.sp
                 )
-            }
-
-            // Temperature
-            Text(
-                text = String.format(Locale.getDefault(), "%.1f° / %.1f°", forecast.tempMin, forecast.tempMax),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
-}
-
-@Composable
+                // moon phase for this day if provided
+                forecast.moonPhase?.let { phase ->
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = getMoonPhaseDescription(phase),
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                }
 fun HourlyForecastItem(forecast: HourlyForecast) {
     Card(
         modifier = Modifier.width(100.dp),
@@ -950,13 +977,19 @@ fun parseForecastData(weatherJson: String): List<DailyForecast> {
             val dateStr = times.getString(i)
             val date = dateFormat.parse(dateStr)
             val formattedDate = outputFormat.format(date ?: Date())
+            val moon = try {
+                daily.getJSONArray("moon_phase").getDouble(i)
+            } catch (_: Exception) {
+                null
+            }
 
             forecastList.add(
                 DailyForecast(
                     date = formattedDate,
                     tempMax = tempMax.getDouble(i),
                     tempMin = tempMin.getDouble(i),
-                    weatherCode = weatherCodes.getInt(i)
+                    weatherCode = weatherCodes.getInt(i),
+                    moonPhase = moon
                 )
             )
         }
@@ -1055,6 +1088,20 @@ fun formatTime(timeString: String): String {
         } catch (e: Exception) {
             "N/A" // Ultimate fallback
         }
+    }
+}
+
+fun getMoonPhaseDescription(phase: Double): String {
+    // phase value comes from the Open-Meteo API where 0=new moon, 0.5=full moon, 1=next new moon
+    return when {
+        phase < 0.01 || phase > 0.99 -> "🌑 Neumond"
+        phase < 0.25 -> "🌒 Zunehmender Sichelmond"
+        phase < 0.26 -> "🌓 Erstes Viertel"
+        phase < 0.49 -> "🌔 Zunehmender Mond"
+        phase < 0.51 -> "🌕 Vollmond"
+        phase < 0.74 -> "🌖 Abnehmender Mond"
+        phase < 0.76 -> "🌗 Letztes Viertel"
+        else -> "🌘 Abnehmender Sichelmond"
     }
 }
 

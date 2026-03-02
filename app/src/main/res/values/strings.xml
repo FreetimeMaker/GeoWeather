@@ -42,6 +42,7 @@
     <string name="BackBTNTXT">← Back</string>
     <string name="TempTXT">Temperature: %1$s°C</string>
     <string name="WindSpeedTXT">Wind: %1$s km/h</string>
+    <string name="change_log_title">Change Log</string>
     <string name="FeelsLikeTXT">Feels like: %1$s°C</string>
     <string name="HumidityTXT">Humidity: %1$s%%</string>
     <string name="PressureTXT">Pressure: %1$s hPa</string>
@@ -52,6 +53,7 @@
     <string name="HourlyForecastTXT">Hourly Forecast</string>
     <string name="SevenDayForecastTXT">7-Day Forecast</string>
     <string name="WeatherDetailsTXT">Weather Details</string>
+    <string name="MoonPhaseTXT">Moonphase</string>
     <string name="AirQualityTXT">Air Quality Index</string>
     <string name="AQIGoodTXT">Good</string>
     <string name="AQIModerateTXT">Moderate</string>
