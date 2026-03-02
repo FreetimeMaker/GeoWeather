@@ -1,6 +1,7 @@
 package com.freetime.geoweather
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.freetime.geoweather.ChangeLogActivity
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
 class SettingsActivity : ComponentActivity() {
@@ -82,9 +84,11 @@ fun SettingsScreen(onBack: () -> Unit) {
                 Text("← Back")
             }
 
-            Button(OnClick = {
-            context.startActivity(Intent(context, WhatsNewActivity::class.java))
-        }) { Text("Open Change Log") })
+            Button(onClick = {
+                context.startActivity(Intent(context, ChangeLogActivity::class.java))
+            }) {
+                Text("Open Change Log")
+            }
         }
         
         // Dark Mode Settings
