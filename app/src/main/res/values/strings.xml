@@ -53,7 +53,6 @@
     <string name="HourlyForecastTXT">Hourly Forecast</string>
     <string name="SevenDayForecastTXT">7-Day Forecast</string>
     <string name="WeatherDetailsTXT">Weather Details</string>
-    <string name="MoonPhaseTXT">Moonphase</string>
     <string name="AirQualityTXT">Air Quality Index</string>
     <string name="AQIGoodTXT">Good</string>
     <string name="AQIModerateTXT">Moderate</string>

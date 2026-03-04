@@ -94,8 +94,6 @@ fun ChangeLogScreen(onBack: () -> Unit) {
         // ---- inline-defined cards --------------------------------
         ReleaseCard(version = BuildConfig.VERSION_NAME) {
             Text("🛠️ Added")
-            Text("• Moon tracking in the Weather Detail Screen")
-            Text("• Display of the next moon phases in the 7-day forecast")
             Text("🛠️ Fixed")
             Text("• Various UI improvements and bug fixes")
         }
