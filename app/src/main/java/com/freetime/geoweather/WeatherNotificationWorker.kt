@@ -8,7 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.core.app.ActivityCompat
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
@@ -18,18 +18,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.URL
-import java.text.SimpleDateFormat
-import java.util.*
 
 class WeatherNotificationWorker(
     context: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
 
+    companion object {
+        private const val TAG = "WeatherNotificationWorker"
+    }
+
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
+            Log.d(TAG, "doWork started")
             // Check notification permissions first
             if (!hasNotificationPermission()) {
+                Log.d(TAG, "No notification permission")
                 return@withContext Result.failure()
             }
             
@@ -43,6 +47,8 @@ class WeatherNotificationWorker(
                     val temp = weatherData.getDouble("temperature")
                     val weatherCode = weatherData.getInt("weathercode")
                     val weatherDescription = getWeatherDescription(weatherCode)
+
+                    Log.d(TAG, "Preparing notification for ${location.name}: $temp, $weatherDescription")
 
                     // Send notification for this location
                     sendWeatherNotification(
@@ -59,15 +65,18 @@ class WeatherNotificationWorker(
             
             Result.success()
         } catch (e: Exception) {
+            Log.e(TAG, "doWork failed", e)
             e.printStackTrace()
             Result.failure()
         }
     }
 
-    private suspend fun fetchWeatherData(lat: Double, lon: Double): JSONObject {
+    private fun fetchWeatherData(lat: Double, lon: Double): JSONObject {
         val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&timezone=auto"
         val response = URL(url).readText()
-        return JSONObject(response)
+        val json = JSONObject(response)
+        // Return the current_weather object (contains temperature, windspeed, weathercode, etc.)
+        return if (json.has("current_weather")) json.getJSONObject("current_weather") else json
     }
     
     private fun hasNotificationPermission(): Boolean {
@@ -109,21 +118,24 @@ class WeatherNotificationWorker(
         locationId: Long
     ) {
         if (!hasNotificationPermission()) {
+            Log.d(TAG, "sendWeatherNotification: permission missing")
             return
         }
         
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
-        // Create notification channel
-        val channel = NotificationChannel(
-            "weather_notifications",
-            "Weather Updates",
-            NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            description = "Daily weather notifications"
+        // Create notification channel (only on Android O+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "weather_notifications",
+                "Weather Updates",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Daily weather notifications"
+            }
+            notificationManager.createNotificationChannel(channel)
         }
-        notificationManager.createNotificationChannel(channel)
-        
+
         // Create intent for opening app with specific location
         val intent = Intent(context, WeatherDetailActivity::class.java).apply {
             putExtra("name", locationName)
@@ -155,5 +167,6 @@ class WeatherNotificationWorker(
         
         // Use location ID for unique notification ID
         notificationManager.notify(locationId.toInt(), notification)
+        Log.d(TAG, "Notification sent for $locationName (id=${locationId.toInt()})")
     }
 }

@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -40,10 +39,10 @@ class WeatherChangeWorker(
                     // Fetch current weather data for this location
                     val currentWeather = fetchCurrentWeatherData(location.latitude, location.longitude)
                     val currentSnapshot = WeatherSnapshot(
-                        temperature = currentWeather.getDouble("temp"),
-                        windSpeed = currentWeather.getDouble("windspeed"),
-                        precipitation = currentWeather.getDouble("precipitation"),
-                        weatherCode = currentWeather.getInt("weather_code"),
+                        temperature = currentWeather.getDouble("temperature"),
+                        windSpeed = currentWeather.optDouble("windspeed", 0.0),
+                        precipitation = currentWeather.optDouble("precipitation", 0.0),
+                        weatherCode = currentWeather.getInt("weathercode"),
                         timestamp = System.currentTimeMillis()
                     )
 
@@ -63,35 +62,44 @@ class WeatherChangeWorker(
             }
             
             Result.success()
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (_: Exception) {
+            // Log intentionally omitted
             Result.failure()
         }
     }
 
-    private suspend fun fetchCurrentWeatherData(lat: Double, lon: Double): JSONObject {
+    private fun fetchCurrentWeatherData(lat: Double, lon: Double): JSONObject {
         val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=precipitation_probability,windspeed_10m&timezone=auto"
         val response = URL(url).readText()
         val json = JSONObject(response)
         
-        val currentWeather = json.getJSONObject("current_weather")
-        val hourly = json.getJSONObject("hourly")
-        
-        // Get current hour index
+        val currentWeather = if (json.has("current_weather")) json.getJSONObject("current_weather") else JSONObject()
+        val hourly = if (json.has("hourly")) json.getJSONObject("hourly") else JSONObject()
+
+        // Get current hour index (best-effort)
         val currentTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault()).format(Date())
-        val times = hourly.getJSONArray("time")
-        var currentIndex = 0
-        for (i in 0 until times.length()) {
-            if (times.getString(i).startsWith(currentTime.substring(0, 13))) {
-                currentIndex = i
-                break
+        if (hourly.has("time")) {
+            val times = hourly.getJSONArray("time")
+            var currentIndex = 0
+            for (i in 0 until times.length()) {
+                if (times.getString(i).startsWith(currentTime.substring(0, 13))) {
+                    currentIndex = i
+                    break
+                }
+            }
+            // Add precipitation and wind speed to current weather if available
+            if (hourly.has("precipitation_probability")) {
+                try {
+                    currentWeather.put("precipitation", hourly.getJSONArray("precipitation_probability").getDouble(currentIndex))
+                } catch (_: Exception) { /* ignore */ }
+            }
+            if (hourly.has("windspeed_10m")) {
+                try {
+                    currentWeather.put("windspeed", hourly.getJSONArray("windspeed_10m").getDouble(currentIndex))
+                } catch (_: Exception) { /* ignore */ }
             }
         }
-        
-        // Add precipitation and wind speed to current weather
-        currentWeather.put("precipitation", hourly.getJSONArray("precipitation_probability").getDouble(currentIndex))
-        currentWeather.put("windspeed", hourly.getJSONArray("windspeed_10m").getDouble(currentIndex))
-        
+
         return currentWeather
     }
 
@@ -109,7 +117,7 @@ class WeatherChangeWorker(
             } else {
                 WeatherSnapshot(temp, wind, precip, code, timestamp)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -181,16 +189,18 @@ class WeatherChangeWorker(
     ) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
-        // Create notification channel
-        val channel = NotificationChannel(
-            "weather_change_alerts",
-            "Weather Change Alerts",
-            NotificationManager.IMPORTANCE_HIGH
-        ).apply {
-            description = "Alerts for significant weather changes"
+        // Create notification channel (Android O+)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "weather_change_alerts",
+                "Weather Change Alerts",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Alerts for significant weather changes"
+            }
+            notificationManager.createNotificationChannel(channel)
         }
-        notificationManager.createNotificationChannel(channel)
-        
+
         // Create intent for opening app with specific location
         val intent = Intent(context, WeatherDetailActivity::class.java).apply {
             putExtra("name", locationName)
