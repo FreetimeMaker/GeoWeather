@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
+import coil.compose.AsyncImage
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -163,6 +164,9 @@ fun WeatherDetailScreen(
     val scope = rememberCoroutineScope()
     var weatherJson by remember { mutableStateOf<String?>(null) }
     var aqiJson by remember { mutableStateOf<String?>(null) }
+    var moonJson by remember { mutableStateOf<String?>(null) }
+    var moonPhaseName by remember { mutableStateOf<String?>(null) }
+    var moonIconCode by remember { mutableStateOf<String?>(null) }
     var forecastList by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
     var hourlyForecastList by remember { mutableStateOf<List<HourlyForecast>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -205,6 +209,24 @@ fun WeatherDetailScreen(
                 val json = withContext(Dispatchers.IO) { httpGet(url) }
                 val aqiJsonResponse = withContext(Dispatchers.IO) {
                     try { httpGet(aqiUrl) } catch (e: Exception) { null }
+                }
+
+                // attempt QWeather call if user key exists
+                val prefs = LocalContext.current.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
+                val qKey = prefs.getString("qweather_api_key", "") ?: ""
+                if (qKey.isNotBlank()) {
+                    try {
+                        val moonUrl = "https://devapi.qweather.com/v7/astronomy/moon?location=$lon,$lat&key=$qKey"
+                        val mq = withContext(Dispatchers.IO) { httpGet(moonUrl) }
+                        moonJson = mq
+                        val obj = JSONObject(mq)
+                            .getJSONArray("moon")
+                            .getJSONObject(0)
+                        moonPhaseName = obj.optString("moonPhaseName", obj.optString("moonPhase", null))
+                        moonIconCode = obj.optString("icon", obj.optString("moonPhaseIcon", null))
+                    } catch (_: Exception) {
+                        // ignore
+                    }
                 }
 
                 // Update entity with fresh data and timestamp
@@ -419,7 +441,7 @@ fun WeatherDetailScreen(
                         // Sonnenaufgang und Sonnenuntergang
                         Column {
                             Text(
-                                text = "☀️ Sonnenaufgang & Sonnenuntergang",
+                                text = "☀️ " + stringResource(R.string.SunriseSunsetLabel),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onBackground
@@ -446,7 +468,7 @@ fun WeatherDetailScreen(
                                             color = Color(0xFFFFA500)
                                         )
                                         Text(
-                                            text = "Sonnenaufgang",
+                                            text = stringResource(R.string.SunriseOnly),
                                             fontSize = 12.sp,
                                             color = Color.Gray
                                         )
@@ -467,7 +489,7 @@ fun WeatherDetailScreen(
                                             color = Color(0xFFFF6B35)
                                         )
                                         Text(
-                                            text = "Sonnenuntergang",
+                                            text = stringResource(R.string.SunsetOnly),
                                             fontSize = 12.sp,
                                             color = Color.Gray
                                         )
@@ -482,6 +504,36 @@ fun WeatherDetailScreen(
                     }
                 }
                 Spacer(Modifier.height(16.dp))
+
+                // Moon cycle card from QWeather with icon
+                moonPhaseName?.let { phaseName ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(stringResource(R.string.MoonCycleTXT), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Spacer(Modifier.height(12.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                moonIconCode?.let { code ->
+                                    // construct icon URL using QWeather standard path
+                                    val url = "https://cdn.qweather.com/content/images/astronomy/moon/$code.png"
+                                    AsyncImage(
+                                        model = url,
+                                        contentDescription = "Moon phase icon",
+                                        modifier = Modifier.size(32.dp)
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                }
+                                Text(
+                                    text = phaseName,
+                                    fontSize = 16.sp
+                                )
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(16.dp))
+                }
 
 
 
@@ -501,7 +553,7 @@ fun WeatherDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "AQI: ${aqiInfo.value}",
+                                    text = stringResource(R.string.AQILabel, aqiInfo.value),
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = aqiInfo.color
@@ -1230,10 +1282,10 @@ fun TimePickerDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Time") },
+        title = { Text(stringResource(R.string.select_time_title)) },
         text = {
             Column {
-                Text("Hour: $selectedHour")
+                Text(stringResource(R.string.hour_label, selectedHour))
                 Slider(
                     value = selectedHour.toFloat(),
                     onValueChange = { selectedHour = it.toInt() },
@@ -1241,7 +1293,7 @@ fun TimePickerDialog(
                     steps = 22
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Minute: $selectedMinute")
+                Text(stringResource(R.string.minute_label, selectedMinute))
                 Slider(
                     value = selectedMinute.toFloat(),
                     onValueChange = { selectedMinute = it.toInt() },
@@ -1257,12 +1309,12 @@ fun TimePickerDialog(
                     onTimeSelected(time)
                 }
             ) {
-                Text("OK")
+                Text(stringResource(R.string.ok_btn))
             }
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel_btn))
             }
         }
     )

@@ -69,6 +69,10 @@ fun SettingsScreen(onBack: () -> Unit) {
         mutableStateOf(sharedPreferences.getBoolean("use_system_theme", true))
     }
 
+    var qweatherKey by remember {
+        mutableStateOf(sharedPreferences.getString("qweather_api_key", "") ?: "")
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,17 +85,17 @@ fun SettingsScreen(onBack: () -> Unit) {
             horizontalArrangement = Arrangement.Start
         ) {
             Button(onClick = onBack) {
-                Text("← Back")
+                Text(stringResource(R.string.back_btn))
             }
 
             Button(onClick = {
                 context.startActivity(Intent(context, ChangeLogActivity::class.java))
             }) {
-                Text("Open Change Log")
+                Text(stringResource(R.string.open_change_log))
             }
         }
         
-        // Dark Mode Settings
+        // Dark Mode & QWeather Settings
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -100,7 +104,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Theme Settings",
+                    text = stringResource(R.string.theme_settings_title),
                     style = MaterialTheme.typography.headlineSmall
                 )
                 
@@ -110,7 +114,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Follow System Theme")
+                    Text(stringResource(R.string.follow_system_theme))
                     Switch(
                         checked = useSystemTheme,
                         onCheckedChange = { enabled ->
@@ -129,9 +133,9 @@ fun SettingsScreen(onBack: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text("Force Dark Mode")
+                        Text(stringResource(R.string.force_dark_mode))
                         Text(
-                            text = "Override system setting",
+                            text = stringResource(R.string.override_system_setting),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -147,6 +151,22 @@ fun SettingsScreen(onBack: () -> Unit) {
                         }
                     )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // QWeather API Key entry
+                Text(stringResource(R.string.qweather_key_label), style = MaterialTheme.typography.bodyMedium)
+                OutlinedTextField(
+                    value = qweatherKey,
+                    onValueChange = { key ->
+                        qweatherKey = key
+                        sharedPreferences.edit()
+                            .putString("qweather_api_key", key)
+                            .apply()
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
         

@@ -82,7 +82,7 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(onClick = onBack) {
-                Text("← Back")
+                Text(stringResource(R.string.back_btn))
             }
         }
 
@@ -93,11 +93,11 @@ fun ChangeLogScreen(onBack: () -> Unit) {
 
         // ---- inline-defined cards --------------------------------
         ReleaseCard(version = BuildConfig.VERSION_NAME) {
-            Text("🛠️ Added")
-            Text("🛠️ Fixed")
-            Text("• Various UI improvements and bug fixes")
-        }
-
+                Text("🛠️ ${stringResource(R.string.added_label)}")
+                Text(stringResource(R.string.changelog_moon_data))
+                Text("🛠️ ${stringResource(R.string.fixed_label)}")
+                Text(stringResource(R.string.changelog_ui_improvements))
+            }
         Spacer(modifier = Modifier.weight(1f))
     }
 }

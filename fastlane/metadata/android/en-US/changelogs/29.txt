@@ -1,2 +1,3 @@
 - Added a "What's New?" Button and Activity in the Settings
 - Updated WeatherDetailActivity so it won't show after 30 Minutes that no Weather Data is cached. Instead, it will be cached until an Internet Connection is available
+- Added Moon Data and Icons using your own qweather API Key
