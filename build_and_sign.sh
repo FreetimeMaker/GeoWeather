@@ -45,7 +45,7 @@ echo "==> Fertig!"
 echo "Signierte APK: $OUT_APK"
 
 echo "==> Zurück zum Hauptbranch wechseln"
-git checkout main
+git checkout master
 
 echo "==> Pushe Tag $TAG auf GitHub"
 git push origin "$TAG"
