@@ -44,7 +44,7 @@
     <string name="WindSpeedTXT">Wind: %1$s km/h</string>
     <string name="change_log_title">Change Log</string>
     <string name="FeelsLikeTXT">Feels like: %1$s°C</string>
-    <string name="MoonCycleTXT">Mondzyklus</string>
+    <string name="MoonCycleTXT">Moon Cycle</string>
     <!-- qweather API key placeholder; set in gradle or secrets -->
     <string name="qweather_api_key">YOUR_QWEATHER_KEY</string>
     <string name="HumidityTXT">Humidity: %1$s%%</string>
