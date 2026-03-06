@@ -162,6 +162,9 @@ fun WeatherDetailScreen(
     onBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val sharedPreferences = remember { context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
+    val qWeatherKey = remember { sharedPreferences.getString("qweather_api_key", "") ?: "" }
     var weatherJson by remember { mutableStateOf<String?>(null) }
     var aqiJson by remember { mutableStateOf<String?>(null) }
     var moonJson by remember { mutableStateOf<String?>(null) }
@@ -212,8 +215,7 @@ fun WeatherDetailScreen(
                 }
 
                 // attempt QWeather call if user key exists
-                val prefs = LocalContext.current.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-                val qKey = prefs.getString("qweather_api_key", "") ?: ""
+                val qKey = qWeatherKey
                 if (qKey.isNotBlank()) {
                     try {
                         val moonUrl = "https://devapi.qweather.com/v7/astronomy/moon?location=$lon,$lat&key=$qKey"
@@ -1185,7 +1187,7 @@ fun calculateWeatherAlerts(
         alerts.add(
             WeatherAlert(
                 type = "wind",
-                message = String.format(resources.getString(R.string.WindAlertTXT), wind.toInt()),
+                message = String.format(resources.getString(R.string.WindAlertTXT), wind.toInt().toString()),
                 severity = "high",
                 color = Color(0xFFFF0000)
             )
@@ -1194,7 +1196,7 @@ fun calculateWeatherAlerts(
         alerts.add(
             WeatherAlert(
                 type = "wind",
-                message = String.format(resources.getString(R.string.WindAlertTXT), wind.toInt()),
+                message = String.format(resources.getString(R.string.WindAlertTXT), wind.toInt().toString()),
                 severity = "medium",
                 color = Color(0xFFFFA500)
             )
@@ -1206,7 +1208,7 @@ fun calculateWeatherAlerts(
         alerts.add(
             WeatherAlert(
                 type = "rain",
-                message = String.format(resources.getString(R.string.RainAlertTXT), precipitation.toInt()),
+                message = String.format(resources.getString(R.string.RainAlertTXT), precipitation.toInt().toString()),
                 severity = "high",
                 color = Color(0xFF0000FF)
             )
@@ -1215,7 +1217,7 @@ fun calculateWeatherAlerts(
         alerts.add(
             WeatherAlert(
                 type = "rain",
-                message = String.format(resources.getString(R.string.RainAlertTXT), precipitation.toInt()),
+                message = String.format(resources.getString(R.string.RainAlertTXT), precipitation.toInt().toString()),
                 severity = "medium",
                 color = Color(0xFF0080FF)
             )
@@ -1227,7 +1229,7 @@ fun calculateWeatherAlerts(
         alerts.add(
             WeatherAlert(
                 type = "temperature",
-                message = String.format(resources.getString(R.string.TemperatureAlertTXT), temp.toInt(), feelsLike.toInt()),
+                message = String.format(resources.getString(R.string.TemperatureAlertTXT), temp.toInt().toString(), feelsLike.toInt().toString()),
                 severity = "high",
                 color = Color(0xFFFF00FF)
             )
@@ -1236,7 +1238,7 @@ fun calculateWeatherAlerts(
         alerts.add(
             WeatherAlert(
                 type = "temperature",
-                message = String.format(resources.getString(R.string.TemperatureAlertTXT), temp.toInt(), feelsLike.toInt()),
+                message = String.format(resources.getString(R.string.TemperatureAlertTXT), temp.toInt().toString(), feelsLike.toInt().toString()),
                 severity = "medium",
                 color = Color(0xFF800080)
             )

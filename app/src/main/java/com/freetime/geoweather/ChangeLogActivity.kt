@@ -11,7 +11,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
 class ChangeLogActivity : ComponentActivity() {
@@ -68,6 +70,14 @@ fun ReleaseCard(version: String, modifier: Modifier = Modifier, content: @Compos
 
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
+    val context = LocalContext.current
+    // `versionName` can be nullable; compute a non-nullable String explicitly
+    val version: String = try {
+        val vn = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        vn ?: "?"
+    } catch (e: Exception) {
+        "?"
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -92,7 +102,7 @@ fun ChangeLogScreen(onBack: () -> Unit) {
         )
 
         // ---- inline-defined cards --------------------------------
-        ReleaseCard(version = BuildConfig.VERSION_NAME) {
+        ReleaseCard(version = version) {
                 Text("🛠️ ${stringResource(R.string.added_label)}")
                 Text(stringResource(R.string.changelog_moon_data))
                 Text("🛠️ ${stringResource(R.string.fixed_label)}")
