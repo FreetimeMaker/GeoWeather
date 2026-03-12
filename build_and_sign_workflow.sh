@@ -3,23 +3,21 @@ set -e
 
 ### CONFIG ###
 APP_ID="com.freetime.geoweather"
-TAG="v1.2.9"   # <-- HIER deine Version eintragen
-KEYSTORE="$HOME/AndroidStudioProjects/GeoWeather/GeoWeather-KeyStore.jks"
-KEY_ALIAS="alle"
-KEY_PASS="KKKKKK"
+TAG="${GITHUB_REF_NAME}"   # automatisch vom CI gesetzt
+KEYSTORE="release.keystore"
+KEY_ALIAS="${KEY_ALIAS}"
+KEY_PASS="${KEY_PASS}"
 OUT_APK="GeoWeather-$TAG.apk"
 ################
 
-echo "==> Zeige Java Version"
+echo "==> Java Version"
 java -version
 
-echo "==> Hole Tags von GitHub"
-git fetch --tags
-
 echo "==> Checkout des Release-Tags: $TAG"
+git fetch --tags
 git checkout "$TAG"
 
-echo "==> Sauberer Build"
+echo "==> Baue Release"
 ./gradlew clean assembleRelease
 
 UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
@@ -43,6 +41,3 @@ apksigner verify --verbose "$OUT_APK"
 
 echo "==> Fertig!"
 echo "Signierte APK: $OUT_APK"
-
-echo "==> Zurück zum Hauptbranch wechseln"
-git checkout master

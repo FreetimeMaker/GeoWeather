@@ -1,27 +1,32 @@
-name: Run Script on Tag
+name: Build on Tag
 
 on:
   push:
     tags:
-      - '*'   # läuft bei jedem neuen Tag
+      - '*'
 
 jobs:
-  run-script:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install and configure Java
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle   # optional, falls du Gradle nutzt
+
+      - name: find keystore
+        run: echo "$KEYSTORE_BASE64" | base64 --decode > release.keystore
+        env:
+          KEYSTORE_BASE64: ./GeoWeather-KeyStore.jks
 
       - name: Make script executable
         run: chmod +x ./build_and_sign_workflow.sh
 
-      - name: Run custom script
+      - name: Run script
         run: ./build_and_sign_workflow.sh
+        env:
+          KEY_ALIAS: alle
+          KEY_PASS: KKKKKK
