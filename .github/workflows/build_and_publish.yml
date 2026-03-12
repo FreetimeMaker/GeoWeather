@@ -1,4 +1,4 @@
-name: Build on Tag
+name: Build, Sign and Release
 
 on:
   push:
@@ -10,9 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # wichtig für Tags
 
-      - uses: actions/setup-java@v4
+      - name: Install Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
@@ -20,6 +24,15 @@ jobs:
       - name: Make script executable
         run: chmod +x ./build_and_sign_workflow.sh
 
-      - name: Run script
+      - name: Build & Sign APK
         run: ./build_and_sign_workflow.sh
 
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "GeoWeather ${{ github.ref_name }}"
+          body: "Automatisch gebaut und signiert."
+          draft: false
+          prerelease: false
+          files: "GeoWeather-${{ github.ref_name }}.apk"
