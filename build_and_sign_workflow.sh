@@ -11,9 +11,15 @@ OUT_APK="GeoWeather-$TAG.apk"
 echo "==> Java Version"
 java -version
 
-echo "==> Checkout des Release-Tags: $TAG"
+echo "==> Entferne lokale Tags"
+git tag -l | xargs -r git tag -d
+
+echo "==> Hole Tags von GitHub"
 git fetch --tags
+
+echo "==> Checkout des Release-Tags: $TAG"
 git checkout "$TAG"
+
 
 echo "==> Baue Release"
 ./gradlew clean assembleRelease
