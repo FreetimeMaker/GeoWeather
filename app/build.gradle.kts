@@ -38,11 +38,11 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2026.02.01"))
 
     // Compose UI
-    implementation("androidx.compose.ui:ui:1.10.4")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.10.4")
+    implementation("androidx.compose.ui:ui:1.10.5")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.10.5")
     implementation("androidx.compose.material3:material3:1.4.0")
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.10.4")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.10.5")
 
     // Lifecycle Compose (observeAsState)
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.10.0")
