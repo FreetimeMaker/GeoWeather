@@ -20,19 +20,23 @@ git fetch --tags
 echo "==> Checkout des Release-Tags: $TAG"
 git checkout "$TAG"
 
-
 echo "==> Baue Release"
 ./gradlew clean assembleRelease
 
 UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
 
-if [ ! -f "$UNSIGNED_APK" ]; then
-    echo "FEHLER: Unsigned APK nicht gefunden!"
+echo "==> Finde apksigner"
+APKSIGNER=$(find /usr/local/lib/android/sdk/build-tools -name apksigner | head -n 1)
+
+if [ -z "$APKSIGNER" ]; then
+    echo "FEHLER: apksigner nicht gefunden!"
     exit 1
 fi
 
+echo "==> Verwende apksigner: $APKSIGNER"
+
 echo "==> Signiere APK"
-apksigner sign \
+"$APKSIGNER" sign \
   --ks "$KEYSTORE" \
   --ks-key-alias "$KEY_ALIAS" \
   --ks-pass pass:"$KEY_PASS" \
@@ -41,7 +45,7 @@ apksigner sign \
   "$UNSIGNED_APK"
 
 echo "==> Prüfe Signatur"
-apksigner verify --verbose "$OUT_APK"
+"$APKSIGNER" verify --verbose "$OUT_APK"
 
 echo "==> Fertig!"
 echo "Signierte APK: $OUT_APK"
