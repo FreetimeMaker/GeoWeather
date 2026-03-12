@@ -1,14 +1,12 @@
 #!/bin/bash
 set -e
 
-### CONFIG ###
 APP_ID="com.freetime.geoweather"
-TAG="${GITHUB_REF_NAME}"   # automatisch vom CI gesetzt
-KEYSTORE="release.keystore"
-KEY_ALIAS="${KEY_ALIAS}"
-KEY_PASS="${KEY_PASS}"
+TAG="${GITHUB_REF_NAME}"
+KEYSTORE="./GeoWeather-KeyStore.jks"
+KEY_ALIAS="alle"
+KEY_PASS="KKKKKK"
 OUT_APK="GeoWeather-$TAG.apk"
-################
 
 echo "==> Java Version"
 java -version

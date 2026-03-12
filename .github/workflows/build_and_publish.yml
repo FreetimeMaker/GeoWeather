@@ -17,16 +17,9 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: find keystore
-        run: echo "$KEYSTORE_BASE64" | base64 --decode > release.keystore
-        env:
-          KEYSTORE_BASE64: ./GeoWeather-KeyStore.jks
-
       - name: Make script executable
         run: chmod +x ./build_and_sign_workflow.sh
 
       - name: Run script
         run: ./build_and_sign_workflow.sh
-        env:
-          KEY_ALIAS: alle
-          KEY_PASS: KKKKKK
+
