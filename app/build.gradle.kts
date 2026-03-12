@@ -32,7 +32,7 @@ android {
 
 dependencies {
     // FreetimeSDK for more Donation Options
-    implementation("com.github.FreetimeMaker:FreetimeSDK:v1.1.5")
+    implementation("com.github.FreetimeMaker:FreetimeSDK:v1.1.6")
 
     // Compose BOM
     implementation(platform("androidx.compose:compose-bom:2026.02.01"))
