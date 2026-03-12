@@ -221,11 +221,14 @@ fun WeatherDetailScreen(
                         val moonUrl = "https://devapi.qweather.com/v7/astronomy/moon?location=$lon,$lat&key=$qKey"
                         val mq = withContext(Dispatchers.IO) { httpGet(moonUrl) }
                         moonJson = mq
+
                         val obj = JSONObject(mq)
-                            .getJSONArray("moon")
+                            .getJSONArray("moonPhase")
                             .getJSONObject(0)
-                        moonPhaseName = obj.optString("moonPhaseName", obj.optString("moonPhase", null))
-                        moonIconCode = obj.optString("icon", obj.optString("moonPhaseIcon", null))
+
+                        moonPhaseName = obj.optString("name", null)
+                        moonIconCode = obj.optString("icon", null)
+
                     } catch (_: Exception) {
                         // ignore
                     }
