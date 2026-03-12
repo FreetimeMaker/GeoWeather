@@ -1,9 +1,12 @@
-name: Build, Sign and Release
+name: Build, Sign and Conditional Release
 
 on:
   push:
     tags:
       - '*'
+
+permissions:
+  contents: write   # Owner braucht das, Helfer wird ignoriert
 
 jobs:
   build:
@@ -13,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # wichtig für Tags
+          fetch-depth: 0
 
       - name: Install Java
         uses: actions/setup-java@v4
@@ -27,7 +30,23 @@ jobs:
       - name: Build & Sign APK
         run: ./build_and_sign_workflow.sh
 
-      - name: Create GitHub Release
+      - name: Upload APK as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeoWeather-${{ github.ref_name }}.apk
+          path: GeoWeather-${{ github.ref_name }}.apk
+
+      - name: Check if actor is repo owner
+        id: ownercheck
+        run: |
+          if [ "${{ github.actor }}" = "${{ github.repository_owner }}" ]; then
+            echo "is_owner=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_owner=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release (only if owner)
+        if: steps.ownercheck.outputs.is_owner == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
