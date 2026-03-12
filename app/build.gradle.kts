@@ -70,9 +70,9 @@ dependencies {
     ksp("androidx.room:room-compiler:2.8.4")
 
     // AndroidX
-    implementation("androidx.activity:activity-ktx:1.12.4")
+    implementation("androidx.activity:activity-ktx:1.13.0")
     implementation("androidx.fragment:fragment-ktx:1.8.9")
-    implementation("androidx.activity:activity-compose:1.12.4")
+    implementation("androidx.activity:activity-compose:1.13.0")
     
     // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.11.1")
