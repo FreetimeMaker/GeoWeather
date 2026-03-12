@@ -109,4 +109,7 @@
     <string name="wallet_connected">Erfolgreich verbunden</string>
     <string name="change_log_title">Änderungsprotokoll</string>
     <string name="MoonPhaseTXT">Mondphase</string>
+    <string name="MoonCycleTXT">Mondzyklus</string>
+    <string name="qweather_api_key">IHR_QWEATHER_SCHLÜSSEL</string>
+    <string name="whats_new_title">Was ist neu?</string>
 </resources>
