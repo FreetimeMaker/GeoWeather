@@ -1,0 +1,27 @@
+name: Run Script on Tag
+
+on:
+  push:
+    tags:
+      - '*'   # läuft bei jedem neuen Tag
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install and configure Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle   # optional, falls du Gradle nutzt
+
+      - name: Make script executable
+        run: chmod +x ./build_and_sign_workflow.sh
+
+      - name: Run custom script
+        run: ./build_and_sign_workflow.sh
