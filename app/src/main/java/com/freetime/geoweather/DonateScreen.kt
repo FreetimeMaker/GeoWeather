@@ -53,10 +53,6 @@ fun DonateScreen(onBack: () -> Unit) {
         }) { Text(stringResource(R.string.DonViaOxaPay)) }
 
         Button(onClick = {
-            context.startActivity(Intent(context, CoinbaseActivity::class.java))
-        }) { Text(stringResource(R.string.DonViaCoin)) }
-
-        Button(onClick = {
             context.startActivity(Intent(context, BitcoinActivity::class.java))
         }) { Text(stringResource(R.string.DonViaBTC)) }
 

@@ -52,18 +52,32 @@ data class ReleaseNotes(
 )
 
 @Composable
-fun ReleaseCard(version: String, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+fun ReleaseCard(
+    notes: ReleaseNotes,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally // <-- Zentriert
+        ) {
             Text(
-                text = version,
+                text = notes.version,
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
-            content()
+
+            notes.details.forEach { line ->
+                Text(
+                    text = line,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
     }
 }
@@ -71,21 +85,49 @@ fun ReleaseCard(version: String, modifier: Modifier = Modifier, content: @Compos
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val context = LocalContext.current
-    // `versionName` can be nullable; compute a non-nullable String explicitly
     val version: String = try {
-        val vn = context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        vn ?: "?"
+        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"
     } catch (e: Exception) {
         "?"
     }
+
+    // 🔥 Hier fügst du einfach neue Versionen hinzu
+    val releases = listOf(
+        ReleaseNotes(
+            version = "v1.3.0",
+            details = listOf(
+                text("🛠️ ${stringResource(R.string.removed_label)}")
+                text(stringResource(R.string.changelog_remove_coin))
+            )
+        ),
+        ReleaseNotes(
+            version = "v1.2.9",
+            details = listOf(
+                text("🛠️ ${stringResource(R.string.added_label)}")
+                text(stringResource(R.string.changelog_add_translate))
+                text("🛠️ ${stringResource(R.string.fixed_label)}")
+                text(stringResource(R.string.changelog_update_deps))
+                text(stringResource(R.string.changelog_fix_moon))
+            )
+        ),
+        ReleaseNotes(
+            version = "v1.2.8",
+            details = listOf(
+                text("🛠️ ${stringResource(R.string.added_label)}")
+                text(stringResource(R.string.changelog_moon_data))
+                Text("🛠️ ${stringResource(R.string.fixed_label)}")
+                Text(stringResource(R.string.changelog_ui_improvements))
+            )
+        )
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(rememberScrollState()) // <-- ScrollView
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // navigation header
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Start,
@@ -101,13 +143,11 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             style = MaterialTheme.typography.headlineMedium
         )
 
-        // ---- inline-defined cards --------------------------------
-        ReleaseCard(version = version) {
-                Text("🛠️ ${stringResource(R.string.added_label)}")
-                Text(stringResource(R.string.changelog_moon_data))
-                Text("🛠️ ${stringResource(R.string.fixed_label)}")
-                Text(stringResource(R.string.changelog_ui_improvements))
-            }
+        // 🔥 Automatisch mehrere ReleaseCards
+        releases.forEach { release ->
+            ReleaseCard(notes = release)
+        }
+
         Spacer(modifier = Modifier.weight(1f))
     }
 }
