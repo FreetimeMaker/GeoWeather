@@ -112,4 +112,9 @@
     <string name="MoonCycleTXT">Mondzyklus</string>
     <string name="qweather_api_key">IHR_QWEATHER_SCHLÜSSEL</string>
     <string name="whats_new_title">Was ist neu?</string>
+    <string name="changelog_update_deps">• Aktualisierte Abhängigkeiten</string>
+    <string name="changelog_fix_moon">• Festes Mondphasendisplay</string>
+    <string name="changelog_add_translate">• Weitere Übersetzungen hinzugefügt</string>
+    <string name="removed_label">Entfernt</string>
+    <string name="changelog_remove_coin">• Coinbase-Spendenoption aufgrund der Entfernung von Coinbase Commerce entfernt</string>
 </resources>
