@@ -11,20 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.freetime.geoweather.R
-import com.freetime.geoweather.freetimesdk.FreetimeSDKManager
-import com.freetime.geoweather.freetimesdk.PaymentActivity
-import com.freetime.geoweather.freetimesdk.WalletConnectionActivity
-import com.freetime.geoweather.freetimesdk.USDConversionActivity
 
 @Composable
 fun DonateScreen(onBack: () -> Unit) {
     val context = LocalContext.current
-    val sdkManager = remember { FreetimeSDKManager.getInstance(context) }
-    
-    LaunchedEffect(Unit) {
-        sdkManager.trackAppUsage("donate_screen")
-    }
 
     Column(
         modifier = Modifier
@@ -34,23 +24,13 @@ fun DonateScreen(onBack: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // FreetimeSDK powered payment options (without USD gateway)
-        Button(onClick = {
-            context.startActivity(Intent(context, PaymentActivity::class.java))
-        }) { 
-            Text(stringResource(R.string.DonViaFreetimeSDK)) 
-        }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, WalletConnectionActivity::class.java))
-        }) { 
-            Text(stringResource(R.string.DonViaWallet)) 
-        }
-
-        // Original hardcoded payment methods (restored)
         Button(onClick = {
             context.startActivity(Intent(context, OxaPayActivity::class.java))
         }) { Text(stringResource(R.string.DonViaOxaPay)) }
+
+       Button(onClick = {
+           context.startActivity(Intent(context, GH_SponsorsActivity::class.java))
+       }) { Text(stringResource(R.string.DonViaGHSponsors)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, BitcoinActivity::class.java))
@@ -78,21 +58,11 @@ fun DonateScreen(onBack: () -> Unit) {
 
         Button(onClick = {
             context.startActivity(Intent(context, TronActivity::class.java))
-        }) { Text(stringResource(R.string.DonateViaTRON)) }
+        }) { Text(stringResource(R.string.DonViaTRON)) }
 
         Button(onClick = {
             context.startActivity(Intent(context, LTC_Activity::class.java))
         }) { Text(stringResource(R.string.DonViaLTC)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, WalletSelectionActivity::class.java))
-        }) { Text(stringResource(R.string.DonViaWallet)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, USDConversionActivity::class.java))
-        }) { 
-            Text(stringResource(R.string.DonViaUSD)) 
-        }
 
         Button(onClick = {
             context.startActivity(Intent(context, DonatorActivity::class.java))

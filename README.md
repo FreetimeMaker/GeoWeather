@@ -56,7 +56,6 @@ You can download the latest version of GeoWeather from the following platforms:
 
 [<img src="https://github.com/machiav3lli/oandbackupx/blob/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png" alt="Get it on GitHub" height="82">](https://github.com/FreetimeMaker/GeoWeather/releases/latest")
 
-
 [<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.freetime.geoweather)
 
 [<img src="https://www.openapk.net/images/openapk-badge.png" alt="Get it on OpenAPK" height="80">](https://www.openapk.net/geoweather/com.freetime.geoweather/)

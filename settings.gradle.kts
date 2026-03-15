@@ -23,3 +23,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "GeoWeather"
 include(":app")
+include(":SDK")

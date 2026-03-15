@@ -59,17 +59,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ShibActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".WalletSelectionActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".USDGatewayActivity"
-            android:screenOrientation="portrait" />
         <activity android:name=".DonatorActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".freetimesdk.PaymentActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".freetimesdk.WalletConnectionActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".freetimesdk.USDConversionActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ChangeLogActivity"
             android:screenOrientation="portrait" />

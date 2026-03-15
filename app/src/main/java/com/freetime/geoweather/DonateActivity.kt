@@ -369,6 +369,39 @@ class TronActivity : ComponentActivity() {
     }
 }
 
+class GH_SponsorsActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        hideSystemUI()
+        setContent {
+            GeoWeatherTheme {
+                WebViewScreen(
+                    url = "https:github.com/sponsors/FreetimeMaker",
+                    onBack = { finish() }
+                )
+            }
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemUI()
+        }
+    }
+
+    private fun hideSystemUI() {
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
+    }
+}
+
 class DonatorActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -376,70 +409,6 @@ class DonatorActivity : ComponentActivity() {
         setContent {
             GeoWeatherTheme {
                 DonatorScreen(
-                    onBack = { finish() }
-                )
-            }
-        }
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            hideSystemUI()
-        }
-    }
-
-    private fun hideSystemUI() {
-        window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                )
-    }
-}
-
-class WalletSelectionActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        hideSystemUI()
-        setContent {
-            GeoWeatherTheme {
-                WalletSelectionScreen(
-                    onBack = { finish() }
-                )
-            }
-        }
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            hideSystemUI()
-        }
-    }
-
-    private fun hideSystemUI() {
-        window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                )
-    }
-}
-
-class USDGatewayActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        hideSystemUI()
-        setContent {
-            GeoWeatherTheme {
-                USDGatewayScreen(
                     onBack = { finish() }
                 )
             }
@@ -550,174 +519,4 @@ fun openDiscordInvite(context: Context) {
         Uri.parse("https://discord.gg/zPFvwK9pNh")
     )
     context.startActivity(webIntent)
-}
-
-fun openDeepLink(context: Context, deepLink: String) {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(deepLink))
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    context.startActivity(intent)
-}
-
-fun openPaymentUrl(context: Context, paymentUrl: String) {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    context.startActivity(intent)
-}
-
-@Composable
-fun WalletSelectionScreen(
-    onBack: () -> Unit,
-    context: Context = LocalContext.current
-) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 48.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                textAlign = TextAlign.Center,
-                text = stringResource(R.string.WalletTitle),
-                style = MaterialTheme.typography.headlineSmall
-            )
-
-            Text(
-                textAlign = TextAlign.Center,
-                text = stringResource(R.string.WalletDescription),
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            // Enhanced wallet app detection with availability status
-            val walletApps = listOf(
-                Triple("Trust Wallet", "com.trustwallet", "trust://"),
-                Triple("MetaMask", "io.metamask", "metamask://"),
-                Triple("Coinbase Wallet", "io.coinbase.android", "cbwallet://"),
-                Triple("Binance Wallet", "com.binance.dev", "binance://"),
-                Triple("Exodus", "exodusmobile", "exodus://"),
-                Triple("Atomic Wallet", "com.atomicwallet", "atomic://")
-            )
-            
-            val packageManager = context.packageManager
-            
-            walletApps.forEach { (walletName, packageName, deepLink) ->
-                val isInstalled = try {
-                    packageManager.getPackageInfo(packageName, 0)
-                    true
-                } catch (e: Exception) {
-                    false
-                }
-                
-                Button(
-                    onClick = {
-                        if (isInstalled) {
-                            try {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(deepLink))
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                context.startActivity(intent)
-                            } catch (e: Exception) {
-                                // Fallback to Discord invite
-                                openDiscordInvite(context)
-                            }
-                        } else {
-                            // Open app store for installation
-                            try {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName"))
-                                context.startActivity(intent)
-                            } catch (e: Exception) {
-                                // Fallback to Play Store web
-                                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName"))
-                                context.startActivity(webIntent)
-                            }
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isInstalled) 
-                            MaterialTheme.colorScheme.primary 
-                        else 
-                            MaterialTheme.colorScheme.secondary
-                    )
-                ) {
-                    Text(if (isInstalled) "Open $walletName" else "Install $walletName")
-                }
-            }
-            
-            // Fallback option if no wallets are available
-            Button(
-                onClick = {
-                    openDiscordInvite(context)
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Get Help on Discord")
-            }
-        }
-
-        Button(
-            onClick = onBack,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.backToSupPag))
-        }
-    }
-}
-
-@Composable
-fun USDGatewayScreen(
-    onBack: () -> Unit,
-    context: Context = LocalContext.current
-) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 48.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                textAlign = TextAlign.Center,
-                text = stringResource(R.string.USDTitle),
-                style = MaterialTheme.typography.headlineSmall
-            )
-
-            Text(
-                textAlign = TextAlign.Center,
-                text = stringResource(R.string.USDDescription),
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Button(
-                onClick = {
-                    // Original hardcoded USD gateway URL
-                    try {
-                        val paymentUrl = "https://ncwallet.net/pay/19tacit" // USDT payment URL as USD gateway
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
-                        context.startActivity(intent)
-                    } catch (e: Exception) {
-                        // Fallback to Discord invite
-                        openDiscordInvite(context)
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.DonViaUSD))
-            }
-        }
-
-        Button(
-            onClick = onBack,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.backToSupPag))
-        }
-    }
 }
