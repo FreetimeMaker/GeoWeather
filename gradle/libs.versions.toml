@@ -1,5 +1,8 @@
 [versions]
 agp = "9.0.1"
+ui = "1.10.5"
+[libraries]
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

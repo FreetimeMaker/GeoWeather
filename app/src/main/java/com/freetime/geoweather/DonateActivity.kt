@@ -5,19 +5,32 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+import com.freetime.sdk.payment.CoinType
+import com.freetime.sdk.payment.DonationAmountSelector
+import com.freetime.sdk.payment.DonationOption
+import com.freetime.sdk.payment.FreetimePaymentSDK
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
@@ -463,6 +476,10 @@ class DonationViewModel : ViewModel() {
             CoinType.LITECOIN -> "ltc1qexampleaddress123"
             CoinType.DOGECOIN -> "DExampleAddress123456789"
             CoinType.BITCOIN_CASH -> "bitcoincash:qexample123"
+            CoinType.SOLANA -> TODO()
+            CoinType.POLYGON -> TODO()
+            CoinType.BINANCE_COIN -> TODO()
+            CoinType.TRON -> TODO()
         }
     }
 
@@ -483,6 +500,11 @@ class DonationViewModel : ViewModel() {
 
             CoinType.BITCOIN_CASH ->
                 "bitcoincash:$address"
+
+            CoinType.SOLANA -> TODO()
+            CoinType.POLYGON -> TODO()
+            CoinType.BINANCE_COIN -> TODO()
+            CoinType.TRON -> TODO()
         }
     }
 }
@@ -584,7 +606,7 @@ fun DonateScreen(
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
 
-        Text("Donate", style = MaterialTheme.typography.h5)
+        Text("Donate", style = MaterialTheme.typography.headlineSmall)
 
         Spacer(Modifier.height(16.dp))
 
@@ -594,9 +616,7 @@ fun DonateScreen(
                     onClick = { viewModel.selectCoin(coin) },
                     modifier = Modifier.padding(end = 8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor =
-                            if (coin == selectedCoin) MaterialTheme.colors.primary
-                            else MaterialTheme.colors.surface
+                        containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
                     Text(coin.coinName)
@@ -617,7 +637,7 @@ fun DonateScreen(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
                     .clickable { viewModel.selectedOption = option },
-                elevation = 4.dp
+                elevation = CardDefaults.cardElevation()
             ) {
                 Column(Modifier.padding(16.dp)) {
                     Text(option.label)
