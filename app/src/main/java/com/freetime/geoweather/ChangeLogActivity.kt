@@ -96,6 +96,7 @@ fun ChangeLogScreen(onBack: () -> Unit) {
         ReleaseNotes(
             version = "v1.3.0",
             details = listOf(
+                text("🛠️ ${stringResource(R.string.fixed_label)}")
                 text("🛠️ ${stringResource(R.string.removed_label)}")
                 text(stringResource(R.string.changelog_remove_coin))
             )
