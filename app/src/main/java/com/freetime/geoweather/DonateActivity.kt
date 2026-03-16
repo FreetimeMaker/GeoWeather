@@ -5,32 +5,22 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.foundation.isSystemInDarkTheme
-import com.freetime.geoweather.R
-import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.freetime.sdk.payment.*
+import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 class DonateActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -434,6 +424,70 @@ class DonatorActivity : ComponentActivity() {
     }
 }
 
+class DonationViewModel : ViewModel() {
+
+    private val sdk = FreetimePaymentSDK()
+    private val selector = DonationAmountSelector()
+
+    var selectedCoin by mutableStateOf(CoinType.BITCOIN)
+    var donationOptions by mutableStateOf<List<DonationOption>>(emptyList())
+    var selectedOption by mutableStateOf<DonationOption?>(null)
+
+    val supportedCoins = listOf(
+        CoinType.BITCOIN,
+        CoinType.ETHEREUM,
+        CoinType.LITECOIN,
+        CoinType.DOGECOIN,
+        CoinType.BITCOIN_CASH
+    )
+
+    fun selectCoin(coin: CoinType) {
+        selectedCoin = coin
+        selectedOption = null
+        loadOptions()
+    }
+
+    fun loadOptions() {
+        viewModelScope.launch {
+            donationOptions = selector.getDonationOptions(
+                recipientAddressFor(selectedCoin),
+                selectedCoin,
+                sdk
+            )
+        }
+    }
+
+    fun recipientAddressFor(coin: CoinType): String {
+        return when (coin) {
+            CoinType.BITCOIN -> "1A1z7agoat2JLLSQwowL5fTDnwFLzhCe4Y"
+            CoinType.ETHEREUM -> "0x0987654321098765432109876543210987654321"
+            CoinType.LITECOIN -> "ltc1qexampleaddress123"
+            CoinType.DOGECOIN -> "DExampleAddress123456789"
+            CoinType.BITCOIN_CASH -> "bitcoincash:qexample123"
+        }
+    }
+
+    fun walletUriFor(coin: CoinType, address: String, amount: BigDecimal): String {
+        return when (coin) {
+            CoinType.BITCOIN ->
+                "bitcoin:$address"
+
+            CoinType.ETHEREUM -> {
+                "ethereum:$address"
+            }
+
+            CoinType.LITECOIN ->
+                "litecoin:$address"
+
+            CoinType.DOGECOIN ->
+                "dogecoin:$address"
+
+            CoinType.BITCOIN_CASH ->
+                "bitcoincash:$address"
+        }
+    }
+}
+
 @Composable
 fun WebViewScreen(
     url: String,
@@ -509,6 +563,84 @@ fun DonatorScreen(
                 .fillMaxWidth()
         ) {
             Text(stringResource(R.string.backToSupPag))
+        }
+    }
+}
+
+@Composable
+fun DonateScreen(
+    viewModel: DonationViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    onBack: () -> Unit
+) {
+    val coins = viewModel.supportedCoins
+    val selectedCoin = viewModel.selectedCoin
+    val options = viewModel.donationOptions
+    val selectedOption = viewModel.selectedOption
+
+    val context = LocalContext.current
+
+    LaunchedEffect(selectedCoin) {
+        viewModel.loadOptions()
+    }
+
+    Column(Modifier.fillMaxSize().padding(16.dp)) {
+
+        Text("Donate", style = MaterialTheme.typography.h5)
+
+        Spacer(Modifier.height(16.dp))
+
+        Row(Modifier.horizontalScroll(rememberScrollState())) {
+            coins.forEach { coin ->
+                Button(
+                    onClick = { viewModel.selectCoin(coin) },
+                    modifier = Modifier.padding(end = 8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor =
+                            if (coin == selectedCoin) MaterialTheme.colors.primary
+                            else MaterialTheme.colors.surface
+                    )
+                ) {
+                    Text(coin.coinName)
+                }
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        if (options.isEmpty()) {
+            CircularProgressIndicator()
+            return@Column
+        }
+
+        options.forEach { option ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .clickable { viewModel.selectedOption = option },
+                elevation = 4.dp
+            ) {
+                Column(Modifier.padding(16.dp)) {
+                    Text(option.label)
+                }
+            }
+        }
+
+        if (selectedOption != null) {
+            Spacer(Modifier.height(24.dp))
+
+            val address = viewModel.recipientAddressFor(selectedCoin)
+            val uri = viewModel.walletUriFor(selectedCoin, address, selectedOption.amount)
+
+            Button(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+                    context.startActivity(intent)
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Open Wallet App")
+            }
         }
     }
 }
