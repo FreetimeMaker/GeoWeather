@@ -4,6 +4,14 @@
 </div>
 
 <div align="center">
+<h1>📸 Pictures of GeoWeather in Action</h1>
+
+[![1. Picture](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)
+[![2. Picture](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)
+[![3. Picture](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)
+[![4. Picture](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)
+
+<div align="center">
 
 [![Translation status](https://hosted.weblate.org/widget/geoweather/geoweather/287x66-grey.png)](https://hosted.weblate.org/engage/geoweather/)
 </div>
