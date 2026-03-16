@@ -6,10 +6,10 @@
 <div align="center">
 <h1>📸 Pictures of GeoWeather in Action</h1>
 
-[![1. Picture](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)
-[![2. Picture](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)
-[![3. Picture](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)
-[![4. Picture](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="1. Picture"  width="30%">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="2. Picture"  width="30%">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" alt="3. Picture"  width="30%">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" alt="4. Picture"  width="30%">
 
 <div align="center">
 
