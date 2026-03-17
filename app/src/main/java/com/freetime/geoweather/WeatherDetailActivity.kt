@@ -164,7 +164,6 @@ fun WeatherDetailScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val sharedPreferences = remember { context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
-    val qWeatherKey = remember { sharedPreferences.getString("qweather_api_key", "") ?: "" }
     var weatherJson by remember { mutableStateOf<String?>(null) }
     var aqiJson by remember { mutableStateOf<String?>(null) }
     var moonJson by remember { mutableStateOf<String?>(null) }
@@ -190,68 +189,76 @@ fun WeatherDetailScreen(
             } else {
                 Long.MAX_VALUE
             }
-            
+
+            // Diese Variablen müssen VOR dem if/else existieren
+            var json: String? = null
+            var aqiJsonResponse: String? = null
+
             // Use cached data if it's less than 30 minutes old and not forcing refresh
             if (!forceRefresh && entity?.weatherData != null && dataAgeMinutes < 30) {
-                weatherJson = entity.weatherData
+
+                json = entity.weatherData
+                weatherJson = json
+
                 try {
-                    forecastList = parseForecastData(entity.weatherData)
-                    hourlyForecastList = parseHourlyForecastData(entity.weatherData)
+                    forecastList = parseForecastData(json!!)
+                    hourlyForecastList = parseHourlyForecastData(json!!)
                 } catch (e: Exception) {
                     errorMessage = "Error parsing weather data"
                     e.printStackTrace()
                 }
+
             } else {
-                // Fetch fresh data
+
                 val url =
                     "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&timezone=auto"
 
                 val aqiUrl =
                     "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
 
-                val json = withContext(Dispatchers.IO) { httpGet(url) }
-                val aqiJsonResponse = withContext(Dispatchers.IO) {
+                // Wetter JSON laden
+                json = withContext(Dispatchers.IO) { httpGet(url) }
+
+                // AQI JSON laden
+                aqiJsonResponse = withContext(Dispatchers.IO) {
                     try { httpGet(aqiUrl) } catch (e: Exception) { null }
                 }
 
-                // attempt QWeather call if user key exists
-                val qKey = qWeatherKey
-                if (qKey.isNotBlank()) {
-                    try {
-                        val moonUrl = "https://devapi.qweather.com/v7/astronomy/moon?location=$lon,$lat&key=$qKey"
-                        val mq = withContext(Dispatchers.IO) { httpGet(moonUrl) }
-                        moonJson = mq
-
-                        val obj = JSONObject(mq)
-                            .getJSONArray("moonPhase")
-                            .getJSONObject(0)
-
-                        moonPhaseName = obj.optString("name", null)
-                        moonIconCode = obj.optString("icon", null)
-
-                    } catch (_: Exception) {
-                        // ignore
-                    }
-                }
-
-                // Update entity with fresh data and timestamp
-                entity?.copy(
-                    weatherData = json,
-                    lastUpdated = currentTime
-                )?.let {
-                    withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
-                }
-
-                weatherJson = json
-                aqiJson = aqiJsonResponse
-                
                 try {
-                    forecastList = parseForecastData(json)
-                    hourlyForecastList = parseHourlyForecastData(json)
-                } catch (e: Exception) {
-                    errorMessage = e.message ?: "Error parsing weather data"
-                    e.printStackTrace()
+                    val moonUrl = "https://devapi.qweather.com/v7/astronomy/moon?location=$lon,$lat&key=d5184299458c441b92ab98075c4a7928"
+                    val mq = withContext(Dispatchers.IO) { httpGet(moonUrl) }
+                    moonJson = mq
+
+                    val obj = JSONObject(mq)
+                        .getJSONArray("moonPhase")
+                        .getJSONObject(0)
+
+                    moonPhaseName = obj.optString("name", null)
+                    moonIconCode = obj.optString("icon", null)
+
+                } catch (_: Exception) {
+                    // ignore
                 }
+            }
+
+            // Jetzt sind json und aqiJsonResponse IMMER definiert
+
+            entity?.copy(
+                weatherData = json,
+                lastUpdated = currentTime
+            )?.let {
+                withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
+            }
+
+            weatherJson = json
+            aqiJson = aqiJsonResponse
+
+            try {
+                forecastList = parseForecastData(json!!)
+                hourlyForecastList = parseHourlyForecastData(json!!)
+            } catch (e: Exception) {
+                errorMessage = e.message ?: "Error parsing weather data"
+                e.printStackTrace()
             }
         } catch (e: Exception) {
             // Network failed – fall back to cached data if available

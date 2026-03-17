@@ -106,5 +106,6 @@
     <string name="removed_label">Removed</string>
     <string name="changelog_remove_coin">• Removed Coinbase donation option due to remove of Coinbase Commerce</string>
     <string name="DonViaFMSDK">Donate via FreetimeSDK</string>
-    <string name="FixFMSDK">Fixed Donations via FreetimeSDK</string>
+    <string name="FixFMSDK">• Fixed Donations via FreetimeSDK</string>
+    <string name="AddedMoonData">• Added Moon Data for Real Now</string>
 </resources>

@@ -100,6 +100,8 @@ fun ChangeLogScreen(onBack: () -> Unit) {
         ReleaseNotes(
             version = "v1.3.0",
             details = listOf(
+                "🛠️ ${stringResource(R.string.added_label)}",
+                stringResource(R.string.AddedMoonData),
                 "🛠️ ${stringResource(R.string.fixed_label)}",
                 stringResource(R.string.FixFMSDK),
                 "🛠️ ${stringResource(R.string.removed_label)}",
