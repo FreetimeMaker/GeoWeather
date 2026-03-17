@@ -41,7 +41,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview:1.10.5")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material3:material3-icons-extended:1.7.8")
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
     debugImplementation("androidx.compose.ui:ui-tooling:1.10.5")
 
     // Lifecycle Compose (observeAsState)
