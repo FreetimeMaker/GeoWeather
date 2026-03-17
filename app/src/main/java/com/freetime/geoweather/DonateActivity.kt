@@ -476,10 +476,10 @@ class DonationViewModel : ViewModel() {
             CoinType.LITECOIN -> "ltc1qexampleaddress123"
             CoinType.DOGECOIN -> "DExampleAddress123456789"
             CoinType.BITCOIN_CASH -> "bitcoincash:qexample123"
-            CoinType.SOLANA -> TODO()
-            CoinType.POLYGON -> TODO()
-            CoinType.BINANCE_COIN -> TODO()
-            CoinType.TRON -> TODO()
+            CoinType.SOLANA -> "solana:6K6gpBF9nyrSL2vzSaFDZgAJQurkoEzPGtK67WAg6FjX"
+            CoinType.POLYGON -> "polygon:0x3d3eee5b542975839d2dccbf2f97139debc711bc"
+            CoinType.BINANCE_COIN -> "binance:0x3d3eee5b542975839d2dccbf2f97139debc711bc"
+            CoinType.TRON -> "tron:TKUNwoQMyLuJzUzWPKwA7yw4qujz2Pz6gS"
         }
     }
 
@@ -501,10 +501,14 @@ class DonationViewModel : ViewModel() {
             CoinType.BITCOIN_CASH ->
                 "bitcoincash:$address"
 
-            CoinType.SOLANA -> TODO()
-            CoinType.POLYGON -> TODO()
-            CoinType.BINANCE_COIN -> TODO()
-            CoinType.TRON -> TODO()
+            CoinType.SOLANA ->
+                "solana:$address"
+            CoinType.POLYGON ->
+                "polygon:$address"
+            CoinType.BINANCE_COIN ->
+                "binance:$address"
+            CoinType.TRON ->
+                "tron:$address"
         }
     }
 }
@@ -615,7 +619,7 @@ fun DonateScreen(
                 Button(
                     onClick = { viewModel.selectCoin(coin) },
                     modifier = Modifier.padding(end = 8.dp),
-                    colors = ButtonDefaults.buttonColors(
+                    colors = buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {

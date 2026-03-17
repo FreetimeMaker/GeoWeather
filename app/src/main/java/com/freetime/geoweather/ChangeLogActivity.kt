@@ -4,18 +4,26 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+
 
 class ChangeLogActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,29 +100,20 @@ fun ChangeLogScreen(onBack: () -> Unit) {
         ReleaseNotes(
             version = "v1.3.0",
             details = listOf(
-                Text("🛠️ ${stringResource(R.string.fixed_label)}"),
-                Text(stringResource(R.string.FixFMSDK))
-                Text("🛠️ ${stringResource(R.string.removed_label)}"),
-                Text(stringResource(R.string.changelog_remove_coin))
+                "🛠️ ${stringResource(R.string.fixed_label)}",
+                stringResource(R.string.FixFMSDK),
+                "🛠️ ${stringResource(R.string.removed_label)}",
+                stringResource(R.string.changelog_remove_coin)
             )
         ),
         ReleaseNotes(
             version = "v1.2.9",
             details = listOf(
-                Text("🛠️ ${stringResource(R.string.added_label)}"),
-                Text(stringResource(R.string.changelog_add_translate)),
-                Text("🛠️ ${stringResource(R.string.fixed_label)}"),
-                Text(stringResource(R.string.changelog_update_deps)),
-                Text(stringResource(R.string.changelog_fix_moon))
-            )
-        ),
-        ReleaseNotes(
-            version = "v1.2.8",
-            details = listOf(
-                Text("🛠️ ${stringResource(R.string.added_label)}"),
-                Text(stringResource(R.string.changelog_moon_data)),
-                Text("🛠️ ${stringResource(R.string.fixed_label)}"),
-                Text(stringResource(R.string.changelog_ui_improvements))
+                "🛠️ ${stringResource(R.string.added_label)}",
+                stringResource(R.string.changelog_add_translate),
+                "🛠️ ${stringResource(R.string.fixed_label)}",
+                stringResource(R.string.changelog_update_deps),
+                stringResource(R.string.changelog_fix_moon)
             )
         )
     )

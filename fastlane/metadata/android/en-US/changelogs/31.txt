@@ -1,1 +1,2 @@
 - Removed Coinbase donation option due to remove of Coinbase Commerce
+- Fixed Donations via FreetimeSDK
