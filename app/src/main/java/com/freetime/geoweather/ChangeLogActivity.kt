@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,38 +86,34 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val context = LocalContext.current
-    val version: String = try {
-        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"
-    } catch (e: Exception) {
-        "?"
-    }
 
     // 🔥 Hier fügst du einfach neue Versionen hinzu
     val releases = listOf(
         ReleaseNotes(
             version = "v1.3.0",
             details = listOf(
-                text("🛠️ ${stringResource(R.string.fixed_label)}")
-                text("🛠️ ${stringResource(R.string.removed_label)}")
-                text(stringResource(R.string.changelog_remove_coin))
+                Text("🛠️ ${stringResource(R.string.fixed_label)}"),
+                Text(stringResource(R.string.FixFMSDK))
+                Text("🛠️ ${stringResource(R.string.removed_label)}"),
+                Text(stringResource(R.string.changelog_remove_coin))
             )
         ),
         ReleaseNotes(
             version = "v1.2.9",
             details = listOf(
-                text("🛠️ ${stringResource(R.string.added_label)}")
-                text(stringResource(R.string.changelog_add_translate))
-                text("🛠️ ${stringResource(R.string.fixed_label)}")
-                text(stringResource(R.string.changelog_update_deps))
-                text(stringResource(R.string.changelog_fix_moon))
+                Text("🛠️ ${stringResource(R.string.added_label)}"),
+                Text(stringResource(R.string.changelog_add_translate)),
+                Text("🛠️ ${stringResource(R.string.fixed_label)}"),
+                Text(stringResource(R.string.changelog_update_deps)),
+                Text(stringResource(R.string.changelog_fix_moon))
             )
         ),
         ReleaseNotes(
             version = "v1.2.8",
             details = listOf(
-                text("🛠️ ${stringResource(R.string.added_label)}")
-                text(stringResource(R.string.changelog_moon_data))
-                Text("🛠️ ${stringResource(R.string.fixed_label)}")
+                Text("🛠️ ${stringResource(R.string.added_label)}"),
+                Text(stringResource(R.string.changelog_moon_data)),
+                Text("🛠️ ${stringResource(R.string.fixed_label)}"),
                 Text(stringResource(R.string.changelog_ui_improvements))
             )
         )
