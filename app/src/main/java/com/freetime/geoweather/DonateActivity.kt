@@ -371,6 +371,36 @@ class TronActivity : ComponentActivity() {
     }
 }
 
+class FMSDK_Activity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        hideSystemUI()
+        setContent {
+            GeoWeatherTheme {
+                FMSDK_Screen(onBack = { finish() })
+            }
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemUI()
+        }
+    }
+
+    private fun hideSystemUI() {
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
+    }
+}
+
 class GH_SponsorsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -540,6 +570,13 @@ fun WebViewScreen(
             Text(stringResource(R.string.backToSupPag))
         }
     }
+}
+
+@Composable
+fun FMSDK_Screen(
+    onBack: () -> Unit
+) {
+    DonateScreen(onBack = onBack)
 }
 
 @Composable
