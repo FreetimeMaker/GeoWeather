@@ -38,7 +38,6 @@ class FreetimePaymentSDK {
         paymentProviders[CoinType.ETHEREUM] = EthereumPaymentProvider()
         paymentProviders[CoinType.LITECOIN] = LitecoinPaymentProvider()
         paymentProviders[CoinType.BITCOIN_CASH] = BitcoinCashPaymentProvider()
-        paymentProviders[CoinType.CARDANO] = CardanoPaymentProvider()
         paymentProviders[CoinType.DOGECOIN] = DogecoinPaymentProvider()
         paymentProviders[CoinType.SOLANA] = SolanaPaymentProvider()
     }

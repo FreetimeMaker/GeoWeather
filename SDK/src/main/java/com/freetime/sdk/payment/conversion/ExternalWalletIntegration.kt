@@ -71,7 +71,7 @@ data class ExternalWalletApp(
             supportedCoins = listOf(
                 CoinType.BITCOIN, CoinType.ETHEREUM, CoinType.LITECOIN,
                 CoinType.BITCOIN_CASH, CoinType.DOGECOIN, CoinType.BINANCE_COIN,
-                CoinType.POLYGON, CoinType.SOLANA, CoinType.TRON, CoinType.CARDANO
+                CoinType.POLYGON, CoinType.SOLANA, CoinType.TRON,
             ),
             deepLinkScheme = "atomic"
         )
@@ -150,20 +150,6 @@ data class ExternalWalletApp(
             deepLinkScheme = "solflare"
         )
         
-        val YOROI_WALLET = ExternalWalletApp(
-            name = "Yoroi Wallet",
-            packageName = "io.emurgo.yoroi",
-            supportedCoins = listOf(CoinType.CARDANO),
-            deepLinkScheme = "yoroi"
-        )
-        
-        val ADALITE_WALLET = ExternalWalletApp(
-            name = "AdaLite Wallet",
-            packageName = "com.adalite.wallet",
-            supportedCoins = listOf(CoinType.CARDANO),
-            deepLinkScheme = "adalite"
-        )
-        
         val TRON_WALLET = ExternalWalletApp(
             name = "TronWallet",
             packageName = "com.tronlinkpro.wallet",
@@ -184,7 +170,7 @@ data class ExternalWalletApp(
             supportedCoins = listOf(
                 CoinType.BITCOIN, CoinType.ETHEREUM, CoinType.LITECOIN,
                 CoinType.BITCOIN_CASH, CoinType.DOGECOIN, CoinType.BINANCE_COIN,
-                CoinType.POLYGON, CoinType.SOLANA, CoinType.TRON, CoinType.CARDANO
+                CoinType.POLYGON, CoinType.SOLANA, CoinType.TRON
             ),
             deepLinkScheme = "bitkeep"
         )
@@ -230,7 +216,7 @@ data class ExternalWalletApp(
             supportedCoins = listOf(
                 CoinType.BITCOIN, CoinType.ETHEREUM, CoinType.LITECOIN,
                 CoinType.BITCOIN_CASH, CoinType.DOGECOIN, CoinType.BINANCE_COIN,
-                CoinType.POLYGON, CoinType.SOLANA, CoinType.TRON, CoinType.CARDANO
+                CoinType.POLYGON, CoinType.SOLANA, CoinType.TRON
             ),
             deepLinkScheme = "mathwallet"
         )
@@ -252,8 +238,7 @@ data class ExternalWalletApp(
                 BINANCE_WALLET, EXODUS, ATOMIC_WALLET,
                 LEDGER_LIVE, TREZOR_SUITE, MYCELIUM, ELECTRUM,
                 BRAVE_WALLET, RAINBOW_WALLET, WALLET_CONNECT,
-                PHANTOM_WALLET, SOLFLARE_WALLET, YOROI_WALLET,
-                ADALITE_WALLET, TRON_WALLET, KLEVER_WALLET,
+                TRON_WALLET, KLEVER_WALLET,
                 BITKEEP_WALLET, SAFE_WALLET, ARGENT_WALLET,
                 ZERION_WALLET, IM_TOKEN_WALLET, MATH_WALLET,
                 TOKEN_POCKET

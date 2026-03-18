@@ -16,7 +16,6 @@ class DonationProvider : DonationInterface {
             CoinType.ETHEREUM to BigDecimal("0.01"),
             CoinType.LITECOIN to BigDecimal("0.1"),
             CoinType.BITCOIN_CASH to BigDecimal("0.001"),
-            CoinType.CARDANO to BigDecimal("1"),
             CoinType.DOGECOIN to BigDecimal("1"),
             CoinType.SOLANA to BigDecimal("0.1"),
             CoinType.POLYGON to BigDecimal("0.01"),
