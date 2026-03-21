@@ -32,8 +32,6 @@
     <string name="change_log_title">Change Log</string>
     <string name="FeelsLikeTXT">Feels like: %1$s°C</string>
     <string name="MoonCycleTXT">Moon Cycle</string>
-    <!-- qweather API key placeholder; set in gradle or secrets -->
-    <string name="qweather_api_key">YOUR_QWEATHER_KEY</string>
     <string name="HumidityTXT">Humidity: %1$s%%</string>
     <string name="PressureTXT">Pressure: %1$s hPa</string>
     <string name="SunriseSunsetLabel">Sunrise &amp; Sunset</string>
@@ -44,7 +42,6 @@
     <string name="follow_system_theme">Follow System Theme</string>
     <string name="force_dark_mode">Force Dark Mode</string>
     <string name="override_system_setting">Override system setting</string>
-    <string name="qweather_key_label">QWeather API Key</string>
     <string name="back_btn">← Back</string>
     <string name="open_change_log">Open Change Log</string>
     <string name="added_label">Added</string>
@@ -108,4 +105,6 @@
     <string name="DonViaFMSDK">Donate via FreetimeSDK</string>
     <string name="FixFMSDK">• Fixed Donations via FreetimeSDK</string>
     <string name="AddedMoonData">• Added Moon Data for Real Now</string>
+    <string name="FixActivities">• Fixed Activity Crash when opening GitHub Sponsors or FreetimeSDK for Donation</string>
+    <string name="changelog_remove_api_key">• Removed QWeather API Key from Settings</string>
 </resources>

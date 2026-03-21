@@ -208,7 +208,7 @@ class WeatherChangeWorker(
             putExtra("lon", 0.0)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        
+
         val pendingIntent = PendingIntent.getActivity(
             context,
             locationId.toInt() + 1000, // Use different offset to avoid conflicts

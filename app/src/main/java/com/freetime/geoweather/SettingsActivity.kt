@@ -69,10 +69,6 @@ fun SettingsScreen(onBack: () -> Unit) {
         mutableStateOf(sharedPreferences.getBoolean("use_system_theme", true))
     }
 
-    var qweatherKey by remember {
-        mutableStateOf(sharedPreferences.getString("qweather_api_key", "") ?: "")
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -151,22 +147,6 @@ fun SettingsScreen(onBack: () -> Unit) {
                         }
                     )
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // QWeather API Key entry
-                Text(stringResource(R.string.qweather_key_label), style = MaterialTheme.typography.bodyMedium)
-                OutlinedTextField(
-                    value = qweatherKey,
-                    onValueChange = { key ->
-                        qweatherKey = key
-                        sharedPreferences.edit()
-                            .putString("qweather_api_key", key)
-                            .apply()
-                    },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
             }
         }
         

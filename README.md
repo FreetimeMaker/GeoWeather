@@ -38,7 +38,7 @@ GeoWeather is a modern Android weather application that allows you to monitor we
 - 🎨 **Weather Icons**: Visual representation of weather conditions
 - 🔔 **Notifications**: Receive weather alerts and updates
 - 💳 **Donation Feature**: Support development through integrated FreetimeSDK
-- 📝 **Integrated Change Log**: You can always look in the Change Log (which was added in Version 1.2.8) what was changed from Version 1.2.8 to the current released Version
+- 📝 **Integrated Change Log**: You can always look in the Change Log (which was added in Version 1.2.9) what was changed from Version 1.2.9 to the current released Version
 
 ## 🛠️ Technology Stack
 
