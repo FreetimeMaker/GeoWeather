@@ -52,6 +52,6 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: "GeoWeather ${{ github.ref_name }}"
           body: "Automatisch gebaut und signiert."
-          draft: false
+          draft: true
           prerelease: false
           files: "GeoWeather-${{ github.ref_name }}.apk"
