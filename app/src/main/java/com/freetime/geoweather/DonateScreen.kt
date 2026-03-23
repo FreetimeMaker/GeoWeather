@@ -65,6 +65,10 @@ fun DonateScreen(onBack: () -> Unit) {
         }) { Text(stringResource(R.string.DonViaLTC)) }
 
         Button(onClick = {
+            context.startActivity(Intent(context, BNB_Activity::class.java))
+        }) { Text(stringResource(R.string.DonViaBNB)) }
+
+        Button(onClick = {
             context.startActivity(Intent(context, FMSDK_Activity::class.java))
         }) { Text(stringResource(R.string.DonViaFMSDK)) }
 
