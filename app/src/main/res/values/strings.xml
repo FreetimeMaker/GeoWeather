@@ -100,8 +100,8 @@
     <string name="changelog_update_deps">• Updated dependencies</string>
     <string name="changelog_fix_moon">• Fixed moon phase display</string>
     <string name="changelog_add_translate">• Added more translations</string>
-    <string name="removed_label">Removed</string>
-    <string name="changelog_remove_coin">• Removed Coinbase donation option due to remove of Coinbase Commerce</string>
+    <string name="removed_label">Removed label</string>
+    <string name="changelog_remove_coin">• Deleted Coinbase donation option due to remove of Coinbase Commerce</string>
     <string name="DonViaFMSDK">Donate via FreetimeSDK</string>
     <string name="FixFMSDK">• Fixed Donations via FreetimeSDK</string>
     <string name="AddedMoonData">• Added Moon Data for Real Now</string>
