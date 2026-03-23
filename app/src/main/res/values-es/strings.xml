@@ -92,7 +92,7 @@
     <string name="follow_system_theme">Seguir Tema del Sistema</string>
     <string name="force_dark_mode">Forzar tema oscuro</string>
     <string name="override_system_setting">Ignorar ajustes del sistema.</string>
-    <string name="back_btn">Retroceder.</string>
+    <string name="back_btn">← Back</string>
     <string name="open_change_log">Abrir registro de cambios.</string>
     <string name="added_label">Añadido</string>
     <string name="fixed_label">Fijo</string>
