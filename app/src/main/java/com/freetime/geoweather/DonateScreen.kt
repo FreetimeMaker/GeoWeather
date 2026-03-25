@@ -69,6 +69,18 @@ fun DonateScreen(onBack: () -> Unit) {
         }) { Text(stringResource(R.string.DonViaBNB)) }
 
         Button(onClick = {
+            context.startActivity(Intent(context, PEPE_Activity::class.java))
+        }) { Text(stringResource(R.string.DonViaPEPE)) }
+
+        Button(onClick = {
+            context.startActivity(Intent(context, SOL_Activity::class.java))
+        }) { Text(stringResource(R.string.DonViaSOL)) }
+
+        Button(onClick = {
+            context.startActivity(Intent(context, ShibActivity::class.java))
+        }) { Text(stringResource(R.string.DonViaShib)) }
+
+        Button(onClick = {
             context.startActivity(Intent(context, FMSDK_Activity::class.java))
         }) { Text(stringResource(R.string.DonViaFMSDK)) }
 

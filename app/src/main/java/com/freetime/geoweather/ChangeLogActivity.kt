@@ -98,6 +98,15 @@ fun ChangeLogScreen(onBack: () -> Unit) {
     // 🔥 Hier fügst du einfach neue Versionen hinzu
     val releases = listOf(
         ReleaseNotes(
+            version = "v1.3.2",
+            details = listOf(
+                "🛠️ ${stringResource(R.string.added_label)}",
+                stringResource(R.string.AddedMoreDons),
+                "🛠️ ${stringResource(R.string.fixed_label)}",
+                stringResource(R.string.HopefullyFixedFMSDK)
+            )
+        ),
+        ReleaseNotes(
             version = "v1.3.1",
             details = listOf(
                 "🛠️ ${stringResource(R.string.fixed_label)}",

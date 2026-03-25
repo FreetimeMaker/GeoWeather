@@ -15,6 +15,10 @@
     <string name="DonViaSHIB">Donate via SHIB</string>
     <string name="DonViaDOGE">Donate via DOGE</string>
     <string name="DonViaTRON">Donate via TRON</string>
+    <string name="DonViaBNB">Donate via BNB</string>
+    <string name="DonViaPEPE">Donate via PEPE</string>
+    <string name="DonViaSOL">Donate via SOL</string>
+    <string name="DonViaShib">Donate via Shib</string>
     <string name="DonViaGHSponsors">Donate via GitHub Sponsors</string>
     <string name="ViewSup">View Supporters</string>
     <string name="BackToWeaDash">Go Back to the Weather Dashboard</string>
@@ -107,4 +111,6 @@
     <string name="AddedMoonData">• Added Moon Data for Real Now</string>
     <string name="FixActivities">• Fixed Activity Crash when opening GitHub Sponsors or FreetimeSDK for Donation</string>
     <string name="changelog_remove_api_key">• Removed QWeather API Key from Settings</string>
+        <string name="AddedMoreDons">• Added More Donation Options</string>
+        <string name="HopefullyFixedFMSDK">• Hopefully Fixed FreetimeSDK Donation Option</string>
 </resources>

@@ -509,7 +509,9 @@ class FMSDK_Activity : ComponentActivity() {
         hideSystemUI()
         setContent {
             GeoWeatherTheme {
-                FMSDK_Screen(onBack = { finish() })
+                DonationViewModel(
+                    onBack = { finish() }
+                )
             }
         }
     }
