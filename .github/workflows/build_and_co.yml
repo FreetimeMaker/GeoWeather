@@ -2,11 +2,11 @@ name: Build, Sign and Conditional Release
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
 
 permissions:
-  contents: write   # Owner braucht das, Helfer wird ignoriert
+  contents: write
 
 jobs:
   build:
@@ -17,6 +17,45 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Detect version & create tag if missing
+        id: versioncheck
+        run: |
+          FILE=""
+          if [ -f "app/build.gradle.kts" ]; then
+            FILE="app/build.gradle.kts"
+          elif [ -f "app/build.gradle" ]; then
+            FILE="app/build.gradle"
+          else
+            echo "No build.gradle(.kts) found in app/"
+            exit 1
+          fi
+
+          VERSION=$(grep -oP 'versionName\s*"?\K[0-9]+\.[0-9]+\.[0-9]+' "$FILE")
+
+          if [ -z "$VERSION" ]; then
+            echo "Could not extract versionName"
+            exit 1
+          fi
+
+          echo "Detected version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "Tag v$VERSION already exists. Skipping tag creation."
+            echo "create_tag=false" >> $GITHUB_OUTPUT
+          else
+            echo "Tag v$VERSION does not exist. Creating it."
+            git tag "v$VERSION"
+            git push origin "v$VERSION"
+            echo "create_tag=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Stop workflow if tag already existed
+        if: steps.versioncheck.outputs.create_tag == 'false'
+        run: |
+          echo "Tag already existed — stopping workflow."
+          exit 0
 
       - name: Install Java
         uses: actions/setup-java@v4
@@ -33,8 +72,8 @@ jobs:
       - name: Upload APK as workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GeoWeather-${{ github.ref_name }}.apk
-          path: GeoWeather-${{ github.ref_name }}.apk
+          name: GeoWeather-${{ steps.versioncheck.outputs.version }}.apk
+          path: GeoWeather-${{ steps.versioncheck.outputs.version }}.apk
 
       - name: Check if actor is repo owner
         id: ownercheck
@@ -49,9 +88,9 @@ jobs:
         if: steps.ownercheck.outputs.is_owner == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: "GeoWeather ${{ github.ref_name }}"
+          tag_name: v${{ steps.versioncheck.outputs.version }}
+          name: "GeoWeather ${{ steps.versioncheck.outputs.version }}"
           body: "Automatisch gebaut und signiert."
           draft: true
           prerelease: false
-          files: "GeoWeather-${{ github.ref_name }}.apk"
+          files: "GeoWeather-${{ steps.versioncheck.outputs.version }}.apk"
