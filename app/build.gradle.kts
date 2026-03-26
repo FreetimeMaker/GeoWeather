@@ -75,7 +75,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.13.0")
     
     // WorkManager
-    implementation("androidx.work:work-runtime-ktx:2.11.1")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
