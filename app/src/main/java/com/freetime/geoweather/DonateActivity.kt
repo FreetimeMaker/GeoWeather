@@ -476,7 +476,7 @@ class FMSDK_Activity : ComponentActivity() {
         hideSystemUI()
         setContent {
             GeoWeatherTheme {
-                DonationViewModel(
+                FMSDK_Screen(
                     onBack = { finish() }
                 )
             }
@@ -581,7 +581,11 @@ class DonationViewModel : ViewModel() {
         CoinType.ETHEREUM,
         CoinType.LITECOIN,
         CoinType.DOGECOIN,
-        CoinType.BITCOIN_CASH
+        CoinType.BITCOIN_CASH,
+        CoinType.SOLANA,
+        CoinType.POLYGON,
+        CoinType.BINANCE_COIN,
+        CoinType.TRON
     )
 
     fun selectCoin(coin: CoinType) {
@@ -634,10 +638,13 @@ class DonationViewModel : ViewModel() {
 
             CoinType.SOLANA ->
                 "solana:$address"
+
             CoinType.POLYGON ->
                 "polygon:$address"
+
             CoinType.BINANCE_COIN ->
                 "binance:$address"
+
             CoinType.TRON ->
                 "tron:$address"
         }
@@ -677,8 +684,21 @@ fun WebViewScreen(
 fun FMSDK_Screen(
     onBack: () -> Unit
 ) {
-    DonateScreen(onBack = onBack)
+    val vm: DonationViewModel = viewModel()
+
+    DonateScreen(
+        onBack = onBack,
+        viewModel = vm
+    )
 }
+
+@Composable
+fun DonateScreen(
+    onBack: () -> Unit,
+    viewModel: DonationViewModel,
+    context: Context = LocalContext.current
+)
+
 
 @Composable
 fun DonatorScreen(
