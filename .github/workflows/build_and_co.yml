@@ -21,6 +21,8 @@ jobs:
       - name: Detect version & create tag if missing
         id: versioncheck
         run: |
+          set -e
+
           FILE=""
           if [ -f "app/build.gradle.kts" ]; then
             FILE="app/build.gradle.kts"
@@ -31,24 +33,33 @@ jobs:
             exit 1
           fi
 
-          VERSION=$(grep -oP 'versionName\s*"?\K[0-9]+\.[0-9]+\.[0-9]+' "$FILE")
+          echo "Using file: $FILE"
+
+          # versionName extrahieren
+          LINE=$(grep 'versionName' "$FILE" | head -n1 || true)
+          echo "Matched line: $LINE"
+
+          VERSION=$(printf '%s\n' "$LINE" | sed -E 's/.*versionName[[:space:]]*"?([^"]+)"?.*/\1/')
 
           if [ -z "$VERSION" ]; then
-            echo "Could not extract versionName"
+            echo "Could not extract versionName from $FILE"
             exit 1
           fi
 
           echo "Detected version: $VERSION"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          # Tags holen
+          git fetch --tags
 
           if git rev-parse "v$VERSION" >/dev/null 2>&1; then
             echo "Tag v$VERSION already exists. Skipping tag creation."
-            echo "create_tag=false" >> $GITHUB_OUTPUT
+            echo "create_tag=false" >> "$GITHUB_OUTPUT"
           else
             echo "Tag v$VERSION does not exist. Creating it."
             git tag "v$VERSION"
             git push origin "v$VERSION"
-            echo "create_tag=true" >> $GITHUB_OUTPUT
+            echo "create_tag=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Stop workflow if tag already existed
@@ -73,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: GeoWeather-${{ steps.versioncheck.outputs.version }}.apk
-          path: GeoWeather-${{ steps.versioncheck.outputs.version }}.apk
+          path: GeoWeather-*.apk
 
       - name: Check if actor is repo owner
         id: ownercheck
@@ -93,4 +104,4 @@ jobs:
           body: "Automatisch gebaut und signiert."
           draft: true
           prerelease: false
-          files: "GeoWeather-${{ steps.versioncheck.outputs.version }}.apk"
+          files: "GeoWeather-*.apk"
