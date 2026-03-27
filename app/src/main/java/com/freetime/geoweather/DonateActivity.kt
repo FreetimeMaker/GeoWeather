@@ -32,6 +32,7 @@ import com.freetime.sdk.payment.DonationAmountSelector
 import com.freetime.sdk.payment.DonationOption
 import com.freetime.sdk.payment.FreetimePaymentSDK
 import kotlinx.coroutines.launch
+import androidx.lifecycle.viewmodel.compose.viewModel
 import java.math.BigDecimal
 
 class DonateActivity : ComponentActivity() {
@@ -694,10 +695,11 @@ fun FMSDK_Screen(
 
 @Composable
 fun DonateScreen(
-    onBack: () -> Unit,
+    onBack: () -> Unit
+) {
     viewModel: DonationViewModel,
     context: Context = LocalContext.current
-)
+}
 
 
 @Composable
