@@ -3,7 +3,7 @@ name: Build, Sign and Conditional Release
 on:
   push:
     branches:
-      - '**'
+      - main
 
 permissions:
   contents: write
@@ -23,7 +23,7 @@ jobs:
         run: |
           set -e
 
-          FILE=""
+          # Detect gradle file
           if [ -f "app/build.gradle.kts" ]; then
             FILE="app/build.gradle.kts"
           elif [ -f "app/build.gradle" ]; then
@@ -35,11 +35,11 @@ jobs:
 
           echo "Using file: $FILE"
 
-          # versionName extrahieren
+          # Extract versionName (supports all formats)
           LINE=$(grep 'versionName' "$FILE" | head -n1 || true)
           echo "Matched line: $LINE"
 
-          VERSION=$(printf '%s\n' "$LINE" | sed -E 's/.*versionName[[:space:]]*"?([^"]+)"?.*/\1/')
+          VERSION=$(printf '%s\n' "$LINE" | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
 
           if [ -z "$VERSION" ]; then
             echo "Could not extract versionName from $FILE"
@@ -49,9 +49,10 @@ jobs:
           echo "Detected version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-          # Tags holen
+          # Ensure tags are available
           git fetch --tags
 
+          # Check if tag exists
           if git rev-parse "v$VERSION" >/dev/null 2>&1; then
             echo "Tag v$VERSION already exists. Skipping tag creation."
             echo "create_tag=false" >> "$GITHUB_OUTPUT"
