@@ -471,38 +471,6 @@ class ShibActivity : ComponentActivity() {
     }
 }
 
-class FMSDK_Activity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        hideSystemUI()
-        setContent {
-            GeoWeatherTheme {
-                FMSDK_Screen(
-                    onBack = { finish() }
-                )
-            }
-        }
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            hideSystemUI()
-        }
-    }
-
-    private fun hideSystemUI() {
-        window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                )
-    }
-}
-
 class GH_SponsorsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -568,90 +536,6 @@ class DonatorActivity : ComponentActivity() {
     }
 }
 
-class DonationViewModel : ViewModel() {
-
-    private val sdk = FreetimePaymentSDK()
-    private val selector = DonationAmountSelector()
-
-    var selectedCoin by mutableStateOf(CoinType.BITCOIN)
-    var donationOptions by mutableStateOf<List<DonationOption>>(emptyList())
-    var selectedOption by mutableStateOf<DonationOption?>(null)
-
-    val supportedCoins = listOf(
-        CoinType.BITCOIN,
-        CoinType.ETHEREUM,
-        CoinType.LITECOIN,
-        CoinType.DOGECOIN,
-        CoinType.BITCOIN_CASH,
-        CoinType.SOLANA,
-        CoinType.POLYGON,
-        CoinType.BINANCE_COIN,
-        CoinType.TRON
-    )
-
-    fun selectCoin(coin: CoinType) {
-        selectedCoin = coin
-        selectedOption = null
-        loadOptions()
-    }
-
-    fun loadOptions() {
-        viewModelScope.launch {
-            donationOptions = selector.getDonationOptions(
-                recipientAddressFor(selectedCoin),
-                selectedCoin,
-                sdk
-            )
-        }
-    }
-
-    fun recipientAddressFor(coin: CoinType): String {
-        return when (coin) {
-            CoinType.BITCOIN -> "1A1z7agoat2JLLSQwowL5fTDnwFLzhCe4Y"
-            CoinType.ETHEREUM -> "0x0987654321098765432109876543210987654321"
-            CoinType.LITECOIN -> "ltc1qexampleaddress123"
-            CoinType.DOGECOIN -> "DExampleAddress123456789"
-            CoinType.BITCOIN_CASH -> "bitcoincash:qexample123"
-            CoinType.SOLANA -> "solana:6K6gpBF9nyrSL2vzSaFDZgAJQurkoEzPGtK67WAg6FjX"
-            CoinType.POLYGON -> "polygon:0x3d3eee5b542975839d2dccbf2f97139debc711bc"
-            CoinType.BINANCE_COIN -> "binance:0x3d3eee5b542975839d2dccbf2f97139debc711bc"
-            CoinType.TRON -> "tron:TKUNwoQMyLuJzUzWPKwA7yw4qujz2Pz6gS"
-        }
-    }
-
-    fun walletUriFor(coin: CoinType, address: String, amount: BigDecimal): String {
-        return when (coin) {
-            CoinType.BITCOIN ->
-                "bitcoin:$address"
-
-            CoinType.ETHEREUM -> {
-                "ethereum:$address"
-            }
-
-            CoinType.LITECOIN ->
-                "litecoin:$address"
-
-            CoinType.DOGECOIN ->
-                "dogecoin:$address"
-
-            CoinType.BITCOIN_CASH ->
-                "bitcoincash:$address"
-
-            CoinType.SOLANA ->
-                "solana:$address"
-
-            CoinType.POLYGON ->
-                "polygon:$address"
-
-            CoinType.BINANCE_COIN ->
-                "binance:$address"
-
-            CoinType.TRON ->
-                "tron:$address"
-        }
-    }
-}
-
 @Composable
 fun WebViewScreen(
     url: String,
@@ -679,26 +563,6 @@ fun WebViewScreen(
             Text(stringResource(R.string.backToSupPag))
         }
     }
-}
-
-@Composable
-fun FMSDK_Screen(
-    onBack: () -> Unit
-) {
-    val vm: DonationViewModel = viewModel()
-
-    DonateScreen(
-        onBack = onBack,
-        viewModel = vm
-    )
-}
-
-@Composable
-fun DonateScreen(
-    onBack: () -> Unit
-) {
-    viewModel: DonationViewModel,
-    context: Context = LocalContext.current
 }
 
 
