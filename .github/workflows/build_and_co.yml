@@ -9,8 +9,99 @@ permissions:
   contents: write
 
 jobs:
-  ping:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Say hi
-        run: echo "Workflow läuft 🎉"
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect version & create tag if missing
+        id: versioncheck
+        run: |
+          set -e
+
+          FILE=""
+          if [ -f "app/build.gradle.kts" ]; then
+            FILE="app/build.gradle.kts"
+          elif [ -f "app/build.gradle" ]; then
+            FILE="app/build.gradle"
+          else
+            echo "No build.gradle(.kts) found in app/"
+            exit 1
+          fi
+
+          echo "Using file: $FILE"
+
+          # versionName extrahieren
+          LINE=$(grep 'versionName' "$FILE" | head -n1 || true)
+          echo "Matched line: $LINE"
+
+          VERSION=$(printf '%s\n' "$LINE" | sed -E 's/.*versionName[[:space:]]*"?([^"]+)"?.*/\1/')
+
+          if [ -z "$VERSION" ]; then
+            echo "Could not extract versionName from $FILE"
+            exit 1
+          fi
+
+          echo "Detected version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          # Tags holen
+          git fetch --tags
+
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "Tag v$VERSION already exists. Skipping tag creation."
+            echo "create_tag=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Tag v$VERSION does not exist. Creating it."
+            git tag "v$VERSION"
+            git push origin "v$VERSION"
+            echo "create_tag=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Stop workflow if tag already existed
+        if: steps.versioncheck.outputs.create_tag == 'false'
+        run: |
+          echo "Tag already existed — stopping workflow."
+          exit 0
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Make script executable
+        run: chmod +x ./build_and_sign_workflow.sh
+
+      - name: Build & Sign APK
+        run: ./build_and_sign_workflow.sh
+
+      - name: Upload APK as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeoWeather-${{ steps.versioncheck.outputs.version }}.apk
+          path: GeoWeather-*.apk
+
+      - name: Check if actor is repo owner
+        id: ownercheck
+        run: |
+          if [ "${{ github.actor }}" = "${{ github.repository_owner }}" ]; then
+            echo "is_owner=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_owner=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release (only if owner)
+        if: steps.ownercheck.outputs.is_owner == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.versioncheck.outputs.version }}
+          name: "GeoWeather ${{ steps.versioncheck.outputs.version }}"
+          body: "Automatisch gebaut und signiert."
+          draft: true
+          prerelease: false
+          files: "GeoWeather-*.apk"
