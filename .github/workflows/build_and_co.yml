@@ -3,7 +3,7 @@ name: Build, Sign and Conditional Release
 on:
   push:
     branches:
-      - main
+      - '**'
 
 permissions:
   contents: write
