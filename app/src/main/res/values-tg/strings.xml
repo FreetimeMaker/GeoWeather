@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    </resources>
+    <string name="app_name">GeoWeather</string>
+    <string name="backToSupPag">Бозгашт ба саҳифаи дастгирӣ</string>
+    <string name="JoiOffDisSer">Ба сервери расмии Discord ҳамроҳ шавед</string>
+    <string name="DonPers">Никто еще не сделал пожертвования.</string>
+</resources>
