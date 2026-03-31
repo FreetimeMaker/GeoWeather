@@ -156,7 +156,7 @@ class WeatherNotificationWorker(
         val message = context.getString(R.string.WeatherNotificationTXT, locationName, tempText, weatherDescription)
         
         val notification = NotificationCompat.Builder(context, "weather_notifications")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.icon)
             .setContentTitle(context.getString(R.string.DailyWeatherUpdateTXT))
             .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
