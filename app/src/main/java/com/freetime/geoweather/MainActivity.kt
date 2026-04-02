@@ -59,7 +59,6 @@ import com.freetime.geoweather.freetimesdk.FreetimeSDKManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -104,18 +103,16 @@ class MainActivity : ComponentActivity() {
                 MainScreen(
                     onOpenDetail = { name, lat, lon ->
                         // Mark this location as selected before opening detail
-                        Thread {
-                            val db = LocationDatabase.getDatabase(this@MainActivity)
-                            runBlocking {
-                                db.locationDao().deselectAllLocations()
-                                val location = db.locationDao().findByCoordinates(lat, lon)
-                                if (location != null) {
-                                    db.locationDao().updateLocation(location.copy(selected = true))
-                                }
+                        scope.launch(Dispatchers.IO) {
+                            val db = LocationDatabase.getDatabase(context)
+                            db.locationDao().deselectAllLocations()
+                            val location = db.locationDao().findByCoordinates(lat, lon)
+                            if (location != null) {
+                                db.locationDao().updateLocation(location.copy(selected = true))
                             }
-                        }.start()
+                        }
                         
-                        val intent = Intent(this, WeatherDetailActivity::class.java).apply {
+                        val intent = Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
                             putExtra("name", name)
                             putExtra("lat", lat)
                             putExtra("lon", lon)
