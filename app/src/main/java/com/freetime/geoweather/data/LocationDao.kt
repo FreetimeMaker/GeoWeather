@@ -21,6 +21,12 @@ interface LocationDao {
     @Query("SELECT * FROM locations WHERE latitude = :lat AND longitude = :lon LIMIT 1")
     fun findByCoordinates(lat: Double, lon: Double): LocationEntity?
 
+    @Query("SELECT * FROM locations WHERE selected = 1 LIMIT 1")
+    suspend fun getSelectedLocation(): LocationEntity?
+
+    @Query("UPDATE locations SET selected = 0")
+    suspend fun deselectAllLocations()
+
     @Insert
     fun insertLocation(location: LocationEntity)
 

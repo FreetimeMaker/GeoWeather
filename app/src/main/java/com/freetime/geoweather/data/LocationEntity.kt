@@ -2,8 +2,14 @@ package com.freetime.geoweather.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Index
 
-@Entity(tableName = "locations")
+@Entity(
+    tableName = "locations",
+    indices = [
+        Index(value = ["latitude", "longitude"], unique = true)
+    ]
+)
 data class LocationEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
@@ -15,7 +21,8 @@ data class LocationEntity(
     val notificationsEnabled: Boolean = false,
     val notificationTime: String = "08:00",
     val changeAlertsEnabled: Boolean = false,
-    val changeAlertInterval: String = "3"
+    val changeAlertInterval: String = "3",
+    val selected: Boolean = false
 ) {
     val currentTemp: String?
         get() {

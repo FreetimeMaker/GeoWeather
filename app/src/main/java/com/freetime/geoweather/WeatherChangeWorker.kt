@@ -32,12 +32,14 @@ class WeatherChangeWorker(
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             val db = LocationDatabase.getDatabase(applicationContext)
-            val locations = db.locationDao().getAllLocationsSync()
             
-            for (location in locations) {
-                if (location.changeAlertsEnabled) {
-                    // Fetch current weather data for this location
-                    val currentWeather = fetchCurrentWeatherData(location.latitude, location.longitude)
+            // Only send change alerts for the selected location
+            val selectedLocation = db.locationDao().getSelectedLocation()
+            
+            if (selectedLocation != null && selectedLocation.changeAlertsEnabled) {
+                try {
+                    // Fetch current weather data for the selected location
+                    val currentWeather = fetchCurrentWeatherData(selectedLocation.latitude, selectedLocation.longitude)
                     val currentSnapshot = WeatherSnapshot(
                         temperature = currentWeather.getDouble("temperature"),
                         windSpeed = currentWeather.optDouble("windspeed", 0.0),
@@ -47,17 +49,19 @@ class WeatherChangeWorker(
                     )
 
                     // Get last saved weather snapshot for this location
-                    val lastSnapshot = getLastWeatherSnapshot(applicationContext, location.id)
+                    val lastSnapshot = getLastWeatherSnapshot(applicationContext, selectedLocation.id)
 
                     if (lastSnapshot != null) {
                         val changes = detectWeatherChanges(lastSnapshot, currentSnapshot)
                         if (changes.isNotEmpty()) {
-                            sendWeatherChangeAlert(applicationContext, location.name, changes, location.id)
+                            sendWeatherChangeAlert(applicationContext, selectedLocation.name, changes, selectedLocation.id)
                         }
                     }
 
                     // Save current snapshot for this location
-                    saveWeatherSnapshot(applicationContext, currentSnapshot, location.id)
+                    saveWeatherSnapshot(applicationContext, currentSnapshot, selectedLocation.id)
+                } catch (_: Exception) {
+                    // Error handling
                 }
             }
             

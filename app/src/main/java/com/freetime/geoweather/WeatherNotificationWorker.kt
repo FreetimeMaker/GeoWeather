@@ -38,29 +38,35 @@ class WeatherNotificationWorker(
             }
             
             val db = LocationDatabase.getDatabase(applicationContext)
-            val locations = db.locationDao().getAllLocationsSync()
             
-            for (location in locations) {
-                if (location.notificationsEnabled) {
-                    // Fetch current weather data for this location
-                    val weatherData = fetchWeatherData(location.latitude, location.longitude)
+            // Only send notifications for the selected location
+            val selectedLocation = db.locationDao().getSelectedLocation()
+            
+            if (selectedLocation != null && selectedLocation.notificationsEnabled) {
+                try {
+                    // Fetch current weather data for the selected location
+                    val weatherData = fetchWeatherData(selectedLocation.latitude, selectedLocation.longitude)
                     val temp = weatherData.getDouble("temperature")
                     val weatherCode = weatherData.getInt("weathercode")
                     val weatherDescription = getWeatherDescription(weatherCode)
 
-                    Log.d(TAG, "Preparing notification for ${location.name}: $temp, $weatherDescription")
+                    Log.d(TAG, "Preparing notification for ${selectedLocation.name}: $temp, $weatherDescription")
 
                     // Send notification for this location
                     sendWeatherNotification(
                         applicationContext, 
-                        location.name, 
-                        location.latitude,
-                        location.longitude,
+                        selectedLocation.name, 
+                        selectedLocation.latitude,
+                        selectedLocation.longitude,
                         temp, 
                         weatherDescription,
-                        location.id
+                        selectedLocation.id
                     )
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error fetching weather for selected location", e)
                 }
+            } else {
+                Log.d(TAG, "No selected location with notifications enabled")
             }
             
             Result.success()

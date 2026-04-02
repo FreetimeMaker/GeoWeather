@@ -59,6 +59,7 @@ import com.freetime.geoweather.freetimesdk.FreetimeSDKManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -102,6 +103,18 @@ class MainActivity : ComponentActivity() {
             GeoWeatherTheme(darkTheme = darkTheme) {
                 MainScreen(
                     onOpenDetail = { name, lat, lon ->
+                        // Mark this location as selected before opening detail
+                        Thread {
+                            val db = LocationDatabase.getDatabase(this@MainActivity)
+                            runBlocking {
+                                db.locationDao().deselectAllLocations()
+                                val location = db.locationDao().findByCoordinates(lat, lon)
+                                if (location != null) {
+                                    db.locationDao().updateLocation(location.copy(selected = true))
+                                }
+                            }
+                        }.start()
+                        
                         val intent = Intent(this, WeatherDetailActivity::class.java).apply {
                             putExtra("name", name)
                             putExtra("lat", lat)
@@ -249,7 +262,15 @@ fun MainScreen(
             onDismiss = { showAddDialog = false },
             onAdd = { name, lat, lon ->
                 scope.launch(Dispatchers.IO) {
-                    db.locationDao().insertLocation(LocationEntity(name = name, latitude = lat, longitude = lon))
+                    // Deselect all other locations
+                    db.locationDao().deselectAllLocations()
+                    // Insert new location as selected
+                    db.locationDao().insertLocation(LocationEntity(
+                        name = name, 
+                        latitude = lat, 
+                        longitude = lon,
+                        selected = true
+                    ))
                     withContext(Dispatchers.Main) {
                         showAddDialog = false
                     }
