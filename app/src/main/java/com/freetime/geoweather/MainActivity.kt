@@ -336,6 +336,7 @@ fun AddLocationDialog(
                     value = query,
                     onValueChange = { query = it },
                     label = { Text(stringResource(R.string.CityName)) },
+                    placeholder = { Text("e.g. New York or 40.7128, -74.0060") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(12.dp))
@@ -343,28 +344,77 @@ fun AddLocationDialog(
                     onClick = {
                         loading = true
                         results = emptyList()
-                        val url = "https://geocoding-api.open-meteo.com/v1/search?name=" +
-                                URLEncoder.encode(query, "UTF-8") +
-                                "&count=20&language=" + Locale.getDefault().language +
-                                "&format=json"
+
                         scope.launch(Dispatchers.IO) {
                             try {
+                                // Check if input is coordinates (e.g., "40.7128, -74.0060")
+                                val coordinatePattern = Regex("""^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$""")
+                                val matchResult = coordinatePattern.matchEntire(query.trim())
+
+                                val url = if (matchResult != null) {
+                                    // Input is coordinates - use reverse geocoding
+                                    val latitude = matchResult.groupValues[1].toDouble()
+                                    val longitude = matchResult.groupValues[2].toDouble()
+                                    "https://geocoding-api.open-meteo.com/v1/reverse?latitude=$latitude&longitude=$longitude&language=" +
+                                            Locale.getDefault().language + "&format=json"
+                                } else {
+                                    // Input is a city name - use normal geocoding
+                                    val queryParts = query.split(",").map { it.trim() }
+                                    val cityName = queryParts[0]
+                                    val adminOrCountry = if (queryParts.size > 1) queryParts[1] else ""
+
+                                    var searchUrl = "https://geocoding-api.open-meteo.com/v1/search?name=" +
+                                            URLEncoder.encode(cityName, "UTF-8")
+
+                                    if (adminOrCountry.isNotEmpty()) {
+                                        searchUrl += "&admin1=" + URLEncoder.encode(adminOrCountry, "UTF-8")
+                                    }
+
+                                    searchUrl += "&count=20&language=" + Locale.getDefault().language +
+                                            "&format=json"
+                                    searchUrl
+                                }
+
                                 val json = httpGet(url)
                                 val obj = JSONObject(json)
-                                val arr = obj.optJSONArray("results") ?: JSONArray()
                                 val list = mutableListOf<Triple<String, Double, Double>>()
+
+                                // Handle both search and reverse results
+                                val arr = if (obj.has("results")) {
+                                    obj.optJSONArray("results") ?: JSONArray()
+                                } else if (obj.has("name")) {
+                                    // Single result from reverse geocoding
+                                    JSONArray().apply {
+                                        put(obj)
+                                    }
+                                } else {
+                                    JSONArray()
+                                }
+
                                 for (i in 0 until arr.length()) {
                                     val item = arr.getJSONObject(i)
-                                    val name = item.getString("name")
-                                    val lat = item.getDouble("latitude")
-                                    val lon = item.getDouble("longitude")
-                                    list.add(Triple(name, lat, lon))
+                                    val name = item.optString("name", "Unknown")
+                                    val lat = item.optDouble("latitude", 0.0)
+                                    val lon = item.optDouble("longitude", 0.0)
+
+                                    // Build a more informative display name
+                                    var displayName = name
+                                    if (item.has("admin1")) {
+                                        displayName += ", " + item.getString("admin1")
+                                    }
+                                    if (item.has("country")) {
+                                        displayName += ", " + item.getString("country")
+                                    }
+
+                                    list.add(Triple(displayName, lat, lon))
                                 }
+
                                 withContext(Dispatchers.Main) {
                                     results = list
                                     loading = false
                                 }
                             } catch (e: Exception) {
+                                e.printStackTrace()
                                 withContext(Dispatchers.Main) {
                                     loading = false
                                 }

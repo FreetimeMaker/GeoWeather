@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.room.util.TableInfo
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
 
@@ -69,7 +70,7 @@ fun ReleaseCard(
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(
+        TableInfo.Column(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
@@ -97,6 +98,14 @@ fun ChangeLogScreen(onBack: () -> Unit) {
 
     // 🔥 Hier fügst du einfach neue Versionen hinzu
     val releases = listOf(
+        ReleaseNotes(
+            version = "v1.3.3",
+            details = listOf(
+                "🛠️ ${stringResource(R.string.added_label)}",
+                "Added Coordinate Searching function",
+                "Added State in search to make the right city Obvious"
+            )
+        ),
         ReleaseNotes(
             version = "v1.3.2",
             details = listOf(

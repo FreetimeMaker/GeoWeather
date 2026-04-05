@@ -1,2 +1,0 @@
-[ ] - Change Notification Icon
-[ ] - Change Repository Description
