@@ -115,4 +115,10 @@
     <string name="FixFMSDK">• Fueron corregidas las Donaciones a través de FreeTimeSDK</string>
     <string name="AddedMoonData">• Añadido datos de luna en tiempo real.</string>
     <string name="FixActivities">• Corregido Cierres por actividad cuando se quiere donar, y se abre Github Sponsors, o FreetimeSDK.</string>
+    <string name="DonViaBNB">Donar vía BNB</string>
+    <string name="DonViaPEPE">Donar vía PEPE</string>
+    <string name="DonViaSOL">Donar vía SOL</string>
+    <string name="DonViaShib">Donar vía Shib</string>
+    <string name="AddedMoreDons">• Mas opciones de donación agregadas</string>
+    <string name="HopefullyFixedFMSDK">• Afortunadamente Arreglada la opción de donación FreetimeSDK</string>
 </resources>
