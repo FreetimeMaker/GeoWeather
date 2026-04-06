@@ -1,3 +1,9 @@
+package com.freetime.geoweather.ui.theme
+
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+
 // Material You 3 Typography Styles
 
 object Typography {
