@@ -117,4 +117,10 @@
     <string name="changelog_add_translate">• Weitere Übersetzungen hinzugefügt</string>
     <string name="removed_label">Entfernt</string>
     <string name="changelog_remove_coin">• Coinbase-Spendenoption aufgrund der Entfernung von Coinbase Commerce entfernt</string>
+    <string name="DonViaTRON">Über TRON spenden</string>
+    <string name="DonViaBNB">Über BNB spenden</string>
+    <string name="DonViaPEPE">Über PEPE spenden</string>
+    <string name="DonViaSOL">Über SOL spenden</string>
+    <string name="DonViaShib">Über Shib spenden</string>
+    <string name="DonViaFMSDK">Über FreetimeSDK spenden</string>
 </resources>
