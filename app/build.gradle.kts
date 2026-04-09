@@ -31,9 +31,6 @@ android {
 }
 
 dependencies {
-    // FreetimeSDK for more Donation Options
-    implementation(project(":SDK"))
-
     // Compose BOM
     implementation(platform("androidx.compose:compose-bom:2026.03.01"))
 

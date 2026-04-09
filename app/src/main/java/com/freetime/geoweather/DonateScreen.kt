@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,78 +14,123 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DonateScreen(onBack: () -> Unit) {
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Unterstützen") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Unterstütze die Entwicklung",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "Wähle eine der folgenden Optionen, um das Projekt zu unterstützen.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaOxaPay)) {
+                context.startActivity(Intent(context, OxaPayActivity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaGHSponsors)) {
+                context.startActivity(Intent(context, GH_SponsorsActivity::class.java))
+            }
+
+            Text("Kryptowährungen", style = MaterialTheme.typography.titleMedium, modifier = Modifier.align(Alignment.Start).padding(top = 8.dp))
+
+            DonateButton(text = stringResource(R.string.DonViaBTC)) {
+                context.startActivity(Intent(context, BitcoinActivity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaETH)) {
+                context.startActivity(Intent(context, EthereumActivity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaUSDT)) {
+                context.startActivity(Intent(context, USDT_Activity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaUSDC)) {
+                context.startActivity(Intent(context, USDC_Activity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaSHIB)) {
+                context.startActivity(Intent(context, ShibActivity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaDOGE)) {
+                context.startActivity(Intent(context, DogeActivity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaTRON)) {
+                context.startActivity(Intent(context, TronActivity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaLTC)) {
+                context.startActivity(Intent(context, LTC_Activity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaBNB)) {
+                context.startActivity(Intent(context, BNB_Activity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaPEPE)) {
+                context.startActivity(Intent(context, PEPE_Activity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaSOL)) {
+                context.startActivity(Intent(context, SOL_Activity::class.java))
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            FilledTonalButton(
+                onClick = { context.startActivity(Intent(context, DonatorActivity::class.java)) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.ViewSup))
+            }
+        }
+    }
+}
+
+@Composable
+fun DonateButton(text: String, onClick: () -> Unit) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Button(onClick = {
-            context.startActivity(Intent(context, OxaPayActivity::class.java))
-        }) { Text(stringResource(R.string.DonViaOxaPay)) }
-
-       Button(onClick = {
-           context.startActivity(Intent(context, GH_SponsorsActivity::class.java))
-       }) { Text(stringResource(R.string.DonViaGHSponsors)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, BitcoinActivity::class.java))
-        }) { Text(stringResource(R.string.DonViaBTC)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, EthereumActivity::class.java))
-        }) { Text(stringResource(R.string.DonViaETH)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, USDT_Activity::class.java))
-        }) { Text(stringResource(R.string.DonViaUSDT)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, USDC_Activity::class.java))
-        }) { Text(stringResource(R.string.DonViaUSDC)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, ShibActivity::class.java))
-        }) { Text(stringResource(R.string.DonViaSHIB)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, DogeActivity::class.java))
-        }) { Text(stringResource(R.string.DonViaDOGE)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, TronActivity::class.java))
-        }) { Text(stringResource(R.string.DonViaTRON)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, LTC_Activity::class.java))
-        }) { Text(stringResource(R.string.DonViaLTC)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, BNB_Activity::class.java))
-        }) { Text(stringResource(R.string.DonViaBNB)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, PEPE_Activity::class.java))
-        }) { Text(stringResource(R.string.DonViaPEPE)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, SOL_Activity::class.java))
-        }) { Text(stringResource(R.string.DonViaSOL)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, ShibActivity::class.java))
-        }) { Text(stringResource(R.string.DonViaShib)) }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, DonatorActivity::class.java))
-        }) { Text(stringResource(R.string.ViewSup)) }
-
-        Button(onClick = onBack) { Text(stringResource(R.string.BackToWeaDash)) }
+        Text(text)
     }
 }

@@ -2,11 +2,10 @@ package com.freetime.geoweather
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -16,46 +15,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.freetime.geoweather.ChangeLogActivity
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
 class SettingsActivity : ComponentActivity() {
-    private lateinit var sharedPreferences: SharedPreferences
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedPreferences = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-        hideSystemUI()
+        enableEdgeToEdge()
         
         setContent {
-            val darkTheme = isSystemInDarkTheme()
-            GeoWeatherTheme(darkTheme = darkTheme) {
-                SettingsScreen(onBack = { finish() })
+            val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
+            val useSystemTheme = sharedPreferences.collectAsState(key = "use_system_theme", defaultValue = true)
+            val darkModeEnabled = sharedPreferences.collectAsState(key = "dark_mode_enabled", defaultValue = false)
+            val dynamicColor = sharedPreferences.collectAsState(key = "dynamic_color", defaultValue = true)
+
+            val darkTheme = if (useSystemTheme.value) isSystemInDarkTheme() else darkModeEnabled.value
+            
+            GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor.value) {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    SettingsScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        onBack = { finish() }
+                    )
+                }
             }
         }
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            hideSystemUI()
-        }
-    }
-
-    private fun hideSystemUI() {
-        window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                )
     }
 }
 
 @Composable
-fun SettingsScreen(onBack: () -> Unit) {
+fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     val context = LocalContext.current
     val sharedPreferences = remember { 
         context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) 
@@ -69,87 +57,107 @@ fun SettingsScreen(onBack: () -> Unit) {
         mutableStateOf(sharedPreferences.getBoolean("use_system_theme", true))
     }
 
+    var dynamicColor by remember {
+        mutableStateOf(sharedPreferences.getBoolean("dynamic_color", true))
+    }
+
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Back button
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(onClick = onBack) {
+            FilledTonalButton(onClick = onBack) {
                 Text(stringResource(R.string.back_btn))
             }
 
-            Button(onClick = {
+            FilledTonalButton(onClick = {
                 context.startActivity(Intent(context, ChangeLogActivity::class.java))
             }) {
                 Text(stringResource(R.string.open_change_log))
             }
         }
         
-        // Dark Mode & QWeather Settings
+        Text(
+            text = stringResource(R.string.theme_settings_title),
+            style = MaterialTheme.typography.headlineMedium
+        )
+
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.theme_settings_title),
-                    style = MaterialTheme.typography.headlineSmall
-                )
-                
-                // Use System Theme
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(stringResource(R.string.follow_system_theme))
-                    Switch(
-                        checked = useSystemTheme,
-                        onCheckedChange = { enabled ->
-                            useSystemTheme = enabled
-                            sharedPreferences.edit()
-                                .putBoolean("use_system_theme", enabled)
-                                .apply()
-                        }
-                    )
-                }
-                
-                // Force Dark Mode
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(stringResource(R.string.force_dark_mode))
-                        Text(
-                            text = stringResource(R.string.override_system_setting),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                SettingsToggle(
+                    title = "Dynamische Farben (Material You)",
+                    subtitle = "Farben basierend auf deinem Hintergrundbild (Android 12+)",
+                    checked = dynamicColor,
+                    onCheckedChange = {
+                        dynamicColor = it
+                        sharedPreferences.edit().putBoolean("dynamic_color", it).apply()
                     }
-                    Switch(
-                        checked = darkModeEnabled,
-                        enabled = !useSystemTheme,
-                        onCheckedChange = { enabled ->
-                            darkModeEnabled = enabled
-                            sharedPreferences.edit()
-                                .putBoolean("dark_mode_enabled", enabled)
-                                .apply()
-                        }
-                    )
-                }
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                SettingsToggle(
+                    title = stringResource(R.string.follow_system_theme),
+                    checked = useSystemTheme,
+                    onCheckedChange = {
+                        useSystemTheme = it
+                        sharedPreferences.edit().putBoolean("use_system_theme", it).apply()
+                    }
+                )
+
+                SettingsToggle(
+                    title = stringResource(R.string.force_dark_mode),
+                    subtitle = stringResource(R.string.override_system_setting),
+                    checked = darkModeEnabled,
+                    enabled = !useSystemTheme,
+                    onCheckedChange = {
+                        darkModeEnabled = it
+                        sharedPreferences.edit().putBoolean("dark_mode_enabled", it).apply()
+                    }
+                )
             }
         }
-        
-        Spacer(modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+fun SettingsToggle(
+    title: String,
+    subtitle: String? = null,
+    checked: Boolean,
+    enabled: Boolean = true,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        Switch(
+            checked = checked,
+            enabled = enabled,
+            onCheckedChange = onCheckedChange
+        )
     }
 }
