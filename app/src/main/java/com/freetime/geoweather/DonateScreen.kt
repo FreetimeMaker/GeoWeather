@@ -22,10 +22,10 @@ fun DonateScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Unterstützen") },
+                title = { Text(stringResource(R.string.donate_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_nav_desc))
                     }
                 }
             )
@@ -46,13 +46,13 @@ fun DonateScreen(onBack: () -> Unit) {
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Unterstütze die Entwicklung",
+                        text = stringResource(R.string.support_development),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = "Wähle eine der folgenden Optionen, um das Projekt zu unterstützen.",
+                        text = stringResource(R.string.select_option_msg),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -67,7 +67,11 @@ fun DonateScreen(onBack: () -> Unit) {
                 context.startActivity(Intent(context, GH_SponsorsActivity::class.java))
             }
 
-            Text("Kryptowährungen", style = MaterialTheme.typography.titleMedium, modifier = Modifier.align(Alignment.Start).padding(top = 8.dp))
+            Text(
+                text = stringResource(R.string.crypto_label),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.align(Alignment.Start).padding(top = 8.dp)
+            )
 
             DonateButton(text = stringResource(R.string.DonViaBTC)) {
                 context.startActivity(Intent(context, BitcoinActivity::class.java))

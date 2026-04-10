@@ -52,7 +52,7 @@ class WeatherChangeWorker(
                     val lastSnapshot = getLastWeatherSnapshot(applicationContext, selectedLocation.id)
 
                     if (lastSnapshot != null) {
-                        val changes = detectWeatherChanges(lastSnapshot, currentSnapshot)
+                        val changes = detectWeatherChanges(applicationContext, lastSnapshot, currentSnapshot)
                         if (changes.isNotEmpty()) {
                             sendWeatherChangeAlert(applicationContext, selectedLocation.name, changes, selectedLocation.id)
                         }
@@ -137,17 +137,23 @@ class WeatherChangeWorker(
             .apply()
     }
 
-    private fun detectWeatherChanges(last: WeatherSnapshot, current: WeatherSnapshot): List<String> {
+    private fun detectWeatherChanges(context: Context, last: WeatherSnapshot, current: WeatherSnapshot): List<String> {
         val changes = mutableListOf<String>()
+        val sharedPreferences = context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
+        val tempUnit = sharedPreferences.getString("temp_unit", "celsius") ?: "celsius"
+        val windUnit = sharedPreferences.getString("wind_unit", "kmh") ?: "kmh"
         
         // Temperature change threshold: 5°C
         if (kotlin.math.abs(current.temperature - last.temperature) >= 5.0) {
-            changes.add("Temperature: ${last.temperature.toInt()}°C → ${current.temperature.toInt()}°C")
+            val lastTemp = if (tempUnit == "fahrenheit") (last.temperature * 9/5 + 32).toInt().toString() + "°F" else last.temperature.toInt().toString() + "°C"
+            val currentTemp = if (tempUnit == "fahrenheit") (current.temperature * 9/5 + 32).toInt().toString() + "°F" else current.temperature.toInt().toString() + "°C"
+            changes.add("Temperature: $lastTemp → $currentTemp")
         }
         
         // Wind speed increase threshold: 15 km/h
         if (current.windSpeed - last.windSpeed >= 15.0) {
-            changes.add("Wind increased to ${current.windSpeed.toInt()} km/h")
+            val displayWind = if (windUnit == "mph") (current.windSpeed * 0.621371).toInt().toString() + " mph" else current.windSpeed.toInt().toString() + " km/h"
+            changes.add("Wind increased to $displayWind")
         }
         
         // Precipitation increase threshold: 30%

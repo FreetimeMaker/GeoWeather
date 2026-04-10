@@ -117,12 +117,12 @@ fun MainScreen(
                 title = { Text("GeoWeather") },
                 actions = {
                     IconButton(onClick = onOpenDonate) {
-                        Icon(Icons.Default.Favorite, contentDescription = "Donate", tint = MaterialTheme.colorScheme.primary)
+                        Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.donate_nav_desc), tint = MaterialTheme.colorScheme.primary)
                     }
                     IconButton(onClick = {
                         context.startActivity(Intent(context, SettingsActivity::class.java))
                     }) {
-                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings_nav_desc))
                     }
                 },
                 scrollBehavior = scrollBehavior
@@ -139,7 +139,7 @@ fun MainScreen(
         if (locations.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
                 Text(
-                    text = "Noch keine Standorte hinzugefügt.\nKlicke auf das Plus-Icon unten.",
+                    text = stringResource(R.string.no_locations_msg),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -245,7 +245,7 @@ fun AddLocationDialog(
                     value = query,
                     onValueChange = { query = it },
                     label = { Text(stringResource(R.string.CityName)) },
-                    placeholder = { Text("z.B. Berlin oder 52.52, 13.40") },
+                    placeholder = { Text("e.g. New York or 40.71, -74.00") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )

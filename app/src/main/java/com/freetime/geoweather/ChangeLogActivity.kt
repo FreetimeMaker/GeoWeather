@@ -67,9 +67,9 @@ fun ReleaseCard(
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
         "v1.3.3" to listOf(
-            "${stringResource(R.string.added_label)} Coordinate Searching function",
-            "Added State in search to make the right city obvious",
-            "Added Material YOU support"
+            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_coordinate_search)}",
+            stringResource(R.string.cl_state_in_search),
+            stringResource(R.string.cl_material_you)
         ),
         "v1.3.2" to listOf(
             "${stringResource(R.string.added_label)} ${stringResource(R.string.AddedMoreDons)}",
@@ -93,7 +93,7 @@ fun ChangeLogScreen(onBack: () -> Unit) {
                 title = { Text(stringResource(R.string.whats_new_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_nav_desc))
                     }
                 }
             )

@@ -220,10 +220,10 @@ fun WebViewScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Spenden") },
+                title = { Text(stringResource(R.string.donate_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_nav_desc))
                     }
                 }
             )
@@ -251,10 +251,10 @@ fun DonatorScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Unterstützer") },
+                title = { Text(stringResource(R.string.supporters_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_nav_desc))
                     }
                 }
             )

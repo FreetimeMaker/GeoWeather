@@ -129,6 +129,8 @@ class WeatherNotificationWorker(
         }
         
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val sharedPreferences = context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
+        val tempUnit = sharedPreferences.getString("temp_unit", "celsius") ?: "celsius"
         
         // Create notification channel (only on Android O+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -158,7 +160,9 @@ class WeatherNotificationWorker(
         )
         
         // Format notification message
-        val tempText = "${temperature.toInt()}°C"
+        val displayTemp = if (tempUnit == "fahrenheit") (temperature * 9/5 + 32).toInt() else temperature.toInt()
+        val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+        val tempText = "$displayTemp$tempSuffix"
         val message = context.getString(R.string.WeatherNotificationTXT, locationName, tempText, weatherDescription)
         
         val notification = NotificationCompat.Builder(context, "weather_notifications")

@@ -105,7 +105,11 @@ fun WeatherDetailScreen(
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val db = remember { LocationDatabase.getDatabase(context) }
+    val sharedPreferences = remember { context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
     
+    val tempUnit by sharedPreferences.collectStringAsState("temp_unit", "celsius")
+    val windUnit by sharedPreferences.collectStringAsState("wind_unit", "kmh")
+
     var weatherJson by remember { mutableStateOf<String?>(null) }
     var aqiJson by remember { mutableStateOf<String?>(null) }
     var moonPhaseName by remember { mutableStateOf<String?>(null) }
@@ -121,7 +125,6 @@ fun WeatherDetailScreen(
             val entity = withContext(Dispatchers.IO) { db.locationDao().findByCoordinates(lat, lon) }
             val currentTime = System.currentTimeMillis()
             
-            // Fix: simplified logic to avoid unnecessary elvis operator warning
             val lastUpdated = entity?.lastUpdated
             val dataAgeMinutes = if (lastUpdated != null) (currentTime - lastUpdated) / (1000 * 60) else Long.MAX_VALUE
 
@@ -173,12 +176,12 @@ fun WeatherDetailScreen(
             TopAppBar(
                 title = { Text(name) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") }
+                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_nav_desc)) }
                 },
                 actions = {
                     IconButton(onClick = { scope.launch { refreshWeatherData(true) } }, enabled = !isRefreshing) {
                         if (isRefreshing) CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-                        else Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        else Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh_nav_desc))
                     }
                 },
                 scrollBehavior = scrollBehavior
@@ -202,6 +205,9 @@ fun WeatherDetailScreen(
                 val temp = current.getDouble("temperature")
                 val weatherCode = current.getInt("weathercode")
                 
+                val displayTemp = if (tempUnit == "fahrenheit") (temp * 9/5 + 32).toInt() else temp.toInt()
+                val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+
                 item {
                     Column(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -213,21 +219,21 @@ fun WeatherDetailScreen(
                             modifier = Modifier.size(120.dp),
                             tint = Color.Unspecified
                         )
-                        Text("${temp.toInt()}°", style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Bold)
+                        Text("$displayTemp$tempSuffix", style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Bold)
                         Text(WeatherCodes.getDescription(weatherCode), style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
 
                 item {
-                    WeatherDetailsGrid(obj)
+                    WeatherDetailsGrid(obj, tempUnit, windUnit)
                 }
 
                 item {
-                    HourlyForecastSection(hourlyForecastList)
+                    HourlyForecastSection(hourlyForecastList, tempUnit)
                 }
 
                 item {
-                    DailyForecastSection(forecastList)
+                    DailyForecastSection(forecastList, tempUnit)
                 }
                 
                 item { Spacer(Modifier.height(32.dp)) }
@@ -241,11 +247,19 @@ fun WeatherDetailScreen(
 }
 
 @Composable
-fun WeatherDetailsGrid(weatherObj: JSONObject) {
+fun WeatherDetailsGrid(weatherObj: JSONObject, tempUnit: String, windUnit: String) {
     val current = weatherObj.getJSONObject("current_weather")
     val hourly = weatherObj.optJSONObject("hourly")
     val daily = weatherObj.optJSONObject("daily")
     val currentIndex = if (hourly != null) getCurrentHourIndex(hourly.getJSONArray("time")) else -1
+
+    val wind = current.getDouble("windspeed")
+    val displayWind = if (windUnit == "mph") (wind * 0.621371).toInt() else wind.toInt()
+    val windSuffix = if (windUnit == "mph") " mph" else " km/h"
+
+    val feelsLike = if (currentIndex >= 0) hourly?.getJSONArray("apparent_temperature")?.getDouble(currentIndex) ?: current.getDouble("temperature") else current.getDouble("temperature")
+    val displayFeelsLike = if (tempUnit == "fahrenheit") (feelsLike * 9/5 + 32).toInt() else feelsLike.toInt()
+    val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
 
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -253,17 +267,17 @@ fun WeatherDetailsGrid(weatherObj: JSONObject) {
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                DetailItem(label = "Wind", value = "${current.getDouble("windspeed")} km/h")
-                DetailItem(label = "Gefühlt", value = "${if (currentIndex >= 0) hourly?.getJSONArray("apparent_temperature")?.getDouble(currentIndex) else current.getDouble("temperature")}°")
-                DetailItem(label = "Feuchte", value = "${if (currentIndex >= 0) hourly?.getJSONArray("relativehumidity_2m")?.getInt(currentIndex) else 0}%")
+                DetailItem(label = stringResource(R.string.wind_label), value = "$displayWind$windSuffix")
+                DetailItem(label = stringResource(R.string.feels_like_label), value = "$displayFeelsLike$tempSuffix")
+                DetailItem(label = stringResource(R.string.humidity_label), value = "${if (currentIndex >= 0) hourly?.getJSONArray("relativehumidity_2m")?.getInt(currentIndex) else 0}%")
             }
             if (daily != null) {
                 val sunrise = formatTime(daily.getJSONArray("sunrise").getString(0))
                 val sunset = formatTime(daily.getJSONArray("sunset").getString(0))
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    DetailItem(label = "Aufgang", value = sunrise)
-                    DetailItem(label = "Untergang", value = sunset)
+                    DetailItem(label = stringResource(R.string.sunrise_label), value = sunrise)
+                    DetailItem(label = stringResource(R.string.sunset_label), value = sunset)
                 }
             }
         }
@@ -279,17 +293,19 @@ fun DetailItem(label: String, value: String) {
 }
 
 @Composable
-fun HourlyForecastSection(list: List<HourlyForecast>) {
+fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String) {
+    val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Text("Stündlich", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.hourly_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(8.dp))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             items(list) { forecast ->
+                val displayTemp = if (tempUnit == "fahrenheit") (forecast.temp * 9/5 + 32).toInt() else forecast.temp.toInt()
                 Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest)) {
                     Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(forecast.time, style = MaterialTheme.typography.labelMedium)
                         Icon(painter = painterResource(WeatherIconMapper.getWeatherIcon(forecast.weatherCode)), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified)
-                        Text("${forecast.temp.toInt()}°", style = MaterialTheme.typography.titleSmall)
+                        Text("$displayTemp$tempSuffix", style = MaterialTheme.typography.titleSmall)
                     }
                 }
             }
@@ -298,15 +314,18 @@ fun HourlyForecastSection(list: List<HourlyForecast>) {
 }
 
 @Composable
-fun DailyForecastSection(list: List<DailyForecast>) {
+fun DailyForecastSection(list: List<DailyForecast>, tempUnit: String) {
+    val tempSuffix = if (tempUnit == "fahrenheit") "°" else "°" // Simplified for list
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Text("7 Tage Vorhersage", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.forecast_7day_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(8.dp))
         list.forEach { forecast ->
+            val displayMax = if (tempUnit == "fahrenheit") (forecast.tempMax * 9/5 + 32).toInt() else forecast.tempMax.toInt()
+            val displayMin = if (tempUnit == "fahrenheit") (forecast.tempMin * 9/5 + 32).toInt() else forecast.tempMin.toInt()
             ListItem(
                 headlineContent = { Text(forecast.date) },
                 supportingContent = { Text(WeatherCodes.getDescription(forecast.weatherCode)) },
-                trailingContent = { Text("${forecast.tempMax.toInt()}° / ${forecast.tempMin.toInt()}°", fontWeight = FontWeight.Bold) },
+                trailingContent = { Text("$displayMax$tempSuffix / $displayMin$tempSuffix", fontWeight = FontWeight.Bold) },
                 leadingContent = { Icon(painter = painterResource(WeatherIconMapper.getWeatherIcon(forecast.weatherCode)), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified) },
                 colors = ListItemDefaults.colors(containerColor = Color.Transparent)
             )
