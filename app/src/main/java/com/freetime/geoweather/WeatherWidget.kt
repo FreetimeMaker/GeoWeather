@@ -7,7 +7,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.action.ActionCallback
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -23,82 +29,151 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.freetime.geoweather.data.LocationDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.charset.StandardCharsets
 
 class WeatherWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val db = LocationDatabase.getDatabase(context)
-        val location = db.locationDao().getSelectedLocation()
         val sharedPreferences = context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
+        
+        val location = withContext(Dispatchers.IO) {
+            db.locationDao().getSelectedLocation()
+        }
+        
         val tempUnit = sharedPreferences.getString("temp_unit", "celsius") ?: "celsius"
+        val weatherProvider = sharedPreferences.getString("weather_provider", "open_meteo") ?: "open_meteo"
+        val weatherApiKey = sharedPreferences.getString("weather_api_key", "") ?: ""
 
         var weatherInfo = context.getString(R.string.widget_loading)
-        var temp = ""
+        var tempString = ""
         var locationName = location?.name ?: "No Location"
 
         if (location != null) {
             try {
-                val url = "https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true&timezone=auto"
-                val response = URL(url).readText()
+                val url = if (weatherProvider == "weatherapi" && weatherApiKey.isNotEmpty()) {
+                    "https://api.weatherapi.com/v1/current.json?key=$weatherApiKey&q=${location.latitude},${location.longitude}"
+                } else {
+                    "https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true&timezone=auto"
+                }
+
+                val response = withContext(Dispatchers.IO) {
+                    httpGet(url)
+                }
                 val json = JSONObject(response)
-                val current = json.getJSONObject("current_weather")
-                val t = current.getDouble("temperature")
-                val code = current.getInt("weathercode")
+                
+                val (t, code) = if (weatherProvider == "weatherapi") {
+                    val current = json.getJSONObject("current")
+                    current.getDouble("temp_c") to 0
+                } else {
+                    val current = json.getJSONObject("current_weather")
+                    current.getDouble("temperature") to current.getInt("weathercode")
+                }
                 
                 val displayTemp = if (tempUnit == "fahrenheit") (t * 9/5 + 32).toInt() else t.toInt()
                 val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
                 
-                temp = "$displayTemp$tempSuffix"
+                tempString = "$displayTemp$tempSuffix"
                 weatherInfo = WeatherCodes.getDescription(code, context)
             } catch (e: Exception) {
-                weatherInfo = "Error"
+                weatherInfo = "Error: Check Connection"
             }
+        } else {
+            weatherInfo = "Select a city in app"
         }
 
         provideContent {
-            WeatherWidgetContent(locationName, temp, weatherInfo)
+            WeatherWidgetContent(locationName, tempString, weatherInfo)
+        }
+    }
+
+    private fun httpGet(urlString: String): String {
+        val url = URL(urlString)
+        val c = url.openConnection() as HttpURLConnection
+        c.setRequestProperty("User-Agent", "GeoWeatherApp")
+        c.connectTimeout = 10000
+        c.readTimeout = 10000
+        BufferedReader(InputStreamReader(c.inputStream, StandardCharsets.UTF_8)).use { reader ->
+            val sb = StringBuilder()
+            var line: String?
+            while (reader.readLine().also { line = it } != null) sb.append(line)
+            return sb.toString()
         }
     }
 
     @Composable
     private fun WeatherWidgetContent(name: String, temp: String, info: String) {
-        Column(
+        Row(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .background(ColorProvider(Color(0xFF2196F3)))
-                .padding(12.dp),
+                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = name,
-                style = TextStyle(
-                    color = ColorProvider(Color.White),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            )
-            Spacer(GlanceModifier.size(4.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(
+                modifier = GlanceModifier.defaultWeight(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalAlignment = Alignment.Start
+            ) {
                 Text(
-                    text = temp,
+                    text = name,
+                    maxLines = 1,
                     style = TextStyle(
                         color = ColorProvider(Color.White),
-                        fontSize = 24.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
                 )
-                Spacer(GlanceModifier.width(8.dp))
-                Text(
-                    text = info,
-                    style = TextStyle(
-                        color = ColorProvider(Color.White.copy(alpha = 0.8f)),
-                        fontSize = 14.sp
+                Spacer(GlanceModifier.size(2.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (temp.isNotEmpty()) {
+                        Text(
+                            text = temp,
+                            style = TextStyle(
+                                color = ColorProvider(Color.White),
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Spacer(GlanceModifier.width(4.dp))
+                    }
+                    Text(
+                        text = info,
+                        maxLines = 1,
+                        style = TextStyle(
+                            color = ColorProvider(Color.White.copy(alpha = 0.8f)),
+                            fontSize = 12.sp
+                        )
                     )
-                )
+                }
             }
+            
+            // Refresh Button
+            Image(
+                provider = ImageProvider(android.R.drawable.ic_menu_rotate),
+                contentDescription = "Refresh",
+                modifier = GlanceModifier
+                    .size(24.dp)
+                    .clickable(actionRunCallback<RefreshActionCallback>())
+            )
         }
+    }
+}
+
+class RefreshActionCallback : ActionCallback {
+    override suspend fun onAction(
+        context: Context,
+        glanceId: GlanceId,
+        parameters: ActionParameters
+    ) {
+        WeatherWidget().update(context, glanceId)
     }
 }

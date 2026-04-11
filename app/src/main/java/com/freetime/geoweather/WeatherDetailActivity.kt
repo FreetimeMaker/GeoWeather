@@ -11,8 +11,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -114,16 +116,18 @@ fun WeatherDetailScreen(
     val windUnit by sharedPreferences.collectStringAsState("wind_unit", "kmh")
     val weatherProvider by sharedPreferences.collectStringAsState("weather_provider", "open_meteo")
     val weatherApiKey by sharedPreferences.collectStringAsState("weather_api_key", "")
+    val qweatherApiKey by sharedPreferences.collectStringAsState("qweather_api_key", "d5184299458c441b92ab98075c4a7928")
 
     var weatherJson by remember { mutableStateOf<String?>(null) }
     var aqiJson by remember { mutableStateOf<String?>(null) }
     var moonPhaseName by remember { mutableStateOf<String?>(null) }
-    var moonIconCode by remember { mutableStateOf<String?>(null) }
     var forecastList by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
     var hourlyForecastList by remember { mutableStateOf<List<HourlyForecast>>(emptyList()) }
     var historicalData by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isRefreshing by remember { mutableStateOf(false) }
+    
+    var selectedDayIndex by remember { mutableStateOf(-1) }
 
     suspend fun refreshWeatherData(forceRefresh: Boolean = false) {
         try {
@@ -158,13 +162,14 @@ fun WeatherDetailScreen(
                     historicalData = parseForecastData(histJson)
                 } catch (_: Exception) {}
 
-                try {
-                    val moonUrl = "https://devapi.qweather.com/v7/astronomy/moon?location=$lon,$lat&key=d5184299458c441b92ab98075c4a7928"
-                    val mq = withContext(Dispatchers.IO) { httpGet(moonUrl) }
-                    val obj = JSONObject(mq).getJSONArray("moonPhase").getJSONObject(0)
-                    moonPhaseName = obj.optString("name", null)
-                    moonIconCode = obj.optString("icon", null)
-                } catch (_: Exception) {}
+                if (qweatherApiKey.isNotEmpty()) {
+                    try {
+                        val moonUrl = "https://devapi.qweather.com/v7/astronomy/moon?location=$lon,$lat&key=$qweatherApiKey"
+                        val mq = withContext(Dispatchers.IO) { httpGet(moonUrl) }
+                        val obj = JSONObject(mq).getJSONArray("moonPhase").getJSONObject(0)
+                        moonPhaseName = obj.optString("name", null)
+                    } catch (_: Exception) {}
+                }
             }
 
             if (weatherProvider == "open_meteo") {
@@ -228,7 +233,7 @@ fun WeatherDetailScreen(
             weatherJson?.let { json ->
                 val (temp, weatherCode) = if (weatherProvider == "weatherapi") {
                     val current = JSONObject(json).getJSONObject("current")
-                    current.getDouble("temp_c") to 0 // WeatherAPI codes would need mapping
+                    current.getDouble("temp_c") to 0
                 } else {
                     val current = JSONObject(json).getJSONObject("current_weather")
                     current.getDouble("temperature") to current.getInt("weathercode")
@@ -262,7 +267,39 @@ fun WeatherDetailScreen(
                 }
 
                 item {
-                    DailyForecastSection(forecastList, tempUnit)
+                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        Text(stringResource(R.string.forecast_7day_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(8.dp))
+                        forecastList.forEachIndexed { index, forecast ->
+                            ForecastItemRow(
+                                forecast = forecast,
+                                tempUnit = tempUnit,
+                                isSelected = selectedDayIndex == index,
+                                onClick = { selectedDayIndex = if (selectedDayIndex == index) -1 else index }
+                            )
+                        }
+                    }
+                }
+
+                if (moonPhaseName != null) {
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "🌙", fontSize = 24.sp)
+                                Spacer(Modifier.width(16.dp))
+                                Column {
+                                    Text(text = stringResource(R.string.MoonPhaseTXT), style = MaterialTheme.typography.labelMedium)
+                                    Text(text = moonPhaseName ?: "", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+                    }
                 }
 
                 if (historicalData.isNotEmpty()) {
@@ -278,6 +315,65 @@ fun WeatherDetailScreen(
                 item { Box(Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
             }
         }
+    }
+}
+
+@Composable
+fun ForecastItemRow(
+    forecast: DailyForecast,
+    tempUnit: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val tempSuffix = "°"
+    val displayMax = if (tempUnit == "fahrenheit") (forecast.tempMax * 9/5 + 32).toInt() else forecast.tempMax.toInt()
+    val displayMin = if (tempUnit == "fahrenheit") (forecast.tempMin * 9/5 + 32).toInt() else forecast.tempMin.toInt()
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
+        )
+    ) {
+        Column {
+            ListItem(
+                headlineContent = { Text(forecast.date) },
+                supportingContent = { Text(WeatherCodes.getDescription(forecast.weatherCode, LocalContext.current)) },
+                trailingContent = { Text("$displayMax$tempSuffix / $displayMin$tempSuffix", fontWeight = FontWeight.Bold) },
+                leadingContent = { 
+                    Icon(
+                        painter = painterResource(WeatherIconMapper.getWeatherIcon(forecast.weatherCode)), 
+                        contentDescription = null, 
+                        modifier = Modifier.size(32.dp), 
+                        tint = Color.Unspecified
+                    ) 
+                },
+                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+            )
+            AnimatedVisibility(visible = isSelected) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 64.dp, end = 16.dp, bottom = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    DetailItemSmall(label = stringResource(R.string.trend_max), value = "$displayMax$tempSuffix")
+                    DetailItemSmall(label = stringResource(R.string.trend_min), value = "$displayMin$tempSuffix")
+                    // Man könnte hier noch mehr Tages-spezifische API-Daten anzeigen, falls vorhanden
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DetailItemSmall(label: String, value: String) {
+    Column {
+        Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
     }
 }
 
@@ -408,26 +504,6 @@ fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String) {
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun DailyForecastSection(list: List<DailyForecast>, tempUnit: String) {
-    val tempSuffix = "°"
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Text(stringResource(R.string.forecast_7day_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(8.dp))
-        list.forEach { forecast ->
-            val displayMax = if (tempUnit == "fahrenheit") (forecast.tempMax * 9/5 + 32).toInt() else forecast.tempMax.toInt()
-            val displayMin = if (tempUnit == "fahrenheit") (forecast.tempMin * 9/5 + 32).toInt() else forecast.tempMin.toInt()
-            ListItem(
-                headlineContent = { Text(forecast.date) },
-                supportingContent = { Text(WeatherCodes.getDescription(forecast.weatherCode, LocalContext.current)) },
-                trailingContent = { Text("$displayMax$tempSuffix / $displayMin$tempSuffix", fontWeight = FontWeight.Bold) },
-                leadingContent = { Icon(painter = painterResource(WeatherIconMapper.getWeatherIcon(forecast.weatherCode)), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified) },
-                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-            )
         }
     }
 }

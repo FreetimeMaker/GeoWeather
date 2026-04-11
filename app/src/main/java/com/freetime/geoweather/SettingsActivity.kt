@@ -80,6 +80,10 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
         mutableStateOf(sharedPreferences.getString("weather_api_key", "") ?: "")
     }
 
+    var qweatherApiKey by remember {
+        mutableStateOf(sharedPreferences.getString("qweather_api_key", "") ?: "")
+    }
+
     var tempThreshold by remember {
         mutableStateOf(sharedPreferences.getInt("notif_temp_threshold", 5))
     }
@@ -262,14 +266,14 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         weatherProvider = "open_meteo"
                         sharedPreferences.edit().putString("weather_provider", "open_meteo").apply()
                     })
-                    Text("Open-Meteo (Recommended)")
+                    Text(stringResource(R.string.provider_open_meteo))
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = weatherProvider == "weatherapi", onClick = {
                         weatherProvider = "weatherapi"
                         sharedPreferences.edit().putString("weather_provider", "weatherapi").apply()
                     })
-                    Text("WeatherAPI (Requires API Key)")
+                    Text(stringResource(R.string.provider_weatherapi))
                 }
                 
                 if (weatherProvider == "weatherapi") {
@@ -279,11 +283,24 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             weatherApiKey = it
                             sharedPreferences.edit().putString("weather_api_key", it).apply()
                         },
-                        label = { Text("WeatherAPI Key") },
+                        label = { Text(stringResource(R.string.weather_api_key_label)) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
                 }
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                OutlinedTextField(
+                    value = qweatherApiKey,
+                    onValueChange = {
+                        qweatherApiKey = it
+                        sharedPreferences.edit().putString("qweather_api_key", it).apply()
+                    },
+                    label = { Text(stringResource(R.string.qweather_api_key_label)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
             }
         }
         

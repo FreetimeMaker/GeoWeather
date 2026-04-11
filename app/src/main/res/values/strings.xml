@@ -19,6 +19,7 @@
 <string name="DonViaSOL">Donate via SOL</string>
 <string name="DonViaGHSponsors">Donate via GitHub Sponsors</string>
 <string name="ViewSup">View Supporters</string>
+<string name="BackToWeaDash">Go Back to the Weather Dashboard</string>
 <string name="DelLoc">Delete location</string>
 <string name="DelLocConAsk">Are you sure you want to delete %1$s?</string>
 <string name="DelTXT">Delete</string>
@@ -36,13 +37,13 @@
 <string name="fixed_label">Fixed</string>
 <string name="removed_label">Removed</string>
 <string name="whats_new_title">Whats new?</string>
-<string name="FixFMSDK">• Fixed Donations via FreetimeSDK</string>
-<string name="AddedMoonData">• Added Moon Data for Real Now</string>
-<string name="FixActivities">• Fixed Activity Crash when opening GitHub Sponsors or FreetimeSDK for Donation</string>
-<string name="changelog_remove_coin">• Deleted Coinbase donation option due to remove of Coinbase Commerce</string>
-<string name="changelog_remove_api_key">• Removed QWeather API Key from Settings</string>
-<string name="AddedMoreDons">• Added More Donation Options</string>
-<string name="HopefullyFixedFMSDK">• Hopefully Fixed FreetimeSDK Donation Option</string>
+<string name="FixFMSDK">Fixed Donations via FreetimeSDK</string>
+<string name="AddedMoonData">Added Moon Data for Real Now</string>
+<string name="FixActivities">Fixed Activity Crash when opening GitHub Sponsors or FreetimeSDK for Donation</string>
+<string name="changelog_remove_coin">Deleted Coinbase donation option due to remove of Coinbase Commerce</string>
+<string name="changelog_remove_api_key">Removed QWeather API Key from Settings</string>
+<string name="AddedMoreDons">Added More Donation Options</string>
+<string name="HopefullyFixedFMSDK">Hopefully Fixed FreetimeSDK Donation Option</string>
 <string name="DailyWeatherUpdateTXT">Daily Weather Update</string>
 <string name="WeatherNotificationTXT">Weather in %1$s: %2$s, %3$s</string>
 <string name="WeatherChangeTXT">Weather Change Alert</string>
@@ -79,6 +80,10 @@
 <string name="cl_historical_data">Historical weather data and trends</string>
 <string name="cl_custom_notifs">Customizable weather notification thresholds</string>
 <string name="cl_widgets">Home screen weather widget</string>
+<string name="cl_multi_service">Added support for multiple weather providers (Open-Meteo &amp; WeatherAPI)</string>
+<string name="cl_forecast_enhanced">Enhanced 7-day forecast with interactive details</string>
+<string name="cl_widget_refresh">New Home Screen Widget with refresh button</string>
+<string name="cl_moon_phase">Added moon phase data support</string>
 
 <!-- Settings Strings -->
 <string name="dynamic_color_title">Dynamic Colors (Material You)</string>
@@ -88,6 +93,10 @@
 <string name="wind_threshold_label">Wind Increase Threshold: %1$d</string>
 <string name="precip_threshold_label">Precipitation Threshold: %1$d%%</string>
 <string name="weather_provider_title">Weather Provider</string>
+<string name="qweather_api_key_label">QWeather API Key (for Moon Data)</string>
+<string name="weather_api_key_label">WeatherAPI Key</string>
+<string name="provider_open_meteo">Open-Meteo (Recommended)</string>
+<string name="provider_weatherapi">WeatherAPI (Requires API Key)</string>
 
 <!-- Donation Strings -->
 <string name="donate_title">Support</string>
@@ -123,4 +132,15 @@
 <!-- Widget -->
 <string name="widget_label">GeoWeather Small</string>
 <string name="widget_loading">Loading...</string>
+<string name="no_location_selected">No Location</string>
+<string name="error_connection">Error: Check Connection</string>
+<string name="select_city_msg">Select a city in app</string>
+
+<!-- Moon Strings -->
+<string name="MoonPhaseTXT">Moon phase</string>
+<string name="moonrise_label">Moonrise</string>
+<string name="moonset_label">Moonset</string>
+<string name="illumination_label">Illumination</string>
+
+    <string name="cash_label">Cash</string>
 </resources>

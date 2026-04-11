@@ -79,9 +79,7 @@ You can download the latest version of GeoWeather from the following platforms:
 
 Planned:
 
-- 🌐 **Enhanced Weather APIs**: Integration of multiple weather services for more accurate forecasts
 - 📸 **App Demonstration**: Screenshots and video tutorials on YouTube and other platforms
-- 🎯 **Personalization**: Custom weather notifications and widgets
 - 📊 **Weather History**: Historical weather data and trends
 
 ## 📄 License

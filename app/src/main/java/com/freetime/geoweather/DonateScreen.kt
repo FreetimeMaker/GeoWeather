@@ -59,9 +59,11 @@ fun DonateScreen(onBack: () -> Unit) {
                 }
             }
 
-            DonateButton(text = stringResource(R.string.DonViaOxaPay)) {
-                context.startActivity(Intent(context, OxaPayActivity::class.java))
-            }
+            Text(
+                text = stringResource(R.string.cash_label),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.align(Alignment.Start).padding(top = 8.dp)
+            )
 
             DonateButton(text = stringResource(R.string.DonViaGHSponsors)) {
                 context.startActivity(Intent(context, GH_SponsorsActivity::class.java))
@@ -72,6 +74,10 @@ fun DonateScreen(onBack: () -> Unit) {
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.align(Alignment.Start).padding(top = 8.dp)
             )
+
+            DonateButton(text = stringResource(R.string.DonViaOxaPay)) {
+                context.startActivity(Intent(context, OxaPayActivity::class.java))
+            }
 
             DonateButton(text = stringResource(R.string.DonViaBTC)) {
                 context.startActivity(Intent(context, BitcoinActivity::class.java))
