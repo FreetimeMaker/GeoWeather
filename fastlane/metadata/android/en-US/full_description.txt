@@ -31,7 +31,6 @@ Experience an intuitive weather application inspired by the Swiss MeteoSwiss app
 
 💳 DONATION FEATURE
 - Support continued development
-- Integrated FreetimeSDK for secure payments
 - Voluntary support for open source
 
 🛠️ MODERN TECHNOLOGY
