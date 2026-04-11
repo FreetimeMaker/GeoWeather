@@ -26,7 +26,7 @@
 [![Latest release](https://img.shields.io/github/v/release/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
 [![F-Droid latest release](https://img.shields.io/f-droid/v/com.freetime.geoweather?color=%23ea9010&style=for-the-badge)](https://f-droid.org/packages/com.freetime.geoweather)
 [![GitHub license](https://img.shields.io/github/license/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/blob/main/LICENSE)
-[![Downloads](https://img.shields.io/github/downloads/FreetimeMaker/GeoWeather/total?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)[![GitHub stars](https://img.shields.io/github/FreetimeMaker/GeoWeather?color=%2359a14f&style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/stargazers)
+[![Downloads](https://img.shields.io/github/downloads/FreetimeMaker/GeoWeather/total?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)[![GitHub stars](https://img.shields.io/github/stars/FreetimeMaker/GeoWeather?color=%2359a14f&style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/stargazers)
 </div>
 
 GeoWeather is a modern Android weather application that allows you to monitor weather conditions for multiple cities. The app was inspired by the Swiss weather app MeteoSwiss and offers an intuitive interface with detailed weather information.
