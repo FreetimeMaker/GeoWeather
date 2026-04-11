@@ -60,8 +60,6 @@
             android:screenOrientation="portrait" />
         <activity android:name=".GH_SponsorsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".FMSDK_Activity"
-            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".WeatherWidgetReceiver"
