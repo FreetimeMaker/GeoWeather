@@ -9,6 +9,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -44,19 +46,6 @@ class SettingsActivity : ComponentActivity() {
 }
 
 @Composable
-fun SharedPreferences.collectStringAsState(key: String, defaultValue: String): State<String> {
-    val state = remember { mutableStateOf(getString(key, defaultValue) ?: defaultValue) }
-    DisposableEffect(this, key) {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, k ->
-            if (k == key) state.value = prefs.getString(key, defaultValue) ?: defaultValue
-        }
-        registerOnSharedPreferenceChangeListener(listener)
-        onDispose { unregisterOnSharedPreferenceChangeListener(listener) }
-    }
-    return state
-}
-
-@Composable
 fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     val context = LocalContext.current
     val sharedPreferences = remember { 
@@ -83,9 +72,26 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
         mutableStateOf(sharedPreferences.getString("wind_unit", "kmh") ?: "kmh")
     }
 
+    var weatherProvider by remember {
+        mutableStateOf(sharedPreferences.getString("weather_provider", "open_meteo") ?: "open_meteo")
+    }
+
+    var weatherApiKey by remember {
+        mutableStateOf(sharedPreferences.getString("weather_api_key", "") ?: "")
+    }
+
+    var tempThreshold by remember {
+        mutableStateOf(sharedPreferences.getInt("notif_temp_threshold", 5))
+    }
+
+    var windThreshold by remember {
+        mutableStateOf(sharedPreferences.getInt("notif_wind_threshold", 15))
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -118,10 +124,9 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Dynamic Color (Material You)
                 SettingsToggle(
-                    title = "Dynamische Farben (Material You)",
-                    subtitle = "Farben basierend auf deinem Hintergrundbild (Android 12+)",
+                    title = stringResource(R.string.dynamic_color_title),
+                    subtitle = stringResource(R.string.dynamic_color_subtitle),
                     checked = dynamicColor,
                     onCheckedChange = {
                         dynamicColor = it
@@ -131,7 +136,6 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
 
-                // Use System Theme
                 SettingsToggle(
                     title = stringResource(R.string.follow_system_theme),
                     checked = useSystemTheme,
@@ -141,7 +145,6 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     }
                 )
 
-                // Force Dark Mode
                 SettingsToggle(
                     title = stringResource(R.string.force_dark_mode),
                     subtitle = stringResource(R.string.override_system_setting),
@@ -168,57 +171,123 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Temperature Unit
                 Column {
                     Text(stringResource(R.string.temperature_unit), style = MaterialTheme.typography.bodyLarge)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(
-                            selected = tempUnit == "celsius",
-                            onClick = {
-                                tempUnit = "celsius"
-                                sharedPreferences.edit().putString("temp_unit", "celsius").apply()
-                            }
-                        )
+                        RadioButton(selected = tempUnit == "celsius", onClick = {
+                            tempUnit = "celsius"
+                            sharedPreferences.edit().putString("temp_unit", "celsius").apply()
+                        })
                         Text(stringResource(R.string.unit_celsius))
                         Spacer(Modifier.width(16.dp))
-                        RadioButton(
-                            selected = tempUnit == "fahrenheit",
-                            onClick = {
-                                tempUnit = "fahrenheit"
-                                sharedPreferences.edit().putString("temp_unit", "fahrenheit").apply()
-                            }
-                        )
+                        RadioButton(selected = tempUnit == "fahrenheit", onClick = {
+                            tempUnit = "fahrenheit"
+                            sharedPreferences.edit().putString("temp_unit", "fahrenheit").apply()
+                        })
                         Text(stringResource(R.string.unit_fahrenheit))
                     }
                 }
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
 
-                // Wind Unit
                 Column {
                     Text(stringResource(R.string.wind_speed_unit), style = MaterialTheme.typography.bodyLarge)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(
-                            selected = windUnit == "kmh",
-                            onClick = {
-                                windUnit = "kmh"
-                                sharedPreferences.edit().putString("wind_unit", "kmh").apply()
-                            }
-                        )
+                        RadioButton(selected = windUnit == "kmh", onClick = {
+                            windUnit = "kmh"
+                            sharedPreferences.edit().putString("wind_unit", "kmh").apply()
+                        })
                         Text(stringResource(R.string.unit_kmh))
                         Spacer(Modifier.width(16.dp))
-                        RadioButton(
-                            selected = windUnit == "mph",
-                            onClick = {
-                                windUnit = "mph"
-                                sharedPreferences.edit().putString("wind_unit", "mph").apply()
-                            }
-                        )
+                        RadioButton(selected = windUnit == "mph", onClick = {
+                            windUnit = "mph"
+                            sharedPreferences.edit().putString("wind_unit", "mph").apply()
+                        })
                         Text(stringResource(R.string.unit_mph))
                     }
                 }
             }
         }
+
+        Text(
+            text = stringResource(R.string.notification_settings_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(stringResource(R.string.temp_threshold_label, tempThreshold))
+                Slider(
+                    value = tempThreshold.toFloat(),
+                    onValueChange = { tempThreshold = it.toInt() },
+                    onValueChangeFinished = { sharedPreferences.edit().putInt("notif_temp_threshold", tempThreshold).apply() },
+                    valueRange = 1f..15f,
+                    steps = 14
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                Text(stringResource(R.string.wind_threshold_label, windThreshold))
+                Slider(
+                    value = windThreshold.toFloat(),
+                    onValueChange = { windThreshold = it.toInt() },
+                    onValueChangeFinished = { sharedPreferences.edit().putInt("notif_wind_threshold", windThreshold).apply() },
+                    valueRange = 5f..50f,
+                    steps = 9
+                )
+            }
+        }
+
+        Text(
+            text = stringResource(R.string.weather_provider_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = weatherProvider == "open_meteo", onClick = {
+                        weatherProvider = "open_meteo"
+                        sharedPreferences.edit().putString("weather_provider", "open_meteo").apply()
+                    })
+                    Text("Open-Meteo (Recommended)")
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = weatherProvider == "weatherapi", onClick = {
+                        weatherProvider = "weatherapi"
+                        sharedPreferences.edit().putString("weather_provider", "weatherapi").apply()
+                    })
+                    Text("WeatherAPI (Requires API Key)")
+                }
+                
+                if (weatherProvider == "weatherapi") {
+                    OutlinedTextField(
+                        value = weatherApiKey,
+                        onValueChange = {
+                            weatherApiKey = it
+                            sharedPreferences.edit().putString("weather_api_key", it).apply()
+                        },
+                        label = { Text("WeatherAPI Key") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 

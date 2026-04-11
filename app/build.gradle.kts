@@ -42,6 +42,10 @@ dependencies {
     implementation("androidx.compose.material:material")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
+    // Glance (Widgets)
+    implementation("androidx.glance:glance-appwidget:1.1.1")
+    implementation("androidx.glance:glance-material3:1.1.1")
+
     // Lifecycle Compose (observeAsState)
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.10.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.10.6")

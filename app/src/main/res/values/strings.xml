@@ -74,10 +74,20 @@
 <string name="cl_coordinate_search">Coordinate Searching function</string>
 <string name="cl_state_in_search">Added State in search to make the right city obvious</string>
 <string name="cl_material_you">Added Material YOU support</string>
+<string name="cl_unit_switching">Added Unit Switching (Celsius/Fahrenheit, km/h/mph)</string>
+<string name="cl_localization">Full English localization and UI text cleanup</string>
+<string name="cl_historical_data">Historical weather data and trends</string>
+<string name="cl_custom_notifs">Customizable weather notification thresholds</string>
+<string name="cl_widgets">Home screen weather widget</string>
 
 <!-- Settings Strings -->
 <string name="dynamic_color_title">Dynamic Colors (Material You)</string>
 <string name="dynamic_color_subtitle">Colors based on your wallpaper (Android 12+)</string>
+<string name="notification_settings_title">Notification Settings</string>
+<string name="temp_threshold_label">Temperature Change Threshold: %1$d°</string>
+<string name="wind_threshold_label">Wind Increase Threshold: %1$d</string>
+<string name="precip_threshold_label">Precipitation Threshold: %1$d%%</string>
+<string name="weather_provider_title">Weather Provider</string>
 
 <!-- Donation Strings -->
 <string name="donate_title">Support</string>
@@ -104,4 +114,13 @@
 <string name="wc_thunderstorm">Thunderstorm</string>
 <string name="wc_thunderstorm_hail">Thunderstorm with hail</string>
 <string name="wc_unknown">Unknown</string>
+
+<!-- Trends -->
+<string name="historical_trends_label">Historical Trends (Last 7 Days)</string>
+<string name="trend_max">Max</string>
+<string name="trend_min">Min</string>
+
+<!-- Widget -->
+<string name="widget_label">GeoWeather Small</string>
+<string name="widget_loading">Loading...</string>
 </resources>

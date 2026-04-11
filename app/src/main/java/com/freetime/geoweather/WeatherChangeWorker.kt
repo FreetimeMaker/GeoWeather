@@ -32,13 +32,12 @@ class WeatherChangeWorker(
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             val db = LocationDatabase.getDatabase(applicationContext)
+            val sharedPreferences = applicationContext.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
             
-            // Only send change alerts for the selected location
             val selectedLocation = db.locationDao().getSelectedLocation()
             
             if (selectedLocation != null && selectedLocation.changeAlertsEnabled) {
                 try {
-                    // Fetch current weather data for the selected location
                     val currentWeather = fetchCurrentWeatherData(selectedLocation.latitude, selectedLocation.longitude)
                     val currentSnapshot = WeatherSnapshot(
                         temperature = currentWeather.getDouble("temperature"),
@@ -48,26 +47,24 @@ class WeatherChangeWorker(
                         timestamp = System.currentTimeMillis()
                     )
 
-                    // Get last saved weather snapshot for this location
                     val lastSnapshot = getLastWeatherSnapshot(applicationContext, selectedLocation.id)
 
                     if (lastSnapshot != null) {
-                        val changes = detectWeatherChanges(applicationContext, lastSnapshot, currentSnapshot)
+                        val tempThreshold = sharedPreferences.getInt("notif_temp_threshold", 5).toDouble()
+                        val windThreshold = sharedPreferences.getInt("notif_wind_threshold", 15).toDouble()
+                        
+                        val changes = detectWeatherChanges(applicationContext, lastSnapshot, currentSnapshot, tempThreshold, windThreshold)
                         if (changes.isNotEmpty()) {
                             sendWeatherChangeAlert(applicationContext, selectedLocation.name, changes, selectedLocation.id)
                         }
                     }
 
-                    // Save current snapshot for this location
                     saveWeatherSnapshot(applicationContext, currentSnapshot, selectedLocation.id)
-                } catch (_: Exception) {
-                    // Error handling
-                }
+                } catch (_: Exception) {}
             }
             
             Result.success()
         } catch (_: Exception) {
-            // Log intentionally omitted
             Result.failure()
         }
     }
@@ -80,7 +77,6 @@ class WeatherChangeWorker(
         val currentWeather = if (json.has("current_weather")) json.getJSONObject("current_weather") else JSONObject()
         val hourly = if (json.has("hourly")) json.getJSONObject("hourly") else JSONObject()
 
-        // Get current hour index (best-effort)
         val currentTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault()).format(Date())
         if (hourly.has("time")) {
             val times = hourly.getJSONArray("time")
@@ -91,16 +87,15 @@ class WeatherChangeWorker(
                     break
                 }
             }
-            // Add precipitation and wind speed to current weather if available
             if (hourly.has("precipitation_probability")) {
                 try {
                     currentWeather.put("precipitation", hourly.getJSONArray("precipitation_probability").getDouble(currentIndex))
-                } catch (_: Exception) { /* ignore */ }
+                } catch (_: Exception) {}
             }
             if (hourly.has("windspeed_10m")) {
                 try {
                     currentWeather.put("windspeed", hourly.getJSONArray("windspeed_10m").getDouble(currentIndex))
-                } catch (_: Exception) { /* ignore */ }
+                } catch (_: Exception) {}
             }
         }
 
@@ -116,14 +111,9 @@ class WeatherChangeWorker(
             val code = sharedPreferences.getInt("last_weather_code", -1)
             val timestamp = sharedPreferences.getLong("last_weather_timestamp", 0)
             
-            if (temp.isNaN() || wind.isNaN() || precip.isNaN() || code == -1 || timestamp == 0L) {
-                null
-            } else {
-                WeatherSnapshot(temp, wind, precip, code, timestamp)
-            }
-        } catch (_: Exception) {
-            null
-        }
+            if (temp.isNaN() || wind.isNaN() || precip.isNaN() || code == -1 || timestamp == 0L) null
+            else WeatherSnapshot(temp, wind, precip, code, timestamp)
+        } catch (_: Exception) { null }
     }
 
     private fun saveWeatherSnapshot(context: Context, snapshot: WeatherSnapshot, locationId: Long) {
@@ -137,58 +127,42 @@ class WeatherChangeWorker(
             .apply()
     }
 
-    private fun detectWeatherChanges(context: Context, last: WeatherSnapshot, current: WeatherSnapshot): List<String> {
+    private fun detectWeatherChanges(
+        context: Context, 
+        last: WeatherSnapshot, 
+        current: WeatherSnapshot,
+        tempThreshold: Double,
+        windThreshold: Double
+    ): List<String> {
         val changes = mutableListOf<String>()
         val sharedPreferences = context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
         val tempUnit = sharedPreferences.getString("temp_unit", "celsius") ?: "celsius"
         val windUnit = sharedPreferences.getString("wind_unit", "kmh") ?: "kmh"
         
-        // Temperature change threshold: 5°C
-        if (kotlin.math.abs(current.temperature - last.temperature) >= 5.0) {
+        if (kotlin.math.abs(current.temperature - last.temperature) >= tempThreshold) {
             val lastTemp = if (tempUnit == "fahrenheit") (last.temperature * 9/5 + 32).toInt().toString() + "°F" else last.temperature.toInt().toString() + "°C"
             val currentTemp = if (tempUnit == "fahrenheit") (current.temperature * 9/5 + 32).toInt().toString() + "°F" else current.temperature.toInt().toString() + "°C"
-            changes.add("Temperature: $lastTemp → $currentTemp")
+            changes.add("${context.getString(R.string.feels_like_label)}: $lastTemp → $currentTemp")
         }
         
-        // Wind speed increase threshold: 15 km/h
-        if (current.windSpeed - last.windSpeed >= 15.0) {
+        if (current.windSpeed - last.windSpeed >= windThreshold) {
             val displayWind = if (windUnit == "mph") (current.windSpeed * 0.621371).toInt().toString() + " mph" else current.windSpeed.toInt().toString() + " km/h"
-            changes.add("Wind increased to $displayWind")
+            changes.add("${context.getString(R.string.wind_label)}: $displayWind")
         }
         
-        // Precipitation increase threshold: 30%
         if (current.precipitation - last.precipitation >= 30.0) {
-            changes.add("Precipitation chance: ${last.precipitation.toInt()}% → ${current.precipitation.toInt()}%")
+            changes.add("${context.getString(R.string.PrecipitationTXT)}: ${current.precipitation.toInt()}%")
         }
         
-        // Weather condition change
         if (last.weatherCode != current.weatherCode) {
-            val lastDesc = getWeatherDescription(last.weatherCode)
-            val currentDesc = getWeatherDescription(current.weatherCode)
+            val lastDesc = WeatherCodes.getDescription(last.weatherCode, context)
+            val currentDesc = WeatherCodes.getDescription(current.weatherCode, context)
             if (lastDesc != currentDesc) {
-                changes.add("Condition: $lastDesc → $currentDesc")
+                changes.add("${context.getString(R.string.ConditionChangeTXT)}: $lastDesc → $currentDesc")
             }
         }
         
         return changes
-    }
-
-    private fun getWeatherDescription(weatherCode: Int): String {
-        return when (weatherCode) {
-            0 -> "Clear"
-            1, 2, 3 -> "Partly cloudy"
-            45, 48 -> "Foggy"
-            51, 53, 55 -> "Drizzle"
-            56, 57 -> "Freezing drizzle"
-            61, 63, 65 -> "Rain"
-            66, 67 -> "Freezing rain"
-            71, 73, 75 -> "Snow"
-            77 -> "Snow grains"
-            80, 81, 82 -> "Rain showers"
-            85, 86 -> "Snow showers"
-            95, 96, 99 -> "Thunderstorm"
-            else -> "Unknown"
-        }
     }
 
     private fun sendWeatherChangeAlert(
@@ -199,48 +173,40 @@ class WeatherChangeWorker(
     ) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
-        // Create notification channel (Android O+)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "weather_change_alerts",
                 "Weather Change Alerts",
                 NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Alerts for significant weather changes"
-            }
+            )
             notificationManager.createNotificationChannel(channel)
         }
 
-        // Create intent for opening app with specific location
         val intent = Intent(context, WeatherDetailActivity::class.java).apply {
             putExtra("name", locationName)
-            putExtra("lat", 0.0) // These will be fetched from DB in the activity
-            putExtra("lon", 0.0)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
         val pendingIntent = PendingIntent.getActivity(
             context,
-            locationId.toInt() + 1000, // Use different offset to avoid conflicts
+            locationId.toInt() + 1000,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         
-        // Format notification message
         val changeText = changes.joinToString("\n")
-        val message = context.getString(R.string.WeatherChangeTXT) + " in $locationName:\n$changeText"
+        val message = "$locationName:\n$changeText"
         
         val notification = NotificationCompat.Builder(context, "weather_change_alerts")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.icon)
             .setContentTitle(context.getString(R.string.WeatherChangeTXT))
-            .setContentText("Weather changed in $locationName")
+            .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .build()
         
-        // Use location ID + offset for unique notification ID
         notificationManager.notify(locationId.toInt() + 1000, notification)
     }
 }

@@ -15,3 +15,16 @@ fun SharedPreferences.collectAsState(key: String, defaultValue: Boolean): State<
     }
     return state
 }
+
+@Composable
+fun SharedPreferences.collectStringAsState(key: String, defaultValue: String): State<String> {
+    val state = remember { mutableStateOf(getString(key, defaultValue) ?: defaultValue) }
+    DisposableEffect(this, key) {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, k ->
+            if (k == key) state.value = prefs.getString(key, defaultValue) ?: defaultValue
+        }
+        registerOnSharedPreferenceChangeListener(listener)
+        onDispose { unregisterOnSharedPreferenceChangeListener(listener) }
+    }
+    return state
+}
