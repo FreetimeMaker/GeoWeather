@@ -6,10 +6,10 @@
 <div align="center">
 <h1>📸 Pictures of GeoWeather in Action</h1>
 
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="1. Picture"  width="30%">
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="2. Picture"  width="30%">
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" alt="3. Picture"  width="30%">
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" alt="4. Picture"  width="30%">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="1. Picture"  width="25%">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="2. Picture"  width="25%">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" alt="3. Picture"  width="25%">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" alt="4. Picture"  width="25%">
 </div>
 
 <div align="center">
@@ -24,8 +24,9 @@
 <div align="center">
 
 [![Latest release](https://img.shields.io/github/v/release/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
+[![F-Droid latest release]()](https://f-droid.org/packages/com.freetime.geoweather)
 [![GitHub license](https://img.shields.io/github/license/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/blob/main/LICENSE)
-[![Downloads](https://img.shields.io/github/downloads/FreetimeMaker/GeoWeather/total?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
+[![Downloads](https://img.shields.io/github/downloads/FreetimeMaker/GeoWeather/total?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)[![GitHub stars](https://img.shields.io/github/stars/Iamlooker/Droid-ify?color=%2359a14f&style=for-the-badge)](https://github.com/Iamlooker/Droid-ify/stargazers)
 </div>
 
 GeoWeather is a modern Android weather application that allows you to monitor weather conditions for multiple cities. The app was inspired by the Swiss weather app MeteoSwiss and offers an intuitive interface with detailed weather information.
