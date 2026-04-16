@@ -27,6 +27,12 @@ interface LocationDao {
     @Query("UPDATE locations SET selected = 0")
     suspend fun deselectAllLocations()
 
+    @Query("SELECT * FROM locations WHERE isDefault = 1 LIMIT 1")
+    suspend fun getDefaultLocation(): LocationEntity?
+
+    @Query("UPDATE locations SET isDefault = 0")
+    suspend fun clearDefaultLocation()
+
     @Insert
     fun insertLocation(location: LocationEntity)
 

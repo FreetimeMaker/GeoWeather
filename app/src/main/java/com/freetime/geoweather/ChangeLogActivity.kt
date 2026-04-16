@@ -1,9 +1,12 @@
 package com.freetime.geoweather
 
+import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,19 +16,46 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
 class ChangeLogActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        hideSystemBars()
         setContent {
-            GeoWeatherTheme {
+            val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
+            val useSystemTheme = sharedPreferences.collectAsState(key = "use_system_theme", defaultValue = true)
+            val darkModeEnabled = sharedPreferences.collectAsState(key = "dark_mode_enabled", defaultValue = false)
+            val dynamicColor = sharedPreferences.collectAsState(key = "dynamic_color", defaultValue = true)
+            
+            val darkTheme = if (useSystemTheme.value) isSystemInDarkTheme() else darkModeEnabled.value
+            
+            GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor.value) {
                 ChangeLogScreen(onBack = { finish() })
             }
         }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemBars()
+        }
+    }
+
+    private fun hideSystemBars() {
+        val windowInsetsController =
+            WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
     }
 }
 
@@ -66,6 +96,10 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.3.5" to listOf(
+            "${stringResource(R.string.added_label)} Added More Donation Links",
+            "${stringResource(R.string.fixed_label)} Made Every Screen (Hopefully) like System when activated"
+        ),
         "v1.3.4" to listOf(
             "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_material_you)}",
             stringResource(R.string.cl_unit_switching),

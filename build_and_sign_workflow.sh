@@ -47,5 +47,42 @@ echo "==> Signiere APK"
 echo "==> Prüfe Signatur"
 "$APKSIGNER" verify --verbose "$OUT_APK"
 
-echo "==> Fertig!"
+echo "==> Prüfe, ob Release existiert"
+
+API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/tags/${TAG}"
+RELEASE_JSON=$(curl -s -H "Authorization: Bearer ${GITHUB_TOKEN}" "$API_URL")
+
+RELEASE_ID=$(echo "$RELEASE_JSON" | jq -r '.id')
+
+if [ "$RELEASE_ID" = "null" ]; then
+    echo "Kein Release für Tag $TAG gefunden – APK wird NICHT hochgeladen."
+    echo "==> Fertig!"
+    exit 0
+fi
+
+echo "Release gefunden (ID: $RELEASE_ID)"
+
+echo "==> Prüfe, ob Asset bereits existiert"
+
+ASSET_ID=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name=="'"$OUT_APK"'") | .id')
+
+if [ -n "$ASSET_ID" ] && [ "$ASSET_ID" != "null" ]; then
+    echo "Alte APK gefunden (Asset ID: $ASSET_ID) – lösche sie"
+    curl -s -X DELETE \
+      -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+      "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/assets/${ASSET_ID}"
+fi
+
+echo "==> Lade neue APK hoch"
+
+UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${OUT_APK}"
+
+curl -s \
+  -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+  -H "Content-Type: application/vnd.android.package-archive" \
+  --data-binary @"${OUT_APK}" \
+  "$UPLOAD_URL"
+
+echo "==> Upload abgeschlossen!"
 echo "Signierte APK: $OUT_APK"
+echo "==> Fertig!"

@@ -1,9 +1,13 @@
 package com.freetime.geoweather
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -19,6 +23,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -31,6 +38,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.lifecycleScope
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
@@ -51,11 +62,41 @@ class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { _ -> }
+
+    private val requestLocationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        ) {
+            // Permission granted, handled in UI
+        }
+    }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        hideSystemBars()
         checkNotificationPermission()
+
+        val db = LocationDatabase.getDatabase(this)
+        lifecycleScope.launch {
+            val locations = withContext(Dispatchers.IO) {
+                db.locationDao().getAllLocationsSync()
+            }
+            
+            val defaultLoc = locations.find { it.isDefault }
+            val targetLoc = defaultLoc ?: if (locations.size == 1) locations.first() else null
+            
+            if (targetLoc != null) {
+                val intent = Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
+                    putExtra("name", targetLoc.name)
+                    putExtra("lat", targetLoc.latitude)
+                    putExtra("lon", targetLoc.longitude)
+                }
+                startActivity(intent)
+            }
+        }
         
         setContent {
             val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
@@ -67,6 +108,14 @@ class MainActivity : ComponentActivity() {
             
             GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor.value) {
                 MainScreen(
+                    onRequestLocationPermission = {
+                        requestLocationPermissionLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                            )
+                        )
+                    },
                     onOpenDetail = { name, lat, lon ->
                         val intent = Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
                             putExtra("name", name)
@@ -83,6 +132,21 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemBars()
+        }
+    }
+
+    private fun hideSystemBars() {
+        val windowInsetsController =
+            WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+    }
+
     private fun checkNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -95,6 +159,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    onRequestLocationPermission: () -> Unit,
     onOpenDetail: (String, Double, Double) -> Unit,
     onOpenDonate: () -> Unit
 ) {
@@ -109,13 +174,75 @@ fun MainScreen(
 
     var showAddDialog by remember { mutableStateOf(false) }
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
+    var isLocating by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
-                title = { Text("GeoWeather") },
+                title = { Text(stringResource(R.string.app_name)) },
                 actions = {
+                    IconButton(
+                        onClick = {
+                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                onRequestLocationPermission()
+                            } else {
+                                isLocating = true
+                                val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                                val providers = locationManager.getProviders(true)
+                                var bestLocation: Location? = null
+                                for (provider in providers) {
+                                    val l = try {
+                                        locationManager.getLastKnownLocation(provider)
+                                    } catch (e: SecurityException) {
+                                        null
+                                    }
+                                    if (l != null && (bestLocation == null || l.accuracy < bestLocation.accuracy)) {
+                                        bestLocation = l
+                                    }
+                                }
+
+                                if (bestLocation != null) {
+                                    isLocating = false
+                                    onOpenDetail(context.getString(R.string.current_location), bestLocation.latitude, bestLocation.longitude)
+                                } else {
+                                    // Try request single update
+                                    val provider = if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                                        LocationManager.NETWORK_PROVIDER
+                                    } else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                                        LocationManager.GPS_PROVIDER
+                                    } else {
+                                        null
+                                    }
+
+                                    if (provider != null) {
+                                        try {
+                                            locationManager.requestSingleUpdate(provider, object : LocationListener {
+                                                override fun onLocationChanged(location: Location) {
+                                                    isLocating = false
+                                                    onOpenDetail(context.getString(R.string.current_location), location.latitude, location.longitude)
+                                                }
+                                                override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+                                                override fun onProviderEnabled(provider: String) {}
+                                                override fun onProviderDisabled(provider: String) {}
+                                            }, null)
+                                        } catch (e: SecurityException) {
+                                            isLocating = false
+                                        }
+                                    } else {
+                                        isLocating = false
+                                    }
+                                }
+                            }
+                        },
+                        enabled = !isLocating
+                    ) {
+                        if (isLocating) {
+                            CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                        } else {
+                            Icon(Icons.Default.MyLocation, contentDescription = stringResource(R.string.current_location))
+                        }
+                    }
                     IconButton(onClick = onOpenDonate) {
                         Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.donate_nav_desc), tint = MaterialTheme.colorScheme.primary)
                     }
@@ -153,10 +280,28 @@ fun MainScreen(
                 items(locations) { loc ->
                     ListItem(
                         headlineContent = { Text(loc.name) },
-                        supportingContent = { Text("Lat: ${loc.latitude}, Lon: ${loc.longitude}") },
+                        supportingContent = { Text(stringResource(R.string.coordinates_label, loc.latitude, loc.longitude)) },
                         trailingContent = {
-                            IconButton(onClick = { locationToDelete = loc }) {
-                                Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.DelLoc), tint = MaterialTheme.colorScheme.error)
+                            Row {
+                                IconButton(onClick = {
+                                    scope.launch(Dispatchers.IO) {
+                                        if (loc.isDefault) {
+                                            db.locationDao().updateLocation(loc.copy(isDefault = false))
+                                        } else {
+                                            db.locationDao().clearDefaultLocation()
+                                            db.locationDao().updateLocation(loc.copy(isDefault = true))
+                                        }
+                                    }
+                                }) {
+                                    Icon(
+                                        if (loc.isDefault) Icons.Default.Star else Icons.Default.StarBorder,
+                                        contentDescription = stringResource(if (loc.isDefault) R.string.remove_default else R.string.set_as_default),
+                                        tint = if (loc.isDefault) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                IconButton(onClick = { locationToDelete = loc }) {
+                                    Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.DelLoc), tint = MaterialTheme.colorScheme.error)
+                                }
                             }
                         },
                         modifier = Modifier
@@ -245,7 +390,7 @@ fun AddLocationDialog(
                     value = query,
                     onValueChange = { query = it },
                     label = { Text(stringResource(R.string.CityName)) },
-                    placeholder = { Text("e.g. New York or 40.71, -74.00") },
+                    placeholder = { Text(stringResource(R.string.search_placeholder)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -297,7 +442,7 @@ fun AddLocationDialog(
                         items(results) { (name, lat, lon) ->
                             ListItem(
                                 headlineContent = { Text(name) },
-                                supportingContent = { Text("Lat: $lat, Lon: $lon") },
+                                supportingContent = { Text(stringResource(R.string.coordinates_label, lat, lon)) },
                                 modifier = Modifier.clickable { onAdd(name, lat, lon) }
                             )
                         }

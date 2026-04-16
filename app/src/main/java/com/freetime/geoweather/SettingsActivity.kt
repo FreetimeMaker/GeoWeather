@@ -18,12 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
 class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        hideSystemBars()
         
         setContent {
             val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
@@ -42,6 +46,21 @@ class SettingsActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemBars()
+        }
+    }
+
+    private fun hideSystemBars() {
+        val windowInsetsController =
+            WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
     }
 }
 
@@ -64,25 +83,25 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
         mutableStateOf(sharedPreferences.getBoolean("dynamic_color", true))
     }
 
-    var tempUnit by remember {
-        mutableStateOf(sharedPreferences.getString("temp_unit", "celsius") ?: "celsius")
-    }
+    val tempUnitState by sharedPreferences.collectStringAsState("temp_unit", "celsius")
+    var tempUnit by remember { mutableStateOf(tempUnitState) }
+    LaunchedEffect(tempUnitState) { tempUnit = tempUnitState }
 
-    var windUnit by remember {
-        mutableStateOf(sharedPreferences.getString("wind_unit", "kmh") ?: "kmh")
-    }
+    val windUnitState by sharedPreferences.collectStringAsState("wind_unit", "kmh")
+    var windUnit by remember { mutableStateOf(windUnitState) }
+    LaunchedEffect(windUnitState) { windUnit = windUnitState }
 
-    var weatherProvider by remember {
-        mutableStateOf(sharedPreferences.getString("weather_provider", "open_meteo") ?: "open_meteo")
-    }
+    val weatherProviderState by sharedPreferences.collectStringAsState("weather_provider", "open_meteo")
+    var weatherProvider by remember { mutableStateOf(weatherProviderState) }
+    LaunchedEffect(weatherProviderState) { weatherProvider = weatherProviderState }
 
-    var weatherApiKey by remember {
-        mutableStateOf(sharedPreferences.getString("weather_api_key", "") ?: "")
-    }
+    val weatherApiKeyState by sharedPreferences.collectStringAsState("weather_api_key", "")
+    var weatherApiKey by remember { mutableStateOf(weatherApiKeyState) }
+    LaunchedEffect(weatherApiKeyState) { weatherApiKey = weatherApiKeyState }
 
-    var qweatherApiKey by remember {
-        mutableStateOf(sharedPreferences.getString("qweather_api_key", "") ?: "")
-    }
+    val qweatherApiKeyState by sharedPreferences.collectStringAsState("qweather_api_key", "")
+    var qweatherApiKey by remember { mutableStateOf(qweatherApiKeyState) }
+    LaunchedEffect(qweatherApiKeyState) { qweatherApiKey = qweatherApiKeyState }
 
     var tempThreshold by remember {
         mutableStateOf(sharedPreferences.getInt("notif_temp_threshold", 5))

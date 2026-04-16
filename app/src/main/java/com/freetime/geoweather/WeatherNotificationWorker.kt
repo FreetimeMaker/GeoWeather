@@ -48,7 +48,7 @@ class WeatherNotificationWorker(
                     val weatherData = fetchWeatherData(selectedLocation.latitude, selectedLocation.longitude)
                     val temp = weatherData.getDouble("temperature")
                     val weatherCode = weatherData.getInt("weathercode")
-                    val weatherDescription = getWeatherDescription(weatherCode)
+                    val weatherDescription = WeatherCodes.getDescription(weatherCode, applicationContext)
 
                     Log.d(TAG, "Preparing notification for ${selectedLocation.name}: $temp, $weatherDescription")
 
@@ -93,24 +93,6 @@ class WeatherNotificationWorker(
             ) == PackageManager.PERMISSION_GRANTED
         } else {
             true // Notifications are automatically granted on older versions
-        }
-    }
-
-    private fun getWeatherDescription(weatherCode: Int): String {
-        return when (weatherCode) {
-            0 -> "Clear sky"
-            1, 2, 3 -> "Partly cloudy"
-            45, 48 -> "Foggy"
-            51, 53, 55 -> "Drizzle"
-            56, 57 -> "Freezing drizzle"
-            61, 63, 65 -> "Rain"
-            66, 67 -> "Freezing rain"
-            71, 73, 75 -> "Snow"
-            77 -> "Snow grains"
-            80, 81, 82 -> "Rain showers"
-            85, 86 -> "Snow showers"
-            95, 96, 99 -> "Thunderstorm"
-            else -> "Unknown"
         }
     }
 
@@ -166,7 +148,7 @@ class WeatherNotificationWorker(
         val message = context.getString(R.string.WeatherNotificationTXT, locationName, tempText, weatherDescription)
         
         val notification = NotificationCompat.Builder(context, "weather_notifications")
-            .setSmallIcon(R.drawable.icon)
+            .setSmallIcon(R.mipmap.icon)
             .setContentTitle(context.getString(R.string.DailyWeatherUpdateTXT))
             .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))

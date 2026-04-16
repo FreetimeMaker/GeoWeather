@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -39,6 +40,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
@@ -63,10 +67,10 @@ class WeatherDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
+        hideSystemBars()
         checkNotificationPermission()
         
-        val name = intent.getStringExtra("name") ?: "Unknown"
+        val name = intent.getStringExtra("name") ?: getString(R.string.unknown_location)
         val lat = intent.getDoubleExtra("lat", 0.0)
         val lon = intent.getDoubleExtra("lon", 0.0)
 
@@ -87,6 +91,21 @@ class WeatherDetailActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemBars()
+        }
+    }
+
+    private fun hideSystemBars() {
+        val windowInsetsController =
+            WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
     }
 
     private fun checkNotificationPermission() {
@@ -116,7 +135,7 @@ fun WeatherDetailScreen(
     val windUnit by sharedPreferences.collectStringAsState("wind_unit", "kmh")
     val weatherProvider by sharedPreferences.collectStringAsState("weather_provider", "open_meteo")
     val weatherApiKey by sharedPreferences.collectStringAsState("weather_api_key", "")
-    val qweatherApiKey by sharedPreferences.collectStringAsState("qweather_api_key", "d5184299458c441b92ab98075c4a7928")
+    val qweatherApiKey by sharedPreferences.collectStringAsState("qweather_api_key", "")
 
     var weatherJson by remember { mutableStateOf<String?>(null) }
     var aqiJson by remember { mutableStateOf<String?>(null) }
@@ -193,7 +212,7 @@ fun WeatherDetailScreen(
             }
             errorMessage = null
         } catch (e: Exception) {
-            errorMessage = e.message ?: "Error loading weather"
+            errorMessage = e.message ?: context.getString(R.string.error_loading_weather)
         } finally {
             isRefreshing = false
         }
@@ -240,9 +259,12 @@ fun WeatherDetailScreen(
                 }
                 
                 val displayTemp = if (tempUnit == "fahrenheit") (temp * 9/5 + 32).toInt() else temp.toInt()
-                val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
 
                 item {
+                    val tempSuffixC = stringResource(R.string.temp_c_suffix)
+                    val tempSuffixF = stringResource(R.string.temp_f_suffix)
+                    val tempSuffix = if (tempUnit == "fahrenheit") tempSuffixF else tempSuffixC
+
                     Column(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -325,7 +347,7 @@ fun ForecastItemRow(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val tempSuffix = "°"
+    val tempSuffix = stringResource(R.string.temp_deg_suffix)
     val displayMax = if (tempUnit == "fahrenheit") (forecast.tempMax * 9/5 + 32).toInt() else forecast.tempMax.toInt()
     val displayMin = if (tempUnit == "fahrenheit") (forecast.tempMin * 9/5 + 32).toInt() else forecast.tempMin.toInt()
 
@@ -362,7 +384,6 @@ fun ForecastItemRow(
                 ) {
                     DetailItemSmall(label = stringResource(R.string.trend_max), value = "$displayMax$tempSuffix")
                     DetailItemSmall(label = stringResource(R.string.trend_min), value = "$displayMin$tempSuffix")
-                    // Man könnte hier noch mehr Tages-spezifische API-Daten anzeigen, falls vorhanden
                 }
             }
         }
@@ -436,6 +457,7 @@ fun HistoricalTrendsSection(data: List<DailyForecast>, tempUnit: String) {
 
 @Composable
 fun WeatherDetailsGrid(weatherObj: JSONObject, tempUnit: String, windUnit: String, provider: String) {
+    val context = LocalContext.current
     val (wind, feelsLike, humidity) = if (provider == "weatherapi") {
         val current = weatherObj.getJSONObject("current")
         Triple(current.getDouble("wind_kph"), current.getDouble("feelslike_c"), current.getInt("humidity"))
@@ -450,10 +472,11 @@ fun WeatherDetailsGrid(weatherObj: JSONObject, tempUnit: String, windUnit: Strin
     }
 
     val displayWind = if (windUnit == "mph") (wind * 0.621371).toInt() else wind.toInt()
-    val windSuffix = if (windUnit == "mph") " mph" else " km/h"
+    val windSuffix = if (windUnit == "mph") stringResource(R.string.wind_mph_suffix) else stringResource(R.string.wind_kmh_suffix)
 
     val displayFeelsLike = if (tempUnit == "fahrenheit") (feelsLike * 9/5 + 32).toInt() else feelsLike.toInt()
-    val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+    val tempSuffix = if (tempUnit == "fahrenheit") stringResource(R.string.temp_f_suffix) else stringResource(R.string.temp_c_suffix)
+    val humiditySuffix = stringResource(R.string.humidity_suffix)
 
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -463,7 +486,7 @@ fun WeatherDetailsGrid(weatherObj: JSONObject, tempUnit: String, windUnit: Strin
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 DetailItem(label = stringResource(R.string.wind_label), value = "$displayWind$windSuffix")
                 DetailItem(label = stringResource(R.string.feels_like_label), value = "$displayFeelsLike$tempSuffix")
-                DetailItem(label = stringResource(R.string.humidity_label), value = "$humidity%")
+                DetailItem(label = stringResource(R.string.humidity_label), value = "$humidity$humiditySuffix")
             }
             if (weatherObj.has("daily")) {
                 val daily = weatherObj.getJSONObject("daily")
@@ -489,7 +512,7 @@ fun DetailItem(label: String, value: String) {
 
 @Composable
 fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String) {
-    val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+    val tempSuffix = if (tempUnit == "fahrenheit") stringResource(R.string.temp_f_suffix) else stringResource(R.string.temp_c_suffix)
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(stringResource(R.string.hourly_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(8.dp))

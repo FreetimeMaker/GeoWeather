@@ -102,7 +102,7 @@ jobs:
         with:
           tag_name: v${{ steps.versioncheck.outputs.version }}
           name: "GeoWeather ${{ steps.versioncheck.outputs.version }}"
-          body: "Automatisch gebaut und signiert."
+          body: "Automaticly build and signed."
           draft: true
           prerelease: false
           files: "GeoWeather-*.apk"

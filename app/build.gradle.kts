@@ -6,14 +6,14 @@ plugins {
 
 android {
     namespace = "com.freetime.geoweather"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.freetime.geoweather"
-        minSdk = 26
-        targetSdk = 36
-        versionCode = 35
-        versionName = "1.3.4"
+        minSdk = 24
+        targetSdk = 37
+        versionCode = 36
+        versionName = "1.3.5"
     }
 
     buildFeatures {
@@ -28,6 +28,7 @@ android {
     lint {
         abortOnError = false
     }
+    compileSdkMinor = 0
 }
 
 dependencies {

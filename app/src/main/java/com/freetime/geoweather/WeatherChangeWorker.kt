@@ -142,23 +142,23 @@ class WeatherChangeWorker(
         if (kotlin.math.abs(current.temperature - last.temperature) >= tempThreshold) {
             val lastTemp = if (tempUnit == "fahrenheit") (last.temperature * 9/5 + 32).toInt().toString() + "°F" else last.temperature.toInt().toString() + "°C"
             val currentTemp = if (tempUnit == "fahrenheit") (current.temperature * 9/5 + 32).toInt().toString() + "°F" else current.temperature.toInt().toString() + "°C"
-            changes.add("${context.getString(R.string.feels_like_label)}: $lastTemp → $currentTemp")
+            changes.add(context.getString(R.string.temperature_change_msg, lastTemp, currentTemp))
         }
         
         if (current.windSpeed - last.windSpeed >= windThreshold) {
             val displayWind = if (windUnit == "mph") (current.windSpeed * 0.621371).toInt().toString() + " mph" else current.windSpeed.toInt().toString() + " km/h"
-            changes.add("${context.getString(R.string.wind_label)}: $displayWind")
+            changes.add(context.getString(R.string.wind_increase_msg, displayWind))
         }
         
         if (current.precipitation - last.precipitation >= 30.0) {
-            changes.add("${context.getString(R.string.PrecipitationTXT)}: ${current.precipitation.toInt()}%")
+            changes.add(context.getString(R.string.precip_increase_msg, current.precipitation.toInt()))
         }
         
         if (last.weatherCode != current.weatherCode) {
             val lastDesc = WeatherCodes.getDescription(last.weatherCode, context)
             val currentDesc = WeatherCodes.getDescription(current.weatherCode, context)
             if (lastDesc != currentDesc) {
-                changes.add("${context.getString(R.string.ConditionChangeTXT)}: $lastDesc → $currentDesc")
+                changes.add(context.getString(R.string.condition_change_msg, lastDesc, currentDesc))
             }
         }
         
@@ -198,9 +198,9 @@ class WeatherChangeWorker(
         val message = "$locationName:\n$changeText"
         
         val notification = NotificationCompat.Builder(context, "weather_change_alerts")
-            .setSmallIcon(R.drawable.icon)
+            .setSmallIcon(R.mipmap.icon)
             .setContentTitle(context.getString(R.string.WeatherChangeTXT))
-            .setContentText(message)
+            .setContentText(context.getString(R.string.weather_changed_in_city, locationName))
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)

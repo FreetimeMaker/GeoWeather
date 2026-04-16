@@ -22,7 +22,8 @@ data class LocationEntity(
     val notificationTime: String = "08:00",
     val changeAlertsEnabled: Boolean = false,
     val changeAlertInterval: String = "3",
-    val selected: Boolean = false
+    val selected: Boolean = false,
+    val isDefault: Boolean = false
 ) {
     val currentTemp: String?
         get() {

@@ -54,7 +54,7 @@ class WeatherWidget : GlanceAppWidget() {
 
         var weatherInfo = context.getString(R.string.widget_loading)
         var tempString = ""
-        var locationName = location?.name ?: "No Location"
+        var locationName = location?.name ?: context.getString(R.string.no_location_selected)
 
         if (location != null) {
             try {
@@ -83,10 +83,10 @@ class WeatherWidget : GlanceAppWidget() {
                 tempString = "$displayTemp$tempSuffix"
                 weatherInfo = WeatherCodes.getDescription(code, context)
             } catch (e: Exception) {
-                weatherInfo = "Error: Check Connection"
+                weatherInfo = context.getString(R.string.error_connection)
             }
         } else {
-            weatherInfo = "Select a city in app"
+            weatherInfo = context.getString(R.string.select_city_msg)
         }
 
         provideContent {

@@ -123,6 +123,18 @@ fun DonateScreen(onBack: () -> Unit) {
                 context.startActivity(Intent(context, SOL_Activity::class.java))
             }
 
+            DonateButton(text = stringResource(R.string.DonViaDAI)) {
+                context.startActivity(Intent(context, DaiActivity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaTON)) {
+                context.startActivity(Intent(context, TonActivity::class.java))
+            }
+
+            DonateButton(text = stringResource(R.string.DonViaPOL)) {
+                context.startActivity(Intent(context, PolActivity::class.java))
+            }
+
             Spacer(Modifier.height(16.dp))
 
             FilledTonalButton(
