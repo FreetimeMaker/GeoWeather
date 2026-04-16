@@ -12,7 +12,6 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
@@ -20,4 +19,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "GeoWeather"
-include(":app")
+include(":composeApp")

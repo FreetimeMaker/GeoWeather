@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="SearchBTNTXT">Nadi</string>
-    <string name="cancel_btn">Semmet</string>
-    <string name="hour_label">Asrag: %1$d</string>
-</resources>

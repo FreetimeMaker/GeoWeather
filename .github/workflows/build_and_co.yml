@@ -1,4 +1,4 @@
-name: Build, Sign and Conditional Release
+name: Multiplatform Build and Release
 
 on:
   push:
@@ -9,65 +9,47 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  prepare:
     runs-on: ubuntu-latest
-
+    outputs:
+      version: ${{ steps.versioncheck.outputs.version }}
+      create_tag: ${{ steps.versioncheck.outputs.create_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Detect version & create tag if missing
+      - name: Detect version & create tag
         id: versioncheck
         run: |
-          set -e
-
-          # Detect gradle file
-          if [ -f "app/build.gradle.kts" ]; then
-            FILE="app/build.gradle.kts"
-          elif [ -f "app/build.gradle" ]; then
-            FILE="app/build.gradle"
-          else
-            echo "No build.gradle(.kts) found in app/"
-            exit 1
-          fi
-
-          echo "Using file: $FILE"
-
-          # Extract versionName (supports all formats)
-          LINE=$(grep 'versionName' "$FILE" | head -n1 || true)
-          echo "Matched line: $LINE"
-
-          VERSION=$(printf '%s\n' "$LINE" | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
-
-          if [ -z "$VERSION" ]; then
-            echo "Could not extract versionName from $FILE"
-            exit 1
-          fi
-
-          echo "Detected version: $VERSION"
+          VERSION=$(grep 'versionName' composeApp/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-          # Ensure tags are available
           git fetch --tags
-
-          # Check if tag exists
           if git rev-parse "v$VERSION" >/dev/null 2>&1; then
-            echo "Tag v$VERSION already exists. Skipping tag creation."
             echo "create_tag=false" >> "$GITHUB_OUTPUT"
           else
-            echo "Tag v$VERSION does not exist. Creating it."
             git tag "v$VERSION"
             git push origin "v$VERSION"
             echo "create_tag=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Stop workflow if tag already existed
-        if: steps.versioncheck.outputs.create_tag == 'false'
-        run: |
-          echo "Tag already existed — stopping workflow."
-          exit 0
+  build:
+    needs: prepare
+    if: needs.prepare.outputs.create_tag == 'true'
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            tasks: ":composeApp:assembleRelease :composeApp:packageReleaseDeb :composeApp:packageReleaseRpm :composeApp:wasmJsBrowserDistribution"
+            artifacts: "composeApp/build/compose/binaries/main/deb/*.deb composeApp/build/compose/binaries/main/rpm/*.rpm"
+          - os: windows-latest
+            tasks: ":composeApp:packageReleaseMsi :composeApp:packageReleaseExe"
+            artifacts: "composeApp/build/compose/binaries/main/msi/*.msi composeApp/build/compose/binaries/main/exe/*.exe"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Install Java
         uses: actions/setup-java@v4
@@ -75,34 +57,26 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Make script executable
-        run: chmod +x ./build_and_sign_workflow.sh
+      - name: Build with Gradle
+        run: ./gradlew ${{ matrix.tasks }}
 
-      - name: Build & Sign APK
-        run: ./build_and_sign_workflow.sh
-
-      - name: Upload APK as workflow artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: GeoWeather-${{ steps.versioncheck.outputs.version }}.apk
-          path: GeoWeather-*.apk
-
-      - name: Check if actor is repo owner
-        id: ownercheck
+      - name: Sign Android & WASM Zip (Linux only)
+        if: matrix.os == 'ubuntu-latest'
         run: |
-          if [ "${{ github.actor }}" = "${{ github.repository_owner }}" ]; then
-            echo "is_owner=true" >> $GITHUB_OUTPUT
-          else
-            echo "is_owner=false" >> $GITHUB_OUTPUT
-          fi
+          chmod +x ./build_and_sign_workflow.sh
+          ./build_and_sign_workflow.sh
+          cd composeApp/build/dist/wasmJs/productionExecutable
+          zip -r ../../../../GeoWeather-v${{ needs.prepare.outputs.version }}-wasm.zip .
+        env:
+          GITHUB_REF_NAME: v${{ needs.prepare.outputs.version }}
 
-      - name: Create GitHub Release (only if owner)
-        if: steps.ownercheck.outputs.is_owner == 'true'
+      - name: Create Release and Upload
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.versioncheck.outputs.version }}
-          name: "GeoWeather ${{ steps.versioncheck.outputs.version }}"
-          body: "Automaticly build and signed."
+          tag_name: v${{ needs.prepare.outputs.version }}
+          files: |
+            ${{ matrix.artifacts }}
+            GeoWeather-*.apk
+            GeoWeather-*-wasm.zip
           draft: true
-          prerelease: false
-          files: "GeoWeather-*.apk"
+          generate_release_notes: true
