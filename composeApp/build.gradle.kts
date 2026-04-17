@@ -56,7 +56,7 @@ kotlin {
             implementation(libs.androidx.glance.appwidget)
             implementation(libs.androidx.glance.material3)
             implementation("com.google.android.gms:play-services-location:21.3.0")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
         }
         val desktopMain by getting {
             dependencies {
