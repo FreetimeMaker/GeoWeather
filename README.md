@@ -18,7 +18,7 @@
 </div>
 
 <div align="center">
-<h1>Release numbers</h1>
+<h1>Repository and Build Informations</h1>
 </div>
 
 <div align="center">
@@ -28,6 +28,7 @@
 [![GitHub license](https://img.shields.io/github/license/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/blob/main/LICENSE)
 [![Downloads](https://img.shields.io/github/downloads/FreetimeMaker/GeoWeather/total?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
 [![GitHub stars](https://img.shields.io/github/stars/FreetimeMaker/GeoWeather?color=%2359a14f&style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/stargazers)
+[![Multiplatform Build and Release](https://github.com/FreetimeMaker/GeoWeather/actions/workflows/build_and_co.yml/badge.svg)](https://github.com/FreetimeMaker/GeoWeather/actions/workflows/build_and_co.yml)
 </div>
 
 GeoWeather is a modern Android weather application that allows you to monitor weather conditions for multiple cities. The app was inspired by the Swiss weather app MeteoSwiss and offers an intuitive interface with detailed weather information.

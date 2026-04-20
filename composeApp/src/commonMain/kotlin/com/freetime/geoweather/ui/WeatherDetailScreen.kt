@@ -250,7 +250,7 @@ fun HourlyForecastSection(hourly: com.freetime.geoweather.network.models.HourlyD
         Spacer(Modifier.height(8.dp))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             // Filter currentInstant
-            val now = kotlinx.datetime.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            val now = currentInstant().toLocalDateTime(TimeZone.currentSystemDefault())
             val filteredIndices = hourly.time.indices.filter { i ->
                 val time = LocalDateTime.parse(hourly.time[i])
                 time >= now

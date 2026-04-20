@@ -57,6 +57,7 @@ kotlin {
             implementation(libs.androidx.glance.material3)
             implementation("com.google.android.gms:play-services-location:21.3.0")
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
         }
         val desktopMain by getting {
             dependencies {
@@ -125,4 +126,10 @@ compose.desktop {
             packageVersion = "1.3.6"
         }
     }
+}
+
+tasks.register<Copy>("copyWasmToDocs") {
+    dependsOn("wasmJsBrowserDistribution")
+    from(layout.buildDirectory.dir("dist/wasmJs/productionExecutable"))
+    into(layout.projectDirectory.dir("../docs"))
 }
