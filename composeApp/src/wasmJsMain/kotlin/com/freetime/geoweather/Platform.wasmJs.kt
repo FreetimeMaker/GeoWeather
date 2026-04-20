@@ -1,6 +1,8 @@
 package com.freetime.geoweather
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-actual fun currentInstant(): Instant = Clock.System.now()
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun nowMillis(): Long = kotlin.js.Date.now().toLong()
+
+actual fun currentInstant(): Instant = Instant.fromEpochMilliseconds(nowMillis())
