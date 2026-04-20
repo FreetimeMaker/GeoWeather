@@ -30,12 +30,12 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation("org.jetbrains.compose:compose-runtime:1.10.3")
+            implementation("org.jetbrains.compose:compose-foundation:1.10.3")
+            implementation("org.jetbrains.compose:compose-material3:1.10.3")
+            implementation("org.jetbrains.compose:compose-ui:1.10.3")
+            implementation("org.jetbrains.compose:compose-components-resources:1.10.3")
+            implementation("org.jetbrains.compose:compose-components-ui-tooling-preview:1.10.3")
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.ktor.client.core)
@@ -78,7 +78,7 @@ kotlin {
     }
 }
 
-android {
+androidApplication {
     namespace = "com.freetime.geoweather"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
@@ -125,9 +125,6 @@ compose.desktop {
             packageName = "com.freetime.geoweather"
             packageVersion = "1.3.6"
         }
-    }
-    proguard {
-        isEnabled = false
     }
 }
 

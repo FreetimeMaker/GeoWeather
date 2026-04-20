@@ -24,6 +24,7 @@ fun SettingsScreen(
     val dynamicColor by settingsManager.dynamicColor.collectAsState()
     val tempUnit by settingsManager.tempUnit.collectAsState()
     val windUnit by settingsManager.windUnit.collectAsState()
+    val language by settingsManager.language.collectAsState()
 
     Scaffold(
         topBar = {
@@ -44,6 +45,7 @@ fun SettingsScreen(
             dynamicColor = dynamicColor,
             tempUnit = tempUnit,
             windUnit = windUnit,
+            language = language,
             settingsManager = settingsManager,
             onOpenChangeLog = onOpenChangeLog
         )
@@ -59,6 +61,7 @@ fun SettingsContent(
     dynamicColor: Boolean,
     tempUnit: String,
     windUnit: String,
+    language: String,
     settingsManager: SettingsManager,
     onOpenChangeLog: () -> Unit
 ) {
@@ -122,11 +125,34 @@ fun SettingsContent(
 
             item {
                 Text(
-                    text = stringResource(Res.string.units_label),
+                    text = stringResource(Res.string.language_label),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("Language")
+                    Row {
+                        FilterChip(
+                            selected = language == "en",
+                            onClick = { settingsManager.setLanguage("en") },
+                            label = { Text("English") }
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        FilterChip(
+                            selected = language == "de",
+                            onClick = { settingsManager.setLanguage("de") },
+                            label = { Text("Deutsch") }
+                        )
+                    }
+                }
+            }
+
+            item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),

@@ -22,6 +22,9 @@ class SettingsManager(private val settings: Settings = Settings()) {
     private val _windUnit = MutableStateFlow(settings.getString("wind_unit", "kmh"))
     val windUnit: StateFlow<String> = _windUnit
 
+    private val _language = MutableStateFlow(settings.getString("language", "en"))
+    val language: StateFlow<String> = _language
+
     fun setUseSystemTheme(value: Boolean) {
         settings.putBoolean("use_system_theme", value)
         _useSystemTheme.value = value
@@ -45,6 +48,11 @@ class SettingsManager(private val settings: Settings = Settings()) {
     fun setWindUnit(value: String) {
         settings.putString("wind_unit", value)
         _windUnit.value = value
+    }
+
+    fun setLanguage(value: String) {
+        settings.putString("language", value)
+        _language.value = value
     }
 }
 

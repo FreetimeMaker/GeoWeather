@@ -35,24 +35,29 @@ class WeatherViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
-                val response = api.getWeather(lat, lon)
-                
-                // Fetch historical data for the last 7 days as well
-                val today = currentInstant().toLocalDateTime(TimeZone.currentSystemDefault()).date
-                val startDate = today.minus(7, DateTimeUnit.DAY).toString()
-                val endDate = today.minus(1, DateTimeUnit.DAY).toString()
-                
-                val historicalResponse = try {
-                    api.getHistoricalWeather(lat, lon, startDate, endDate)
-                } catch (e: Exception) {
-                    null
-                }
+                val result = api.getWeather(lat, lon)
+                if (result.isSuccess) {
+                    val response = result.getOrNull()
+                    
+                    // Fetch historical data for the last 7 days as well
+                    val today = currentInstant().toLocalDateTime(TimeZone.currentSystemDefault()).date
+                    val startDate = today.minus(7, DateTimeUnit.DAY).toString()
+                    val endDate = today.minus(1, DateTimeUnit.DAY).toString()
+                    
+                    val historicalResult = api.getHistoricalWeather(lat, lon, startDate, endDate)
+                    val historicalResponse = if (historicalResult.isSuccess) historicalResult.getOrNull() else null
 
-                _uiState.value = _uiState.value.copy(
-                    weather = response, 
-                    historicalWeather = historicalResponse,
-                    isLoading = false
-                )
+                    _uiState.value = _uiState.value.copy(
+                        weather = response, 
+                        historicalWeather = historicalResponse,
+                        isLoading = false
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false, 
+                        error = result.exceptionOrNull()?.message ?: "Failed to load weather data"
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(isLoading = false, error = e.message ?: "Unknown error")
             }

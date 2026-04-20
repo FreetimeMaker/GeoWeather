@@ -26,8 +26,12 @@ class SearchViewModel(private val api: WeatherApi) : ViewModel() {
         .onEach { query ->
             _isSearching.value = true
             try {
-                val response = api.searchLocations(query, "en")
-                _searchResults.value = response.results ?: emptyList()
+                val result = api.searchLocations(query, "en")
+                _searchResults.value = if (result.isSuccess) {
+                    result.getOrNull()?.results ?: emptyList()
+                } else {
+                    emptyList()
+                }
             } catch (e: Exception) {
                 _searchResults.value = emptyList()
             } finally {
