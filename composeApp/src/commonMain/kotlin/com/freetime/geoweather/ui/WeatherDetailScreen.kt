@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.freetime.geoweather.SettingsManager
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
+import com.freetime.geoweather.currentInstant
 import com.freetime.geoweather.network.models.WeatherResponse
 import geoweather.composeapp.generated.resources.*
 import kotlinx.datetime.*
@@ -248,8 +249,8 @@ fun HourlyForecastSection(hourly: com.freetime.geoweather.network.models.HourlyD
         Text(stringResource(Res.string.hourly_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(8.dp))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            // Filter for future hours
-            val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            // Filter currentInstant
+            val now = kotlinx.datetime.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             val filteredIndices = hourly.time.indices.filter { i ->
                 val time = LocalDateTime.parse(hourly.time[i])
                 time >= now

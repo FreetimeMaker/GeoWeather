@@ -65,11 +65,13 @@ kotlin {
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.room.runtime)
                 implementation(libs.sqlite.bundled)
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
             }
         }
         val wasmJsMain by getting {
             dependencies {
                 implementation(libs.ktor.client.js)
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
             }
         }
     }
