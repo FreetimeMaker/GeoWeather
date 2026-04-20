@@ -126,6 +126,9 @@ compose.desktop {
             packageVersion = "1.3.6"
         }
     }
+    proguard {
+        isEnabled = false
+    }
 }
 
 tasks.register<Copy>("copyWasmToDocs") {
