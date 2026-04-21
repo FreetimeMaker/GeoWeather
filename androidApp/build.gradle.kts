@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("com.google.devtools.ksp")
     id("androidx.room")
+    alias(libs.plugins.composeCompiler)
 }
 
 android {
@@ -12,6 +13,8 @@ android {
         applicationId = "com.freetime.geoweather"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.compileSdk.get().toInt()
+        versionCode = 37
+        versionName = "1.3.6"
     }
 
     buildFeatures {
@@ -21,11 +24,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
     }
-        versionCode = 37
-        versionName = "1.3.6"
-    }
-
-
 }
 
 room {
@@ -33,6 +31,7 @@ room {
 }
 
 dependencies {
+    implementation(project(":composeApp"))
     implementation("androidx.core:core-ktx:1.18.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
     implementation("androidx.appcompat:appcompat:1.7.1")

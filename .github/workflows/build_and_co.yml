@@ -23,7 +23,7 @@ jobs:
       - name: Detect version & create tag
         id: versioncheck
         run: |
-          VERSION=$(grep 'versionName' composeApp/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
+          VERSION=$(grep 'versionName' androidApp/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           git fetch --tags
           if git rev-parse "v$VERSION" >/dev/null 2>&1; then

@@ -12,8 +12,6 @@ plugins {
 }
 
 kotlin {
-    androidTarget()
-
     jvm("desktop")
 
     @OptIn(ExperimentalWasmDsl::class)
