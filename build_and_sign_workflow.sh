@@ -13,12 +13,12 @@ echo "==> Java Version"
 java -version
 
 # Android APK Pfad (von Gradle generiert)
-UNSIGNED_APK="composeApp/build/outputs/apk/release/composeApp-release-unsigned.apk"
+UNSIGNED_APK="androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk"
 
 # Falls noch nicht gebaut, jetzt bauen (lokaler Support)
 if [ ! -f "$UNSIGNED_APK" ]; then
     echo "==> Baue Android Release..."
-    ./gradlew :composeApp:assembleRelease
+    ./gradlew :androidApp:assembleRelease
 fi
 
 echo "==> Finde apksigner"

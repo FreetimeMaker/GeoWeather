@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
@@ -87,9 +86,4 @@ tasks.register<Copy>("copyWasmToDocs") {
     dependsOn("wasmJsBrowserDistribution")
     from(layout.buildDirectory.dir("dist/wasmJs/productionExecutable"))
     into(layout.projectDirectory.dir("../docs"))
-}
-
-android {
-    namespace = "com.freetime.geoweather"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
 }

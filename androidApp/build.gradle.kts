@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
-    kotlin("android")
-    alias(libs.plugins.composeCompiler)
+    id("com.google.devtools.ksp")
+    id("androidx.room")
 }
 
 android {
@@ -11,43 +11,45 @@ android {
     defaultConfig {
         applicationId = "com.freetime.geoweather"
         minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 37
-        versionName = "1.3.6"
+        targetSdk = libs.versions.android.compileSdk.get().toInt()
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.10.3"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
+        versionCode = 37
+        versionName = "1.3.6"
+    }
+
+
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
-    implementation(project(":composeApp"))
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.room.runtime)
-    implementation(libs.sqlite.bundled)
-    implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.glance.material3)
-    implementation("com.google.android.gms:play-services-location:21.3.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
+    implementation("androidx.core:core-ktx:1.18.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
+    implementation(platform("androidx.compose:compose-bom:2024.10.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+    implementation("com.russhwolf:multiplatform-settings:1.3.0")
+    implementation("androidx.room:room-runtime:2.8.4")
+    implementation("androidx.sqlite:sqlite-bundled:2.6.2")
+    ksp("androidx.room:room-compiler:2.8.4")
 }
