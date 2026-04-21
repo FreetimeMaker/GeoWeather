@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
@@ -13,14 +13,10 @@ plugins {
 }
 
 kotlin {
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
-    }
-    
+    androidTarget()
+
     jvm("desktop")
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser {
@@ -46,19 +42,6 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
         }
-        androidMain.dependencies {
-            implementation(libs.androidx.appcompat)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.ktor.client.okhttp)
-            implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.room.runtime)
-            implementation(libs.sqlite.bundled)
-            implementation(libs.androidx.glance.appwidget)
-            implementation(libs.androidx.glance.material3)
-            implementation("com.google.android.gms:play-services-location:21.3.0")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
-        }
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
@@ -78,40 +61,12 @@ kotlin {
     }
 }
 
-androidApplication {
-    namespace = "com.freetime.geoweather"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "com.freetime.geoweather"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 37
-        versionName = "1.3.6"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-}
-
 room {
     schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
     add("kspCommonMainMetadata", libs.room.compiler)
-    add("kspAndroid", libs.room.compiler)
     add("kspDesktop", libs.room.compiler)
 }
 
@@ -132,4 +87,9 @@ tasks.register<Copy>("copyWasmToDocs") {
     dependsOn("wasmJsBrowserDistribution")
     from(layout.buildDirectory.dir("dist/wasmJs/productionExecutable"))
     into(layout.projectDirectory.dir("../docs"))
+}
+
+android {
+    namespace = "com.freetime.geoweather"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 }
