@@ -85,3 +85,7 @@ tasks.register<Copy>("copyWasmToDocs") {
     from(layout.buildDirectory.dir("dist/wasmJs/productionExecutable"))
     into(layout.projectDirectory.dir("../docs"))
 }
+
+compose.resources {
+    publicResClass = true
+}
