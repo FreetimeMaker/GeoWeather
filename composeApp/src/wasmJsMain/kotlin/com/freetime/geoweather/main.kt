@@ -13,6 +13,6 @@ fun main() {
     val api = WeatherApi()
     val settingsManager = SettingsManager()
     ComposeViewport(document.body!!) {
-        App(locationDao, api, settingsManager)
+        App(locationDao, api, settingsManager, createLocationService())
     }
 }

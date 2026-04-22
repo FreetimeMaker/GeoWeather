@@ -7,8 +7,6 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.room)
 }
 
 kotlin {
@@ -44,8 +42,6 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutines.swing)
                 implementation(libs.ktor.client.okhttp)
-                implementation(libs.room.runtime)
-                implementation(libs.sqlite.bundled)
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
             }
         }
@@ -58,14 +54,6 @@ kotlin {
     }
 }
 
-room {
-    schemaDirectory("$projectDir/schemas")
-}
-
-dependencies {
-    add("kspCommonMainMetadata", libs.room.compiler)
-    add("kspDesktop", libs.room.compiler)
-}
 
 compose.desktop {
     application {

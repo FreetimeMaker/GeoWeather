@@ -140,8 +140,4 @@
     <string name="cl_v136_ui_ux">Added \"My Location\" button and optimized notification icons</string>
     <string name="cl_v136_stability">Fixed crashes (LazyColumn context) and improved stability</string>
     <string name="language_label">Language</string>
-    <string name="widget_loading">Loading...</string>
-    <string name="no_location_selected">No location selected</string>
-    <string name="error_connection">Connection error</string>
-    <string name="select_city_msg">Select a city</string>
 </resources>
