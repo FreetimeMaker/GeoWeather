@@ -37,7 +37,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.multiplatform.settings)
-            implementation(compose.material.icons.extended)
+            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.1")
         }
         val desktopMain by getting {
             dependencies {
