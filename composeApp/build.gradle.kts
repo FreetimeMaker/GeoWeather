@@ -23,12 +23,12 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
-            implementation("org.jetbrains.compose:compose-runtime:1.10.3")
-            implementation("org.jetbrains.compose:compose-foundation:1.10.3")
-            implementation("org.jetbrains.compose:compose-material3:1.10.3")
-            implementation("org.jetbrains.compose:compose-ui:1.10.3")
-            implementation("org.jetbrains.compose:compose-components-resources:1.10.3")
-            implementation("org.jetbrains.compose:compose-components-ui-tooling-preview:1.10.3")
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.ktor.client.core)
@@ -37,7 +37,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.multiplatform.settings)
-            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+            implementation(compose.material.icons.extended)
         }
         val desktopMain by getting {
             dependencies {
