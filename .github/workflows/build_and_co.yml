@@ -41,7 +41,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            tasks: ":androidApp:assembleRelease :composeApp:packageReleaseDeb :composeApp:packageReleaseRpm :composeApp:wasmJsBrowserDistribution"
+            tasks: ":androidApp:assembleRelease :composeApp:packageReleaseDeb :composeApp:packageReleaseRpm :composeApp:wasmJsBrowserDistribution :composeApp:packageReleaseExe :composeApp:packageReleaseMsi :composeApp:packageReleaseAppImage"
           - os: windows-latest
             
     runs-on: ${{ matrix.os }}

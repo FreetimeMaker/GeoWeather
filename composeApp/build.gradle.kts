@@ -72,7 +72,7 @@ compose.desktop {
         mainClass = "com.freetime.geoweather.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm, TargetFormat.AppImage,
+            targetFormats(TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm, TargetFormat.AppImage,
                 TargetFormat.Exe)
             packageName = "com.freetime.geoweather"
             packageVersion = "1.3.6"
