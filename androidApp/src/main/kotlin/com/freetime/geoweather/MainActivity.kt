@@ -22,9 +22,10 @@ class MainActivity : ComponentActivity() {
         val settings = SharedPreferencesSettings(sharedPreferences)
         val settingsManager = SettingsManager(settings)
         val locationService = createLocationService()
+        val locationDao = RoomLocationDaoAdapter(db.locationDao())
         
         setContent {
-            App(db.locationDao(), api, settingsManager, locationService)
+            App(locationDao, api, settingsManager, locationService)
         }
     }
 }

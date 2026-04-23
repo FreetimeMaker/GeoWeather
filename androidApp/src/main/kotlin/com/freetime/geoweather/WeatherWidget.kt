@@ -53,7 +53,7 @@ class WeatherWidget : GlanceAppWidget() {
         val settings = SharedPreferencesSettings(sharedPreferences)
         
         val location = withContext(Dispatchers.IO) {
-            db.locationDao().getSelectedLocation()
+            RoomLocationDaoAdapter(db.locationDao()).getSelectedLocation()
         }
         
         val tempUnit = settings.getString("temp_unit", "celsius")
