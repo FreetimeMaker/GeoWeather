@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   prepare:
@@ -44,8 +46,9 @@ jobs:
             tasks: ":androidApp:assembleRelease :composeApp:packageReleaseDeb :composeApp:packageReleaseRpm :composeApp:wasmJsBrowserDistribution :composeApp:packageReleaseAppImage"
           - os: windows-latest
             tasks: ":composeApp:packageReleaseExe :composeApp:packageReleaseMsi"
-            
+
     runs-on: ${{ matrix.os }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,6 +58,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+
       - name: Build with Gradle
         run: ./gradlew ${{ matrix.tasks }}
 
@@ -68,13 +72,31 @@ jobs:
         env:
           GITHUB_REF_NAME: v${{ needs.prepare.outputs.version }}
 
+      - name: Upload Pages Artifact (only Linux)
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: composeApp/build/dist/wasmJs/productionExecutable
+
       - name: Create Release and Upload
+        if: matrix.os == 'ubuntu-latest'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.prepare.outputs.version }}
           files: |
-            ${{ matrix.artifacts }}
             GeoWeather-*.apk
             GeoWeather-*-wasm.zip
           draft: true
           generate_release_notes: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

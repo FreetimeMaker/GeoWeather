@@ -65,6 +65,10 @@ compose.desktop {
             packageName = "com.freetime.geoweather"
             packageVersion = "1.3.6"
         }
+
+        buildTypes.release.proguard {
+            configurationFiles.from(project.file("proguard-rules.pro"))
+        }
     }
 }
 
