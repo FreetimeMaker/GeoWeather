@@ -29,6 +29,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.freetime.geoweather.data.LocationDatabase
+import com.freetime.geoweather.data.RoomLocationDaoAdapter
 import com.freetime.geoweather.data.getDatabase
 import com.freetime.geoweather.data.getDatabaseBuilder
 import com.freetime.geoweather.data.initContext

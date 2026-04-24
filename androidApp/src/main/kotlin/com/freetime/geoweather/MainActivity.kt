@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.freetime.geoweather.data.RoomLocationDaoAdapter
 import com.freetime.geoweather.data.getDatabase
 import com.freetime.geoweather.data.getDatabaseBuilder
 import com.freetime.geoweather.data.initContext

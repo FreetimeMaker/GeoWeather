@@ -9,7 +9,7 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-internal interface LocationRoomDao {
+interface LocationRoomDao {
     @Query("SELECT * FROM locations ORDER BY id")
     fun getAllLocationsFlow(): Flow<List<LocationRoomEntity>>
 
