@@ -90,8 +90,8 @@ jobs:
             composeApp/build/compose/binaries/main-release/deb/*.deb
             composeApp/build/compose/binaries/main-release/rpm/*.rpm
             composeApp/build/compose/binaries/main-release/appimage/*.AppImage
+            GeoWeather-v${{ needs.prepare.outputs.version }}-wasm.zip
             GeoWeather-*.apk
-            GeoWeather-*-wasm.zip
           draft: true
           generate_release_notes: true
 

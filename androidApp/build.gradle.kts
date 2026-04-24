@@ -7,28 +7,25 @@ plugins {
 }
 
 android {
-    namespace = "com.freetime.geoweather"
+    namespace = "io.github.freetimemaker.geoweather"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.freetime.geoweather"
+        applicationId = "io.github.freetimemaker.geoweather"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.compileSdk.get().toInt()
-        versionCode = 37
-        versionName = "1.3.6"
+        versionCode = 38
+        versionName = "1.3.7"
     }
 
     buildFeatures {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
-    }
+}
 
-    room {
-        schemaDirectory("$projectDir/schemas")
-    }
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 compose.resources {

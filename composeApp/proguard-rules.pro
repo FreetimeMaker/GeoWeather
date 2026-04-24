@@ -1,18 +1,31 @@
-# ProGuard rules for GeoWeather Compose Desktop
+# Keep multiplatform-settings
+-keep class com.russhwolf.settings.** { *; }
+-keep interface com.russhwolf.settings.** { *; }
 
-# Ignore all warnings to allow the build to proceed despite missing optional dependencies
--ignorewarnings
--dontnote **
--dontwarn **
+# Keep Ktor and OkHttp
+-keep class io.ktor.** { *; }
+-keep class okhttp3.** { *; }
+-keep class okio.** { *; }
 
-# Keep our application code
--keep class com.freetime.geoweather.** { *; }
+# Keep serialization
+-keep class kotlinx.serialization.** { *; }
 
-# Keep Kotlin and Compose internal classes that might be accessed via reflection
--keep class kotlin.** { *; }
--keep class kotlinx.** { *; }
--keep class androidx.compose.** { *; }
--keep class org.jetbrains.skiko.** { *; }
+# Keep all our application code
+-keep class io.github.freetimemaker.geoweather.** { *; }
+-keep class io.github.freetimemaker.geoweather.data.** { *; }
+-keep class io.github.freetimemaker.geoweather.ui.** { *; }
+-keep class io.github.freetimemaker.geoweather.network.** { *; }
+
+# Keep the entry point
+-keep class io.github.freetimemaker.geoweather.MainKt {
+    public static void main(java.lang.String[]);
+}
+
+# Keep generated Compose Resources
+-keep class **.Res { *; }
+-keep class **.Res$* { *; }
+-keep class geoweather.composeapp.generated.resources.** { *; }
+-keep class org.jetbrains.compose.resources.** { *; }
 
 # Necessary for Compose Desktop
 -keepattributes *Annotation*
@@ -20,7 +33,12 @@
 -keepattributes InnerClasses
 -keepattributes EnclosingMethod
 
-# Keep the main class
--keep class com.freetime.geoweather.MainKt {
-    public static void main(java.lang.String[]);
-}
+# Desktop specific keeps
+-keep class androidx.compose.ui.window.** { *; }
+-keep class org.jetbrains.skiko.** { *; }
+-keep class java.awt.** { *; }
+-keep class javax.swing.** { *; }
+
+-dontnote **
+-dontwarn **
+-ignorewarnings
