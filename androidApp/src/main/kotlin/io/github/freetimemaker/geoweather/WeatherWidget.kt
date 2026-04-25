@@ -35,6 +35,7 @@ import io.github.freetimemaker.geoweather.data.getDatabaseBuilder
 import io.github.freetimemaker.geoweather.data.initContext
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
+import io.github.freetimemaker.geoweather.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject

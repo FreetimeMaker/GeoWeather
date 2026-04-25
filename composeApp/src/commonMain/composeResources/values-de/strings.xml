@@ -15,7 +15,11 @@
     <string name="current_location">Current Location</string>
     <string name="search_placeholder">e.g. New York or 40.71, -74.00</string>
     <string name="settings_nav_desc">Settings</string>
-    <string name="donate_nav_desc">Donate</string>
+    <string name="donate_nav_desc">Spenden</string>
+    <string name="widget_loading">Wird geladen...</string>
+    <string name="no_location_selected">Kein Standort gewählt</string>
+    <string name="error_connection">Verbindungsfehler</string>
+    <string name="select_city_msg">Bitte Stadt in der App wählen</string>
 
     <!-- Weather Condition Strings -->
     <string name="wc_clear">Clear sky</string>
