@@ -11,13 +11,13 @@
 -keep class kotlinx.serialization.** { *; }
 
 # Keep all our application code
--keep class com.freetime.geoweather.** { *; }
--keep class com.freetime.geoweather.data.** { *; }
--keep class com.freetime.geoweather.ui.** { *; }
--keep class com.freetime.geoweather.network.** { *; }
+-keep class io.github.freetimemaker.geoweather.** { *; }
+-keep class io.github.freetimemaker.geoweather.data.** { *; }
+-keep class io.github.freetimemaker.geoweather.ui.** { *; }
+-keep class io.github.freetimemaker.geoweather.network.** { *; }
 
 # Keep the entry point
--keep class com.freetime.geoweather.MainKt {
+-keep class io.github.freetimemaker.geoweather.MainKt {
     public static void main(java.lang.String[]);
 }
 

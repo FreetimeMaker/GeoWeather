@@ -57,7 +57,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "com.freetime.geoweather.MainKt"
+        mainClass = "io.github.freetimemaker.geoweather.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm, TargetFormat.AppImage,
@@ -67,6 +67,13 @@ compose.desktop {
             description = "GeoWeather - A modern weather app"
             copyright = "© 2026 FreetimeMaker"
             vendor = "FreetimeMaker"
+
+            linux {
+                packageName = "io.github.freetimemaker.geoweather"
+                appCategory = "Utility;Weather;"
+                menuGroup = "Weather"
+                iconFile.set(project.file("src/desktopMain/resources/icon.png"))
+            }
         }
 
         buildTypes.release.proguard {

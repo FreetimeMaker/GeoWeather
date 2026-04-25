@@ -2,7 +2,7 @@
 set -e
 
 # Variablen
-APP_ID="com.freetime.geoweather"
+APP_ID="io.github.freetimemaker.geoweather"
 TAG="${GITHUB_REF_NAME:-v1.3.6}" # Fallback falls lokal ausgeführt
 KEYSTORE="./GeoWeather-KeyStore.jks"
 KEY_ALIAS="alle"

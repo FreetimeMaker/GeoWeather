@@ -1,0 +1,42 @@
+app-id: io.github.freetimemaker.geoweather
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: geoweather
+
+finish-args:
+  # Netzwerkzugriff für Wetter-API
+  - --share=network
+
+  # GUI
+  - --socket=x11
+  - --socket=wayland
+
+  # GPU-Beschleunigung für Compose Desktop
+  - --device=dri
+
+  # Optional: Zugriff auf HOME für Settings (Multiplatform Settings)
+  - --filesystem=home:ro
+
+modules:
+  - name: geoweather
+    buildsystem: simple
+    build-commands:
+      # Baue die Linux-Distribution (nicht AppImage!)
+      - ./gradlew :composeApp:packageDistributionForCurrentOS --no-daemon
+
+      # Installiere Binary
+      - install -D composeApp/build/compose/binaries/main/app/GeoWeather/bin/GeoWeather /app/bin/geoweather
+
+      # Icon
+      - install -D composeApp/build/compose/binaries/main/app/GeoWeather/lib/GeoWeather.png \
+        /app/share/icons/hicolor/256x256/apps/io.github.freetimemaker.geoweather.png
+
+      # Desktop File
+      - install -D io.github.freetimemaker.geoweather.desktop \
+        /app/share/applications/io.github.freetimemaker.geoweather.desktop
+
+    sources:
+      - type: git
+        url: https://github.com/FreetimeMaker/GeoWeather.git
+        branch: main
