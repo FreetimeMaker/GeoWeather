@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=GeoWeather
-Comment=Modern weather app with 7-day forecast for multiple cities
-Exec=geoweather
-Icon=io.github.freetimemaker.geoweather
-Type=Application
-Categories=Utility;Science;Weather;
-Terminal=false
