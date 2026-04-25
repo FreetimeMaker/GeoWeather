@@ -66,6 +66,13 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew ${{ matrix.tasks }} --no-daemon
 
+      # Debug output to locate AppImage
+      - name: Debug AppImage output
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          echo "Listing compose/binaries:"
+          ls -R composeApp/build/compose/binaries/ || true
+
       # Linux signing + WASM ZIP
       - name: Sign Android & WASM Zip (Linux only)
         if: matrix.os == 'ubuntu-latest'
@@ -91,9 +98,9 @@ jobs:
         with:
           tag_name: v${{ needs.prepare.outputs.version }}
           files: |
-            composeApp/build/compose/binaries/main-release/deb/*.deb
-            composeApp/build/compose/binaries/main-release/rpm/*.rpm
-            composeApp/build/compose/binaries/main-release/appimage/*.AppImage
+            composeApp/build/compose/binaries/**/deb/*.deb
+            composeApp/build/compose/binaries/**/rpm/*.rpm
+            composeApp/build/compose/binaries/**/appimage/*.AppImage
             GeoWeather-v${{ needs.prepare.outputs.version }}-wasm.zip
             GeoWeather-*.apk
           draft: true
@@ -106,8 +113,8 @@ jobs:
         with:
           tag_name: v${{ needs.prepare.outputs.version }}
           files: |
-            composeApp/build/compose/binaries/main-release/exe/*.exe
-            composeApp/build/compose/binaries/main-release/msi/*.msi
+            composeApp/build/compose/binaries/**/exe/*.exe
+            composeApp/build/compose/binaries/**/msi/*.msi
           draft: true
           generate_release_notes: false
 
