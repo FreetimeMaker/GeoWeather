@@ -16,6 +16,10 @@
     <string name="search_placeholder">e.g. New York or 40.71, -74.00</string>
     <string name="settings_nav_desc">Settings</string>
     <string name="donate_nav_desc">Donate</string>
+    <string name="widget_loading">Loading...</string>
+    <string name="no_location_selected">No location selected</string>
+    <string name="error_connection">Connection error</string>
+    <string name="select_city_msg">Please select a city in the app</string>
 
     <!-- Weather Condition Strings -->
     <string name="wc_clear">Clear sky</string>
