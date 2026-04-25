@@ -143,5 +143,8 @@
     <string name="cl_v136_degoogled">Completely removed Google Play Services dependency</string>
     <string name="cl_v136_ui_ux">Added \"My Location\" button and optimized notification icons</string>
     <string name="cl_v136_stability">Fixed crashes (LazyColumn context) and improved stability</string>
+    <string name="cl_v137_ci_cd">Verbesserte Build-Stabilität und CI/CD-Leistung mit Gradle-Caching</string>
+    <string name="cl_v137_signing">Erhöhte Sicherheit für das automatische Signieren von APKs in GitHub Actions</string>
+    <string name="cl_v137_wasm">Probleme beim WebAssembly (Wasm) Build durch externe Abhängigkeiten behoben</string>
     <string name="language_label">Language</string>
 </resources>

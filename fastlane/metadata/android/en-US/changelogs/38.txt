@@ -1,0 +1,3 @@
+• Stability: Improved build stability and CI/CD performance with Gradle caching.
+• Security: Enhanced security for automated APK signing in GitHub Actions.
+• Wasm: Fixed WebAssembly build issues caused by external dependency downtime.

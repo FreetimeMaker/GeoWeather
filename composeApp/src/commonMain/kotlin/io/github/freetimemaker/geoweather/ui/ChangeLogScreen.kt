@@ -50,6 +50,11 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.3.7" to listOf(
+            "${stringResource(Res.string.added_label)} ${stringResource(Res.string.cl_v137_ci_cd)}",
+            "${stringResource(Res.string.fixed_label)} ${stringResource(Res.string.cl_v137_signing)}",
+            "${stringResource(Res.string.fixed_label)} ${stringResource(Res.string.cl_v137_wasm)}"
+        ),
         "v1.3.6" to listOf(
             "${stringResource(Res.string.added_label)} ${stringResource(Res.string.cl_v136_auto_open)}",
             "${stringResource(Res.string.added_label)} ${stringResource(Res.string.cl_v136_default_location)}",

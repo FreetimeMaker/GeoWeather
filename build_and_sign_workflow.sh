@@ -6,7 +6,7 @@ APP_ID="io.github.freetimemaker.geoweather"
 TAG="${GITHUB_REF_NAME:-v1.3.6}" # Fallback falls lokal ausgeführt
 KEYSTORE="./GeoWeather-KeyStore.jks"
 KEY_ALIAS="alle"
-KEY_PASS="KKKKKK" # Hinweis: Sollte idealerweise via Secrets kommen
+KEY_PASS="${GEOWEATHER_KEY_PASS:-KKKKKK}" # Hinweis: Sollte idealerweise via Secrets kommen
 OUT_APK="GeoWeather-$TAG.apk"
 
 echo "==> Java Version"
