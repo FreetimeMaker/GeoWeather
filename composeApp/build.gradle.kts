@@ -57,13 +57,16 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "io.github.freetimemaker.geoweather.MainKt"
+        mainClass = "com.freetime.geoweather.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm, TargetFormat.AppImage,
                 TargetFormat.Exe)
-            packageName = "io.github.freetimemaker.geoweather"
+            packageName = "GeoWeather"
             packageVersion = "1.3.7"
+            description = "GeoWeather - A modern weather app"
+            copyright = "© 2026 FreetimeMaker"
+            vendor = "FreetimeMaker"
         }
 
         buildTypes.release.proguard {

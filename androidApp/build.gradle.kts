@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "io.github.freetimemaker.geoweather"
+    namespace = "com.freetime.geoweather"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "io.github.freetimemaker.geoweather"
+        applicationId = "com.freetime.geoweather"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.compileSdk.get().toInt()
         versionCode = 38
