@@ -25,7 +25,7 @@ jobs:
       - name: Detect version & create tag
         id: versioncheck
         run: |
-          VERSION=$(grep 'versionName' androidApp/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
+          VERSION=$(grep 'versionName' app/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           git fetch --tags
           if git rev-parse "v$VERSION" >/dev/null 2>&1; then
@@ -39,15 +39,9 @@ jobs:
   build:
     needs: prepare
     if: needs.prepare.outputs.create_tag == 'true'
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            tasks: ":androidApp:assembleRelease :composeApp:packageReleaseDeb :composeApp:packageReleaseRpm :composeApp:wasmJsBrowserDistribution :composeApp:packageReleaseAppImage"
-          - os: windows-latest
-            tasks: ":composeApp:packageReleaseExe :composeApp:packageReleaseMsi"
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    run: |
+            tasks: ":app:assembleRelease"
 
     steps:
       - name: Checkout
@@ -63,79 +57,22 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      # 🔥 FIX: Install AppImage tools (REQUIRED)
-      - name: Install AppImage tools
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y squashfs-tools
-          wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-          chmod +x appimagetool-x86_64.AppImage
-          sudo mv appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
-
-      - name: Build with Gradle
-        run: ./gradlew ${{ matrix.tasks }} --no-daemon
-
-      # Debug output to locate AppImage
-      - name: Debug AppImage output
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          echo "Listing compose/binaries:"
-          ls -R composeApp/build/compose/binaries/ || true
-
-      # Linux signing + WASM ZIP
-      - name: Sign Android & WASM Zip (Linux only)
+      # Android signing
+      - name: Sign Android
         if: matrix.os == 'ubuntu-latest'
         run: |
           chmod +x ./build_and_sign_workflow.sh
           ./build_and_sign_workflow.sh
-          cd composeApp/build/dist/wasmJs/productionExecutable
-          zip -r ../../../../GeoWeather-v${{ needs.prepare.outputs.version }}-wasm.zip .
         env:
           GITHUB_REF_NAME: v${{ needs.prepare.outputs.version }}
 
-      # Upload WASM for GitHub Pages
-      - name: Upload Pages Artifact (Linux only)
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: composeApp/build/dist/wasmJs/productionExecutable
-
-      # Upload Linux artifacts to Release
+      # Upload Android artifacts to Release
       - name: Upload Linux Artifacts to Release
         if: matrix.os == 'ubuntu-latest'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.prepare.outputs.version }}
           files: |
-            composeApp/build/compose/binaries/**/deb/*.deb
-            composeApp/build/compose/binaries/**/rpm/*.rpm
-            composeApp/build/compose/binaries/**/appimage/*.AppImage
-            GeoWeather-v${{ needs.prepare.outputs.version }}-wasm.zip
             GeoWeather-*.apk
           draft: true
           generate_release_notes: true
-
-      # Upload Windows artifacts to Release
-      - name: Upload Windows Artifacts to Release
-        if: matrix.os == 'windows-latest'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ needs.prepare.outputs.version }}
-          files: |
-            composeApp/build/compose/binaries/**/exe/*.exe
-            composeApp/build/compose/binaries/**/msi/*.msi
-          draft: true
-          generate_release_notes: false
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

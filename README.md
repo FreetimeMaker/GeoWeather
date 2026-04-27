@@ -18,7 +18,7 @@
 </div>
 
 <div align="center">
-<h1>Repository and Build Informations</h1>
+<h1>Repository, Build and App Informations</h1>
 </div>
 
 <div align="center">
@@ -28,7 +28,13 @@
 [![GitHub license](https://img.shields.io/github/license/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/blob/main/LICENSE)
 [![Downloads](https://img.shields.io/github/downloads/FreetimeMaker/GeoWeather/total?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
 [![GitHub stars](https://img.shields.io/github/stars/FreetimeMaker/GeoWeather?color=%2359a14f&style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/stargazers)
-[![Multiplatform Build and Release](https://github.com/FreetimeMaker/GeoWeather/actions/workflows/build_and_co.yml/badge.svg)](https://github.com/FreetimeMaker/GeoWeather/actions/workflows/build_and_co.yml)
+[![Android Build, Sign and Release](https://github.com/FreetimeMaker/GeoWeather/actions/workflows/build_and_co.yml/badge.svg)](https://github.com/FreetimeMaker/GeoWeather/actions/workflows/build_and_co.yml)
+[![API](https://img.shields.io/badge/API-26%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=26)
+<img alt="Kotlin" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Kotlin/kotlin1.svg" />
+<img src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Android/android1.svg" />
+<a href="https://github.com/FreetimeMaker/GeoWeather/issues">
+  <img src="https://m3-markdown-badges.vercel.app/issues/1/2/FreetimeMaker/GeoWeather" alt="Issues"/>
+</a>
 </div>
 
 GeoWeather is a modern Android weather application that allows you to monitor weather conditions for multiple cities. The app was inspired by the Swiss weather app MeteoSwiss and offers an intuitive interface with detailed weather information.
@@ -64,6 +70,7 @@ You can download the latest version of GeoWeather from the following platforms:
 - **F-Droid**: [com.freetime.geoweather](https://f-droid.org/packages/com.freetime.geoweather)
 - **OpenAPK**: [GeoWeather on OpenAPK](https://www.openapk.net/geoweather/com.freetime.geoweather/)
 - **Obtainium**: [Automatic Updates](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22com.freetime.geoweather%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2FFreetimeMaker%2FGeoWeather%22%2C%22author%22%3A%22Freetime%20Maker%22%2C%22name%22%3A%22GeoWeather%22%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%7D%22%7D)
+- **GitHub Store**: [Open in GitHub Store](https://github-store.org/app?repo=FreetimeMaker/GeoWeather)
 
 <div align="center">
 
@@ -74,6 +81,10 @@ You can download the latest version of GeoWeather from the following platforms:
 [<img src="https://www.openapk.net/images/openapk-badge.png" alt="Get it on OpenAPK" height="80">](https://www.openapk.net/geoweather/com.freetime.geoweather/)
 
 [<img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" width="194">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22com.freetime.geoweather%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2FFreetimeMaker%2FGeoWeather%22%2C%22author%22%3A%22Freetime%20Maker%22%2C%22name%22%3A%22GeoWeather%22%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%7D%22%7D)
+
+<a href="https://github-store.org/app?repo=FreetimeMaker/GeoWeather">
+    <img src="media-resources/ghs_download_badge.png" alt="Get it on GitHub Store" height="58" />
+  </a>
 </div>
 
 ## 🚀 Upcoming Features
@@ -87,9 +98,30 @@ Planned:
 
 This project is licensed under the [Apache-2.0 License](LICENSE).
 
+## ❤️ Support This Project
+
+</div>
+
+GeoWeather is 100% free. No ads. No tracking.
+
+- ⭐ **[Star](https://github.com/FreetimeMaker/GeoWeather/star)** this repository
+- 🐛 **[Report](https://github.com/FreetimeMaker/GeoWeather/issues)** bugs and issues
+- 💡 **[Suggest](https://github.com/FreetimeMaker/GeoWeather/discussions)** new features
+- 💳 **[Sponsor](#-donations)** the developer
+
+---
+
+<div align="center">
+
 ## 🤝 Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
+
+### Contributors :handshake:
+
+<a href="https://github.com/FreetimeMaker/GeoWeather/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=FreetimeMaker/GeoWeather"  alt="Icons of contributors to GeoWeather"/>
+</a>
 
 ## 🌟 Star History
 

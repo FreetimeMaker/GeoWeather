@@ -20,5 +20,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "GeoWeather"
-include(":composeApp")
-include(":androidApp")
+include(":app")
