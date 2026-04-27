@@ -82,9 +82,7 @@ You can download the latest version of GeoWeather from the following platforms:
 
 [<img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" width="194">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22com.freetime.geoweather%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2FFreetimeMaker%2FGeoWeather%22%2C%22author%22%3A%22Freetime%20Maker%22%2C%22name%22%3A%22GeoWeather%22%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%7D%22%7D)
 
-<a href="https://github-store.org/app?repo=FreetimeMaker/GeoWeather">
-    <img src="media-resources/ghs_download_badge.png" alt="Get it on GitHub Store" height="58" />
-  </a>
+[<img src="media-resources/ghs_download_badge.png" alt="Get it on GitHub Store">](https://github-store.org/app?repo=FreetimeMaker/GeoWeather)
 </div>
 
 ## 🚀 Upcoming Features
