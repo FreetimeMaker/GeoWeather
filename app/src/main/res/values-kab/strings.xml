@@ -3,4 +3,13 @@
     <string name="SearchBTNTXT">Nadi</string>
     <string name="cancel_btn">Semmet</string>
     <string name="hour_label">Asrag: %1$d</string>
+    <string name="DelTXT">Kkes</string>
+    <string name="CancelTXT">Semmet</string>
+    <string name="settings_nav_desc">Iɣewwaren</string>
+    <string name="donate_title">Tettwaxla n uɣawas</string>
+    <string name="wind_label">Aḍu</string>
+    <string name="wc_rain">Lehwa</string>
+    <string name="wc_snowfall">Adfel</string>
+    <string name="SunriseOnly">Alluy n yiṭij</string>
+    <string name="wc_unknown">D arussin</string>
 </resources>
