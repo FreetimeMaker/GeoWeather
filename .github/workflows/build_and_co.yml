@@ -1,4 +1,4 @@
-name: Multiplatform Build and Release
+name: Android Build, Sign and Release
 
 on:
   push:
@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
   id-token: write
 
 jobs:
@@ -40,8 +39,6 @@ jobs:
     needs: prepare
     if: needs.prepare.outputs.create_tag == 'true'
     runs-on: ubuntu-latest
-    run: |
-            tasks: ":app:assembleRelease"
 
     steps:
       - name: Checkout

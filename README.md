@@ -74,7 +74,7 @@ You can download the latest version of GeoWeather from the following platforms:
 
 <div align="center">
 
-[<img src="https://github.com/machiav3lli/oandbackupx/blob/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png" alt="Get it on GitHub" height="82">](https://github.com/FreetimeMaker/GeoWeather/releases/latest")
+[<img src="https://github.com/machiav3lli/oandbackupx/blob/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png" alt="Get it on GitHub" height="82">](https://github.com/FreetimeMaker/GeoWeather/releases/latest)
 
 [<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.freetime.geoweather)
 
@@ -99,8 +99,6 @@ Planned:
 This project is licensed under the [Apache-2.0 License](LICENSE).
 
 ## ❤️ Support This Project
-
-</div>
 
 GeoWeather is 100% free. No ads. No tracking.
 
@@ -132,6 +130,8 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=FreetimeMaker/GeoWeather&type=date&legend=top-left" />
  </picture>
 </a>
+
+</div>
 
 ---
 

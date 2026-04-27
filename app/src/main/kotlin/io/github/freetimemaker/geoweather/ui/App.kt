@@ -22,6 +22,19 @@ fun App(
     val coroutineScope = rememberCoroutineScope()
 
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Main) }
+    var hasAutoOpened by remember { mutableStateOf(false) }
+
+    val locations by locationsViewModel.locations.collectAsState()
+
+    LaunchedEffect(locations) {
+        if (!hasAutoOpened && locations.isNotEmpty()) {
+            val defaultLoc = locations.find { it.isDefault } ?: if (locations.size == 1) locations.first() else null
+            if (defaultLoc != null) {
+                currentScreen = Screen.Detail(defaultLoc)
+            }
+            hasAutoOpened = true
+        }
+    }
 
     val useSystemTheme by settingsManager.useSystemTheme.collectAsState()
     val darkModeSetting by settingsManager.darkModeEnabled.collectAsState()

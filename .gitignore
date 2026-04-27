@@ -29,4 +29,3 @@ local.properties
 *.apk.idsig
 .idea
 .proxyai
-/kotlin-js-store

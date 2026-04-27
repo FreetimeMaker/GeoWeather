@@ -42,7 +42,6 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
     implementation("com.russhwolf:multiplatform-settings:1.3.0")
     implementation(libs.ktor.client.okhttp)
@@ -52,7 +51,5 @@ dependencies {
     implementation(libs.sqlite.bundled)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
-    implementation("com.google.android.gms:play-services-location:21.3.0")
-    implementation("com.google.android.gms:play-services-base:18.10.0")
     ksp(libs.room.compiler)
 }
