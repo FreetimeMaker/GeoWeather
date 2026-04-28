@@ -96,6 +96,9 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.3.8" to listOf(
+            "Changed back to Android only"
+        ),
         "v1.3.7" to listOf(
             "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v137_ci_cd)}",
             "${stringResource(R.string.fixed_label)} ${stringResource(R.string.cl_v137_signing)}",

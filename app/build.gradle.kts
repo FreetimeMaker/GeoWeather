@@ -13,8 +13,8 @@ android {
         applicationId = "io.github.freetimemaker.geoweather"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.compileSdk.get().toInt()
-        versionCode = 38
-        versionName = "1.3.7"
+        versionCode = 39
+        versionName = "1.3.8"
     }
 
     buildFeatures {
