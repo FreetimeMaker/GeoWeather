@@ -195,4 +195,15 @@
     <string name="wind_mph_suffix"> mph</string>
     <string name="temp_deg_suffix">°</string>
     <string name="humidity_suffix">%</string>
+
+    <!-- ChangeLogs of v1.3.6 & v1.3.7 -->
+    <string name="cl_v136_auto_open">Auto-navigation to default or single location on startup</string>
+    <string name="cl_v136_default_location">Set favorite locations as default with a star icon</string>
+    <string name="cl_v136_current_location">Native \"Current Location\" support using system services</string>
+    <string name="cl_v136_degoogled">Completely removed Google Play Services dependency</string>
+    <string name="cl_v136_ui_ux">Added \"My Location\" button and optimized notification icons</string>
+    <string name="cl_v136_stability">Fixed crashes (LazyColumn context) and improved stability</string>
+    <string name="cl_v137_ci_cd">Improved build stability and CI/CD performance with Gradle caching</string>
+    <string name="cl_v137_signing">Enhanced security for automated APK signing in GitHub Actions</string>
+    <string name="cl_v137_wasm">Fixed WebAssembly (Wasm) build issues caused by external dependencies</string>
 </resources>

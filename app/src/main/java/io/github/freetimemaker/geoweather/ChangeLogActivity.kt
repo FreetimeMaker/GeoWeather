@@ -96,6 +96,19 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.3.7" to listOf(
+            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v137_ci_cd)}",
+            "${stringResource(R.string.fixed_label)} ${stringResource(R.string.cl_v137_signing)}",
+            "${stringResource(R.string.fixed_label)} ${stringResource(R.string.cl_v137_wasm)}"
+        ),
+        "v1.3.6" to listOf(
+            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v136_auto_open)}",
+            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v136_default_location)}",
+            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v136_current_location)}",
+            "${stringResource(R.string.removed_label)} ${stringResource(R.string.cl_v136_degoogled)}",
+            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v136_ui_ux)}",
+            "${stringResource(R.string.fixed_label)} ${stringResource(R.string.cl_v136_stability)}"
+        ),
         "v1.3.5" to listOf(
             "${stringResource(R.string.added_label)} Added More Donation Links",
             "${stringResource(R.string.fixed_label)} Made Every Screen (Hopefully) like System when activated"
