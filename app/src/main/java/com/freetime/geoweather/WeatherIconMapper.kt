@@ -1,4 +1,4 @@
-package io.github.freetimemaker.geoweather
+package com.freetime.geoweather
 
 import android.text.TextUtils
 import java.time.ZoneId

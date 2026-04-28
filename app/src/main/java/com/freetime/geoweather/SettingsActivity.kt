@@ -1,4 +1,4 @@
-package io.github.freetimemaker.geoweather
+package com.freetime.geoweather
 
 import android.content.Context
 import android.content.Intent
@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import io.github.freetimemaker.geoweather.ui.theme.GeoWeatherTheme
+import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
 class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,4 +1,4 @@
-package io.github.freetimemaker.geoweather.data
+package com.freetime.geoweather.data
 
 import android.content.Context
 import androidx.room.Database

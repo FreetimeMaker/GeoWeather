@@ -1,4 +1,4 @@
-package io.github.freetimemaker.geoweather.ui.theme
+package com.freetime.geoweather.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes

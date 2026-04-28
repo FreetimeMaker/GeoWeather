@@ -1,4 +1,4 @@
-package io.github.freetimemaker.geoweather.ui.theme
+package com.freetime.geoweather.ui.theme
 
 import android.os.Build
 import androidx.compose.material3.MaterialTheme

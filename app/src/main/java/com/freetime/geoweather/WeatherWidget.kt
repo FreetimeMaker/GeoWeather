@@ -1,4 +1,4 @@
-package io.github.freetimemaker.geoweather
+package com.freetime.geoweather
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -28,7 +28,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import io.github.freetimemaker.geoweather.data.LocationDatabase
+import com.freetime.geoweather.data.LocationDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject

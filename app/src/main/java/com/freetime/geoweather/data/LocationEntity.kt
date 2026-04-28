@@ -1,4 +1,4 @@
-package io.github.freetimemaker.geoweather.data
+package com.freetime.geoweather.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

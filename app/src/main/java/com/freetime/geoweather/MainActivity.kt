@@ -1,4 +1,4 @@
-package io.github.freetimemaker.geoweather
+package com.freetime.geoweather
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -42,9 +42,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
-import io.github.freetimemaker.geoweather.data.LocationDatabase
-import io.github.freetimemaker.geoweather.data.LocationEntity
-import io.github.freetimemaker.geoweather.ui.theme.GeoWeatherTheme
+import com.freetime.geoweather.data.LocationDatabase
+import com.freetime.geoweather.data.LocationEntity
+import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

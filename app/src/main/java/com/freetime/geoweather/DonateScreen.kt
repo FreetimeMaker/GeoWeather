@@ -1,4 +1,4 @@
-package io.github.freetimemaker.geoweather
+package com.freetime.geoweather
 
 import android.content.Intent
 import androidx.compose.foundation.layout.*

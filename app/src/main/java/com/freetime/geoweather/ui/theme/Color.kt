@@ -1,4 +1,4 @@
-package io.github.freetimemaker.geoweather.ui.theme
+package com.freetime.geoweather.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
