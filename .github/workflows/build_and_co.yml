@@ -3,7 +3,8 @@ name: Android Build, Sign and Release
 on:
   push:
     branches:
-      - '**'
+      - master
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -43,6 +44,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install Java
         uses: actions/setup-java@v4
@@ -54,22 +57,18 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      # Android signing
       - name: Sign Android
-        if: matrix.os == 'ubuntu-latest'
         run: |
           chmod +x ./build_and_sign_workflow.sh
           ./build_and_sign_workflow.sh
         env:
           GITHUB_REF_NAME: v${{ needs.prepare.outputs.version }}
 
-      # Upload Android artifacts to Release
-      - name: Upload Linux Artifacts to Release
-        if: matrix.os == 'ubuntu-latest'
+      - name: Upload APK to Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.prepare.outputs.version }}
           files: |
-            GeoWeather-*.apk
+            GeoWeather-v${{ needs.prepare.outputs.version }}.apk
           draft: true
           generate_release_notes: true
