@@ -38,7 +38,6 @@ jobs:
 
   build:
     needs: prepare
-    if: needs.prepare.outputs.create_tag == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -64,11 +63,20 @@ jobs:
         env:
           GITHUB_REF_NAME: v${{ needs.prepare.outputs.version }}
 
+      - name: Upload APK as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeoWeather-v${{ needs.prepare.outputs.version }}-build${{ github.run_number }}
+          path: GeoWeather-v${{ needs.prepare.outputs.version }}.apk
+          if-no-files-found: error
+          retention-days: 90
+
       - name: Upload APK to Release
+        if: needs.prepare.outputs.create_tag == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.prepare.outputs.version }}
           files: |
             GeoWeather-v${{ needs.prepare.outputs.version }}.apk
-          draft: true
+          draft: false
           generate_release_notes: true
