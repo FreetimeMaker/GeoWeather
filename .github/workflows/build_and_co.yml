@@ -78,5 +78,5 @@ jobs:
           tag_name: v${{ needs.prepare.outputs.version }}
           files: |
             GeoWeather-master.apk
-          draft: false
+          draft: true
           generate_release_notes: true
