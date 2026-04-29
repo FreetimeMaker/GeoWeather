@@ -1,6 +1,1 @@
-• Auto-Open: Automatically navigate to default or single location on startup.
-• Default Location: Set a favorite location as default with a star icon.
-• Current Location: Fetch location using native system services (LocationManager).
-• De-Googled: Fully removed Google Play Services dependency for location.
-• UI: Added "My Location" button and optimized notification icons.
-• Stability: Fixed crashes and resource errors for better performance.
+· Changed back to Android Only
