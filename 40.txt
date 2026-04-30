@@ -1,1 +1,0 @@
-· Updated so it won't Crash when trying to Donate

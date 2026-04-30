@@ -1,1 +1,1 @@
-· Updated so it won't Crash when trying to Donate
+· Changed back to Android Only
