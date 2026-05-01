@@ -1,14 +1,23 @@
----
 version: 2
 updates:
-  # Gradle Dependencies
-  - package-ecosystem: "gradle"
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
-      time: "12:00"
+      interval: "cron"
+      time: "0 * * * *"
     open-pull-requests-limit: 100
     commit-message:
       prefix: "chore"
       include: "scope"
 
+  # Gradle Dependencies
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "cron"
+      time: "0 * * * *"
+    open-pull-requests-limit: 100
+    commit-message:
+      prefix: "chore"
+      include: "scope"

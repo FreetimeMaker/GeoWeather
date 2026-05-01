@@ -1,4 +1,4 @@
-name: Build, Sign and Release Android App and Web Page
+name: Build, Sign and Release Android App
 
 on:
   push:
@@ -27,7 +27,9 @@ jobs:
         run: |
           VERSION=$(grep 'versionName' app/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
           git fetch --tags
+
           if git rev-parse "v$VERSION" >/dev/null 2>&1; then
             echo "create_tag=false" >> "$GITHUB_OUTPUT"
           else
@@ -56,27 +58,52 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Sign Android
+      - name: Build Android App
+        run: ./gradlew :app:assembleRelease
+
+      - name: Find APKSIGNER
+        id: find_apksigner
         run: |
-          chmod +x ./build_and_sign_workflow.sh
-          ./build_and_sign_workflow.sh
-        env:
-          GITHUB_REF_NAME: v${{ needs.prepare.outputs.version }}
+          APKSIGNER=$(find /usr/local/lib/android/sdk/build-tools -name apksigner | head -n 1)
+          echo "apksigner=$APKSIGNER" >> $GITHUB_OUTPUT
+
+      - name: Sign Android
+        id: sign_apk
+        run: |
+          UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
+          SIGNED_APK="GeoWeather-${{ needs.prepare_android_app.outputs.version }}.apk"
+
+          echo "==> Signiere APK: $SIGNED_APK"
+          "${{ steps.find_apksigner.outputs.apksigner }}" sign \
+            --ks ./GeoWeather-KeyStore.jks \
+            --ks-key-alias alle \
+            --ks-pass pass:KKKKKK \
+            --key-pass pass:KKKKKK \
+            --out "$SIGNED_APK" \
+            "$UNSIGNED_APK"
+
+          echo "signed_apk=$SIGNED_APK" >> $GITHUB_OUTPUT
+
+      - name: Verify APK Signature
+        run: |
+          echo "==> Überprüfe Signatur"
+          "${{ steps.find_apksigner.outputs.apksigner }}" verify --verbose \
+            "${{ steps.sign_apk.outputs.signed_apk }}"
 
       - name: Upload APK as build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GeoWeather-master.apk
-          path: GeoWeather-master.apk
+          name: GeoWeather-${{ needs.prepare_android_app.outputs.version }}.apk
+          path: GeoWeather-${{ needs.prepare_android_app.outputs.version }}.apk
           if-no-files-found: error
           retention-days: 90
 
       - name: Upload APK to Release
-        if: needs.prepare.outputs.create_tag == 'true'
+        if: needs.prepare_android_app.outputs.create_tag == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ needs.prepare.outputs.version }}
+          tag_name: v${{ needs.prepare_android_app.outputs.version }}
           files: |
-            GeoWeather-master.apk
+            GeoWeather-${{ needs.prepare_android_app.outputs.version }}.apk
           draft: true
           generate_release_notes: true
