@@ -93,9 +93,9 @@
     <string name="hour_label">שעה</string>
     <string name="humidity_label">לחות</string>
     <string name="minute_label">דקה</string>
-    <string name="open_change_log">יומן שינויים</string>
+    <string name="open_change_log">פתיחת יומן שינויים</string>
     <string name="wc_rain">גשם</string>
-    <string name="refresh_nav_desc">רענן</string>
+    <string name="refresh_nav_desc">רענון</string>
     <string name="removed_label">הוסר</string>
     <string name="settings_nav_desc">הגדרות</string>
     <string name="sunrise_label">זריחה</string>
@@ -114,5 +114,19 @@
     <string name="whats_new_title">מה חדש?</string>
     <string name="wind_label">רוח</string>
     <string name="wind_speed_unit">יחידת מהירות רוח</string>
-    <string name="fixed_label">קבוע</string>
+    <string name="fixed_label"></string>
+    <string name="DonViaTRON">תרומה באמצעות TRON</string>
+    <string name="donate_title">תרומה</string>
+    <string name="wc_mainly_clear">בהיר לרוב</string>
+    <string name="back_nav_desc">חזרה</string>
+    <string name="cancel_btn">ביטול</string>
+    <string name="dynamic_color_title">צבעים דינמיים (Material You)</string>
+    <string name="hourly_label">לפי שעה</string>
+    <string name="unit_kmh">קמ״ש</string>
+    <string name="wind_kmh_suffix">קמ״ש</string>
+    <string name="MoonPhaseTXT">צורת הירח</string>
+    <string name="payment_failed">התשלום נכשל</string>
+    <string name="payment_successful">התשלום הצליח</string>
+    <string name="select_time_title">בחירת שעה</string>
+    <string name="set_as_default">קביעה כברירת מחדל</string>
 </resources>
