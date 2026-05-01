@@ -77,7 +77,6 @@
     <string name="wallet_connected">Wallet Connected</string>
     <string name="WeatherNotificationTXT">Weather in %1$s: %2$s, %3$s</string>
     <string name="WeatherChangeTXT">Weather Change Alert</string>
-
     <!-- Unit Settings -->
     <string name="unit_settings_title">Unit Settings</string>
     <string name="temperature_unit">Temperature Unit</string>
@@ -86,7 +85,6 @@
     <string name="unit_fahrenheit">Fahrenheit (°F)</string>
     <string name="unit_kmh">km/h</string>
     <string name="unit_mph">mph</string>
-
     <!-- Weather Detail Strings -->
     <string name="wind_label">Wind</string>
     <string name="feels_like_label">Feels like</string>
@@ -102,7 +100,6 @@
     <string name="no_locations_msg">No locations added yet.\nClick on the plus icon below.</string>
     <string name="error_loading_weather">Error loading weather</string>
     <string name="unknown_location">Unknown</string>
-
     <!-- Changelog Strings -->
     <string name="cl_coordinate_search">Coordinate Searching function</string>
     <string name="cl_state_in_search">Added State in search to make the right city obvious</string>
@@ -116,7 +113,6 @@
     <string name="cl_forecast_enhanced">Enhanced 7-day forecast with interactive details</string>
     <string name="cl_widget_refresh">New Home Screen Widget with refresh button</string>
     <string name="cl_moon_phase">Added moon phase data support</string>
-
     <!-- Settings Strings -->
     <string name="dynamic_color_title">Dynamic Colors (Material You)</string>
     <string name="dynamic_color_subtitle">Colors based on your wallpaper (Android 12+)</string>
@@ -129,7 +125,6 @@
     <string name="weather_api_key_label">WeatherAPI Key</string>
     <string name="provider_open_meteo">Open-Meteo (Recommended)</string>
     <string name="provider_weatherapi">WeatherAPI (Requires API Key)</string>
-
     <!-- Donation Strings -->
     <string name="donate_title">Donate</string>
     <string name="support_development">Support development</string>
@@ -139,7 +134,6 @@
     <string name="supporters_title">Supporters</string>
     <string name="back_to_support">Go Back to the Support Page</string>
     <string name="search_placeholder">e.g. New York or 40.71, -74.00</string>
-
     <!-- Weather Condition Strings -->
     <string name="wc_clear">Clear sky</string>
     <string name="wc_mainly_clear">Mainly clear</string>
@@ -156,46 +150,39 @@
     <string name="wc_thunderstorm">Thunderstorm</string>
     <string name="wc_thunderstorm_hail">Thunderstorm with hail</string>
     <string name="wc_unknown">Unknown</string>
-
     <!-- Trends -->
     <string name="historical_trends_label">Historical Trends (Last 7 Days)</string>
     <string name="trend_max">Max</string>
     <string name="trend_min">Min</string>
-
     <!-- Widget -->
     <string name="widget_label">GeoWeather Small</string>
     <string name="widget_loading">Loading...</string>
     <string name="no_location_selected">No Location</string>
     <string name="error_connection">Error: Check Connection</string>
     <string name="select_city_msg">Select a city in app</string>
-
     <!-- Moon Strings -->
     <string name="MoonPhaseTXT">Moon phase</string>
     <string name="moonrise_label">Moonrise</string>
     <string name="moonset_label">Moonset</string>
     <string name="illumination_label">Illumination</string>
-
     <!-- Location Labels -->
     <string name="coordinates_label">Lat: %1$.2f, Lon: %2$.2f</string>
     <string name="set_as_default">Set as default</string>
     <string name="remove_default">Remove default</string>
     <string name="current_location">Current Location</string>
-
     <!-- Worker Strings -->
     <string name="temperature_change_msg">Temperature changed from %1$s to %2$s</string>
     <string name="wind_increase_msg">Wind increased to %1$s</string>
     <string name="precip_increase_msg">Precipitation chance: %1$d%%</string>
     <string name="condition_change_msg">Condition: %1$s → %2$s</string>
     <string name="weather_changed_in_city">Weather changed in %1$s</string>
-
     <!-- Suffixes and Units -->
     <string name="temp_c_suffix">°C</string>
     <string name="temp_f_suffix">°F</string>
-    <string name="wind_kmh_suffix"> km/h</string>
-    <string name="wind_mph_suffix"> mph</string>
+    <string name="wind_kmh_suffix">km/h</string>
+    <string name="wind_mph_suffix">mph</string>
     <string name="temp_deg_suffix">°</string>
     <string name="humidity_suffix">%</string>
-
     <!-- ChangeLogs of v1.3.6 & v1.3.7 -->
     <string name="cl_v136_auto_open">Auto-navigation to default or single location on startup</string>
     <string name="cl_v136_default_location">Set favorite locations as default with a star icon</string>
