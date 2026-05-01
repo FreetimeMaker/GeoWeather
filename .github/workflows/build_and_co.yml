@@ -61,6 +61,47 @@ jobs:
       - name: Build Android App
         run: ./gradlew :app:assembleRelease
 
+      # ---------------------------------------
+      # 🔥 VIRUSTOTAL SCAN BEFORE SIGNING
+      # ---------------------------------------
+      - name: VirusTotal Scan
+        id: vt_scan
+        run: |
+          APK="app/build/outputs/apk/release/app-release-unsigned.apk"
+
+          echo "==> Uploading APK to VirusTotal..."
+          RESPONSE=$(curl -s -X POST "https://www.virustotal.com/api/v3/files" \
+            -H "x-apikey: $VT_API_KEY" \
+            -F "file=@${APK}")
+
+          ANALYSIS_ID=$(echo "$RESPONSE" | jq -r '.data.id')
+
+          echo "Analysis ID: $ANALYSIS_ID"
+
+          echo "==> Waiting for VirusTotal analysis..."
+          STATUS="queued"
+
+          while [ "$STATUS" != "completed" ]; do
+            sleep 10
+            RESULT=$(curl -s "https://www.virustotal.com/api/v3/analyses/$ANALYSIS_ID" \
+              -H "x-apikey: $VT_API_KEY")
+            STATUS=$(echo "$RESULT" | jq -r '.data.attributes.status')
+            echo "Status: $STATUS"
+          done
+
+          MALICIOUS=$(echo "$RESULT" | jq -r '.data.attributes.stats.malicious')
+
+          echo "Malicious count: $MALICIOUS"
+
+          if [ "$MALICIOUS" != "0" ]; then
+            echo "❌ VirusTotal detected malware!"
+            exit 1
+          fi
+
+          echo "✅ VirusTotal reports: CLEAN"
+        env:
+          VT_API_KEY: ${{ secrets.VT_API_KEY }}
+
       - name: Find APKSIGNER
         id: find_apksigner
         run: |
