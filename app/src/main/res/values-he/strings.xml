@@ -96,4 +96,23 @@
     <string name="open_change_log">יומן שינויים</string>
     <string name="wc_rain">גשם</string>
     <string name="refresh_nav_desc">רענן</string>
+    <string name="removed_label">הוסר</string>
+    <string name="settings_nav_desc">הגדרות</string>
+    <string name="sunrise_label">זריחה</string>
+    <string name="SunriseOnly">זריחה</string>
+    <string name="SunriseSunsetLabel">זריחה/שקיעה</string>
+    <string name="sunset_label">שקיעה</string>
+    <string name="SunsetOnly">שקיעה</string>
+    <string name="support_development">תמיכה בפיתוח</string>
+    <string name="supporters_title">תומכים</string>
+    <string name="temperature_unit">יחידת טמפרטורה</string>
+    <string name="theme_settings_title">הגדרות ערכת נושא</string>
+    <string name="wc_thunderstorm">סופת רעמים</string>
+    <string name="wc_unknown">לא ידוע</string>
+    <string name="unknown_location">לא ידוע</string>
+    <string name="weather_provider_title">ספק מזג האוויר</string>
+    <string name="whats_new_title">מה חדש?</string>
+    <string name="wind_label">רוח</string>
+    <string name="wind_speed_unit">יחידת מהירות רוח</string>
+    <string name="fixed_label">קבוע</string>
 </resources>
