@@ -80,4 +80,18 @@
     <string name="PrecipitationChangeTXT">Precipitation chance increased to %1$s%%</string>
     <string name="ConditionChangeTXT">Weather condition changed from %1$s to %2$s</string>
     <string name="ErrorFetchingWeatherTXT">Error loading weather data. Please try again.</string>
+    <string name="wc_clear">שמיים בהירים</string>
+    <string name="crypto_label">מטבעות קריפטו</string>
+    <string name="current_location">המיקום הנוכחי</string>
+    <string name="donate_nav_desc">תרומה</string>
+    <string name="widget_loading">בטעינה...</string>
+    <string name="unit_celsius">צלזיוס (‎°C)</string>
+    <string name="change_log_title">יומן שינויים</string>
+    <string name="unit_fahrenheit">פרנהייט (‎°F)</string>
+    <string name="feels_like_label">מרגיש כמו</string>
+    <string name="wc_fog">ערפל</string>
+    <string name="hour_label">שעה</string>
+    <string name="humidity_label">לחות</string>
+    <string name="minute_label">דקה</string>
+    <string name="open_change_log">יומן שינויים</string>
 </resources>
