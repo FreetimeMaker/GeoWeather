@@ -94,4 +94,6 @@
     <string name="humidity_label">לחות</string>
     <string name="minute_label">דקה</string>
     <string name="open_change_log">יומן שינויים</string>
+    <string name="wc_rain">גשם</string>
+    <string name="refresh_nav_desc">רענן</string>
 </resources>
