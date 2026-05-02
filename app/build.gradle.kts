@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     id("com.google.devtools.ksp") // for Room
     alias(libs.plugins.room)
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -21,6 +22,9 @@ android {
         compose = true
     }
 
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
 }
 
 room {

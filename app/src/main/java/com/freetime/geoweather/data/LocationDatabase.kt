@@ -7,10 +7,11 @@ import androidx.room.RoomDatabase
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-@Database(entities = [LocationEntity::class], version = 6, exportSchema = false)
+@Database(entities = [LocationEntity::class, WeatherHistoryEntity::class], version = 7, exportSchema = false)
 abstract class LocationDatabase : RoomDatabase() {
 
     abstract fun locationDao(): LocationDao
+    abstract fun weatherHistoryDao(): WeatherHistoryDao
 
     companion object {
         @Volatile
