@@ -90,7 +90,7 @@
     <string name="sunrise_label">ຕາເວັນຂຶ້ນ</string>
     <string name="sunset_label">ຕາເວັນຕົກ</string>
     <string name="hourly_label">ລາຍຊົ່ວໂມງ</string>
-<string name="back_nav_desc">ກັບຄືນ</string>
+    <string name="back_nav_desc">ກັບຄືນ</string>
     <string name="refresh_nav_desc">ໂຫຼດຄືນໃໝ່</string>
     <string name="donate_nav_desc">ບໍລິຈາກ</string>
     <string name="settings_nav_desc">ການຕັ້ງຄ່າ</string>
