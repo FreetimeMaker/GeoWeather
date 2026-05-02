@@ -9,8 +9,8 @@ Experience an intuitive weather application inspired by the Swiss MeteoSwiss app
 - Quick switching between different locations
 - Personal favorites list
 
-📅 7-DAY FORECAST
-- Detailed weather predictions for the entire week
+📅 3 to 7-DAY FORECAST
+- Detailed weather predictions for the entire week (With Premium Plan)
 - Temperature trends and precipitation probability
 - Wind speed and humidity information
 
@@ -32,6 +32,7 @@ Experience an intuitive weather application inspired by the Swiss MeteoSwiss app
 💳 DONATION FEATURE
 - Support continued development
 - Voluntary support for open source
+- More Saving and more Features (With Premium Plan)
 
 🛠️ MODERN TECHNOLOGY
 - Developed with Jetpack Compose for smooth performance
