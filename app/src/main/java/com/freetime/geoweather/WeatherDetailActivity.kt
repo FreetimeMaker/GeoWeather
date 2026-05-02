@@ -165,9 +165,9 @@ fun WeatherDetailScreen(
                 weatherJson = json
             } else {
                 val url = if (weatherProvider == "weatherapi" && weatherApiKey.isNotEmpty()) {
-                    "https://api.weatherapi.com/v1/forecast.json?key=$weatherApiKey&q=$lat,$lon&days=7&aqi=yes"
+                    "https://api.weatherapi.com/v1/forecast.json?key=$weatherApiKey&q=$lat,$lon&days=3&aqi=yes"
                 } else {
-                    "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&timezone=auto"
+                    "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&forecast_days=3&timezone=auto"
                 }
                 
                 val aqiUrl = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
@@ -290,7 +290,7 @@ fun WeatherDetailScreen(
 
                 item {
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        Text(stringResource(R.string.forecast_7day_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.forecast_3day_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(8.dp))
                         forecastList.forEachIndexed { index, forecast ->
                             ForecastItemRow(
@@ -586,7 +586,8 @@ fun parseHourlyForecastData(json: String): List<HourlyForecast> {
         for (i in 0 until times.length()) {
             val date = inF.parse(times.getString(i)) ?: continue
             if (date.after(now.time) && list.size < 24) {
-                list.add(HourlyForecast(outF.format(date), temps.getDouble(i), codes.getInt(i)))
+                val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(h.getLong("time_epoch") * 1000))
+                hourlyList.add(HourlyForecast(time, h.getDouble("temp_c"), 0))
             }
         }
     } catch (_: Exception) {}
