@@ -68,6 +68,10 @@
             android:screenOrientation="portrait" />
         <activity android:name=".PolActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".OptimismActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ARB_Activity"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".WeatherWidgetReceiver"
@@ -79,11 +83,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/weather_widget_info" />
         </receiver>
-
-        <service
-            android:name="androidx.glance.appwidget.GlanceAppWidgetService"
-            android:exported="false"
-            android:permission="android.permission.BIND_REMOTEVIEW" />
     </application>
 
 </manifest>

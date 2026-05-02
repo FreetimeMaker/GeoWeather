@@ -96,8 +96,17 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.4.1" to listOf(
+          "· Added more Donation Options"
+        ),
+        "v1.4.0" to listOf(
+          "· Changed everything from 7 Days to 3 Days because I am working on an API for the App with Different optional plans."
+        ),
+        "v1.3.9" to listOf(
+            "· Updated so it won't Crash when trying to Donate"
+        ),
         "v1.3.8" to listOf(
-            "Changed back to Android only"
+            "· Changed back to Android only"
         ),
         "v1.3.7" to listOf(
             "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v137_ci_cd)}",

@@ -28,8 +28,8 @@
     <string name="DelLocConAsk">Are you sure you want to delete %1$s?</string>
     <string name="DelTXT">Delete</string>
     <string name="CancelTXT">Cancel</string>
-    <string name="SearchForCity">Search for a City</string>
-    <string name="CityName">City name</string>
+    <string name="SearchForCity">Search for a City with name or coordinates</string>
+    <string name="CityName">City name or Coordinates</string>
     <string name="SearchBTNTXT">Search</string>
     <string name="theme_settings_title">Theme Settings</string>
     <string name="follow_system_theme">Follow System Theme</string>

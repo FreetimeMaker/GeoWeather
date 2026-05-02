@@ -135,6 +135,14 @@ fun DonateScreen(onBack: () -> Unit) {
                 context.startActivity(Intent(context, PolActivity::class.java))
             }
 
+            DonateButton(text = "Donate via Optimism") {
+                context.startActivity(Intent(context, OptimismActivity::class.java))
+            }
+
+            DonateButton(text = "Donate via ARB") {
+                context.startActivity(Intent(context, ARB_Activity::class.java))
+            }
+
             Spacer(Modifier.height(16.dp))
 
             FilledTonalButton(
