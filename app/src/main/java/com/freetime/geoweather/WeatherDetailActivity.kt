@@ -581,13 +581,12 @@ fun parseHourlyForecastData(json: String): List<HourlyForecast> {
         val temps = hourly.getJSONArray("temperature_2m")
         val codes = hourly.getJSONArray("weathercode")
         val inF = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())
-        val outF = SimpleDateFormat("HH:mm", Locale.getDefault())
         val now = Calendar.getInstance()
         for (i in 0 until times.length()) {
             val date = inF.parse(times.getString(i)) ?: continue
             if (date.after(now.time) && list.size < 24) {
-                val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(h.getLong("time_epoch") * 1000))
-                hourlyList.add(HourlyForecast(time, h.getDouble("temp_c"), 0))
+                val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
+                list.add(HourlyForecast(time, temps.getDouble(i), codes.getInt(i)))
             }
         }
     } catch (_: Exception) {}
