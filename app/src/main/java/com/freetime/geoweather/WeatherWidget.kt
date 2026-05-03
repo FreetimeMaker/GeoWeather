@@ -27,7 +27,7 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
+import androidx.glance.color.ColorProvider
 import com.freetime.geoweather.data.LocationDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -99,7 +99,7 @@ class WeatherWidget : GlanceAppWidget() {
         Row(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(ColorProvider(day = Color(0xFFE3F2FD), night = Color(0xFF1A1C1E)))
+                .background(ColorProvider(Color(0xFFE3F2FD), Color(0xFF1A1C1E)))
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -122,7 +122,7 @@ class WeatherWidget : GlanceAppWidget() {
                     text = name,
                     maxLines = 1,
                     style = TextStyle(
-                        color = ColorProvider(day = Color.Black, night = Color.White),
+                        color = ColorProvider(Color.Black, Color.White),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -133,7 +133,7 @@ class WeatherWidget : GlanceAppWidget() {
                         Text(
                             text = temp,
                             style = TextStyle(
-                                color = ColorProvider(day = Color.Black, night = Color.White),
+                                color = ColorProvider(Color.Black, Color.White),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -144,7 +144,7 @@ class WeatherWidget : GlanceAppWidget() {
                         text = info,
                         maxLines = 1,
                         style = TextStyle(
-                            color = ColorProvider(day = Color.DarkGray, night = Color.LightGray),
+                            color = ColorProvider(Color.DarkGray, Color.LightGray),
                             fontSize = 12.sp
                         )
                     )

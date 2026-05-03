@@ -156,6 +156,24 @@ class WeatherRepository(private val context: Context) {
         return list
     }
 
+    suspend fun getHistoricalData(lat: Double, lon: Double, daysAgo: Int = 3): List<DailyForecast> {
+        return try {
+            val cal = Calendar.getInstance()
+            val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            cal.add(Calendar.DAY_OF_YEAR, -1)
+            val endDate = df.format(cal.time)
+            cal.add(Calendar.DAY_OF_YEAR, -(daysAgo - 1))
+            val startDate = df.format(cal.time)
+            
+            val url = "${ApiConstants.OPEN_METEO_ARCHIVE}?latitude=$lat&longitude=$lon&start_date=$startDate&end_date=$endDate&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto"
+            val response = NetworkUtils.httpGet(url) ?: return emptyList()
+            val json = JSONObject(response)
+            parseOpenMeteoDaily(json.getJSONObject("daily"))
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     sealed class WeatherDataResult {
         data class Success(
             val provider: String,

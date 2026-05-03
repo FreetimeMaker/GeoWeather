@@ -46,6 +46,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
+import com.freetime.geoweather.data.LocationDatabase
+import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.LocationsViewModel
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import kotlinx.coroutines.Dispatchers

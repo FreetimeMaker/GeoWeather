@@ -51,7 +51,6 @@
     <string name="DailyWeatherUpdateTXT">ອັບເດດສະພາບອາກາດປະຈຳວັນ</string>
     <string name="AQILabel">AQI: %1$s</string>
     <string name="DonViaFMSDK">ບໍລິຈາກຜ່ານ FreetimeSDK</string>
-    <string name="DonViaFreetimeSDK">ບໍລິຈາກຜ່ານ FreetimeSDK</string>
     <string name="MoonCycleTXT">ວົງຈອນດວງຈັນ</string>
     <string name="SunriseOnly">ຕາເວັນຂຶ້ນ</string>
     <string name="SunriseSunsetLabel">ຕາເວັນຂຶ້ນ/ຕາເວັນຕົກ</string>

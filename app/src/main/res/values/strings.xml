@@ -194,6 +194,8 @@
     <string name="cl_v137_ci_cd">Improved build stability and CI/CD performance with Gradle caching</string>
     <string name="cl_v137_signing">Enhanced security for automated APK signing in GitHub Actions</string>
     <string name="cl_v137_wasm">Fixed WebAssembly (Wasm) build issues caused by external dependencies</string>
+    <string name="show_historical_data">Show Historical Data</string>
+    <string name="show_historical_data_desc">Show weather trends from the last 3 days</string>
     <string name="require_login_title">Require Login</string>
     <string name="require_login_subtitle">Ask for login on app startup</string>
     <string name="account_nav_desc">Account / Login</string>

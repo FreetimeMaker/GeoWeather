@@ -34,13 +34,11 @@ object WeatherIconMapper {
         return if (provider.lowercase() == "weatherapi") {
             getWeatherApiIcon(code, isDay)
         } else {
-            getWeatherIcon(code)
+            getWeatherIcon(code, isDay)
         }
     }
 
-    fun getWeatherIcon(code: Int): Int {
-        val isDay = isDaytime()
-
+    fun getWeatherIcon(code: Int, isDay: Boolean = isDaytime()): Int {
         return when (code) {
             0 -> if (isDay) R.drawable.google_clear_day else R.drawable.google_clear_night
             1 -> if (isDay) R.drawable.google_mostly_clear_day else R.drawable.google_mostly_clear_night
@@ -53,8 +51,8 @@ object WeatherIconMapper {
             66, 67 -> R.drawable.icy
             71, 73, 75 -> if (isDay) R.drawable.google_snow_with_sunny_light else R.drawable.google_snow_with_sunny_dark
             77 -> R.drawable.flurries
-            80, 81, 82 -> R.drawable.scattered_showers
-            85, 86 -> R.drawable.scattered_snow_showers_day
+            80, 81, 82 -> if (isDay) R.drawable.scattered_showers_day else R.drawable.scattered_showers_night
+            85, 86 -> if (isDay) R.drawable.scattered_snow_showers_day else R.drawable.scattered_snow_showers_night
             95 -> R.drawable.isolated_scattered_thunderstorms_day
             96, 99 -> R.drawable.isolated_scattered_thunderstorms_day
             else -> if (isDay) R.drawable.google_cloudy_with_sunny_light else R.drawable.google_cloudy_with_sunny_dark
@@ -77,9 +75,9 @@ object WeatherIconMapper {
             1087, 1273, 1276, 1279, 1282 -> R.drawable.isolated_scattered_thunderstorms_day
             1114, 1117 -> R.drawable.blowing_snow
             1237, 1261, 1264 -> R.drawable.flurries
-            1240, 1243, 1246 -> R.drawable.scattered_showers
-            1249, 1252 -> R.drawable.scattered_showers
-            1255, 1258 -> R.drawable.scattered_snow_showers_day
+            1240, 1243, 1246 -> if (isDay) R.drawable.scattered_showers_day else R.drawable.scattered_showers_night
+            1249, 1252 -> if (isDay) R.drawable.scattered_showers_day else R.drawable.scattered_showers_night
+            1255, 1258 -> if (isDay) R.drawable.scattered_snow_showers_day else R.drawable.scattered_snow_showers_night
             else -> if (isDay) R.drawable.google_cloudy_with_sunny_light else R.drawable.google_cloudy_with_sunny_dark
         }
     }

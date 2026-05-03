@@ -206,12 +206,7 @@ fun WeatherDetailScreen(
                 }
                 
                 if (showHistoricalData) {
-                    try {
-                        val histUrl = "${ApiConstants.OPEN_METEO_ARCHIVE}?latitude=$lat&longitude=$lon&start_date=${getYesterdayDate(3)}&end_date=${getYesterdayDate(1)}&daily=temperature_2m_max,temperature_2m_min&timezone=auto"
-                        val histJson = withContext(Dispatchers.IO) { NetworkUtils.httpGet(histUrl) }
-                        // Historical data still uses local parsing for now as it's a specific archive call
-                        historicalData = parseForecastData(histJson)
-                    } catch (_: Exception) {}
+                    historicalData = weatherRepository.getHistoricalData(lat, lon, 3)
                 }
             }
             errorMessage = null
@@ -566,25 +561,6 @@ fun getYesterdayDate(daysAgo: Int): String {
     val cal = Calendar.getInstance()
     cal.add(Calendar.DAY_OF_YEAR, -daysAgo)
     return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.time)
-}
-
-fun parseForecastData(json: String): List<DailyForecast> {
-    val list = mutableListOf<DailyForecast>()
-    try {
-        val obj = JSONObject(json)
-        val daily = obj.getJSONObject("daily")
-        val times = daily.getJSONArray("time")
-        val tMax = daily.getJSONArray("temperature_2m_max")
-        val tMin = daily.getJSONArray("temperature_2m_min")
-        val codes = if (daily.has("weathercode")) daily.getJSONArray("weathercode") else null
-        val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val outF = SimpleDateFormat("EEE, dd. MMM", Locale.getDefault())
-        for (i in 0 until times.length()) {
-            val date = df.parse(times.getString(i))
-            list.add(DailyForecast(outF.format(date ?: Date()), tMax.getDouble(i), tMin.getDouble(i), codes?.getInt(i) ?: 0))
-        }
-    } catch (_: Exception) {}
-    return list
 }
 
 fun getCurrentHourIndex(timesArray: JSONArray): Int {

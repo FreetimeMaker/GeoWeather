@@ -65,7 +65,7 @@ data class LocationEntity(
                     if (obj.has("current")) {
                         obj.getJSONObject("current").getInt("is_day") == 1
                     } else true
-                }
+                } ?: true
             } catch (e: Exception) {
                 true
             }
