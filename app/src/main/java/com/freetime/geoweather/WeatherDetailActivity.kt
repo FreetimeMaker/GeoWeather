@@ -598,7 +598,7 @@ fun formatTime(timeString: String): String {
 
 
 @Composable
-fun HistoryItemRow(entry: WeatherHistoryEntity, tempUnit: String) {
+private fun HistoryItemRow(entry: WeatherHistoryEntity, tempUnit: String) {
     val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
     val dateString = sdf.format(Date(entry.timestamp))
     
@@ -616,7 +616,7 @@ fun HistoryItemRow(entry: WeatherHistoryEntity, tempUnit: String) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = entry.location, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Text(text = "", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
+                Text(text = "$displayTemp$tempSuffix", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
             Row(

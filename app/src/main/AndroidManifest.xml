@@ -56,8 +56,6 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ChangeLogActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".WeatherHistoryActivity"
-            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".WeatherWidgetReceiver"
