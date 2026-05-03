@@ -7,10 +7,11 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 
 object NetworkUtils {
-    fun httpGet(urlString: String): String {
+    fun httpGet(urlString: String, token: String? = null): String {
         val url = URL(urlString)
         val c = url.openConnection() as HttpURLConnection
         c.setRequestProperty("User-Agent", "GeoWeatherApp")
+        token?.let { c.setRequestProperty("Authorization", "Bearer $it") }
         c.connectTimeout = 12000
         c.readTimeout = 12000
         

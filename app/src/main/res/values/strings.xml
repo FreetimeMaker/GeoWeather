@@ -196,6 +196,8 @@
     <string name="cl_v137_wasm">Fixed WebAssembly (Wasm) build issues caused by external dependencies</string>
     <string name="show_historical_data">Show Historical Data</string>
     <string name="show_historical_data_desc">Show weather trends from the last 3 days</string>
+    <string name="cloud_sync_available">Cloud Sync Available</string>
+    <string name="cloud_sync_desc">Login to backup your locations and sync across devices.</string>
     <string name="require_login_title">Require Login</string>
     <string name="require_login_subtitle">Ask for login on app startup</string>
     <string name="account_nav_desc">Account / Login</string>

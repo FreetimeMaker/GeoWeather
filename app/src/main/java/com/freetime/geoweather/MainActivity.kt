@@ -56,6 +56,11 @@ import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 class MainActivity : ComponentActivity() {
@@ -69,7 +74,7 @@ class MainActivity : ComponentActivity() {
         if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
             permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         ) {
-            // Permission granted, handled in UI
+            // Permission granted
         }
     }
     
@@ -85,6 +90,14 @@ class MainActivity : ComponentActivity() {
         viewModel.syncWithCloud()
 
         val sharedPrefs = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
+        val requireLogin = sharedPrefs.getBoolean("require_login", false)
+        val authManager = AuthManager.getInstance(this)
+
+        if (requireLogin && !authManager.isAuthenticated) {
+            startActivity(Intent(this, AuthActivity::class.java))
+            finish()
+            return
+        }
         
         val db = LocationDatabase.getDatabase(this)
         lifecycleScope.launch {
@@ -313,75 +326,99 @@ fun MainScreen(
             )
         }
     ) { innerPadding ->
-        if (locations.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                Text(
-                    text = stringResource(R.string.no_locations_msg),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            val authManager = remember { AuthManager.getInstance(context) }
+            val isAuthenticated = authManager.isAuthenticated
+            
+            if (!isAuthenticated) {
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(text = "Cloud Sync verfügbar", style = MaterialTheme.typography.titleMedium)
+                            Text(text = "Melde dich an, um deine Standorte zu sichern.", style = MaterialTheme.typography.bodySmall)
+                        }
+                        Button(onClick = { context.startActivity(Intent(context, AuthActivity::class.java)) }) {
+                            Text("Login")
+                        }
+                    }
+                }
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = innerPadding
-            ) {
-                items(locations) { loc ->
-                    val sharedPrefs = LocalContext.current.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-                    val tempUnit = sharedPrefs.getString("temp_unit", "celsius") ?: "celsius"
-                    
-                    ListItem(
-                        leadingContent = {
-                            loc.currentWeatherCode?.let { code ->
-                                Icon(
-                                    painter = painterResource(id = WeatherIconMapper.getIcon(code, loc.provider, loc.isDay)),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(40.dp),
-                                    tint = Color.Unspecified
-                                )
-                            }
-                        },
-                        headlineContent = { 
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(loc.name)
-                                loc.currentTemp?.let { temp ->
-                                    val displayTemp = if (tempUnit == "fahrenheit") (temp * 9/5 + 32).toInt() else temp.toInt()
-                                    val suffix = if (tempUnit == "fahrenheit") "°F" else "°C"
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        text = "$displayTemp$suffix",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            }
-                        },
-                        supportingContent = { Text(stringResource(R.string.coordinates_label, loc.latitude, loc.longitude)) },
-                        trailingContent = {
-                            Row {
-                                IconButton(onClick = {
-                                    viewModel.setDefaultLocation(loc, !loc.isDefault)
-                                }) {
-                                    Icon(
-                                        if (loc.isDefault) Icons.Default.Star else Icons.Default.StarBorder,
-                                        contentDescription = stringResource(if (loc.isDefault) R.string.remove_default else R.string.set_as_default),
-                                        tint = if (loc.isDefault) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                                IconButton(onClick = { locationToDelete = loc }) {
-                                    Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.DelLoc), tint = MaterialTheme.colorScheme.error)
-                                }
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                viewModel.selectLocation(loc)
-                                onOpenDetail(loc.name, loc.latitude, loc.longitude)
-                            }
+
+            if (locations.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = stringResource(R.string.no_locations_msg),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant)
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(locations) { loc ->
+                        val sharedPrefs = LocalContext.current.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
+                        val tempUnit = sharedPrefs.getString("temp_unit", "celsius") ?: "celsius"
+                        
+                        ListItem(
+                            leadingContent = {
+                                loc.currentWeatherCode?.let { code ->
+                                    Icon(
+                                        painter = painterResource(id = WeatherIconMapper.getIcon(code, loc.provider, loc.isDay)),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(40.dp),
+                                        tint = Color.Unspecified
+                                    )
+                                }
+                            },
+                            headlineContent = { 
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(loc.name)
+                                    loc.currentTemp?.let { temp ->
+                                        val displayTemp = if (tempUnit == "fahrenheit") (temp * 9/5 + 32).toInt() else temp.toInt()
+                                        val suffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+                                        Spacer(Modifier.width(8.dp))
+                                        Text(
+                                            text = "$displayTemp$suffix",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
+                            },
+                            supportingContent = { Text(stringResource(R.string.coordinates_label, loc.latitude, loc.longitude)) },
+                            trailingContent = {
+                                Row {
+                                    IconButton(onClick = {
+                                        viewModel.setDefaultLocation(loc, !loc.isDefault)
+                                    }) {
+                                        Icon(
+                                            if (loc.isDefault) Icons.Default.Star else Icons.Default.StarBorder,
+                                            contentDescription = stringResource(if (loc.isDefault) R.string.remove_default else R.string.set_as_default),
+                                            tint = if (loc.isDefault) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    IconButton(onClick = { locationToDelete = loc }) {
+                                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.DelLoc), tint = MaterialTheme.colorScheme.error)
+                                    }
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    viewModel.selectLocation(loc)
+                                    onOpenDetail(loc.name, loc.latitude, loc.longitude)
+                                }
+                        )
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant)
+                    }
                 }
             }
         }
@@ -417,6 +454,20 @@ fun MainScreen(
                 }
             }
         )
+    }
+}
+
+private fun httpGet(urlString: String): String {
+    val url = URL(urlString)
+    val c = url.openConnection() as HttpURLConnection
+    c.setRequestProperty("User-Agent", "GeoWeatherApp")
+    c.connectTimeout = 12000
+    c.readTimeout = 12000
+    BufferedReader(InputStreamReader(c.inputStream, StandardCharsets.UTF_8)).use { reader ->
+        val sb = StringBuilder()
+        var line: String?
+        while (reader.readLine().also { line = it } != null) sb.append(line)
+        return sb.toString()
     }
 }
 

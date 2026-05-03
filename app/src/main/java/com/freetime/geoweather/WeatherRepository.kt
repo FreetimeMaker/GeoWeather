@@ -17,9 +17,12 @@ class WeatherRepository(private val context: Context) {
     suspend fun getWeatherData(lat: Double, lon: Double, days: Int = 3): WeatherDataResult {
         val provider = sharedPrefs.getString("weather_provider", "open_meteo") ?: "open_meteo"
         val apiKey = sharedPrefs.getString("weather_api_key", "") ?: ""
+        val authManager = AuthManager.getInstance(context)
 
         return try {
-            if (provider == "weatherapi" && apiKey.isNotEmpty()) {
+            if (authManager.isAuthenticated) {
+                fetchFromCustomApi(lat, lon, authManager.getAccessToken(), provider, days)
+            } else if (provider == "weatherapi" && apiKey.isNotEmpty()) {
                 fetchFromWeatherApi(lat, lon, apiKey, days)
             } else {
                 fetchFromOpenMeteo(lat, lon, days)
@@ -27,6 +30,105 @@ class WeatherRepository(private val context: Context) {
         } catch (e: Exception) {
             WeatherDataResult.Error(e.message ?: "Unknown error")
         }
+    }
+
+    private fun fetchFromCustomApi(lat: Double, lon: Double, token: String, provider: String, days: Int): WeatherDataResult {
+        val url = "${ApiConstants.BASE_URL}/api/weather?latitude=$lat&longitude=$lon&provider=$provider&days=$days"
+        val response = NetworkUtils.httpGet(url, token)
+        val json = JSONObject(response)
+        
+        // Custom API returns standardized format or pass-through
+        // For now, let's assume it returns a success flag and data
+        if (json.optBoolean("success", true)) {
+            val data = json.optJSONObject("data") ?: json
+            return if (provider == "weatherapi") {
+                // If the API returns raw WeatherAPI response
+                parseWeatherApiData(data, response)
+            } else {
+                // Assume Open-Meteo or similar
+                parseOpenMeteoData(data, response, lat, lon)
+            }
+        } else {
+            return WeatherDataResult.Error(json.optString("message", "API Error"))
+        }
+    }
+
+    private fun parseOpenMeteoData(json: JSONObject, rawResponse: String, lat: Double, lon: Double): WeatherDataResult {
+        val current = if (json.has("current")) json.getJSONObject("current") else json.getJSONObject("current_weather")
+        val daily = json.getJSONObject("daily")
+        val hourly = json.getJSONObject("hourly")
+
+        val aqiJson = try {
+            NetworkUtils.httpGet(ApiConstants.getAirQualityUrl(lat, lon))
+        } catch (e: Exception) {
+            null
+        }
+        
+        val moonPhase = try {
+            getMoonPhase(lat, lon)
+        } catch (e: Exception) {
+            null
+        }
+
+        return WeatherDataResult.Success(
+            provider = "open_meteo",
+            temp = current.getDouble(if (current.has("temperature_2m")) "temperature_2m" else "temperature"),
+            windSpeed = current.optDouble(if (current.has("windspeed_10m")) "windspeed_10m" else "windspeed", 0.0),
+            precipitation = 0.0,
+            weatherCode = current.getInt("weathercode"),
+            isDay = current.optInt("is_day", 1) == 1,
+            dailyForecast = parseOpenMeteoDaily(daily),
+            hourlyForecast = parseOpenMeteoHourly(hourly),
+            rawJson = rawResponse,
+            aqiJson = aqiJson,
+            moonPhase = moonPhase
+        )
+    }
+
+    private fun parseWeatherApiData(json: JSONObject, rawResponse: String): WeatherDataResult {
+        val current = json.getJSONObject("current")
+        val forecast = json.getJSONObject("forecast").getJSONArray("forecastday")
+
+        val dailyList = mutableListOf<DailyForecast>()
+        val hourlyList = mutableListOf<HourlyForecast>()
+        
+        val outF = SimpleDateFormat("EEE, dd. MMM", Locale.getDefault())
+        val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        for (i in 0 until forecast.length()) {
+            val day = forecast.getJSONObject(i)
+            val dayInfo = day.getJSONObject("day")
+            val date = df.parse(day.getString("date"))
+            val code = dayInfo.getJSONObject("condition").getInt("code")
+            dailyList.add(DailyForecast(outF.format(date ?: Date()), dayInfo.getDouble("maxtemp_c"), dayInfo.getDouble("mintemp_c"), code))
+            
+            if (i == 0) {
+                val hours = day.getJSONArray("hour")
+                val now = System.currentTimeMillis()
+                for (j in 0 until hours.length()) {
+                    val h = hours.getJSONObject(j)
+                    if (h.getLong("time_epoch") * 1000 > now && hourlyList.size < 24) {
+                        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(h.getLong("time_epoch") * 1000))
+                        val hCode = h.getJSONObject("condition").getInt("code")
+                        hourlyList.add(HourlyForecast(time, h.getDouble("temp_c"), hCode))
+                    }
+                }
+            }
+        }
+
+        return WeatherDataResult.Success(
+            provider = "weatherapi",
+            temp = current.getDouble("temp_c"),
+            windSpeed = current.getDouble("wind_kph"),
+            precipitation = current.getDouble("precip_mm"),
+            weatherCode = current.getJSONObject("condition").getInt("code"),
+            isDay = current.getInt("is_day") == 1,
+            dailyForecast = dailyList,
+            hourlyForecast = hourlyList,
+            rawJson = rawResponse,
+            aqiJson = rawResponse,
+            moonPhase = null // Moon phase can be added if needed
+        )
     }
 
     private fun fetchFromOpenMeteo(lat: Double, lon: Double, days: Int): WeatherDataResult {
@@ -170,6 +272,7 @@ class WeatherRepository(private val context: Context) {
     }
 
     suspend fun getHistoricalData(lat: Double, lon: Double, daysAgo: Int = 3): List<DailyForecast> {
+        val authManager = AuthManager.getInstance(context)
         return try {
             val cal = Calendar.getInstance()
             val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -178,10 +281,21 @@ class WeatherRepository(private val context: Context) {
             cal.add(Calendar.DAY_OF_YEAR, -(daysAgo - 1))
             val startDate = df.format(cal.time)
             
-            val url = "${ApiConstants.OPEN_METEO_ARCHIVE}?latitude=$lat&longitude=$lon&start_date=$startDate&end_date=$endDate&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto"
-            val response = NetworkUtils.httpGet(url) ?: return emptyList()
+            val url = if (authManager.isAuthenticated) {
+                "${ApiConstants.BASE_URL}/api/weather/history?latitude=$lat&longitude=$lon&start_date=$startDate&end_date=$endDate"
+            } else {
+                "${ApiConstants.OPEN_METEO_ARCHIVE}?latitude=$lat&longitude=$lon&start_date=$startDate&end_date=$endDate&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto"
+            }
+            
+            val response = if (authManager.isAuthenticated) {
+                NetworkUtils.httpGet(url, authManager.getAccessToken())
+            } else {
+                NetworkUtils.httpGet(url)
+            } ?: return emptyList()
+            
             val json = JSONObject(response)
-            parseOpenMeteoDaily(json.getJSONObject("daily"))
+            val data = if (json.has("data")) json.getJSONObject("data") else json
+            parseOpenMeteoDaily(data.getJSONObject("daily"))
         } catch (e: Exception) {
             emptyList()
         }
