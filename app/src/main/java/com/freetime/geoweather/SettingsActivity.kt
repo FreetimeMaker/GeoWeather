@@ -87,10 +87,6 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
         mutableStateOf(sharedPreferences.getBoolean("show_historical_data", true))
     }
 
-    var requireLogin by remember {
-        mutableStateOf(sharedPreferences.getBoolean("require_login", false))
-    }
-
     val authManager = remember { AuthManager.getInstance(context) }
     var isAuthenticated by remember { mutableStateOf(authManager.isAuthenticated) }
     val userInfo = authManager.userInfo
@@ -248,18 +244,6 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     onCheckedChange = {
                         showHistoricalData = it
                         sharedPreferences.edit().putBoolean("show_historical_data", it).apply()
-                    }
-                )
-
-                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-
-                SettingsToggle(
-                    title = stringResource(R.string.require_login_title),
-                    subtitle = stringResource(R.string.require_login_subtitle),
-                    checked = requireLogin,
-                    onCheckedChange = {
-                        requireLogin = it
-                        sharedPreferences.edit().putBoolean("require_login", it).apply()
                     }
                 )
             }
