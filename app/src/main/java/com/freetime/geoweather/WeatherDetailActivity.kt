@@ -45,6 +45,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
+import com.freetime.geoweather.data.WeatherHistoryEntity
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -150,6 +151,7 @@ fun WeatherDetailScreen(
     var forecastList by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
     var hourlyForecastList by remember { mutableStateOf<List<HourlyForecast>>(emptyList()) }
     var historicalData by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
+    val localHistory by db.weatherHistoryDao().getHistoryForLocation(name).observeAsState(initial = emptyList())
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isRefreshing by remember { mutableStateOf(false) }
     
@@ -247,8 +249,12 @@ fun WeatherDetailScreen(
                         listOf(t.first, t.second, t.third, "weatherapi")
                     }
                 } else {
-                    val current = JSONObject(json).getJSONObject("current_weather")
-                    Triple(current.getDouble("temperature"), current.getInt("weathercode"), true).let { t ->
+                    val root = JSONObject(json)
+                    val current = if (root.has("current")) root.getJSONObject("current") else root.getJSONObject("current_weather")
+                    val temp = if (current.has("temperature_2m")) current.getDouble("temperature_2m") else current.getDouble("temperature")
+                    val code = current.getInt("weathercode")
+                    val isDay = current.optInt("is_day", 1) == 1
+                    Triple(temp, code, isDay).let { t ->
                         listOf(t.first, t.second, t.third, "open_meteo")
                     }
                 }
@@ -327,6 +333,23 @@ fun WeatherDetailScreen(
                 if (historicalData.isNotEmpty()) {
                     item {
                         HistoricalTrendsSection(historicalData, tempUnit)
+                    }
+                }
+
+                if (localHistory.isNotEmpty()) {
+                    item {
+                        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                            Text(
+                                text = stringResource(R.string.weather_history_title),
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            localHistory.take(5).forEach { entry ->
+                                HistoryItemRow(entry, tempUnit)
+                                Spacer(Modifier.height(8.dp))
+                            }
+                        }
                     }
                 }
                 
@@ -473,11 +496,11 @@ fun WeatherDetailsGrid(weatherObj: JSONObject, tempUnit: String, windUnit: Strin
         val current = weatherObj.getJSONObject("current")
         Triple(current.getDouble("wind_kph"), current.getDouble("feelslike_c"), current.getInt("humidity"))
     } else {
-        val current = weatherObj.getJSONObject("current_weather")
+        val current = if (weatherObj.has("current")) weatherObj.getJSONObject("current") else weatherObj.getJSONObject("current_weather")
         val hourly = weatherObj.optJSONObject("hourly")
         val currentIndex = if (hourly != null) getCurrentHourIndex(hourly.getJSONArray("time")) else -1
-        val windVal = current.getDouble("windspeed")
-        val feelsVal = if (currentIndex >= 0) hourly?.getJSONArray("apparent_temperature")?.optDouble(currentIndex, current.getDouble("temperature")) ?: current.getDouble("temperature") else current.getDouble("temperature")
+        val windVal = if (current.has("windspeed_10m")) current.getDouble("windspeed_10m") else current.getDouble("windspeed")
+        val feelsVal = if (currentIndex >= 0) hourly?.getJSONArray("apparent_temperature")?.optDouble(currentIndex, current.optDouble("temperature_2m", current.optDouble("temperature", 0.0))) ?: current.optDouble("temperature_2m", current.optDouble("temperature", 0.0)) else current.optDouble("temperature_2m", current.optDouble("temperature", 0.0))
         val humVal = if (currentIndex >= 0) hourly?.getJSONArray("relativehumidity_2m")?.optInt(currentIndex, 0) ?: 0 else 0
         Triple(windVal, feelsVal, humVal)
     }
@@ -573,3 +596,36 @@ fun formatTime(timeString: String): String {
     } catch (_: Exception) { timeString.takeLast(5) }
 }
 
+
+@Composable
+fun HistoryItemRow(entry: WeatherHistoryEntity, tempUnit: String) {
+    val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+    val dateString = sdf.format(Date(entry.timestamp))
+    
+    val displayTemp = if (tempUnit == "fahrenheit") (entry.temperature * 9/5 + 32).toInt() else entry.temperature.toInt()
+    val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = entry.location, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(text = "", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = entry.conditions ?: "", style = MaterialTheme.typography.bodyMedium)
+                Text(text = dateString, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+    }
+}

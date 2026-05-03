@@ -30,21 +30,34 @@ class WeatherRepository(private val context: Context) {
     }
 
     private fun fetchFromOpenMeteo(lat: Double, lon: Double, days: Int): WeatherDataResult {
-        val url = "${ApiConstants.OPEN_METEO_FORECAST}?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature,precipitation_probability,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&forecast_days=$days&timezone=auto"
-        val response = NetworkUtils.httpGet(url) ?: return WeatherDataResult.Error("Network error")
+        val url = "${ApiConstants.OPEN_METEO_FORECAST}?latitude=$lat&longitude=$lon&current=temperature_2m,windspeed_10m,weathercode,is_day&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature,precipitation_probability,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&forecast_days=$days&timezone=auto"
+        val response = try {
+            NetworkUtils.httpGet(url) ?: return WeatherDataResult.Error("Network error")
+        } catch (e: Exception) {
+            return WeatherDataResult.Error(e.message ?: "Network error")
+        }
         val json = JSONObject(response)
         
-        val current = json.getJSONObject("current_weather")
+        val current = if (json.has("current")) json.getJSONObject("current") else json.getJSONObject("current_weather")
         val daily = json.getJSONObject("daily")
         val hourly = json.getJSONObject("hourly")
 
-        val aqiJson = NetworkUtils.httpGet(ApiConstants.getAirQualityUrl(lat, lon))
-        val moonPhase = getMoonPhase(lat, lon)
+        val aqiJson = try {
+            NetworkUtils.httpGet(ApiConstants.getAirQualityUrl(lat, lon))
+        } catch (e: Exception) {
+            null
+        }
+        
+        val moonPhase = try {
+            getMoonPhase(lat, lon)
+        } catch (e: Exception) {
+            null
+        }
 
         return WeatherDataResult.Success(
             provider = "open_meteo",
-            temp = current.getDouble("temperature"),
-            windSpeed = current.optDouble("windspeed", 0.0),
+            temp = current.getDouble(if (current.has("temperature_2m")) "temperature_2m" else "temperature"),
+            windSpeed = current.optDouble(if (current.has("windspeed_10m")) "windspeed_10m" else "windspeed", 0.0),
             precipitation = 0.0,
             weatherCode = current.getInt("weathercode"),
             isDay = current.optInt("is_day", 1) == 1,

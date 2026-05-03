@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
@@ -37,6 +36,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -47,6 +47,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.LocationsViewModel
@@ -170,11 +172,12 @@ class MainActivity : ComponentActivity() {
             val id = data.getQueryParameter("id")
             val email = data.getQueryParameter("email")
             val name = data.getQueryParameter("name")
+            val pic = data.getQueryParameter("picture") ?: data.getQueryParameter("profile_picture") ?: ""
             val tier = data.getQueryParameter("tier") ?: "free"
 
             if (token != null) {
                 val authMgr = AuthManager.getInstance(this)
-                authMgr.saveAuthData(token, refreshToken ?: "", id ?: "", email ?: "", name ?: "", tier)
+                authMgr.saveAuthData(token, refreshToken ?: "", id ?: "", email ?: "", name ?: "", tier, pic)
                 Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
             }
         }
@@ -269,15 +272,23 @@ fun MainScreen(
                     IconButton(onClick = {
                         context.startActivity(Intent(context, AuthActivity::class.java))
                     }) {
-                        Icon(Icons.Default.AccountCircle, contentDescription = stringResource(R.string.account_nav_desc))
+                        val authMgr = remember { AuthManager.getInstance(context) }
+                        val userInfo = authMgr.userInfo
+                        if (userInfo?.profilePicture?.isNotEmpty() == true) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(userInfo.profilePicture)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = stringResource(R.string.account_nav_desc),
+                                modifier = Modifier.size(32.dp).clip(androidx.compose.foundation.shape.CircleShape)
+                            )
+                        } else {
+                            Icon(Icons.Default.AccountCircle, contentDescription = stringResource(R.string.account_nav_desc))
+                        }
                     }
                     IconButton(onClick = onOpenDonate) {
                         Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.donate_nav_desc), tint = MaterialTheme.colorScheme.primary)
-                    }
-                    IconButton(onClick = {
-                        context.startActivity(Intent(context, WeatherHistoryActivity::class.java))
-                    }) {
-                        Icon(Icons.Default.History, contentDescription = stringResource(R.string.history_nav_desc))
                     }
                     IconButton(onClick = {
                         context.startActivity(Intent(context, SettingsActivity::class.java))

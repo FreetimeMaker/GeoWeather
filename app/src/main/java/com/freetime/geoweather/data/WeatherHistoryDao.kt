@@ -7,6 +7,8 @@ import androidx.room.Query
 interface WeatherHistoryDao {
     @Query("SELECT * FROM weather_history ORDER BY timestamp DESC")
     fun getAllHistory(): LiveData<List<WeatherHistoryEntity>>
+    @Query("SELECT * FROM weather_history WHERE location = :locationName ORDER BY timestamp DESC")
+    fun getHistoryForLocation(locationName: String): LiveData<List<WeatherHistoryEntity>>
     @Insert
     fun insertHistory(history: WeatherHistoryEntity)
     @Query("DELETE FROM weather_history WHERE timestamp < :cutoffTime")

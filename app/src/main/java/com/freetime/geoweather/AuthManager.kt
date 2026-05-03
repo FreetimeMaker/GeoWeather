@@ -48,6 +48,7 @@ class AuthManager(private val context: Context) {
                     id = obj.optString("id", ""),
                     email = obj.optString("email", ""),
                     name = obj.optString("name", ""),
+                    profilePicture = obj.optString("profile_picture", ""),
                     subscriptionTier = obj.optString("subscription_tier", "free")
                 )
             } catch (e: Exception) {
@@ -60,11 +61,12 @@ class AuthManager(private val context: Context) {
     /**
      * Save authentication data from OAuth callback
      */
-    fun saveAuthData(token: String, refreshToken: String, id: String, email: String, name: String, subscriptionTier: String) {
+    fun saveAuthData(token: String, refreshToken: String, id: String, email: String, name: String, subscriptionTier: String, profilePicture: String = "") {
         val userObj = JSONObject()
         userObj.put("id", id)
         userObj.put("email", email)
         userObj.put("name", name)
+        userObj.put("profile_picture", profilePicture)
         userObj.put("subscription_tier", subscriptionTier)
 
         prefs.edit()
@@ -92,6 +94,7 @@ data class UserInfo(
     val id: String,
     val email: String,
     val name: String,
+    val profilePicture: String,
     val subscriptionTier: String
 )
 

@@ -96,6 +96,13 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.5.4" to listOf(
+            "Added support for user profile pictures from API",
+            "Moved weather history section to Weather Detail view",
+            "Improved Open-Meteo API compatibility and weather loading",
+            "Fixed weather history icon in Main Screen",
+            "Added image loading support with Coil"
+        ),
         "v1.5.3" to listOf(
             "Implemented GitHub OAuth authentication via API",
             "Login is now optional and managed via Settings",
