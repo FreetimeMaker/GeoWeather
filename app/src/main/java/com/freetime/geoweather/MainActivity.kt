@@ -20,13 +20,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -78,6 +82,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         hideSystemBars()
         checkNotificationPermission()
+
+        val sharedPrefs = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
+        val requireLogin = sharedPrefs.getBoolean("require_login", false)
+        val authManager = AuthManager.getInstance(this)
+
+        if (requireLogin && !authManager.isAuthenticated) {
+            startActivity(Intent(this, AuthActivity::class.java))
+            finish()
+            return
+        }
 
         val db = LocationDatabase.getDatabase(this)
         lifecycleScope.launch {
@@ -243,8 +257,18 @@ fun MainScreen(
                             Icon(Icons.Default.MyLocation, contentDescription = stringResource(R.string.current_location))
                         }
                     }
+                    IconButton(onClick = {
+                        context.startActivity(Intent(context, AuthActivity::class.java))
+                    }) {
+                        Icon(Icons.Default.AccountCircle, contentDescription = stringResource(R.string.account_nav_desc))
+                    }
                     IconButton(onClick = onOpenDonate) {
                         Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.donate_nav_desc), tint = MaterialTheme.colorScheme.primary)
+                    }
+                    IconButton(onClick = {
+                        context.startActivity(Intent(context, WeatherHistoryActivity::class.java))
+                    }) {
+                        Icon(Icons.Default.History, contentDescription = stringResource(R.string.history_nav_desc))
                     }
                     IconButton(onClick = {
                         context.startActivity(Intent(context, SettingsActivity::class.java))
@@ -278,8 +302,35 @@ fun MainScreen(
                 contentPadding = innerPadding
             ) {
                 items(locations) { loc ->
+                    val sharedPrefs = LocalContext.current.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
+                    val tempUnit = sharedPrefs.getString("temp_unit", "celsius") ?: "celsius"
+                    
                     ListItem(
-                        headlineContent = { Text(loc.name) },
+                        leadingContent = {
+                            loc.currentWeatherCode?.let { code ->
+                                Icon(
+                                    painter = painterResource(id = WeatherIconMapper.getIcon(code, loc.provider, loc.isDay)),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(40.dp),
+                                    tint = Color.Unspecified
+                                )
+                            }
+                        },
+                        headlineContent = { 
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(loc.name)
+                                loc.currentTemp?.let { temp ->
+                                    val displayTemp = if (tempUnit == "fahrenheit") (temp * 9/5 + 32).toInt() else temp.toInt()
+                                    val suffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = "$displayTemp$suffix",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        },
                         supportingContent = { Text(stringResource(R.string.coordinates_label, loc.latitude, loc.longitude)) },
                         trailingContent = {
                             Row {
@@ -357,20 +408,6 @@ fun MainScreen(
     }
 }
 
-private fun httpGet(urlString: String): String {
-    val url = URL(urlString)
-    val c = url.openConnection() as HttpURLConnection
-    c.setRequestProperty("User-Agent", "GeoWeatherApp")
-    c.connectTimeout = 12000
-    c.readTimeout = 12000
-    BufferedReader(InputStreamReader(c.inputStream, StandardCharsets.UTF_8)).use { reader ->
-        val sb = StringBuilder()
-        var line: String?
-        while (reader.readLine().also { line = it } != null) sb.append(line)
-        return sb.toString()
-    }
-}
-
 @Composable
 fun AddLocationDialog(
     onDismiss: () -> Unit,
@@ -405,11 +442,11 @@ fun AddLocationDialog(
                                 val url = if (matchResult != null) {
                                     val latitude = matchResult.groupValues[1].toDouble()
                                     val longitude = matchResult.groupValues[2].toDouble()
-                                    "https://geocoding-api.open-meteo.com/v1/reverse?latitude=$latitude&longitude=$longitude&language=" + Locale.getDefault().language + "&format=json"
+                                    "${ApiConstants.OPEN_METEO_REVERSE_GEOCODING}?latitude=$latitude&longitude=$longitude&language=" + Locale.getDefault().language + "&format=json"
                                 } else {
-                                    "https://geocoding-api.open-meteo.com/v1/search?name=" + URLEncoder.encode(query, "UTF-8") + "&count=20&language=" + Locale.getDefault().language + "&format=json"
+                                    "${ApiConstants.OPEN_METEO_GEOCODING}?name=" + URLEncoder.encode(query, "UTF-8") + "&count=20&language=" + Locale.getDefault().language + "&format=json"
                                 }
-                                val json = httpGet(url)
+                                val json = NetworkUtils.httpGet(url)
                                 val obj = JSONObject(json)
                                 val list = mutableListOf<Triple<String, Double, Double>>()
                                 val arr = if (obj.has("results")) obj.optJSONArray("results") ?: JSONArray()

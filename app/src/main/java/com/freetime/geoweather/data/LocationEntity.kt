@@ -25,29 +25,55 @@ data class LocationEntity(
     val selected: Boolean = false,
     val isDefault: Boolean = false
 ) {
-    val currentTemp: String?
+    val currentTemp: Double?
         get() {
             return try {
                 weatherData?.let { data ->
                     val obj = org.json.JSONObject(data)
-                    val current = obj.getJSONObject("current_weather")
-                    current.getDouble("temperature").toString()
+                    if (obj.has("current_weather")) {
+                        obj.getJSONObject("current_weather").getDouble("temperature")
+                    } else if (obj.has("current")) {
+                        obj.getJSONObject("current").getDouble("temp_c")
+                    } else null
                 }
             } catch (e: Exception) {
                 null
             }
         }
     
-    val currentWind: String?
+    val currentWeatherCode: Int?
         get() {
             return try {
                 weatherData?.let { data ->
                     val obj = org.json.JSONObject(data)
-                    val current = obj.getJSONObject("current_weather")
-                    current.getDouble("windspeed").toString()
+                    if (obj.has("current_weather")) {
+                        obj.getJSONObject("current_weather").getInt("weathercode")
+                    } else if (obj.has("current")) {
+                        obj.getJSONObject("current").getJSONObject("condition").getInt("code")
+                    } else null
                 }
             } catch (e: Exception) {
                 null
             }
         }
+
+    val isDay: Boolean
+        get() {
+            return try {
+                weatherData?.let { data ->
+                    val obj = org.json.JSONObject(data)
+                    if (obj.has("current")) {
+                        obj.getJSONObject("current").getInt("is_day") == 1
+                    } else true
+                }
+            } catch (e: Exception) {
+                true
+            }
+        }
+
+    val provider: String
+        get() {
+            return if (weatherData?.contains("\"current\":") == true) "weatherapi" else "open_meteo"
+        }
+
 }

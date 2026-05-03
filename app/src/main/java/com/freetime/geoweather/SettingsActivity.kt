@@ -83,6 +83,18 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
         mutableStateOf(sharedPreferences.getBoolean("dynamic_color", true))
     }
 
+    var showHistoricalData by remember {
+        mutableStateOf(sharedPreferences.getBoolean("show_historical_data", true))
+    }
+
+    var requireLogin by remember {
+        mutableStateOf(sharedPreferences.getBoolean("require_login", false))
+    }
+
+    val authManager = remember { AuthManager.getInstance(context) }
+    var isAuthenticated by remember { mutableStateOf(authManager.isAuthenticated) }
+    val userInfo = authManager.userInfo
+
     val tempUnitState by sharedPreferences.collectStringAsState("temp_unit", "celsius")
     var tempUnit by remember { mutableStateOf(tempUnitState) }
     LaunchedEffect(tempUnitState) { tempUnit = tempUnitState }
@@ -133,6 +145,54 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                 Text(stringResource(R.string.open_change_log))
             }
         }
+
+        Text(
+            text = stringResource(R.string.account_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (isAuthenticated && userInfo != null) {
+                    Text(text = stringResource(R.string.logged_in_as), style = MaterialTheme.typography.labelMedium)
+                    Text(text = userInfo.name, style = MaterialTheme.typography.titleMedium)
+                    Text(text = userInfo.email, style = MaterialTheme.typography.bodyMedium)
+                    
+                    val tierString = if (userInfo.subscriptionTier == "pro") stringResource(R.string.tier_pro) else stringResource(R.string.tier_free)
+                    Text(text = stringResource(R.string.subscription_tier, tierString), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Button(
+                        onClick = {
+                            authManager.logout()
+                            isAuthenticated = false
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                    ) {
+                        Text(stringResource(R.string.logout_button))
+                    }
+                } else {
+                    Text(text = stringResource(R.string.not_logged_in), style = MaterialTheme.typography.bodyLarge)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = {
+                            context.startActivity(Intent(context, AuthActivity::class.java))
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.login_title))
+                    }
+                }
+            }
+        }
         
         Text(
             text = stringResource(R.string.theme_settings_title),
@@ -176,6 +236,30 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     onCheckedChange = {
                         darkModeEnabled = it
                         sharedPreferences.edit().putBoolean("dark_mode_enabled", it).apply()
+                    }
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                SettingsToggle(
+                    title = stringResource(R.string.show_historical_data),
+                    subtitle = stringResource(R.string.show_historical_data_desc),
+                    checked = showHistoricalData,
+                    onCheckedChange = {
+                        showHistoricalData = it
+                        sharedPreferences.edit().putBoolean("show_historical_data", it).apply()
+                    }
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                SettingsToggle(
+                    title = stringResource(R.string.require_login_title),
+                    subtitle = stringResource(R.string.require_login_subtitle),
+                    checked = requireLogin,
+                    onCheckedChange = {
+                        requireLogin = it
+                        sharedPreferences.edit().putBoolean("require_login", it).apply()
                     }
                 )
             }

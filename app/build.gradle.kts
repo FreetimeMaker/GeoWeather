@@ -14,8 +14,8 @@ android {
         applicationId = "com.freetime.geoweather"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.compileSdk.get().toInt()
-        versionCode = 42
-        versionName = "1.5.1"
+        versionCode = 44
+        versionName = "1.5.2"
     }
 
     buildFeatures {

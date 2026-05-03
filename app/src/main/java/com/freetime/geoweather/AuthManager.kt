@@ -186,10 +186,24 @@ class AuthManager(private val context: Context) {
             outputStream.write(body.toByteArray(StandardCharsets.UTF_8))
         }
 
-        return c.inputStream.use { inputStream ->
-            BufferedReader(InputStreamReader(inputStream, StandardCharsets.UTF_8)).use { reader ->
-                reader.readText()
+        return try {
+            c.inputStream.use { inputStream ->
+                BufferedReader(InputStreamReader(inputStream, StandardCharsets.UTF_8)).use { reader ->
+                    reader.readText()
+                }
             }
+        } catch (e: Exception) {
+            val errorStream = c.errorStream
+            if (errorStream != null) {
+                val errorResponse = BufferedReader(InputStreamReader(errorStream, StandardCharsets.UTF_8)).use { it.readText() }
+                try {
+                    val json = JSONObject(errorResponse)
+                    throw RuntimeException(json.optString("message", "API-Fehler"))
+                } catch (_: Exception) {
+                    throw RuntimeException("API-Fehler: $errorResponse")
+                }
+            }
+            throw RuntimeException("Netzwerkfehler: ${e.message}", e)
         }
     }
 }

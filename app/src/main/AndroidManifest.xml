@@ -41,45 +41,22 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".AuthActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".WeatherDetailActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".DonateActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".SettingsActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".OxaPayActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".EthereumActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".BitcoinActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".TronActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".USDT_Activity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".USDC_Activity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".LTC_Activity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".DogeActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".ShibActivity"
+        <activity android:name=".DonateWebViewActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".DonatorActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".SettingsActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".ChangeLogActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".GH_SponsorsActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".DaiActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".TonActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".PolActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".OptimismActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".ARB_Activity"
+        <activity android:name=".WeatherHistoryActivity"
             android:screenOrientation="portrait" />
 
         <receiver

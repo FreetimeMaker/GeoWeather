@@ -69,6 +69,16 @@ class WeatherDetailActivity : ComponentActivity() {
         enableEdgeToEdge()
         hideSystemBars()
         checkNotificationPermission()
+
+        val sharedPrefs = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
+        val requireLogin = sharedPrefs.getBoolean("require_login", false)
+        val authManager = AuthManager.getInstance(this)
+
+        if (requireLogin && !authManager.isAuthenticated) {
+            startActivity(Intent(this, AuthActivity::class.java))
+            finish()
+            return
+        }
         
         val name = intent.getStringExtra("name") ?: getString(R.string.unknown_location)
         val lat = intent.getDoubleExtra("lat", 0.0)
@@ -130,12 +140,17 @@ fun WeatherDetailScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val db = remember { LocationDatabase.getDatabase(context) }
     val sharedPreferences = remember { context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
+    val authManager = remember { AuthManager.getInstance(context) }
+    val weatherRepository = remember { WeatherRepository(context) }
+    val userInfo = authManager.userInfo
+    val isPro = userInfo?.subscriptionTier == "pro"
     
     val tempUnit by sharedPreferences.collectStringAsState("temp_unit", "celsius")
     val windUnit by sharedPreferences.collectStringAsState("wind_unit", "kmh")
     val weatherProvider by sharedPreferences.collectStringAsState("weather_provider", "open_meteo")
     val weatherApiKey by sharedPreferences.collectStringAsState("weather_api_key", "")
     val qweatherApiKey by sharedPreferences.collectStringAsState("qweather_api_key", "")
+    val showHistoricalData by sharedPreferences.collectAsState("show_historical_data", true)
 
     var weatherJson by remember { mutableStateOf<String?>(null) }
     var aqiJson by remember { mutableStateOf<String?>(null) }
@@ -157,57 +172,46 @@ fun WeatherDetailScreen(
             val lastUpdated = entity?.lastUpdated
             val dataAgeMinutes = if (lastUpdated != null) (currentTime - lastUpdated) / (1000 * 60) else Long.MAX_VALUE
 
-            var json: String? = null
-            var aqiJsonResponse: String? = null
+            val forecastDays = if (isPro) 7 else 3
 
             if (!forceRefresh && entity?.weatherData != null && dataAgeMinutes < 30) {
-                json = entity.weatherData
+                val json = entity.weatherData
                 weatherJson = json
+                // Note: If we really want to support offline/cached view with parsed lists, 
+                // we should store those in the DB or re-parse here. 
+                // For now, we'll trigger a refresh if lists are empty but json exists
+                if (forecastList.isEmpty()) {
+                    scope.launch { refreshWeatherData(true) }
+                }
             } else {
-                val url = if (weatherProvider == "weatherapi" && weatherApiKey.isNotEmpty()) {
-                    "https://api.weatherapi.com/v1/forecast.json?key=$weatherApiKey&q=$lat,$lon&days=3&aqi=yes"
-                } else {
-                    "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&forecast_days=3&timezone=auto"
-                }
+                val result = weatherRepository.getWeatherData(lat, lon, forecastDays)
                 
-val aqiUrl = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
-                val histUrl = "https://archive-api.open-meteo.com/v1/archive?latitude=$lat&longitude=$lon&start_date=${getYesterdayDate(-3)}&end_date=${getYesterdayDate(0)}&daily=temperature_2m_max,temperature_2m_min&timezone=auto"
-                
-                json = withContext(Dispatchers.IO) { httpGet(url) }
-                aqiJsonResponse = withContext(Dispatchers.IO) { try { httpGet(aqiUrl) } catch (e: Exception) { null } }
-                
-                try {
-                    val histJson = withContext(Dispatchers.IO) { httpGet(histUrl) }
-                    historicalData = parseForecastData(histJson)
-                } catch (_: Exception) {}
-
-                if (qweatherApiKey.isNotEmpty()) {
-                    try {
-                        val moonUrl = "https://devapi.qweather.com/v7/astronomy/moon?location=$lon,$lat&key=$qweatherApiKey"
-                        val mq = withContext(Dispatchers.IO) { httpGet(moonUrl) }
-                        val obj = JSONObject(mq).getJSONArray("moonPhase").getJSONObject(0)
-                        moonPhaseName = obj.optString("name", null)
-                    } catch (_: Exception) {}
-                }
-            }
-
-            if (weatherProvider == "open_meteo") {
-                entity?.copy(weatherData = json, lastUpdated = currentTime)?.let {
-                    withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
-                }
-            }
-
-            weatherJson = json
-            aqiJson = aqiJsonResponse
-            if (json != null) {
-                if (weatherProvider == "weatherapi") {
-                    parseWeatherApiData(json).let {
-                        forecastList = it.first
-                        hourlyForecastList = it.second
+                when (result) {
+                    is WeatherRepository.WeatherDataResult.Success -> {
+                        weatherJson = result.rawJson
+                        forecastList = result.dailyForecast
+                        hourlyForecastList = result.hourlyForecast
+                        aqiJson = result.aqiJson
+                        moonPhaseName = result.moonPhase
+                        
+                        if (result.provider == "open_meteo") {
+                            entity?.copy(weatherData = result.rawJson, lastUpdated = currentTime)?.let {
+                                withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
+                            }
+                        }
                     }
-                } else {
-                    forecastList = parseForecastData(json)
-                    hourlyForecastList = parseHourlyForecastData(json)
+                    is WeatherRepository.WeatherDataResult.Error -> {
+                        errorMessage = result.message
+                    }
+                }
+                
+                if (showHistoricalData) {
+                    try {
+                        val histUrl = "${ApiConstants.OPEN_METEO_ARCHIVE}?latitude=$lat&longitude=$lon&start_date=${getYesterdayDate(3)}&end_date=${getYesterdayDate(1)}&daily=temperature_2m_max,temperature_2m_min&timezone=auto"
+                        val histJson = withContext(Dispatchers.IO) { NetworkUtils.httpGet(histUrl) }
+                        // Historical data still uses local parsing for now as it's a specific archive call
+                        historicalData = parseForecastData(histJson)
+                    } catch (_: Exception) {}
                 }
             }
             errorMessage = null
@@ -250,15 +254,19 @@ val aqiUrl = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$la
             }
 
             weatherJson?.let { json ->
-                val (temp, weatherCode) = if (weatherProvider == "weatherapi") {
+                    val (temp, weatherCode, isDay, currentProvider) = if (weatherProvider == "weatherapi") {
                     val current = JSONObject(json).getJSONObject("current")
-                    current.getDouble("temp_c") to 0
+                    Triple(current.getDouble("temp_c"), current.getJSONObject("condition").getInt("code"), current.getInt("is_day") == 1).let { t -> 
+                        listOf(t.first, t.second, t.third, "weatherapi")
+                    }
                 } else {
                     val current = JSONObject(json).getJSONObject("current_weather")
-                    current.getDouble("temperature") to current.getInt("weathercode")
+                    Triple(current.getDouble("temperature"), current.getInt("weathercode"), true).let { t ->
+                        listOf(t.first, t.second, t.third, "open_meteo")
+                    }
                 }
                 
-                val displayTemp = if (tempUnit == "fahrenheit") (temp * 9/5 + 32).toInt() else temp.toInt()
+                val displayTemp = if (tempUnit == "fahrenheit") (temp as Double * 9/5 + 32).toInt() else (temp as Double).toInt()
 
                 item {
                     val tempSuffixC = stringResource(R.string.temp_c_suffix)
@@ -270,13 +278,13 @@ val aqiUrl = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$la
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
-                            painter = painterResource(id = WeatherIconMapper.getWeatherIcon(weatherCode)),
+                            painter = painterResource(id = WeatherIconMapper.getIcon(weatherCode as Int, currentProvider as String, isDay as Boolean)),
                             contentDescription = null,
                             modifier = Modifier.size(120.dp),
                             tint = Color.Unspecified
                         )
                         Text("$displayTemp$tempSuffix", style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Bold)
-                        Text(WeatherCodes.getDescription(weatherCode, context), style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(WeatherCodes.getDescription(weatherCode as Int, context, currentProvider as String), style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
 
@@ -285,18 +293,23 @@ val aqiUrl = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$la
                 }
 
                 item {
-                    HourlyForecastSection(hourlyForecastList, tempUnit)
+                    HourlyForecastSection(hourlyForecastList, tempUnit, weatherProvider)
                 }
 
                 item {
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        Text(stringResource(R.string.forecast_3day_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = if (isPro) stringResource(R.string.SevenDayForecastTXT) else stringResource(R.string.forecast_3day_label),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
                         Spacer(Modifier.height(8.dp))
                         forecastList.forEachIndexed { index, forecast ->
                             ForecastItemRow(
                                 forecast = forecast,
                                 tempUnit = tempUnit,
                                 isSelected = selectedDayIndex == index,
+                                weatherProvider = weatherProvider,
                                 onClick = { selectedDayIndex = if (selectedDayIndex == index) -1 else index }
                             )
                         }
@@ -345,6 +358,7 @@ fun ForecastItemRow(
     forecast: DailyForecast,
     tempUnit: String,
     isSelected: Boolean,
+    weatherProvider: String = "open_meteo",
     onClick: () -> Unit
 ) {
     val tempSuffix = stringResource(R.string.temp_deg_suffix)
@@ -363,11 +377,11 @@ fun ForecastItemRow(
         Column {
             ListItem(
                 headlineContent = { Text(forecast.date) },
-                supportingContent = { Text(WeatherCodes.getDescription(forecast.weatherCode, LocalContext.current)) },
+                supportingContent = { Text(if (weatherProvider == "weatherapi") WeatherCodes.getWeatherApiDescription(forecast.weatherCode, LocalContext.current) else WeatherCodes.getDescription(forecast.weatherCode, LocalContext.current)) },
                 trailingContent = { Text("$displayMax$tempSuffix / $displayMin$tempSuffix", fontWeight = FontWeight.Bold) },
                 leadingContent = { 
                     Icon(
-                        painter = painterResource(WeatherIconMapper.getWeatherIcon(forecast.weatherCode)), 
+                        painter = painterResource(if (weatherProvider == "weatherapi") WeatherIconMapper.getWeatherApiIcon(forecast.weatherCode) else WeatherIconMapper.getWeatherIcon(forecast.weatherCode)), 
                         contentDescription = null, 
                         modifier = Modifier.size(32.dp), 
                         tint = Color.Unspecified
@@ -447,8 +461,18 @@ fun HistoricalTrendsSection(data: List<DailyForecast>, tempUnit: String) {
                 }
                 Spacer(Modifier.height(8.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(stringResource(R.string.trend_min), color = Color.Blue, style = MaterialTheme.typography.labelSmall)
-                    Text(stringResource(R.string.trend_max), color = Color.Red, style = MaterialTheme.typography.labelSmall)
+                    data.forEach { forecast ->
+                        Text(
+                            text = forecast.date.split(",").last().trim(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(stringResource(R.string.trend_min), color = Color.Blue, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.trend_max), color = Color.Red, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -488,10 +512,17 @@ fun WeatherDetailsGrid(weatherObj: JSONObject, tempUnit: String, windUnit: Strin
                 DetailItem(label = stringResource(R.string.feels_like_label), value = "$displayFeelsLike$tempSuffix")
                 DetailItem(label = stringResource(R.string.humidity_label), value = "$humidity$humiditySuffix")
             }
-            if (weatherObj.has("daily")) {
+            val (sunrise, sunset) = if (provider == "weatherapi") {
+                val astro = weatherObj.getJSONObject("forecast").getJSONArray("forecastday").getJSONObject(0).getJSONObject("astro")
+                astro.getString("sunrise") to astro.getString("sunset")
+            } else if (weatherObj.has("daily")) {
                 val daily = weatherObj.getJSONObject("daily")
-                val sunrise = formatTime(daily.getJSONArray("sunrise").getString(0))
-                val sunset = formatTime(daily.getJSONArray("sunset").getString(0))
+                formatTime(daily.getJSONArray("sunrise").getString(0)) to formatTime(daily.getJSONArray("sunset").getString(0))
+            } else {
+                null to null
+            }
+
+            if (sunrise != null && sunset != null) {
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                     DetailItem(label = stringResource(R.string.sunrise_label), value = sunrise)
@@ -511,7 +542,7 @@ fun DetailItem(label: String, value: String) {
 }
 
 @Composable
-fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String) {
+fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String, weatherProvider: String = "open_meteo") {
     val tempSuffix = if (tempUnit == "fahrenheit") stringResource(R.string.temp_f_suffix) else stringResource(R.string.temp_c_suffix)
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(stringResource(R.string.hourly_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
@@ -522,7 +553,7 @@ fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String) {
                 Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest)) {
                     Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(forecast.time, style = MaterialTheme.typography.labelMedium)
-                        Icon(painter = painterResource(WeatherIconMapper.getWeatherIcon(forecast.weatherCode)), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified)
+                        Icon(painter = painterResource(if (weatherProvider == "weatherapi") WeatherIconMapper.getWeatherApiIcon(forecast.weatherCode) else WeatherIconMapper.getWeatherIcon(forecast.weatherCode)), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified)
                         Text("$displayTemp$tempSuffix", style = MaterialTheme.typography.titleSmall)
                     }
                 }
@@ -531,28 +562,11 @@ fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String) {
     }
 }
 
-private fun httpGet(urlString: String): String {
-    val url = URL(urlString)
-    val c = url.openConnection() as HttpURLConnection
-    c.setRequestProperty("User-Agent", "GeoWeatherApp")
-    c.connectTimeout = 12000
-    c.readTimeout = 12000
-    BufferedReader(InputStreamReader(c.inputStream, StandardCharsets.UTF_8)).use { reader ->
-        val sb = StringBuilder()
-        var line: String?
-        while (reader.readLine().also { line = it } != null) sb.append(line)
-        return sb.toString()
-    }
-}
-
 fun getYesterdayDate(daysAgo: Int): String {
     val cal = Calendar.getInstance()
     cal.add(Calendar.DAY_OF_YEAR, -daysAgo)
     return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.time)
 }
-
-data class DailyForecast(val date: String, val tempMax: Double, val tempMin: Double, val weatherCode: Int)
-data class HourlyForecast(val time: String, val temp: Double, val weatherCode: Int)
 
 fun parseForecastData(json: String): List<DailyForecast> {
     val list = mutableListOf<DailyForecast>()
@@ -573,57 +587,6 @@ fun parseForecastData(json: String): List<DailyForecast> {
     return list
 }
 
-fun parseHourlyForecastData(json: String): List<HourlyForecast> {
-    val list = mutableListOf<HourlyForecast>()
-    try {
-        val hourly = JSONObject(json).getJSONObject("hourly")
-        val times = hourly.getJSONArray("time")
-        val temps = hourly.getJSONArray("temperature_2m")
-        val codes = hourly.getJSONArray("weathercode")
-        val inF = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())
-        val now = Calendar.getInstance()
-        for (i in 0 until times.length()) {
-            val date = inF.parse(times.getString(i)) ?: continue
-            if (date.after(now.time) && list.size < 24) {
-                val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
-                list.add(HourlyForecast(time, temps.getDouble(i), codes.getInt(i)))
-            }
-        }
-    } catch (_: Exception) {}
-    return list
-}
-
-fun parseWeatherApiData(json: String): Pair<List<DailyForecast>, List<HourlyForecast>> {
-    val dailyList = mutableListOf<DailyForecast>()
-    val hourlyList = mutableListOf<HourlyForecast>()
-    try {
-        val obj = JSONObject(json)
-        val forecast = obj.getJSONObject("forecast").getJSONArray("forecastday")
-        val outF = SimpleDateFormat("EEE, dd. MMM", Locale.getDefault())
-        val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        
-        for (i in 0 until forecast.length()) {
-            val day = forecast.getJSONObject(i)
-            val astro = day.getJSONObject("day")
-            val date = df.parse(day.getString("date"))
-            dailyList.add(DailyForecast(outF.format(date ?: Date()), astro.getDouble("maxtemp_c"), astro.getDouble("mintemp_c"), 0))
-            
-            if (i == 0) {
-                val hours = day.getJSONArray("hour")
-                val now = System.currentTimeMillis()
-                for (j in 0 until hours.length()) {
-                    val h = hours.getJSONObject(j)
-                    if (h.getLong("time_epoch") * 1000 > now && hourlyList.size < 24) {
-                        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(h.getLong("time_epoch") * 1000))
-                        hourlyList.add(HourlyForecast(time, h.getDouble("temp_c"), 0))
-                    }
-                }
-            }
-        }
-    } catch (_: Exception) {}
-    return dailyList to hourlyList
-}
-
 fun getCurrentHourIndex(timesArray: JSONArray): Int {
     val now = Calendar.getInstance()
     val currentHour = now.get(Calendar.HOUR_OF_DAY)
@@ -641,3 +604,4 @@ fun formatTime(timeString: String): String {
         SimpleDateFormat("HH:mm", Locale.getDefault()).format(date ?: Date())
     } catch (_: Exception) { timeString.takeLast(5) }
 }
+

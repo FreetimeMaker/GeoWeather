@@ -1,0 +1,179 @@
+package com.freetime.geoweather
+
+import android.content.Context
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.nio.charset.StandardCharsets
+import java.text.SimpleDateFormat
+import java.util.*
+
+class WeatherRepository(private val context: Context) {
+
+    private val sharedPrefs = context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
+
+    suspend fun getWeatherData(lat: Double, lon: Double, days: Int = 3): WeatherDataResult {
+        val provider = sharedPrefs.getString("weather_provider", "open_meteo") ?: "open_meteo"
+        val apiKey = sharedPrefs.getString("weather_api_key", "") ?: ""
+
+        return try {
+            if (provider == "weatherapi" && apiKey.isNotEmpty()) {
+                fetchFromWeatherApi(lat, lon, apiKey, days)
+            } else {
+                fetchFromOpenMeteo(lat, lon, days)
+            }
+        } catch (e: Exception) {
+            WeatherDataResult.Error(e.message ?: "Unknown error")
+        }
+    }
+
+    private fun fetchFromOpenMeteo(lat: Double, lon: Double, days: Int): WeatherDataResult {
+        val url = "${ApiConstants.OPEN_METEO_FORECAST}?latitude=$lat&longitude=$lon&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature,precipitation_probability,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&forecast_days=$days&timezone=auto"
+        val response = NetworkUtils.httpGet(url) ?: return WeatherDataResult.Error("Network error")
+        val json = JSONObject(response)
+        
+        val current = json.getJSONObject("current_weather")
+        val daily = json.getJSONObject("daily")
+        val hourly = json.getJSONObject("hourly")
+
+        val aqiJson = NetworkUtils.httpGet(ApiConstants.getAirQualityUrl(lat, lon))
+        val moonPhase = getMoonPhase(lat, lon)
+
+        return WeatherDataResult.Success(
+            provider = "open_meteo",
+            temp = current.getDouble("temperature"),
+            windSpeed = current.optDouble("windspeed", 0.0),
+            precipitation = 0.0,
+            weatherCode = current.getInt("weathercode"),
+            isDay = true,
+            dailyForecast = parseOpenMeteoDaily(daily),
+            hourlyForecast = parseOpenMeteoHourly(hourly),
+            rawJson = response,
+            aqiJson = aqiJson,
+            moonPhase = moonPhase
+        )
+    }
+
+    private fun getMoonPhase(lat: Double, lon: Double): String? {
+        val qWeatherKey = ApiConstants.QWEATHER_API_KEY
+        if (qWeatherKey.isEmpty()) return null
+        
+        return try {
+            val language = Locale.getDefault().language
+            val qWeatherUrl = "https://devapi.qweather.com/v7/astronomy/moon?location=$lon,$lat&key=$qWeatherKey&lang=$language"
+            val qJson = NetworkUtils.httpGet(qWeatherUrl) ?: return null
+            JSONObject(qJson).getJSONObject("moonPhase").getJSONArray("name").getString(0)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun fetchFromWeatherApi(lat: Double, lon: Double, apiKey: String, days: Int): WeatherDataResult {
+        val url = "${ApiConstants.WEATHER_API_FORECAST}?key=$apiKey&q=$lat,$lon&days=$days&aqi=yes"
+        val response = NetworkUtils.httpGet(url) ?: return WeatherDataResult.Error("Network error")
+        val json = JSONObject(response)
+        
+        val current = json.getJSONObject("current")
+        val forecast = json.getJSONObject("forecast").getJSONArray("forecastday")
+
+        val dailyList = mutableListOf<DailyForecast>()
+        val hourlyList = mutableListOf<HourlyForecast>()
+        
+        val outF = SimpleDateFormat("EEE, dd. MMM", Locale.getDefault())
+        val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        for (i in 0 until forecast.length()) {
+            val day = forecast.getJSONObject(i)
+            val dayInfo = day.getJSONObject("day")
+            val date = df.parse(day.getString("date"))
+            val code = dayInfo.getJSONObject("condition").getInt("code")
+            dailyList.add(DailyForecast(outF.format(date ?: Date()), dayInfo.getDouble("maxtemp_c"), dayInfo.getDouble("mintemp_c"), code))
+            
+            if (i == 0) {
+                val hours = day.getJSONArray("hour")
+                val now = System.currentTimeMillis()
+                for (j in 0 until hours.length()) {
+                    val h = hours.getJSONObject(j)
+                    if (h.getLong("time_epoch") * 1000 > now && hourlyList.size < 24) {
+                        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(h.getLong("time_epoch") * 1000))
+                        val hCode = h.getJSONObject("condition").getInt("code")
+                        hourlyList.add(HourlyForecast(time, h.getDouble("temp_c"), hCode))
+                    }
+                }
+            }
+        }
+
+        val moonPhase = getMoonPhase(lat, lon)
+
+        return WeatherDataResult.Success(
+            provider = "weatherapi",
+            temp = current.getDouble("temp_c"),
+            windSpeed = current.getDouble("wind_kph"),
+            precipitation = current.getDouble("precip_mm"),
+            weatherCode = current.getJSONObject("condition").getInt("code"),
+            isDay = current.getInt("is_day") == 1,
+            dailyForecast = dailyList,
+            hourlyForecast = hourlyList,
+            rawJson = response,
+            aqiJson = response, // WeatherAPI includes AQI in the main response
+            moonPhase = moonPhase
+        )
+    }
+
+    private fun parseOpenMeteoDaily(daily: JSONObject): List<DailyForecast> {
+        val list = mutableListOf<DailyForecast>()
+        val times = daily.getJSONArray("time")
+        val tMax = daily.getJSONArray("temperature_2m_max")
+        val tMin = daily.getJSONArray("temperature_2m_min")
+        val codes = if (daily.has("weathercode")) daily.getJSONArray("weathercode") else null
+        val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outF = SimpleDateFormat("EEE, dd. MMM", Locale.getDefault())
+        
+        for (i in 0 until times.length()) {
+            val date = df.parse(times.getString(i))
+            list.add(DailyForecast(outF.format(date ?: Date()), tMax.getDouble(i), tMin.getDouble(i), codes?.getInt(i) ?: 0))
+        }
+        return list
+    }
+
+    private fun parseOpenMeteoHourly(hourly: JSONObject): List<HourlyForecast> {
+        val list = mutableListOf<HourlyForecast>()
+        val times = hourly.getJSONArray("time")
+        val temps = hourly.getJSONArray("temperature_2m")
+        val codes = hourly.getJSONArray("weathercode")
+        val inF = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())
+        val now = Calendar.getInstance()
+        
+        for (i in 0 until times.length()) {
+            val date = inF.parse(times.getString(i)) ?: continue
+            if (date.after(now.time) && list.size < 24) {
+                val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
+                list.add(HourlyForecast(time, temps.getDouble(i), codes.getInt(i)))
+            }
+        }
+        return list
+    }
+
+    sealed class WeatherDataResult {
+        data class Success(
+            val provider: String,
+            val temp: Double,
+            val windSpeed: Double = 0.0,
+            val precipitation: Double = 0.0,
+            val weatherCode: Int,
+            val isDay: Boolean,
+            val dailyForecast: List<DailyForecast>,
+            val hourlyForecast: List<HourlyForecast>,
+            val rawJson: String,
+            val aqiJson: String? = null,
+            val moonPhase: String? = null
+        ) : WeatherDataResult()
+        data class Error(val message: String) : WeatherDataResult()
+    }
+}
+
+data class DailyForecast(val date: String, val tempMax: Double, val tempMin: Double, val weatherCode: Int)
+data class HourlyForecast(val time: String, val temp: Double, val weatherCode: Int)
+

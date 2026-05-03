@@ -43,81 +43,76 @@ class WeatherWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val db = LocationDatabase.getDatabase(context)
         val sharedPreferences = context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
+        val weatherRepository = WeatherRepository(context)
         
+        val requireLogin = sharedPreferences.getBoolean("require_login", false)
+        val authManager = AuthManager.getInstance(context)
+
+        if (requireLogin && !authManager.isAuthenticated) {
+            provideContent {
+                WeatherWidgetContent(
+                    context.getString(R.string.app_name),
+                    "",
+                    context.getString(R.string.login_required_widget)
+                )
+            }
+            return
+        }
+
         val location = withContext(Dispatchers.IO) {
             db.locationDao().getSelectedLocation()
         }
         
         val tempUnit = sharedPreferences.getString("temp_unit", "celsius") ?: "celsius"
-        val weatherProvider = sharedPreferences.getString("weather_provider", "open_meteo") ?: "open_meteo"
-        val weatherApiKey = sharedPreferences.getString("weather_api_key", "") ?: ""
-
         var weatherInfo = context.getString(R.string.widget_loading)
         var tempString = ""
         var locationName = location?.name ?: context.getString(R.string.no_location_selected)
+        var iconRes: Int? = null
 
         if (location != null) {
-            try {
-                val url = if (weatherProvider == "weatherapi" && weatherApiKey.isNotEmpty()) {
-                    "https://api.weatherapi.com/v1/current.json?key=$weatherApiKey&q=${location.latitude},${location.longitude}"
-                } else {
-                    "https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true&timezone=auto"
+            val result = weatherRepository.getWeatherData(location.latitude, location.longitude, 1)
+            
+            when (result) {
+                is WeatherRepository.WeatherDataResult.Success -> {
+                    val displayTemp = if (tempUnit == "fahrenheit") (result.temp * 9/5 + 32).toInt() else result.temp.toInt()
+                    val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+                    
+                    tempString = "$displayTemp$tempSuffix"
+                    weatherInfo = WeatherCodes.getDescription(result.weatherCode, context, result.provider)
+                    iconRes = WeatherIconMapper.getIcon(result.weatherCode, result.provider, result.isDay)
                 }
-
-                val response = withContext(Dispatchers.IO) {
-                    httpGet(url)
+                is WeatherRepository.WeatherDataResult.Error -> {
+                    weatherInfo = context.getString(R.string.error_connection)
                 }
-                val json = JSONObject(response)
-                
-                val (t, code) = if (weatherProvider == "weatherapi") {
-                    val current = json.getJSONObject("current")
-                    current.getDouble("temp_c") to 0
-                } else {
-                    val current = json.getJSONObject("current_weather")
-                    current.getDouble("temperature") to current.getInt("weathercode")
-                }
-                
-                val displayTemp = if (tempUnit == "fahrenheit") (t * 9/5 + 32).toInt() else t.toInt()
-                val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
-                
-                tempString = "$displayTemp$tempSuffix"
-                weatherInfo = WeatherCodes.getDescription(code, context)
-            } catch (e: Exception) {
-                weatherInfo = context.getString(R.string.error_connection)
             }
         } else {
             weatherInfo = context.getString(R.string.select_city_msg)
         }
 
         provideContent {
-            WeatherWidgetContent(locationName, tempString, weatherInfo)
-        }
-    }
-
-    private fun httpGet(urlString: String): String {
-        val url = URL(urlString)
-        val c = url.openConnection() as HttpURLConnection
-        c.setRequestProperty("User-Agent", "GeoWeatherApp")
-        c.connectTimeout = 10000
-        c.readTimeout = 10000
-        BufferedReader(InputStreamReader(c.inputStream, StandardCharsets.UTF_8)).use { reader ->
-            val sb = StringBuilder()
-            var line: String?
-            while (reader.readLine().also { line = it } != null) sb.append(line)
-            return sb.toString()
+            WeatherWidgetContent(locationName, tempString, weatherInfo, iconRes)
         }
     }
 
     @Composable
-    private fun WeatherWidgetContent(name: String, temp: String, info: String) {
+    private fun WeatherWidgetContent(name: String, temp: String, info: String, iconRes: Int? = null) {
         Row(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(ColorProvider(Color(0xFF2196F3)))
+                .background(ColorProvider(day = Color(0xFFE3F2FD), night = Color(0xFF1A1C1E)))
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (iconRes != null) {
+                Image(
+                    provider = ImageProvider(iconRes),
+                    contentDescription = null,
+                    modifier = GlanceModifier.size(48.dp)
+                )
+                Spacer(GlanceModifier.width(8.dp))
+            }
+
             Column(
                 modifier = GlanceModifier.defaultWeight(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -127,7 +122,7 @@ class WeatherWidget : GlanceAppWidget() {
                     text = name,
                     maxLines = 1,
                     style = TextStyle(
-                        color = ColorProvider(Color.White),
+                        color = ColorProvider(day = Color.Black, night = Color.White),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -138,7 +133,7 @@ class WeatherWidget : GlanceAppWidget() {
                         Text(
                             text = temp,
                             style = TextStyle(
-                                color = ColorProvider(Color.White),
+                                color = ColorProvider(day = Color.Black, night = Color.White),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -149,7 +144,7 @@ class WeatherWidget : GlanceAppWidget() {
                         text = info,
                         maxLines = 1,
                         style = TextStyle(
-                            color = ColorProvider(Color.White.copy(alpha = 0.8f)),
+                            color = ColorProvider(day = Color.DarkGray, night = Color.LightGray),
                             fontSize = 12.sp
                         )
                     )

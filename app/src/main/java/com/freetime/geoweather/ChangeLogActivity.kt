@@ -96,23 +96,32 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.5.2" to listOf(
+            "Added Authentication & User Profile support",
+            "Added 'Require Login' security setting",
+            "Added Historical Weather Trends (Last 3 days)",
+            "Added 7-day forecast support for PRO users",
+            "Improved API error handling and stability",
+            "Added date labels to historical charts",
+            "Optimized background workers and widget for security"
+        ),
         "v1.5.1" to listOf(
-            "· Fixed a StartUp Error"
+            "Fixed a StartUp Error"
         ),
         "v1.5.0" to listOf(
-            "· Added my own API"
+            "Added my own API"
         ),
         "v1.4.1" to listOf(
-          "· Added more Donation Options"
+            "Added more Donation Options"
         ),
         "v1.4.0" to listOf(
-          "· Changed everything from 7 Days to 3 Days because I am working on an API for the App with Different optional plans."
+            "Changed everything from 7 Days to 3 Days because I am working on an API for the App with Different optional plans."
         ),
         "v1.3.9" to listOf(
-            "· Updated so it won't Crash when trying to Donate"
+            "Updated so it won't Crash when trying to Donate"
         ),
         "v1.3.8" to listOf(
-            "· Changed back to Android only"
+            "Changed back to Android only"
         ),
         "v1.3.7" to listOf(
             "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v137_ci_cd)}",

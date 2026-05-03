@@ -6,11 +6,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
@@ -25,25 +29,93 @@ class AuthActivity : ComponentActivity() {
 
         val authMgr = com.freetime.geoweather.AuthManager.getInstance(this)
 
-        if (authMgr.isAuthenticated) {
-            startMainActivity()
-            return
-        }
-
         setContent {
             GeoWeatherTheme {
-                AuthScreenContent(
-                    authManager = authMgr,
-                    onLoginSuccess = { startMainActivity() },
-                    onRegisterSuccess = { startMainActivity() }
-                )
+                val isAuthenticated = remember { mutableStateOf(authMgr.isAuthenticated) }
+                
+                if (isAuthenticated.value) {
+                    UserInfoScreen(
+                        authManager = authMgr,
+                        onLogout = {
+                            authMgr.logout()
+                            isAuthenticated.value = false
+                        },
+                        onBack = { finish() }
+                    )
+                } else {
+                    AuthScreenContent(
+                        authManager = authMgr,
+                        onLoginSuccess = { startMainActivity() },
+                        onRegisterSuccess = { startMainActivity() }
+                    )
+                }
             }
         }
     }
 
     private fun startMainActivity() {
-        startActivity(Intent(this, MainActivity::class.java))
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
         finish()
+    }
+}
+
+@Composable
+private fun UserInfoScreen(
+    authManager: com.freetime.geoweather.AuthManager,
+    onLogout: () -> Unit,
+    onBack: () -> Unit
+) {
+    val userInfo = authManager.userInfo
+
+    Scaffold(
+        topBar = {
+            @OptIn(ExperimentalMaterial3Api::class)
+            TopAppBar(
+                title = { Text(stringResource(R.string.account_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_nav_desc))
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                Icons.Default.AccountCircle,
+                contentDescription = null,
+                modifier = Modifier.size(100.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text(text = stringResource(R.string.logged_in_as), style = MaterialTheme.typography.labelLarge)
+            Text(text = userInfo?.name ?: stringResource(R.string.unknown_location), style = MaterialTheme.typography.headlineMedium)
+            Text(text = userInfo?.email ?: "", style = MaterialTheme.typography.bodyLarge)
+            
+            val tierString = if (userInfo?.subscriptionTier == "pro") stringResource(R.string.tier_pro) else stringResource(R.string.tier_free)
+            Text(text = stringResource(R.string.subscription_tier, tierString), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            Button(
+                onClick = onLogout,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+            ) {
+                Text(stringResource(R.string.logout_button))
+            }
+        }
     }
 }
 
@@ -69,7 +141,7 @@ private fun AuthScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = if (isLogin) "Anmelden" else "Registrieren",
+            text = if (isLogin) stringResource(R.string.login_title) else stringResource(R.string.register_title),
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -78,7 +150,7 @@ private fun AuthScreenContent(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("E-Mail") },
+            label = { Text(stringResource(R.string.email_label)) },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -88,7 +160,7 @@ private fun AuthScreenContent(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Name") },
+                label = { Text(stringResource(R.string.name_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -97,7 +169,7 @@ private fun AuthScreenContent(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Passwort") },
+            label = { Text(stringResource(R.string.password_label)) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
@@ -107,7 +179,7 @@ private fun AuthScreenContent(
         Button(
             onClick = {
                 if (email.isBlank() || password.isBlank() || (!isLogin && name.isBlank())) {
-                    Toast.makeText(context, "Bitte alle Felder ausfüllen", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show()
                     return@Button
                 }
 
@@ -127,14 +199,14 @@ private fun AuthScreenContent(
                         }
                     } catch (e: Exception) {
                         isLoading = false
-                        Toast.makeText(context, "Fehler: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "${context.getString(R.string.error_loading_weather)}: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = !isLoading
         ) {
-            Text(if (isLogin) "Anmelden" else "Registrieren")
+            Text(if (isLogin) stringResource(R.string.login_button) else stringResource(R.string.register_button))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -145,7 +217,7 @@ private fun AuthScreenContent(
             password = ""
             name = ""
         }) {
-            Text(if (isLogin) "Noch kein Konto? Registrieren" else "Bereits Konto? Anmelden")
+            Text(if (isLogin) stringResource(R.string.no_account_msg) else stringResource(R.string.have_account_msg))
         }
     }
 }

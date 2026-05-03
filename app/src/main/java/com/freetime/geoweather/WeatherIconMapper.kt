@@ -30,6 +30,14 @@ object WeatherIconMapper {
         return now.isAfter(sunriseTime) && now.isBefore(sunsetTime)
     }
 
+    fun getIcon(code: Int, provider: String = "open_meteo", isDay: Boolean = true): Int {
+        return if (provider.lowercase() == "weatherapi") {
+            getWeatherApiIcon(code, isDay)
+        } else {
+            getWeatherIcon(code)
+        }
+    }
+
     fun getWeatherIcon(code: Int): Int {
         val isDay = isDaytime()
 
@@ -40,8 +48,38 @@ object WeatherIconMapper {
             3 -> R.drawable.google_cloudy
             45, 48 -> R.drawable.google_fog
             51, 53, 55 -> R.drawable.google_drizzle
+            56, 57 -> R.drawable.icy
             61, 63, 65 -> if (isDay) R.drawable.google_rain_with_sunny_light else R.drawable.google_rain_with_sunny_dark
+            66, 67 -> R.drawable.icy
             71, 73, 75 -> if (isDay) R.drawable.google_snow_with_sunny_light else R.drawable.google_snow_with_sunny_dark
+            77 -> R.drawable.flurries
+            80, 81, 82 -> R.drawable.scattered_showers
+            85, 86 -> R.drawable.scattered_snow_showers_day
+            95 -> R.drawable.isolated_scattered_thunderstorms_day
+            96, 99 -> R.drawable.isolated_scattered_thunderstorms_day
+            else -> if (isDay) R.drawable.google_cloudy_with_sunny_light else R.drawable.google_cloudy_with_sunny_dark
+        }
+    }
+
+    /**
+     * Map WeatherAPI condition codes to app icons
+     */
+    fun getWeatherApiIcon(code: Int, isDay: Boolean = true): Int {
+        return when (code) {
+            1000 -> if (isDay) R.drawable.google_clear_day else R.drawable.google_clear_night
+            1003 -> if (isDay) R.drawable.google_mostly_clear_day else R.drawable.google_mostly_clear_night
+            1006 -> if (isDay) R.drawable.google_partly_cloudy_day else R.drawable.google_partly_cloudy_night
+            1009 -> R.drawable.google_cloudy
+            1030, 1135, 1147 -> R.drawable.google_fog
+            1063, 1180, 1183, 1186, 1189, 1192, 1195 -> if (isDay) R.drawable.google_rain_with_sunny_light else R.drawable.google_rain_with_sunny_dark
+            1066, 1210, 1213, 1216, 1219, 1222, 1225 -> if (isDay) R.drawable.google_snow_with_sunny_light else R.drawable.google_snow_with_sunny_dark
+            1069, 1204, 1207, 1072, 1150, 1153, 1168, 1171 -> R.drawable.google_drizzle
+            1087, 1273, 1276, 1279, 1282 -> R.drawable.isolated_scattered_thunderstorms_day
+            1114, 1117 -> R.drawable.blowing_snow
+            1237, 1261, 1264 -> R.drawable.flurries
+            1240, 1243, 1246 -> R.drawable.scattered_showers
+            1249, 1252 -> R.drawable.scattered_showers
+            1255, 1258 -> R.drawable.scattered_snow_showers_day
             else -> if (isDay) R.drawable.google_cloudy_with_sunny_light else R.drawable.google_cloudy_with_sunny_dark
         }
     }
