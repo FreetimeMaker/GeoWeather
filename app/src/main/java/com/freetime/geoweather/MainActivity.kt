@@ -10,6 +10,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -75,17 +76,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         hideSystemBars()
         checkNotificationPermission()
+        
+        handleAuthCallback(intent)
 
         val sharedPrefs = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-        val requireLogin = sharedPrefs.getBoolean("require_login", false)
-        val authManager = AuthManager.getInstance(this)
-
-        if (requireLogin && !authManager.isAuthenticated) {
-            startActivity(Intent(this, AuthActivity::class.java))
-            finish()
-            return
-        }
-
+        
         val db = LocationDatabase.getDatabase(this)
         lifecycleScope.launch {
             val locations = withContext(Dispatchers.IO) {
@@ -158,6 +153,29 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleAuthCallback(intent)
+    }
+
+    private fun handleAuthCallback(intent: Intent?) {
+        val data = intent?.data
+        if (data != null && data.scheme == "geoweather" && data.host == "auth") {
+            val token = data.getQueryParameter("token")
+            val refreshToken = data.getQueryParameter("refreshToken")
+            val id = data.getQueryParameter("id")
+            val email = data.getQueryParameter("email")
+            val name = data.getQueryParameter("name")
+            val tier = data.getQueryParameter("tier") ?: "free"
+
+            if (token != null) {
+                val authMgr = AuthManager.getInstance(this)
+                authMgr.saveAuthData(token, refreshToken ?: "", id ?: "", email ?: "", name ?: "", tier)
+                Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
             }
         }
     }

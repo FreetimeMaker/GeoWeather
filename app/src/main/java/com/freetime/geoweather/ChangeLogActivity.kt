@@ -96,6 +96,13 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.5.3" to listOf(
+            "Implemented GitHub OAuth authentication via API",
+            "Login is now optional and managed via Settings",
+            "Improved deep link handling for authentication callback",
+            "Fixed resource merging and translation issues",
+            "Updated Weather Icon mapping for better day/night accuracy"
+        ),
         "v1.5.2" to listOf(
             "Added Authentication & User Profile support",
             "Added 'Require Login' security setting",

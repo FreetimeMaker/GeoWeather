@@ -35,15 +35,7 @@ class DonateActivity : ComponentActivity() {
         hideSystemBars()
 
         val sharedPrefs = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-        val requireLogin = sharedPrefs.getBoolean("require_login", false)
-        val authManager = AuthManager.getInstance(this)
-
-        if (requireLogin && !authManager.isAuthenticated) {
-            startActivity(Intent(this, AuthActivity::class.java))
-            finish()
-            return
-        }
-
+        
         setContent {
             val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
             val useSystemTheme = sharedPreferences.collectAsState(key = "use_system_theme", defaultValue = true)
@@ -120,15 +112,7 @@ class DonatorActivity : ComponentActivity() {
         hideSystemBars()
 
         val sharedPrefs = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-        val requireLogin = sharedPrefs.getBoolean("require_login", false)
-        val authManager = AuthManager.getInstance(this)
-
-        if (requireLogin && !authManager.isAuthenticated) {
-            startActivity(Intent(this, AuthActivity::class.java))
-            finish()
-            return
-        }
-
+        
         setContent {
             val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
             val useSystemTheme = sharedPreferences.collectAsState(key = "use_system_theme", defaultValue = true)

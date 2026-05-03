@@ -14,8 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import kotlinx.coroutines.Dispatchers
@@ -44,20 +44,14 @@ class AuthActivity : ComponentActivity() {
                     )
                 } else {
                     AuthScreenContent(
-                        authManager = authMgr,
-                        onLoginSuccess = { startMainActivity() },
-                        onRegisterSuccess = { startMainActivity() }
+                        onLoginClick = {
+                            val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${com.freetime.geoweather.ApiConstants.BASE_URL}/api/auth/github"))
+                            startActivity(intent)
+                        }
                     )
                 }
             }
         }
-    }
-
-    private fun startMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(intent)
-        finish()
     }
 }
 
@@ -121,18 +115,8 @@ private fun UserInfoScreen(
 
 @Composable
 private fun AuthScreenContent(
-    authManager: com.freetime.geoweather.AuthManager,
-    onLoginSuccess: () -> Unit,
-    onRegisterSuccess: () -> Unit
+    onLoginClick: () -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var isLogin by remember { mutableStateOf(true) }
-    var isLoading by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -140,84 +124,42 @@ private fun AuthScreenContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Icon(
+            imageVector = Icons.Default.AccountCircle,
+            contentDescription = null,
+            modifier = Modifier.size(100.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
         Text(
-            text = if (isLogin) stringResource(R.string.login_title) else stringResource(R.string.register_title),
+            text = stringResource(R.string.login_title),
             style = MaterialTheme.typography.headlineMedium
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text(stringResource(R.string.email_label)) },
-            modifier = Modifier.fillMaxWidth()
-        )
-
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (!isLogin) {
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text(stringResource(R.string.name_label)) },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(stringResource(R.string.password_label)) },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+        Text(
+            text = stringResource(R.string.github_login_desc),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(48.dp))
 
         Button(
-            onClick = {
-                if (email.isBlank() || password.isBlank() || (!isLogin && name.isBlank())) {
-                    Toast.makeText(context, context.getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show()
-                    return@Button
-                }
-
-                isLoading = true
-                scope.launch(Dispatchers.Main) {
-                    try {
-                        val result = if (isLogin) {
-                            authManager.login(email, password, com.freetime.geoweather.ApiConstants.BASE_URL)
-                        } else {
-                            authManager.register(email, password, name, com.freetime.geoweather.ApiConstants.BASE_URL)
-                        }
-                        isLoading = false
-                        if (result.success) {
-                            if (isLogin) onLoginSuccess() else onRegisterSuccess()
-                        } else {
-                            Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
-                        }
-                    } catch (e: Exception) {
-                        isLoading = false
-                        Toast.makeText(context, "${context.getString(R.string.error_loading_weather)}: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            },
+            onClick = onLoginClick,
             modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading
+            shape = MaterialTheme.shapes.medium
         ) {
-            Text(if (isLogin) stringResource(R.string.login_button) else stringResource(R.string.register_button))
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextButton(onClick = {
-            isLogin = !isLogin
-            email = ""
-            password = ""
-            name = ""
-        }) {
-            Text(if (isLogin) stringResource(R.string.no_account_msg) else stringResource(R.string.have_account_msg))
+            Icon(
+                painter = painterResource(id = android.R.drawable.ic_menu_info_details), // Just a placeholder icon
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(R.string.login_with_github))
         }
     }
 }

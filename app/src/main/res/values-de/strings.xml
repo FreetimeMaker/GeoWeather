@@ -154,4 +154,7 @@
     <string name="weather_history_title">Wetterverlauf</string>
     <string name="no_history_msg">Noch kein Wetterverlauf aufgezeichnet.</string>
     <string name="history_nav_desc">Wetterverlauf anzeigen</string>
+    <string name="login_with_github">Mit GitHub anmelden</string>
+    <string name="github_login_desc">Nutze deinen GitHub Account, um dich anzumelden und zusätzliche Features wie den 7-Tage-Vorhersage-Verlauf freizuschalten.</string>
+    <string name="login_success">Login erfolgreich!</string>
 </resources>

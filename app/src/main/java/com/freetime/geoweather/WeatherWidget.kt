@@ -45,20 +45,6 @@ class WeatherWidget : GlanceAppWidget() {
         val sharedPreferences = context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
         val weatherRepository = WeatherRepository(context)
         
-        val requireLogin = sharedPreferences.getBoolean("require_login", false)
-        val authManager = AuthManager.getInstance(context)
-
-        if (requireLogin && !authManager.isAuthenticated) {
-            provideContent {
-                WeatherWidgetContent(
-                    context.getString(R.string.app_name),
-                    "",
-                    context.getString(R.string.login_required_widget)
-                )
-            }
-            return
-        }
-
         val location = withContext(Dispatchers.IO) {
             db.locationDao().getSelectedLocation()
         }

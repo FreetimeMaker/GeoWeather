@@ -71,14 +71,6 @@ class WeatherDetailActivity : ComponentActivity() {
         checkNotificationPermission()
 
         val sharedPrefs = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-        val requireLogin = sharedPrefs.getBoolean("require_login", false)
-        val authManager = AuthManager.getInstance(this)
-
-        if (requireLogin && !authManager.isAuthenticated) {
-            startActivity(Intent(this, AuthActivity::class.java))
-            finish()
-            return
-        }
         
         val name = intent.getStringExtra("name") ?: getString(R.string.unknown_location)
         val lat = intent.getDoubleExtra("lat", 0.0)

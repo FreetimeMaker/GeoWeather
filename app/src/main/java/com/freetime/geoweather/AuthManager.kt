@@ -58,71 +58,21 @@ class AuthManager(private val context: Context) {
     fun getAccessToken(): String = prefs.getString(KEY_ACCESS_TOKEN, "") ?: ""
 
     /**
-     * Register a new user account
+     * Save authentication data from OAuth callback
      */
-    suspend fun register(email: String, password: String, name: String, apiBaseUrl: String): AuthResult = withContext(Dispatchers.IO) {
-        try {
-            val body = "email=${java.net.URLEncoder.encode(email, "UTF-8")}&password=${java.net.URLEncoder.encode(password, "UTF-8")}&name=${java.net.URLEncoder.encode(name, "UTF-8")}"
-            val response = httpPost(
-                url = "$apiBaseUrl/api/auth/register",
-                body = body
-            )
+    fun saveAuthData(token: String, refreshToken: String, id: String, email: String, name: String, subscriptionTier: String) {
+        val userObj = JSONObject()
+        userObj.put("id", id)
+        userObj.put("email", email)
+        userObj.put("name", name)
+        userObj.put("subscription_tier", subscriptionTier)
 
-            parseAuthResponse(response)
-        } catch (e: Exception) {
-            AuthResult(false, e.message ?: "Registration failed", null)
-        }
-    }
-
-    /**
-     * Login with email and password
-     */
-    suspend fun login(email: String, password: String, apiBaseUrl: String): AuthResult = withContext(Dispatchers.IO) {
-        try {
-            val body = "email=${java.net.URLEncoder.encode(email, "UTF-8")}&password=${java.net.URLEncoder.encode(password, "UTF-8")}"
-            val response = httpPost(
-                url = "$apiBaseUrl/api/auth/login",
-                body = body
-            )
-
-            parseAuthResponse(response)
-        } catch (e: Exception) {
-            AuthResult(false, e.message ?: "Login failed", null)
-        }
-    }
-
-    /**
-     * Refresh the access token
-     */
-    suspend fun refreshToken(apiBaseUrl: String): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val refreshToken = prefs.getString(KEY_REFRESH_TOKEN, "") ?: ""
-            if (refreshToken.isEmpty()) return@withContext false
-
-            val response = httpPost(
-                url = "$apiBaseUrl/api/auth/refresh",
-                body = "refreshToken=$refreshToken"
-            )
-
-            val json = JSONObject(response)
-            if (json.has("token")) {
-                val newToken = json.getString("token")
-                val newRefreshToken = json.optString("refreshToken", refreshToken)
-                val expiresIn = json.optLong("expires_in", 0L)
-
-                prefs.edit()
-                    .putString(KEY_ACCESS_TOKEN, newToken)
-                    .putString(KEY_REFRESH_TOKEN, newRefreshToken)
-                    .putLong(KEY_EXPIRES_AT, if (expiresIn > 0) System.currentTimeMillis() + expiresIn * 1000 else 0L)
-                    .apply()
-
-                true
-            } else {
-                false
-            }
-        } catch (e: Exception) {
-            false
-        }
+        prefs.edit()
+            .putString(KEY_ACCESS_TOKEN, token)
+            .putString(KEY_REFRESH_TOKEN, refreshToken)
+            .putString(KEY_USER_INFO, userObj.toString())
+            .putLong(KEY_EXPIRES_AT, System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000) // Default 30 days
+            .apply()
     }
 
     /**
@@ -135,76 +85,6 @@ class AuthManager(private val context: Context) {
             .remove(KEY_USER_INFO)
             .remove(KEY_EXPIRES_AT)
             .apply()
-    }
-
-    private fun parseAuthResponse(response: String): AuthResult {
-        return try {
-            val json = JSONObject(response)
-            if (json.has("token")) {
-                val token = json.getString("token")
-                val refreshToken = json.optString("refreshToken", "")
-                val expiresIn = json.optLong("expires_in", 0L)
-                val userObj = json.optJSONObject("user") ?: JSONObject()
-
-                prefs.edit()
-                    .putString(KEY_ACCESS_TOKEN, token)
-                    .putString(KEY_REFRESH_TOKEN, refreshToken)
-                    .putString(KEY_USER_INFO, userObj.toString())
-                    .putLong(KEY_EXPIRES_AT, if (expiresIn > 0) System.currentTimeMillis() + expiresIn * 1000 else 0L)
-                    .apply()
-
-                AuthResult(
-                    success = true,
-                    message = json.optString("message", "Success"),
-                    user = UserInfo(
-                        id = userObj.optString("id", ""),
-                        email = userObj.optString("email", ""),
-                        name = userObj.optString("name", ""),
-                        subscriptionTier = userObj.optString("subscription_tier", "free")
-                    )
-                )
-            } else {
-                AuthResult(false, json.optString("message", "Authentication failed"), null)
-            }
-        } catch (e: Exception) {
-            AuthResult(false, e.message ?: "Parse error", null)
-        }
-    }
-
-    private fun httpPost(url: String, body: String): String {
-        val urlObj = URL(url)
-        val c = urlObj.openConnection() as HttpURLConnection
-        c.requestMethod = "POST"
-        c.setRequestProperty("User-Agent", "GeoWeatherApp")
-        c.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
-        c.setRequestProperty("Accept", "application/json")
-        c.doOutput = true
-        c.connectTimeout = 12000
-        c.readTimeout = 12000
-
-        c.outputStream.use { outputStream ->
-            outputStream.write(body.toByteArray(StandardCharsets.UTF_8))
-        }
-
-        return try {
-            c.inputStream.use { inputStream ->
-                BufferedReader(InputStreamReader(inputStream, StandardCharsets.UTF_8)).use { reader ->
-                    reader.readText()
-                }
-            }
-        } catch (e: Exception) {
-            val errorStream = c.errorStream
-            if (errorStream != null) {
-                val errorResponse = BufferedReader(InputStreamReader(errorStream, StandardCharsets.UTF_8)).use { it.readText() }
-                try {
-                    val json = JSONObject(errorResponse)
-                    throw RuntimeException(json.optString("message", "API-Fehler"))
-                } catch (_: Exception) {
-                    throw RuntimeException("API-Fehler: $errorResponse")
-                }
-            }
-            throw RuntimeException("Netzwerkfehler: ${e.message}", e)
-        }
     }
 }
 
