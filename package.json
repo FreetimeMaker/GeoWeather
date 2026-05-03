@@ -1,11 +1,17 @@
 {
-  "name": "geoweather-monorepo",
+  "name": "geoweather",
   "version": "1.0.0",
-  "private": true,
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
     "express": "^5.2.1"
-  },
-  "scripts": {
-    "start": "node Website/server.js"
   }
 }
