@@ -47,7 +47,7 @@ class WeatherRepository(private val context: Context) {
             windSpeed = current.optDouble("windspeed", 0.0),
             precipitation = 0.0,
             weatherCode = current.getInt("weathercode"),
-            isDay = true,
+            isDay = current.optInt("is_day", 1) == 1,
             dailyForecast = parseOpenMeteoDaily(daily),
             hourlyForecast = parseOpenMeteoHourly(hourly),
             rawJson = response,

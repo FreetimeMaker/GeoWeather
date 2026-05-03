@@ -28,14 +28,6 @@
     <string name="DonViaPOL">Über POL spenden</string>
     <string name="DonViaOptimism">Über Optimism spenden</string>
     <string name="DonViaARB">Über ARB spenden</string>
-    <string name="DonViaBTC">Über Bitcoin spenden</string>
-    <string name="DonViaETH">Über Ethereum spenden</string>
-    <string name="DonViaUSDT">Über USDT spenden</string>
-    <string name="DonViaUSDC">Über USDC spenden</string>
-    <string name="DonViaSHIB">Über SHIB spenden</string>
-    <string name="DonViaDOGE">Über DOGE spenden</string>
-    <string name="DonViaLTC">Über Litecoin spenden</string>
-    <string name="DonViaShib">Über Shiba Inu spenden</string>
     <string name="ViewSup">Unterstützer anzeigen</string>
     <string name="BackToWeaDash">Zurück zum Wetter‑Dashboard</string>
     <string name="DelLoc">Standort löschen</string>
@@ -160,4 +152,7 @@
     <string name="not_logged_in">Nicht angemeldet</string>
     <string name="login_button">Anmelden</string>
     <string name="register_button">Registrieren</string>
+    <string name="weather_history_title">Wetterverlauf</string>
+    <string name="no_history_msg">Noch kein Wetterverlauf aufgezeichnet.</string>
+    <string name="history_nav_desc">Wetterverlauf anzeigen</string>
 </resources>

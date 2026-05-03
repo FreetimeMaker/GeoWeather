@@ -46,20 +46,11 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
-import com.freetime.geoweather.data.LocationDatabase
-import com.freetime.geoweather.data.LocationEntity
+import com.freetime.geoweather.ui.LocationsViewModel
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import java.util.*
 
 class MainActivity : ComponentActivity() {
@@ -179,12 +170,10 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val db = remember { LocationDatabase.getDatabase(context) }
+    val viewModel = remember { LocationsViewModel(context.applicationContext as android.app.Application) }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    val locations: List<LocationEntity> by db.locationDao()
-        .getAllLocations()
-        .observeAsState(initial = emptyList())
+    val locations: List<LocationEntity> by viewModel.locations.observeAsState(initial = emptyList())
 
     var showAddDialog by remember { mutableStateOf(false) }
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
@@ -335,14 +324,7 @@ fun MainScreen(
                         trailingContent = {
                             Row {
                                 IconButton(onClick = {
-                                    scope.launch(Dispatchers.IO) {
-                                        if (loc.isDefault) {
-                                            db.locationDao().updateLocation(loc.copy(isDefault = false))
-                                        } else {
-                                            db.locationDao().clearDefaultLocation()
-                                            db.locationDao().updateLocation(loc.copy(isDefault = true))
-                                        }
-                                    }
+                                    viewModel.setDefaultLocation(loc, !loc.isDefault)
                                 }) {
                                     Icon(
                                         if (loc.isDefault) Icons.Default.Star else Icons.Default.StarBorder,
@@ -358,10 +340,7 @@ fun MainScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                scope.launch(Dispatchers.IO) {
-                                    db.locationDao().deselectAllLocations()
-                                    db.locationDao().updateLocation(loc.copy(selected = true))
-                                }
+                                viewModel.selectLocation(loc)
                                 onOpenDetail(loc.name, loc.latitude, loc.longitude)
                             }
                     )
@@ -373,13 +352,11 @@ fun MainScreen(
 
     if (showAddDialog) {
         AddLocationDialog(
+            viewModel = viewModel,
             onDismiss = { showAddDialog = false },
             onAdd = { name, lat, lon ->
-                scope.launch(Dispatchers.IO) {
-                    db.locationDao().deselectAllLocations()
-                    db.locationDao().insertLocation(LocationEntity(name = name, latitude = lat, longitude = lon, selected = true))
-                    withContext(Dispatchers.Main) { showAddDialog = false }
-                }
+                viewModel.addLocation(name, lat, lon)
+                showAddDialog = false
             }
         )
     }
@@ -391,10 +368,8 @@ fun MainScreen(
             text = { Text(String.format(stringResource(R.string.DelLocConAsk), location.name)) },
             confirmButton = {
                 TextButton(onClick = {
-                    scope.launch(Dispatchers.IO) {
-                        db.locationDao().deleteLocation(location)
-                        withContext(Dispatchers.Main) { locationToDelete = null }
-                    }
+                    viewModel.deleteLocation(location)
+                    locationToDelete = null
                 }) {
                     Text(stringResource(R.string.DelTXT), color = MaterialTheme.colorScheme.error)
                 }
@@ -410,6 +385,7 @@ fun MainScreen(
 
 @Composable
 fun AddLocationDialog(
+    viewModel: LocationsViewModel,
     onDismiss: () -> Unit,
     onAdd: (String, Double, Double) -> Unit
 ) {
@@ -435,37 +411,9 @@ fun AddLocationDialog(
                     onClick = {
                         loading = true
                         results = emptyList()
-                        scope.launch(Dispatchers.IO) {
-                            try {
-                                val coordinatePattern = Regex("""^(-?\\d+\\.?\\d*)\\s*,\\s*(-?\\d+\\.?\\d*)$""")
-                                val matchResult = coordinatePattern.matchEntire(query.trim())
-                                val url = if (matchResult != null) {
-                                    val latitude = matchResult.groupValues[1].toDouble()
-                                    val longitude = matchResult.groupValues[2].toDouble()
-                                    "${ApiConstants.OPEN_METEO_REVERSE_GEOCODING}?latitude=$latitude&longitude=$longitude&language=" + Locale.getDefault().language + "&format=json"
-                                } else {
-                                    "${ApiConstants.OPEN_METEO_GEOCODING}?name=" + URLEncoder.encode(query, "UTF-8") + "&count=20&language=" + Locale.getDefault().language + "&format=json"
-                                }
-                                val json = NetworkUtils.httpGet(url)
-                                val obj = JSONObject(json)
-                                val list = mutableListOf<Triple<String, Double, Double>>()
-                                val arr = if (obj.has("results")) obj.optJSONArray("results") ?: JSONArray()
-                                          else if (obj.has("name")) JSONArray().apply { put(obj) }
-                                          else JSONArray()
-                                for (i in 0 until arr.length()) {
-                                    val item = arr.getJSONObject(i)
-                                    val name = item.optString("name", "Unknown")
-                                    val lat = item.optDouble("latitude", 0.0)
-                                    val lon = item.optDouble("longitude", 0.0)
-                                    var displayName = name
-                                    if (item.has("admin1")) displayName += ", " + item.getString("admin1")
-                                    if (item.has("country")) displayName += ", " + item.getString("country")
-                                    list.add(Triple(displayName, lat, lon))
-                                }
-                                withContext(Dispatchers.Main) { results = list; loading = false }
-                            } catch (e: Exception) {
-                                withContext(Dispatchers.Main) { loading = false }
-                            }
+                        scope.launch {
+                            results = viewModel.search(query)
+                            loading = false
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
