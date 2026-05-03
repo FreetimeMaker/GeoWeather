@@ -96,6 +96,12 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.5.1" to listOf(
+            "· Fixed a StartUp Error"
+        ),
+        "v1.5.0" to listOf(
+            "· Added my own API"
+        ),
         "v1.4.1" to listOf(
           "· Added more Donation Options"
         ),
