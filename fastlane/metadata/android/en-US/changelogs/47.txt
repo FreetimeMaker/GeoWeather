@@ -1,0 +1,4 @@
+- Added Cloud Synchronization for favorite locations
+- Added manual "Sync with Cloud" button in Account settings
+- Automatic background synchronization on startup and login
+- Improved data persistence and cross-device availability

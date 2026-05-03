@@ -16,8 +16,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.freetime.geoweather.ui.LocationsViewModel
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -67,6 +70,7 @@ class SettingsActivity : ComponentActivity() {
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     val context = LocalContext.current
+    val locationsViewModel: LocationsViewModel = viewModel()
     val sharedPreferences = remember { 
         context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) 
     }
@@ -168,6 +172,18 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     Text(text = stringResource(R.string.subscription_tier, tierString), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                     
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = { locationsViewModel.syncWithCloud() },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                    ) {
+                        Icon(painterResource(android.R.drawable.stat_notify_sync), contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.sync_now))
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     SettingsToggle(
                         title = stringResource(R.string.require_login_title),

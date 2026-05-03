@@ -48,5 +48,14 @@ class ApiClient(private val baseUrl: String) {
             token?.let { header("Authorization",  "Bearer $it") }
         }
     }
+
+    suspend fun syncLocations(locations: List<LocationSyncRequest>, token: String): Boolean {
+        return try {
+            val response = post("/api/locations/sync", LocationsSyncListRequest(locations), token)
+            response.status.isSuccess()
+        } catch (e: Exception) {
+            false
+        }
+    }
 }
 

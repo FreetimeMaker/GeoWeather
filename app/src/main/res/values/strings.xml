@@ -224,4 +224,8 @@
     <string name="login_with_github">Login with GitHub</string>
     <string name="github_login_desc">Use your GitHub account to login and unlock additional features like 7-day forecast history.</string>
     <string name="login_success">Login successful!</string>
+    <string name="sync_now">Sync with Cloud</string>
+    <string name="last_synced">Last synced: %1$s</string>
+    <string name="sync_failed">Sync failed</string>
+    <string name="sync_success">Sync successful</string>
 </resources>

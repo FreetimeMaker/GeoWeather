@@ -96,6 +96,12 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.5.5" to listOf(
+            "Added Cloud Synchronization for favorite locations",
+            "Added manual 'Sync with Cloud' button in Account settings",
+            "Automatic background synchronization on startup and login",
+            "Improved data persistence and cross-device availability"
+        ),
         "v1.5.4" to listOf(
             "Added support for user profile pictures from API",
             "Moved weather history section to Weather Detail view",

@@ -81,6 +81,9 @@ class MainActivity : ComponentActivity() {
         
         handleAuthCallback(intent)
 
+        val viewModel = LocationsViewModel(application)
+        viewModel.syncWithCloud()
+
         val sharedPrefs = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
         
         val db = LocationDatabase.getDatabase(this)
@@ -179,6 +182,9 @@ class MainActivity : ComponentActivity() {
                 val authMgr = AuthManager.getInstance(this)
                 authMgr.saveAuthData(token, refreshToken ?: "", id ?: "", email ?: "", name ?: "", tier, pic)
                 Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+                
+                // Sync after login
+                LocationsViewModel(application).syncWithCloud()
             }
         }
     }

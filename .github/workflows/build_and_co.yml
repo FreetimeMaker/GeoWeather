@@ -71,7 +71,7 @@ jobs:
         id: sign_apk
         run: |
           UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
-          SIGNED_APK="GeoWeather-${{ needs.prepare_android_app.outputs.version }}.apk"
+          SIGNED_APK="GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk"
 
           echo "==> Signiere APK: $SIGNED_APK"
           "${{ steps.find_apksigner.outputs.apksigner }}" sign \
@@ -93,8 +93,8 @@ jobs:
       - name: Upload APK as build artifact
         uses: actions/upload-artifact@v7
         with:
-          name: GeoWeather-${{ needs.prepare_android_app.outputs.version }}.apk
-          path: GeoWeather-${{ needs.prepare_android_app.outputs.version }}.apk
+          name: GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk
+          path: GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk
           if-no-files-found: error
           retention-days: 90
 
@@ -104,6 +104,6 @@ jobs:
         with:
           tag_name: v${{ needs.prepare_android_app.outputs.version }}
           files: |
-            GeoWeather-${{ needs.prepare_android_app.outputs.version }}.apk
+            GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk
           draft: true
           generate_release_notes: true
