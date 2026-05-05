@@ -44,7 +44,7 @@ class AuthActivity : ComponentActivity() {
                 } else {
                     AuthScreenContent(
                         onLoginClick = {
-                            val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${com.freetime.geoweather.ApiConstants.BASE_URL}/api/auth/github"))
+                            val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${com.freetime.geoweather.ApiConstants.BASE_URL}/api/v1/auth/github"))
                             startActivity(intent)
                         }
                     )
