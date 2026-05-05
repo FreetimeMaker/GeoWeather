@@ -231,4 +231,5 @@
     <string name="last_synced">Last synced: %1$s</string>
     <string name="sync_failed">Sync failed</string>
     <string name="sync_success">Sync successful</string>
+    <string name="tier_premium">Pr</string>
 </resources>

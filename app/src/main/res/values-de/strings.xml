@@ -145,7 +145,7 @@
     <string name="logged_in_as">Angemeldet als:</string>
     <string name="subscription_tier">Abonnement-Stufe: %1$s</string>
     <string name="tier_free">Kostenlos</string>
-    <string name="tier_pro">PRO</string>
+    <string name="tier_premium">PRO</string>
     <string name="account_title">Konto</string>
     <string name="login_required_widget">Login erforderlich</string>
     <string name="not_logged_in">Nicht angemeldet</string>
