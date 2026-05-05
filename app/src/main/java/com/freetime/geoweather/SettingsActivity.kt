@@ -167,8 +167,8 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     Text(text = stringResource(R.string.logged_in_as), style = MaterialTheme.typography.labelMedium)
                     Text(text = userInfo.name, style = MaterialTheme.typography.titleMedium)
                     Text(text = userInfo.email, style = MaterialTheme.typography.bodyMedium)
-                    
-                    val tierString = if (userInfo.subscriptionTier == "pro") stringResource(R.string.tier_pro) else stringResource(R.string.tier_free)
+
+                    val tierString = if (userInfo?.subscriptionTier == "premium") stringResource(R.string.tier_premium) else if (userInfo?.subscriptionTier == "freemium") stringResource(R.string.tier_freemium) else stringResource(R.string.tier_free)
                     Text(text = stringResource(R.string.subscription_tier, tierString), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                     
                     Spacer(modifier = Modifier.height(16.dp))
