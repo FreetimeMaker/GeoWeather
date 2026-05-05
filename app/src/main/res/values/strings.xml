@@ -213,7 +213,8 @@
     <string name="logged_in_as">Logged in as:</string>
     <string name="subscription_tier">Subscription Tier: %1$s</string>
     <string name="tier_free">Free</string>
-    <string name="tier_pro">PRO</string>
+    <string name="tier_freemium">Freemium</string>
+    <string name="tier_premium">Premium</string>
     <string name="account_title">Account</string>
     <string name="login_required_widget">Login Required</string>
     <string name="not_logged_in">Not logged in</string>

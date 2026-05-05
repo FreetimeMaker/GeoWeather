@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     alias(libs.plugins.composeCompiler)
-    id("com.google.devtools.ksp") // for Room
+    alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     kotlin("plugin.serialization")
 }
@@ -14,8 +14,8 @@ android {
         applicationId = "com.freetime.geoweather"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.compileSdk.get().toInt()
-        versionCode = 47
-        versionName = "1.5.5"
+        versionCode = 48
+        versionName = "1.5.6"
     }
 
     buildFeatures {

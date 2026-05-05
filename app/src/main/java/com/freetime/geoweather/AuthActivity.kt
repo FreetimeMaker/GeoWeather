@@ -26,7 +26,7 @@ class AuthActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val authMgr = com.freetime.geoweather.AuthManager.getInstance(this)
+        val authMgr = AuthManager.getInstance(this)
 
         setContent {
             GeoWeatherTheme {
@@ -44,7 +44,7 @@ class AuthActivity : ComponentActivity() {
                 } else {
                     AuthScreenContent(
                         onLoginClick = {
-                            val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${com.freetime.geoweather.ApiConstants.BASE_URL}/api/v1/auth/github"))
+                            val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${ApiConstants.BASE_URL}/api/v1/auth/github"))
                             startActivity(intent)
                         }
                     )
@@ -111,7 +111,7 @@ private fun UserInfoScreen(
             Text(text = userInfo?.name ?: stringResource(R.string.unknown_location), style = MaterialTheme.typography.headlineMedium)
             Text(text = userInfo?.email ?: "", style = MaterialTheme.typography.bodyLarge)
             
-            val tierString = if (userInfo?.subscriptionTier == "pro") stringResource(R.string.tier_pro) else stringResource(R.string.tier_free)
+            val tierString = if (userInfo?.subscriptionTier == "premium") stringResource(R.string.tier_premium) else if (userInfo?.subscriptionTier == "freemium") stringResource(R.string.tier_freemium) else stringResource(R.string.tier_free)
             Text(text = stringResource(R.string.subscription_tier, tierString), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
             
             Spacer(modifier = Modifier.height(32.dp))

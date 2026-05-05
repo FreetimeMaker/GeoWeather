@@ -96,6 +96,13 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.5.6" to listOf(
+            "Updated Authentication flow with improved Bearer token support",
+            "Added background synchronization for smoother user experience",
+            "Integrated authenticated weather data fetching",
+            "Added new translations (Mara)",
+            "Improved app stability and fixed minor UI issues"
+        ),
         "v1.5.5" to listOf(
             "Added Cloud Synchronization for favorite locations",
             "Added manual 'Sync with Cloud' button in Account settings",
