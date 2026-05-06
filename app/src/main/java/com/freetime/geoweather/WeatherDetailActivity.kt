@@ -136,7 +136,7 @@ fun WeatherDetailScreen(
     val authManager = remember { AuthManager.getInstance(context) }
     val weatherRepository = remember { WeatherRepository(context) }
     val userInfo = authManager.userInfo
-    val isPro = userInfo?.subscriptionTier == "pro"
+    val isPremium = userInfo?.subscriptionTier == "premium"
     
     val tempUnit by sharedPreferences.collectStringAsState("temp_unit", "celsius")
     val windUnit by sharedPreferences.collectStringAsState("wind_unit", "kmh")
@@ -166,7 +166,7 @@ fun WeatherDetailScreen(
             val lastUpdated = entity?.lastUpdated
             val dataAgeMinutes = if (lastUpdated != null) (currentTime - lastUpdated) / (1000 * 60) else Long.MAX_VALUE
 
-            val forecastDays = if (isPro) 7 else 3
+            val forecastDays = if (isPremium) 7 else 3
 
             if (!forceRefresh && entity?.weatherData != null && dataAgeMinutes < 30) {
                 val json = entity.weatherData
@@ -292,7 +292,7 @@ fun WeatherDetailScreen(
                 item {
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                         Text(
-                            text = if (isPro) stringResource(R.string.SevenDayForecastTXT) else stringResource(R.string.forecast_3day_label),
+                            text = if (isPremium) stringResource(R.string.SevenDayForecastTXT) else stringResource(R.string.forecast_3day_label),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )

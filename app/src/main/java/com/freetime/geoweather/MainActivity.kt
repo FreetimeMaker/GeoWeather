@@ -90,15 +90,8 @@ class MainActivity : ComponentActivity() {
         viewModel.syncWithCloud()
 
         val sharedPrefs = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-        val requireLogin = sharedPrefs.getBoolean("require_login", false)
         val authManager = AuthManager.getInstance(this)
 
-        if (requireLogin && !authManager.isAuthenticated) {
-            startActivity(Intent(this, AuthActivity::class.java))
-            finish()
-            return
-        }
-        
         val db = LocationDatabase.getDatabase(this)
         lifecycleScope.launch {
             val locations = withContext(Dispatchers.IO) {

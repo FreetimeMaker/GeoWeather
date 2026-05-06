@@ -33,10 +33,9 @@ class WeatherChangeWorker(
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             val sharedPreferences = applicationContext.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-            val requireLogin = sharedPreferences.getBoolean("require_login", false)
             val authManager = AuthManager.getInstance(applicationContext)
 
-            if (requireLogin && !authManager.isAuthenticated) {
+            if (authManager.isAuthenticated) {
                 return@withContext Result.success()
             }
 

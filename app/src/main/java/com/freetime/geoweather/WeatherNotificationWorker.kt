@@ -33,10 +33,9 @@ class WeatherNotificationWorker(
             Log.d(TAG, "doWork started")
 
             val sharedPrefs = applicationContext.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-            val requireLogin = sharedPrefs.getBoolean("require_login", false)
             val authManager = AuthManager.getInstance(applicationContext)
 
-            if (requireLogin && !authManager.isAuthenticated) {
+            if (authManager.isAuthenticated) {
                 Log.d(TAG, "Login required but not authenticated, skipping notification")
                 return@withContext Result.success()
             }

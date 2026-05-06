@@ -33,7 +33,7 @@ class WeatherRepository(private val context: Context) {
     }
 
     private fun fetchFromCustomApi(lat: Double, lon: Double, token: String, provider: String, days: Int): WeatherDataResult {
-        val url = "${ApiConstants.BASE_URL}/api/weather?latitude=$lat&longitude=$lon&provider=$provider&days=$days"
+        val url = "${ApiConstants.BASE_URL}/v1/weather?latitude=$lat&longitude=$lon&provider=$provider&days=$days"
         val response = NetworkUtils.httpGet(url, token)
         val json = JSONObject(response)
         
@@ -282,7 +282,7 @@ class WeatherRepository(private val context: Context) {
             val startDate = df.format(cal.time)
             
             val url = if (authManager.isAuthenticated) {
-                "${ApiConstants.BASE_URL}/api/weather/history?latitude=$lat&longitude=$lon&start_date=$startDate&end_date=$endDate"
+                "${ApiConstants.BASE_URL}/v1/weather/history?latitude=$lat&longitude=$lon&start_date=$startDate&end_date=$endDate"
             } else {
                 "${ApiConstants.OPEN_METEO_ARCHIVE}?latitude=$lat&longitude=$lon&start_date=$startDate&end_date=$endDate&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto"
             }

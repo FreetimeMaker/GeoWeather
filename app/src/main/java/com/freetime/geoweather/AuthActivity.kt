@@ -44,7 +44,7 @@ class AuthActivity : ComponentActivity() {
                 } else {
                     AuthScreenContent(
                         onLoginClick = {
-                            val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${ApiConstants.BASE_URL}/api/v1/auth/github"))
+                            val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${ApiConstants.BASE_URL}/v1/auth/github"))
                             startActivity(intent)
                         }
                     )

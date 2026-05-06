@@ -1,7 +1,7 @@
 package com.freetime.geoweather
 
 object ApiConstants {
-    const val BASE_URL = "https://geo-weather-api.vercel.app"
+    const val BASE_URL = "https://vzuzorzvuuinpdrntnnm.supabase.co/functions/v1/api"
     
     // Open-Meteo APIs
     const val OPEN_METEO_FORECAST = "https://api.open-meteo.com/v1/forecast"
@@ -17,7 +17,6 @@ object ApiConstants {
     // QWeather
     const val QWEATHER_MOON = "https://devapi.qweather.com/v7/astronomy/moon"
     const val QWEATHER_API_KEY = "" // Fill with your key or leave empty
-
     fun getAirQualityUrl(lat: Double, lon: Double): String {
         return "$OPEN_METEO_AIR_QUALITY?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
     }

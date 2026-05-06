@@ -164,8 +164,7 @@ fun WebViewScreen(
     ) { innerPadding ->
         AndroidView(
             factory = { ctx ->
-                WebView(ctx).apply {
-                    webViewClient = WebViewClient()
+                PrivacyWebView(ctx).apply {
                     settings.javaScriptEnabled = true
                     loadUrl(url)
                 }
