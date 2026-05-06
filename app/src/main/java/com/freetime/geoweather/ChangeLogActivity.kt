@@ -96,6 +96,11 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.5.7" to listOf(
+            "Replaced all hardcoded German and non-English strings with English resources",
+            "Improved UI localization and consistency",
+            "Updated versioning and internal string management"
+        ),
         "v1.5.6" to listOf(
             "Updated Authentication flow with improved Bearer token support",
             "Added background synchronization for smoother user experience",

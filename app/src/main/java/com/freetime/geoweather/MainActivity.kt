@@ -344,11 +344,11 @@ fun MainScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(text = "Cloud Sync verfügbar", style = MaterialTheme.typography.titleMedium)
-                            Text(text = "Melde dich an, um deine Standorte zu sichern.", style = MaterialTheme.typography.bodySmall)
+                            Text(text = stringResource(R.string.cloud_sync_available), style = MaterialTheme.typography.titleMedium)
+                            Text(text = stringResource(R.string.cloud_sync_desc), style = MaterialTheme.typography.bodySmall)
                         }
                         Button(onClick = { context.startActivity(Intent(context, AuthActivity::class.java)) }) {
-                            Text("Login")
+                            Text(stringResource(R.string.login_button))
                         }
                     }
                 }

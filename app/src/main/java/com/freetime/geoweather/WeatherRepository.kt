@@ -134,9 +134,9 @@ class WeatherRepository(private val context: Context) {
     private fun fetchFromOpenMeteo(lat: Double, lon: Double, days: Int): WeatherDataResult {
         val url = "${ApiConstants.OPEN_METEO_FORECAST}?latitude=$lat&longitude=$lon&current=temperature_2m,windspeed_10m,weathercode,is_day&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,pressure_msl,apparent_temperature,precipitation_probability,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&forecast_days=$days&timezone=auto"
         val response = try {
-            NetworkUtils.httpGet(url) ?: return WeatherDataResult.Error("Network error")
+            NetworkUtils.httpGet(url) ?: return WeatherDataResult.Error(context.getString(R.string.error_connection))
         } catch (e: Exception) {
-            return WeatherDataResult.Error(e.message ?: "Network error")
+            return WeatherDataResult.Error(e.message ?: context.getString(R.string.error_connection))
         }
         val json = JSONObject(response)
         
