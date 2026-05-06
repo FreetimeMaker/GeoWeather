@@ -20,6 +20,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
@@ -48,7 +49,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.ImageLoader
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.LocationsViewModel
@@ -286,6 +289,8 @@ fun MainScreen(
                     }) {
                         val authMgr = remember { AuthManager.getInstance(context) }
                         val userInfo = authMgr.userInfo
+                        val context = LocalContext.current
+
                         if (userInfo?.profilePicture?.isNotEmpty() == true) {
                             AsyncImage(
                                 model = ImageRequest.Builder(context)
@@ -293,10 +298,16 @@ fun MainScreen(
                                     .crossfade(true)
                                     .build(),
                                 contentDescription = stringResource(R.string.account_nav_desc),
-                                modifier = Modifier.size(32.dp).clip(androidx.compose.foundation.shape.CircleShape)
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
                             )
                         } else {
-                            Icon(Icons.Default.AccountCircle, contentDescription = stringResource(R.string.account_nav_desc))
+                            Icon(
+                                Icons.Default.AccountCircle,
+                                contentDescription = stringResource(R.string.account_nav_desc),
+                                modifier = Modifier.size(32.dp)
+                            )
                         }
                     }
                     IconButton(onClick = onOpenDonate) {

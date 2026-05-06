@@ -1,6 +1,7 @@
 package com.freetime.geoweather
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -19,6 +21,10 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.ExternalAuthConfig
+import io.github.jan.supabase.auth.providers.Github
+import kotlinx.coroutines.launch
 
 class AuthActivity : ComponentActivity() {
 
@@ -42,10 +48,22 @@ class AuthActivity : ComponentActivity() {
                         onBack = { finish() }
                     )
                 } else {
+                    val context = LocalContext.current
+                    val scope = rememberCoroutineScope()
+
                     AuthScreenContent(
                         onLoginClick = {
-                            val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${ApiConstants.BASE_URL}/v1/auth/github"))
-                            startActivity(intent)
+                            scope.launch {
+                                try {
+                                    supabase.auth.signInWith(Github)
+                                } catch (e: Exception) {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.gh_login_failed),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
                         }
                     )
                 }
