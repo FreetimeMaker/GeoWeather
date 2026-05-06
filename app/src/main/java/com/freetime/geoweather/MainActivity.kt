@@ -56,6 +56,7 @@ import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.LocationsViewModel
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -80,14 +81,35 @@ class MainActivity : ComponentActivity() {
             // Permission granted
         }
     }
+
+    override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
+        super.onNewIntent(intent, caller)
+        handleDeepLink(intent)
+    }
+
+    private fun handleDeepLink(intent: Intent) {
+        val uri = intent.data ?: return
+        val code = uri.getQueryParameter("code") ?: return
+
+        lifecycleScope.launch {
+            try {
+                val session = supabase.auth.exchangeCodeForSession(code)
+                println("Login erfolgreich: ${session.user?.email}")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         hideSystemBars()
         checkNotificationPermission()
-        
+
         handleAuthCallback(intent)
+
+        handleDeepLink(intent)
 
         val viewModel = LocationsViewModel(application)
         viewModel.syncWithCloud()

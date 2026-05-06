@@ -55,7 +55,9 @@ class AuthActivity : ComponentActivity() {
                         onLoginClick = {
                             scope.launch {
                                 try {
-                                    supabase.auth.signInWith(Github)
+                                    supabase.auth.signInWith(
+                                        Github
+                                    )
                                 } catch (e: Exception) {
                                     Toast.makeText(
                                         context,
