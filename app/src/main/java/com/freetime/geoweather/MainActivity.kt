@@ -82,9 +82,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // Neue API (Android 14+)
     override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
         super.onNewIntent(intent, caller)
         handleDeepLink(intent)
+    }
+
+    // Alte API (Android 13 und älter, CI, AGP < 8.3)
+    @Suppress("DEPRECATION")
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) handleDeepLink(intent)
     }
 
     private fun handleDeepLink(intent: Intent) {
@@ -191,11 +199,6 @@ class MainActivity : ComponentActivity() {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        handleAuthCallback(intent)
     }
 
     private fun handleAuthCallback(intent: Intent?) {
