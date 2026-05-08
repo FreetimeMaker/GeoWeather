@@ -1,10 +1,6 @@
 package com.freetime.geoweather
 
-import io.github.jan.supabase.auth.Auth
-import io.github.jan.supabase.auth.ExternalAuthAction
-import io.github.jan.supabase.auth.SettingsSessionManager
 import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.functions.Functions
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.PropertyConversionMethod
 import io.github.jan.supabase.serializer.KotlinXSerializer

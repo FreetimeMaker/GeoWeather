@@ -1,7 +1,7 @@
 package com.freetime.geoweather
 
 object ApiConstants {
-    const val BASE_URL = "https://vzuzorzvuuinpdrntnnm.supabase.co/functions/v1/api"
+    const val BASE_URL = "https://geoweather-api.onrender.com/api"
 
     // Open-Meteo APIs
     const val OPEN_METEO_FORECAST = "https://api.open-meteo.com/v1/forecast"

@@ -80,8 +80,8 @@ class MainActivity : ComponentActivity() {
         ) {
             // Permission granted
         }
+    }
 
-    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -99,28 +99,36 @@ class MainActivity : ComponentActivity() {
             val locations = withContext(Dispatchers.IO) {
                 db.locationDao().getAllLocationsSync()
             }
-            
+
             val defaultLoc = locations.find { it.isDefault }
             val targetLoc = defaultLoc ?: if (locations.size == 1) locations.first() else null
-            
+
             if (targetLoc != null) {
-                val intent = Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
-                    putExtra("name", targetLoc.name)
-                    putExtra("lat", targetLoc.latitude)
-                    putExtra("lon", targetLoc.longitude)
-                }
+                val intent =
+                    Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
+                        putExtra("name", targetLoc.name)
+                        putExtra("lat", targetLoc.latitude)
+                        putExtra("lon", targetLoc.longitude)
+                    }
                 startActivity(intent)
             }
         }
-        
+
         setContent {
-            val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
-            val useSystemTheme = sharedPreferences.collectAsState(key = "use_system_theme", defaultValue = true)
-            val darkModeEnabled = sharedPreferences.collectAsState(key = "dark_mode_enabled", defaultValue = false)
-            val dynamicColor = sharedPreferences.collectAsState(key = "dynamic_color", defaultValue = true)
-            
-            val darkTheme = if (useSystemTheme.value) isSystemInDarkTheme() else darkModeEnabled.value
-            
+            val sharedPreferences =
+                remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
+            val useSystemTheme =
+                sharedPreferences.collectAsState(key = "use_system_theme", defaultValue = true)
+            val darkModeEnabled = sharedPreferences.collectAsState(
+                key = "dark_mode_enabled",
+                defaultValue = false
+            )
+            val dynamicColor =
+                sharedPreferences.collectAsState(key = "dynamic_color", defaultValue = true)
+
+            val darkTheme =
+                if (useSystemTheme.value) isSystemInDarkTheme() else darkModeEnabled.value
+
             GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor.value) {
                 MainScreen(
                     onRequestLocationPermission = {
@@ -132,11 +140,12 @@ class MainActivity : ComponentActivity() {
                         )
                     },
                     onOpenDetail = { name, lat, lon ->
-                        val intent = Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
-                            putExtra("name", name)
-                            putExtra("lat", lat)
-                            putExtra("lon", lon)
-                        }
+                        val intent =
+                            Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
+                                putExtra("name", name)
+                                putExtra("lat", lat)
+                                putExtra("lon", lon)
+                            }
                         startActivity(intent)
                     },
                     onOpenDonate = {
@@ -164,15 +173,14 @@ class MainActivity : ComponentActivity() {
 
     private fun checkNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        handleAuthCallback(intent)
     }
 
     private fun handleAuthCallback(intent: Intent?) {
@@ -183,14 +191,25 @@ class MainActivity : ComponentActivity() {
             val id = data.getQueryParameter("id")
             val email = data.getQueryParameter("email")
             val name = data.getQueryParameter("name")
-            val pic = data.getQueryParameter("picture") ?: data.getQueryParameter("profile_picture") ?: ""
+            val pic =
+                data.getQueryParameter("picture") ?: data.getQueryParameter("profile_picture")
+                ?: ""
             val tier = data.getQueryParameter("tier") ?: "free"
 
             if (token != null) {
                 val authMgr = AuthManager.getInstance(this)
-                authMgr.saveAuthData(token, refreshToken ?: "", id ?: "", email ?: "", name ?: "", tier, pic)
-                Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
-                
+                authMgr.saveAuthData(
+                    token,
+                    refreshToken ?: "",
+                    id ?: "",
+                    email ?: "",
+                    name ?: "",
+                    tier,
+                    pic
+                )
+                Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT)
+                    .show()
+
                 // Sync after login
                 LocationsViewModel(application).syncWithCloud()
             }
@@ -207,7 +226,8 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val viewModel = remember { LocationsViewModel(context.applicationContext as android.app.Application) }
+    val viewModel =
+        remember { LocationsViewModel(context.applicationContext as android.app.Application) }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val locations: List<LocationEntity> by viewModel.locations.observeAsState(initial = emptyList())
@@ -224,11 +244,16 @@ fun MainScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            if (ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                                ) != PackageManager.PERMISSION_GRANTED
+                            ) {
                                 onRequestLocationPermission()
                             } else {
                                 isLocating = true
-                                val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                                val locationManager =
+                                    context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
                                 val providers = locationManager.getProviders(true)
                                 var bestLocation: Location? = null
                                 for (provider in providers) {
@@ -244,28 +269,51 @@ fun MainScreen(
 
                                 if (bestLocation != null) {
                                     isLocating = false
-                                    onOpenDetail(context.getString(R.string.current_location), bestLocation.latitude, bestLocation.longitude)
+                                    onOpenDetail(
+                                        context.getString(R.string.current_location),
+                                        bestLocation.latitude,
+                                        bestLocation.longitude
+                                    )
                                 } else {
                                     // Try request single update
-                                    val provider = if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                                        LocationManager.NETWORK_PROVIDER
-                                    } else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                                        LocationManager.GPS_PROVIDER
-                                    } else {
-                                        null
-                                    }
+                                    val provider =
+                                        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                                            LocationManager.NETWORK_PROVIDER
+                                        } else if (locationManager.isProviderEnabled(
+                                                LocationManager.GPS_PROVIDER
+                                            )
+                                        ) {
+                                            LocationManager.GPS_PROVIDER
+                                        } else {
+                                            null
+                                        }
 
                                     if (provider != null) {
                                         try {
-                                            locationManager.requestSingleUpdate(provider, object : LocationListener {
-                                                override fun onLocationChanged(location: Location) {
-                                                    isLocating = false
-                                                    onOpenDetail(context.getString(R.string.current_location), location.latitude, location.longitude)
-                                                }
-                                                override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-                                                override fun onProviderEnabled(provider: String) {}
-                                                override fun onProviderDisabled(provider: String) {}
-                                            }, null)
+                                            locationManager.requestSingleUpdate(
+                                                provider,
+                                                object : LocationListener {
+                                                    override fun onLocationChanged(location: Location) {
+                                                        isLocating = false
+                                                        onOpenDetail(
+                                                            context.getString(R.string.current_location),
+                                                            location.latitude,
+                                                            location.longitude
+                                                        )
+                                                    }
+
+                                                    override fun onStatusChanged(
+                                                        provider: String?,
+                                                        status: Int,
+                                                        extras: Bundle?
+                                                    ) {
+                                                    }
+
+                                                    override fun onProviderEnabled(provider: String) {}
+                                                    override fun onProviderDisabled(provider: String) {}
+                                                },
+                                                null
+                                            )
                                         } catch (e: SecurityException) {
                                             isLocating = false
                                         }
@@ -278,9 +326,15 @@ fun MainScreen(
                         enabled = !isLocating
                     ) {
                         if (isLocating) {
-                            CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                strokeWidth = 2.dp
+                            )
                         } else {
-                            Icon(Icons.Default.MyLocation, contentDescription = stringResource(R.string.current_location))
+                            Icon(
+                                Icons.Default.MyLocation,
+                                contentDescription = stringResource(R.string.current_location)
+                            )
                         }
                     }
                     IconButton(onClick = {
@@ -310,12 +364,19 @@ fun MainScreen(
                         }
                     }
                     IconButton(onClick = onOpenDonate) {
-                        Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.donate_nav_desc), tint = MaterialTheme.colorScheme.primary)
+                        Icon(
+                            Icons.Default.Favorite,
+                            contentDescription = stringResource(R.string.donate_nav_desc),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                     IconButton(onClick = {
                         context.startActivity(Intent(context, SettingsActivity::class.java))
                     }) {
-                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings_nav_desc))
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings_nav_desc)
+                        )
                     }
                 },
                 scrollBehavior = scrollBehavior
@@ -332,7 +393,7 @@ fun MainScreen(
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             val authManager = remember { AuthManager.getInstance(context) }
             val isAuthenticated = authManager.isAuthenticated
-            
+
             if (!isAuthenticated) {
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -343,10 +404,23 @@ fun MainScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(text = stringResource(R.string.cloud_sync_available), style = MaterialTheme.typography.titleMedium)
-                            Text(text = stringResource(R.string.cloud_sync_desc), style = MaterialTheme.typography.bodySmall)
+                            Text(
+                                text = stringResource(R.string.cloud_sync_available),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = stringResource(R.string.cloud_sync_desc),
+                                style = MaterialTheme.typography.bodySmall
+                            )
                         }
-                        Button(onClick = { context.startActivity(Intent(context, AuthActivity::class.java)) }) {
+                        Button(onClick = {
+                            context.startActivity(
+                                Intent(
+                                    context,
+                                    AuthActivity::class.java
+                                )
+                            )
+                        }) {
                             Text(stringResource(R.string.login_button))
                         }
                     }
@@ -367,26 +441,38 @@ fun MainScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(locations) { loc ->
-                        val sharedPrefs = LocalContext.current.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-                        val tempUnit = sharedPrefs.getString("temp_unit", "celsius") ?: "celsius"
-                        
+                        val sharedPrefs = LocalContext.current.getSharedPreferences(
+                            "geo_weather_prefs",
+                            Context.MODE_PRIVATE
+                        )
+                        val tempUnit =
+                            sharedPrefs.getString("temp_unit", "celsius") ?: "celsius"
+
                         ListItem(
                             leadingContent = {
                                 loc.currentWeatherCode?.let { code ->
                                     Icon(
-                                        painter = painterResource(id = WeatherIconMapper.getIcon(code, loc.provider, loc.isDay)),
+                                        painter = painterResource(
+                                            id = WeatherIconMapper.getIcon(
+                                                code,
+                                                loc.provider,
+                                                loc.isDay
+                                            )
+                                        ),
                                         contentDescription = null,
                                         modifier = Modifier.size(40.dp),
                                         tint = Color.Unspecified
                                     )
                                 }
                             },
-                            headlineContent = { 
+                            headlineContent = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(loc.name)
                                     loc.currentTemp?.let { temp ->
-                                        val displayTemp = if (tempUnit == "fahrenheit") (temp * 9/5 + 32).toInt() else temp.toInt()
-                                        val suffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+                                        val displayTemp =
+                                            if (tempUnit == "fahrenheit") (temp * 9 / 5 + 32).toInt() else temp.toInt()
+                                        val suffix =
+                                            if (tempUnit == "fahrenheit") "°F" else "°C"
                                         Spacer(Modifier.width(8.dp))
                                         Text(
                                             text = "$displayTemp$suffix",
@@ -396,7 +482,15 @@ fun MainScreen(
                                     }
                                 }
                             },
-                            supportingContent = { Text(stringResource(R.string.coordinates_label, loc.latitude, loc.longitude)) },
+                            supportingContent = {
+                                Text(
+                                    stringResource(
+                                        R.string.coordinates_label,
+                                        loc.latitude,
+                                        loc.longitude
+                                    )
+                                )
+                            },
                             trailingContent = {
                                 Row {
                                     IconButton(onClick = {
@@ -409,7 +503,11 @@ fun MainScreen(
                                         )
                                     }
                                     IconButton(onClick = { locationToDelete = loc }) {
-                                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.DelLoc), tint = MaterialTheme.colorScheme.error)
+                                        Icon(
+                                            Icons.Default.Delete,
+                                            contentDescription = stringResource(R.string.DelLoc),
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
                                     }
                                 }
                             },
@@ -420,7 +518,10 @@ fun MainScreen(
                                     onOpenDetail(loc.name, loc.latitude, loc.longitude)
                                 }
                         )
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant)
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
                     }
                 }
             }
@@ -442,13 +543,23 @@ fun MainScreen(
         AlertDialog(
             onDismissRequest = { locationToDelete = null },
             title = { Text(stringResource(R.string.DelLoc)) },
-            text = { Text(String.format(stringResource(R.string.DelLocConAsk), location.name)) },
+            text = {
+                Text(
+                    String.format(
+                        stringResource(R.string.DelLocConAsk),
+                        location.name
+                    )
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.deleteLocation(location)
                     locationToDelete = null
                 }) {
-                    Text(stringResource(R.string.DelTXT), color = MaterialTheme.colorScheme.error)
+                    Text(
+                        stringResource(R.string.DelTXT),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             },
             dismissButton = {
@@ -512,13 +623,24 @@ fun AddLocationDialog(
                     Text(stringResource(R.string.SearchBTNTXT))
                 }
                 if (loading) {
-                    Box(Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                    Box(
+                        Modifier.fillMaxWidth().height(100.dp),
+                        contentAlignment = Alignment.Center
+                    ) { CircularProgressIndicator() }
                 } else if (results.isNotEmpty()) {
                     LazyColumn(modifier = Modifier.heightIn(max = 300.dp)) {
                         items(results) { (name, lat, lon) ->
                             ListItem(
                                 headlineContent = { Text(name) },
-                                supportingContent = { Text(stringResource(R.string.coordinates_label, lat, lon)) },
+                                supportingContent = {
+                                    Text(
+                                        stringResource(
+                                            R.string.coordinates_label,
+                                            lat,
+                                            lon
+                                        )
+                                    )
+                                },
                                 modifier = Modifier.clickable { onAdd(name, lat, lon) }
                             )
                         }
