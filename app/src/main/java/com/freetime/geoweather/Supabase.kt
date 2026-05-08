@@ -22,27 +22,9 @@ val supabase = createSupabaseClient(
         }
     )
 
-    install(Auth) {
-        host = "com.freetime.geoweather" // this can be anything, eg. your package name or app/company url (not your Supabase url)
-        scheme = "deeplink scheme"
-        alwaysAutoRefresh = true // default: true
-        autoLoadFromStorage = true // default: true
-        autoSaveToStorage = true // default: true
-        retryDelay = 10.seconds // default: 10.seconds
-        enableLifecycleCallbacks = true // default: true
-        sessionManager = SettingsSessionManager() // default: SettingsSessionManager()
-
-        // On Android only, you can set OAuth and SSO logins to open in a custom tab, rather than an external browser:
-        defaultExternalAuthAction = ExternalAuthAction.CustomTabs() //defaults to ExternalAuthAction.ExternalBrowser
-    }
-
     install(Postgrest) {
         defaultSchema = "public" // default: "public"
         propertyConversionMethod = PropertyConversionMethod.CAMEL_CASE_TO_SNAKE_CASE // default: PropertyConversionMethod.CAMEL_CASE_TO_SNAKE_CASE
         timeout = 30.seconds // default: 30.seconds
-    }
-
-    install(Functions) {
-        //no custom settings
     }
 }

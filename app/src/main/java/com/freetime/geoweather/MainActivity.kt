@@ -80,44 +80,13 @@ class MainActivity : ComponentActivity() {
         ) {
             // Permission granted
         }
-    }
 
-    // Neue API (Android 14+)
-    override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
-        super.onNewIntent(intent, caller)
-        handleDeepLink(intent)
-    }
-
-    // Alte API (Android 13 und älter, CI, AGP < 8.3)
-    @Suppress("DEPRECATION")
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        if (intent != null) handleDeepLink(intent)
-    }
-
-    private fun handleDeepLink(intent: Intent) {
-        val uri = intent.data ?: return
-        val code = uri.getQueryParameter("code") ?: return
-
-        lifecycleScope.launch {
-            try {
-                val session = supabase.auth.exchangeCodeForSession(code)
-                println("Login erfolgreich: ${session.user?.email}")
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         hideSystemBars()
         checkNotificationPermission()
-
-        handleAuthCallback(intent)
-
-        handleDeepLink(intent)
 
         val viewModel = LocationsViewModel(application)
         viewModel.syncWithCloud()
@@ -199,6 +168,11 @@ class MainActivity : ComponentActivity() {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleAuthCallback(intent)
     }
 
     private fun handleAuthCallback(intent: Intent?) {
