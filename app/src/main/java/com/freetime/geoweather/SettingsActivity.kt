@@ -378,6 +378,27 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     })
                     Text(stringResource(R.string.provider_weatherapi))
                 }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = weatherProvider == "visualcrossing", onClick = {
+                        weatherProvider = "visualcrossing"
+                        sharedPreferences.edit().putString("weather_provider", "visualcrossing").apply()
+                    })
+                    Text(stringResource(R.string.provider_visualcrossing))
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = weatherProvider == "tomorrow", onClick = {
+                        weatherProvider = "tomorrow"
+                        sharedPreferences.edit().putString("weather_provider", "tomorrow").apply()
+                    })
+                    Text(stringResource(R.string.provider_tomorrow))
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = weatherProvider == "accuweather", onClick = {
+                        weatherProvider = "accuweather"
+                        sharedPreferences.edit().putString("weather_provider", "accuweather").apply()
+                    })
+                    Text(stringResource(R.string.provider_accuweather))
+                }
                 
                 if (weatherProvider == "weatherapi") {
                     OutlinedTextField(

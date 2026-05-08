@@ -1,0 +1,5 @@
+• API: Added support for multiple weather providers via custom API.
+• Plans: Integrated subscription tiers (Free, Freemium, Premium) visibility.
+• Fix: Resolved endless loading screen when weather data fetching fails.
+• UI: Improved Account screen with plan details and logout options.
+• Strings: Full transition from hardcoded text to localized resources.

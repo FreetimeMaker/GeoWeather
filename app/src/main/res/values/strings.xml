@@ -126,6 +126,9 @@
     <string name="weather_api_key_label">WeatherAPI Key</string>
     <string name="provider_open_meteo">Open-Meteo (Recommended)</string>
     <string name="provider_weatherapi">WeatherAPI (Requires API Key)</string>
+    <string name="provider_visualcrossing">Visual Crossing</string>
+    <string name="provider_tomorrow">Tomorrow.io</string>
+    <string name="provider_accuweather">AccuWeather (Premium)</string>
     <!-- Donation Strings -->
     <string name="donate_title">Donate</string>
     <string name="support_development">Support development</string>
@@ -227,9 +230,10 @@
     <string name="login_with_github">Login with GitHub</string>
     <string name="github_login_desc">Use your GitHub account to login and unlock additional features like 7-day forecast history.</string>
     <string name="login_success">Login successful!</string>
+    <string name="login_failed">Login failed</string>
+    <string name="gh_login_failed">GitHub login failed. Please check your connection.</string>
     <string name="sync_now">Sync with Cloud</string>
     <string name="last_synced">Last synced: %1$s</string>
     <string name="sync_failed">Sync failed</string>
     <string name="sync_success">Sync successful</string>
-    <string name="gh_login_failed">GitHub login failed</string>
 </resources>
