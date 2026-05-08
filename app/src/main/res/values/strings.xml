@@ -129,6 +129,25 @@
     <string name="provider_visualcrossing">Visual Crossing</string>
     <string name="provider_tomorrow">Tomorrow.io</string>
     <string name="provider_accuweather">AccuWeather (Premium)</string>
+    <string name="oxapay">OxaPay</string>
+    <string name="gh_sponsors">GitHub Sponsors</string>
+    <string name="btc">Bitcoin</string>
+    <string name="eth">Ethereum</string>
+    <string name="usdt">USDT</string>
+    <string name="usdc">USDC</string>
+    <string name="shib">SHIB</string>
+    <string name="doge">Dogecoin</string>
+    <string name="tron">TRON</string>
+    <string name="ltc">Litecoin</string>
+    <string name="bnb">BNB</string>
+    <string name="pepe">PEPE</string>
+    <string name="sol">Solana</string>
+    <string name="dai">DAI</string>
+    <string name="ton">TON</string>
+    <string name="pol">POL</string>
+    <string name="login_error_format">Error: %1$s</string>
+    <string name="back_nav_desc_short">Back</string>
+    <string name="account_title_label">Account</string>
     <!-- Donation Strings -->
     <string name="donate_title">Donate</string>
     <string name="support_development">Support development</string>
@@ -236,4 +255,7 @@
     <string name="last_synced">Last synced: %1$s</string>
     <string name="sync_failed">Sync failed</string>
     <string name="sync_success">Sync successful</string>
+    <string name="weather_change_alerts_channel_name">Weather Change Alerts</string>
+    <string name="weather_notifications_channel_name">Weather Updates</string>
+    <string name="weather_notifications_channel_desc">Daily weather notifications</string>
 </resources>

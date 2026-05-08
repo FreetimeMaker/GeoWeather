@@ -12,6 +12,7 @@ object ApiConstants {
     
     // WeatherAPI
     const val WEATHER_API_FORECAST = "https://api.weatherapi.com/v1/forecast.json"
+    const val WEATHER_API_CURRENT = "https://api.weatherapi.com/v1/current.json"
     
     // QWeather
     const val QWEATHER_API_KEY = "" // Fill with your key or leave empty

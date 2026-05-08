@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -71,8 +72,6 @@ class WeatherDetailActivity : ComponentActivity() {
         hideSystemBars()
         checkNotificationPermission()
 
-        val sharedPrefs = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-        
         val name = intent.getStringExtra("name") ?: getString(R.string.unknown_location)
         val lat = intent.getDoubleExtra("lat", 0.0)
         val lon = intent.getDoubleExtra("lon", 0.0)
@@ -141,8 +140,6 @@ fun WeatherDetailScreen(
     val tempUnit by sharedPreferences.collectStringAsState("temp_unit", "celsius")
     val windUnit by sharedPreferences.collectStringAsState("wind_unit", "kmh")
     val weatherProvider by sharedPreferences.collectStringAsState("weather_provider", "open_meteo")
-    val weatherApiKey by sharedPreferences.collectStringAsState("weather_api_key", "")
-    val qweatherApiKey by sharedPreferences.collectStringAsState("qweather_api_key", "")
     val showHistoricalData by sharedPreferences.collectAsState("show_historical_data", true)
 
     var weatherJson by remember { mutableStateOf<String?>(null) }
@@ -160,6 +157,7 @@ fun WeatherDetailScreen(
     suspend fun refreshWeatherData(forceRefresh: Boolean = false) {
         try {
             isRefreshing = true
+            errorMessage = null
             val entity = withContext(Dispatchers.IO) { db.locationDao().findByCoordinates(lat, lon) }
             val currentTime = System.currentTimeMillis()
             
@@ -171,11 +169,14 @@ fun WeatherDetailScreen(
             if (!forceRefresh && entity?.weatherData != null && dataAgeMinutes < 30) {
                 val json = entity.weatherData
                 weatherJson = json
-                // Note: If we really want to support offline/cached view with parsed lists, 
-                // we should store those in the DB or re-parse here. 
-                // For now, we'll trigger a refresh if lists are empty but json exists
-                if (forecastList.isEmpty()) {
-                    scope.launch { refreshWeatherData(true) }
+                scope.launch { 
+                    val result = weatherRepository.getWeatherData(lat, lon, forecastDays)
+                    if (result is WeatherRepository.WeatherDataResult.Success) {
+                        forecastList = result.dailyForecast
+                        hourlyForecastList = result.hourlyForecast
+                        aqiJson = result.aqiJson
+                        moonPhaseName = result.moonPhase
+                    }
                 }
             } else {
                 val result = weatherRepository.getWeatherData(lat, lon, forecastDays)
@@ -203,7 +204,6 @@ fun WeatherDetailScreen(
                     historicalData = weatherRepository.getHistoricalData(lat, lon, 3)
                 }
             }
-            errorMessage = null
         } catch (e: Exception) {
             errorMessage = e.message ?: context.getString(R.string.error_loading_weather)
         } finally {
@@ -238,33 +238,41 @@ fun WeatherDetailScreen(
         ) {
             if (errorMessage != null) {
                 item {
-                    Text(errorMessage!!, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp))
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(errorMessage!!, color = MaterialTheme.colorScheme.error, textAlign = TextAlign.Center)
+                        Spacer(Modifier.height(8.dp))
+                        Button(onClick = { scope.launch { refreshWeatherData(true) } }) {
+                            Text(stringResource(R.string.refresh_nav_desc))
+                        }
+                    }
                 }
             }
 
+            if (weatherJson == null && isRefreshing) {
+                item { Box(Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
+            }
+
             weatherJson?.let { json ->
-                    val (temp, weatherCode, isDay, currentProvider) = if (weatherProvider == "weatherapi") {
+                val (temp, weatherCode, isDay, currentProvider) = if (weatherProvider == "weatherapi") {
                     val current = JSONObject(json).getJSONObject("current")
-                    Triple(current.getDouble("temp_c"), current.getJSONObject("condition").getInt("code"), current.getInt("is_day") == 1).let { t -> 
-                        listOf(t.first, t.second, t.third, "weatherapi")
-                    }
+                    val condition = current.getJSONObject("condition")
+                    listOf(current.getDouble("temp_c"), condition.getInt("code"), current.getInt("is_day") == 1, "weatherapi")
                 } else {
                     val root = JSONObject(json)
                     val current = if (root.has("current")) root.getJSONObject("current") else root.getJSONObject("current_weather")
-                    val temp = if (current.has("temperature_2m")) current.getDouble("temperature_2m") else current.getDouble("temperature")
+                    val t = if (current.has("temperature_2m")) current.getDouble("temperature_2m") else current.getDouble("temperature")
                     val code = current.getInt("weathercode")
-                    val isDay = current.optInt("is_day", 1) == 1
-                    Triple(temp, code, isDay).let { t ->
-                        listOf(t.first, t.second, t.third, "open_meteo")
-                    }
+                    val day = current.optInt("is_day", 1) == 1
+                    listOf(t, code, day, "open_meteo")
                 }
                 
                 val displayTemp = if (tempUnit == "fahrenheit") (temp as Double * 9/5 + 32).toInt() else (temp as Double).toInt()
 
                 item {
-                    val tempSuffixC = stringResource(R.string.temp_c_suffix)
-                    val tempSuffixF = stringResource(R.string.temp_f_suffix)
-                    val tempSuffix = if (tempUnit == "fahrenheit") tempSuffixF else tempSuffixC
+                    val tempSuffix = if (tempUnit == "fahrenheit") stringResource(R.string.temp_f_suffix) else stringResource(R.string.temp_c_suffix)
 
                     Column(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -285,26 +293,27 @@ fun WeatherDetailScreen(
                     WeatherDetailsGrid(JSONObject(json), tempUnit, windUnit, weatherProvider)
                 }
 
-                item {
-                    HourlyForecastSection(hourlyForecastList, tempUnit, weatherProvider)
+                if (hourlyForecastList.isNotEmpty()) {
+                    item {
+                        HourlyForecastSection(hourlyForecastList, tempUnit, weatherProvider)
+                    }
                 }
 
-                item {
-                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        Text(
-                            text = if (isPremium) stringResource(R.string.SevenDayForecastTXT) else stringResource(R.string.forecast_3day_label),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        forecastList.forEachIndexed { index, forecast ->
-                            ForecastItemRow(
-                                forecast = forecast,
-                                tempUnit = tempUnit,
-                                isSelected = selectedDayIndex == index,
-                                weatherProvider = weatherProvider,
-                                onClick = { selectedDayIndex = if (selectedDayIndex == index) -1 else index }
-                            )
+                if (forecastList.isNotEmpty()) {
+                    item {
+                        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                            val label = if (isPremium) stringResource(R.string.SevenDayForecastTXT) else stringResource(R.string.forecast_3day_label)
+                            Text(label, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            Spacer(Modifier.height(8.dp))
+                            forecastList.forEachIndexed { index, forecast ->
+                                ForecastItemRow(
+                                    forecast = forecast,
+                                    tempUnit = tempUnit,
+                                    isSelected = selectedDayIndex == index,
+                                    weatherProvider = weatherProvider,
+                                    onClick = { selectedDayIndex = if (selectedDayIndex == index) -1 else index }
+                                )
+                            }
                         }
                     }
                 }
@@ -339,11 +348,7 @@ fun WeatherDetailScreen(
                 if (localHistory.isNotEmpty()) {
                     item {
                         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                            Text(
-                                text = stringResource(R.string.weather_history_title),
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Text(stringResource(R.string.weather_history_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                             Spacer(Modifier.height(8.dp))
                             localHistory.take(5).forEach { entry ->
                                 HistoryItemRow(entry, tempUnit)
@@ -354,10 +359,6 @@ fun WeatherDetailScreen(
                 }
                 
                 item { Spacer(Modifier.height(32.dp)) }
-            }
-
-            if (weatherJson == null && !isRefreshing) {
-                item { Box(Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
             }
         }
     }
@@ -387,11 +388,11 @@ fun ForecastItemRow(
         Column {
             ListItem(
                 headlineContent = { Text(forecast.date) },
-                supportingContent = { Text(if (weatherProvider == "weatherapi") WeatherCodes.getWeatherApiDescription(forecast.weatherCode, LocalContext.current) else WeatherCodes.getDescription(forecast.weatherCode, LocalContext.current)) },
+                supportingContent = { Text(WeatherCodes.getDescription(forecast.weatherCode, LocalContext.current, weatherProvider)) },
                 trailingContent = { Text("$displayMax$tempSuffix / $displayMin$tempSuffix", fontWeight = FontWeight.Bold) },
                 leadingContent = { 
                     Icon(
-                        painter = painterResource(if (weatherProvider == "weatherapi") WeatherIconMapper.getWeatherApiIcon(forecast.weatherCode) else WeatherIconMapper.getWeatherIcon(forecast.weatherCode)), 
+                        painter = painterResource(WeatherIconMapper.getIcon(forecast.weatherCode, weatherProvider, true)), 
                         contentDescription = null, 
                         modifier = Modifier.size(32.dp), 
                         tint = Color.Unspecified
@@ -401,9 +402,7 @@ fun ForecastItemRow(
             )
             AnimatedVisibility(visible = isSelected) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 64.dp, end = 16.dp, bottom = 12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(start = 64.dp, end = 16.dp, bottom = 12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     DetailItemSmall(label = stringResource(R.string.trend_max), value = "$displayMax$tempSuffix")
@@ -432,12 +431,7 @@ fun HistoricalTrendsSection(data: List<DailyForecast>, tempUnit: String) {
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .padding(top = 8.dp)
-                ) {
+                Box(modifier = Modifier.fillMaxWidth().height(150.dp).padding(top = 8.dp)) {
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         val width = size.width
                         val height = size.height
@@ -472,11 +466,7 @@ fun HistoricalTrendsSection(data: List<DailyForecast>, tempUnit: String) {
                 Spacer(Modifier.height(8.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     data.forEach { forecast ->
-                        Text(
-                            text = forecast.date.split(",").last().trim(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Text(text = forecast.date.split(",").last().trim(), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 Spacer(Modifier.height(8.dp))
@@ -491,23 +481,22 @@ fun HistoricalTrendsSection(data: List<DailyForecast>, tempUnit: String) {
 
 @Composable
 fun WeatherDetailsGrid(weatherObj: JSONObject, tempUnit: String, windUnit: String, provider: String) {
-    val context = LocalContext.current
     val (wind, feelsLike, humidity) = if (provider == "weatherapi") {
         val current = weatherObj.getJSONObject("current")
         Triple(current.getDouble("wind_kph"), current.getDouble("feelslike_c"), current.getInt("humidity"))
     } else {
-        val current = if (weatherObj.has("current")) weatherObj.getJSONObject("current") else weatherObj.getJSONObject("current_weather")
-        val hourly = weatherObj.optJSONObject("hourly")
+        val root = weatherObj
+        val current = if (root.has("current")) root.getJSONObject("current") else root.getJSONObject("current_weather")
+        val hourly = root.optJSONObject("hourly")
         val currentIndex = if (hourly != null) getCurrentHourIndex(hourly.getJSONArray("time")) else -1
         val windVal = if (current.has("windspeed_10m")) current.getDouble("windspeed_10m") else current.getDouble("windspeed")
-        val feelsVal = if (currentIndex >= 0) hourly?.getJSONArray("apparent_temperature")?.optDouble(currentIndex, current.optDouble("temperature_2m", current.optDouble("temperature", 0.0))) ?: current.optDouble("temperature_2m", current.optDouble("temperature", 0.0)) else current.optDouble("temperature_2m", current.optDouble("temperature", 0.0))
+        val feelsVal = if (currentIndex >= 0) hourly?.getJSONArray("apparent_temperature")?.optDouble(currentIndex, current.optDouble("temperature_2m", 0.0)) ?: current.optDouble("temperature_2m", 0.0) else current.optDouble("temperature_2m", 0.0)
         val humVal = if (currentIndex >= 0) hourly?.getJSONArray("relativehumidity_2m")?.optInt(currentIndex, 0) ?: 0 else 0
         Triple(windVal, feelsVal, humVal)
     }
 
     val displayWind = if (windUnit == "mph") (wind * 0.621371).toInt() else wind.toInt()
     val windSuffix = if (windUnit == "mph") stringResource(R.string.wind_mph_suffix) else stringResource(R.string.wind_kmh_suffix)
-
     val displayFeelsLike = if (tempUnit == "fahrenheit") (feelsLike * 9/5 + 32).toInt() else feelsLike.toInt()
     val tempSuffix = if (tempUnit == "fahrenheit") stringResource(R.string.temp_f_suffix) else stringResource(R.string.temp_c_suffix)
     val humiditySuffix = stringResource(R.string.humidity_suffix)
@@ -528,9 +517,7 @@ fun WeatherDetailsGrid(weatherObj: JSONObject, tempUnit: String, windUnit: Strin
             } else if (weatherObj.has("daily")) {
                 val daily = weatherObj.getJSONObject("daily")
                 formatTime(daily.getJSONArray("sunrise").getString(0)) to formatTime(daily.getJSONArray("sunset").getString(0))
-            } else {
-                null to null
-            }
+            } else { null to null }
 
             if (sunrise != null && sunset != null) {
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -563,7 +550,7 @@ fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String, weatherP
                 Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest)) {
                     Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(forecast.time, style = MaterialTheme.typography.labelMedium)
-                        Icon(painter = painterResource(if (weatherProvider == "weatherapi") WeatherIconMapper.getWeatherApiIcon(forecast.weatherCode) else WeatherIconMapper.getWeatherIcon(forecast.weatherCode)), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified)
+                        Icon(painter = painterResource(WeatherIconMapper.getIcon(forecast.weatherCode, weatherProvider, true)), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified)
                         Text("$displayTemp$tempSuffix", style = MaterialTheme.typography.titleSmall)
                     }
                 }
@@ -572,17 +559,35 @@ fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String, weatherP
     }
 }
 
-fun getYesterdayDate(daysAgo: Int): String {
-    val cal = Calendar.getInstance()
-    cal.add(Calendar.DAY_OF_YEAR, -daysAgo)
-    return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.time)
+@Composable
+private fun HistoryItemRow(entry: WeatherHistoryEntity, tempUnit: String) {
+    val dateString = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault()).format(Date(entry.timestamp))
+    val displayTemp = if (tempUnit == "fahrenheit") (entry.temperature * 9/5 + 32).toInt() else entry.temperature.toInt()
+    val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Text(text = entry.location, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(text = "$displayTemp$tempSuffix", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(text = entry.conditions ?: "", style = MaterialTheme.typography.bodyMedium)
+                Text(text = dateString, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+    }
 }
 
 fun getCurrentHourIndex(timesArray: JSONArray): Int {
     val now = Calendar.getInstance()
     val currentHour = now.get(Calendar.HOUR_OF_DAY)
     for (i in 0 until timesArray.length()) {
-        val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault()).parse(timesArray.getString(i)) ?: continue
+        val date = try { SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault()).parse(timesArray.getString(i)) } catch(_:Exception) { null } ?: continue
         val cal = Calendar.getInstance().apply { time = date }
         if (cal.get(Calendar.HOUR_OF_DAY) == currentHour && cal.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)) return i
     }
@@ -594,38 +599,4 @@ fun formatTime(timeString: String): String {
         val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault()).parse(timeString)
         SimpleDateFormat("HH:mm", Locale.getDefault()).format(date ?: Date())
     } catch (_: Exception) { timeString.takeLast(5) }
-}
-
-
-@Composable
-private fun HistoryItemRow(entry: WeatherHistoryEntity, tempUnit: String) {
-    val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
-    val dateString = sdf.format(Date(entry.timestamp))
-    
-    val displayTemp = if (tempUnit == "fahrenheit") (entry.temperature * 9/5 + 32).toInt() else entry.temperature.toInt()
-    val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = entry.location, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Text(text = "$displayTemp$tempSuffix", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = entry.conditions ?: "", style = MaterialTheme.typography.bodyMedium)
-                Text(text = dateString, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        }
-    }
 }

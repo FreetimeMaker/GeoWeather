@@ -56,7 +56,6 @@ import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.LocationsViewModel
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
-import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -90,9 +89,6 @@ class MainActivity : ComponentActivity() {
 
         val viewModel = LocationsViewModel(application)
         viewModel.syncWithCloud()
-
-        val sharedPrefs = getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-        val authManager = AuthManager.getInstance(this)
 
         val db = LocationDatabase.getDatabase(this)
         lifecycleScope.launch {
@@ -552,14 +548,9 @@ fun MainScreen(
                 )
             },
             confirmButton = {
-                TextButton(onClick = {
+                ConfirmDeleteButton {
                     viewModel.deleteLocation(location)
                     locationToDelete = null
-                }) {
-                    Text(
-                        stringResource(R.string.DelTXT),
-                        color = MaterialTheme.colorScheme.error
-                    )
                 }
             },
             dismissButton = {
@@ -571,17 +562,13 @@ fun MainScreen(
     }
 }
 
-private fun httpGet(urlString: String): String {
-    val url = URL(urlString)
-    val c = url.openConnection() as HttpURLConnection
-    c.setRequestProperty("User-Agent", "GeoWeatherApp")
-    c.connectTimeout = 12000
-    c.readTimeout = 12000
-    BufferedReader(InputStreamReader(c.inputStream, StandardCharsets.UTF_8)).use { reader ->
-        val sb = StringBuilder()
-        var line: String?
-        while (reader.readLine().also { line = it } != null) sb.append(line)
-        return sb.toString()
+@Composable
+fun ConfirmDeleteButton(onClick: () -> Unit) {
+    TextButton(onClick = onClick) {
+        Text(
+            stringResource(R.string.DelTXT),
+            color = MaterialTheme.colorScheme.error
+        )
     }
 }
 

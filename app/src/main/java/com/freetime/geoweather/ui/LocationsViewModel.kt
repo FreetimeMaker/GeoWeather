@@ -85,7 +85,7 @@ class LocationsViewModel(application: Application) : AndroidViewModel(applicatio
 
     suspend fun search(query: String): List<Triple<String, Double, Double>> {
         return withContext(Dispatchers.IO) {
-            geocodingRepository.searchLocations(query)
+            geocodingRepository.searchLocations(getApplication(), query)
         }
     }
 }

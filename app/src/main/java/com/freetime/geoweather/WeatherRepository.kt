@@ -28,7 +28,7 @@ class WeatherRepository(private val context: Context) {
                 fetchFromOpenMeteo(lat, lon, days)
             }
         } catch (e: Exception) {
-            WeatherDataResult.Error(e.message ?: "Unknown error")
+            WeatherDataResult.Error(e.message ?: context.getString(R.string.wc_unknown))
         }
     }
 
@@ -37,19 +37,15 @@ class WeatherRepository(private val context: Context) {
         val response = NetworkUtils.httpGet(url, token)
         val json = JSONObject(response)
         
-        // Custom API returns standardized format or pass-through
-        // For now, let's assume it returns a success flag and data
         if (json.optBoolean("success", true)) {
             val data = json.optJSONObject("data") ?: json
             return if (provider == "weatherapi") {
-                // If the API returns raw WeatherAPI response
                 parseWeatherApiData(data, response)
             } else {
-                // Assume Open-Meteo or similar
                 parseOpenMeteoData(data, response, lat, lon)
             }
         } else {
-            return WeatherDataResult.Error(json.optString("message", "API Error"))
+            return WeatherDataResult.Error(json.optString("message", context.getString(R.string.error_connection)))
         }
     }
 
@@ -127,7 +123,7 @@ class WeatherRepository(private val context: Context) {
             hourlyForecast = hourlyList,
             rawJson = rawResponse,
             aqiJson = rawResponse,
-            moonPhase = null // Moon phase can be added if needed
+            moonPhase = null 
         )
     }
 
@@ -187,7 +183,7 @@ class WeatherRepository(private val context: Context) {
 
     private fun fetchFromWeatherApi(lat: Double, lon: Double, apiKey: String, days: Int): WeatherDataResult {
         val url = "${ApiConstants.WEATHER_API_FORECAST}?key=$apiKey&q=$lat,$lon&days=$days&aqi=yes"
-        val response = NetworkUtils.httpGet(url) ?: return WeatherDataResult.Error("Network error")
+        val response = NetworkUtils.httpGet(url) ?: return WeatherDataResult.Error(context.getString(R.string.error_connection))
         val json = JSONObject(response)
         
         val current = json.getJSONObject("current")
@@ -232,7 +228,7 @@ class WeatherRepository(private val context: Context) {
             dailyForecast = dailyList,
             hourlyForecast = hourlyList,
             rawJson = response,
-            aqiJson = response, // WeatherAPI includes AQI in the main response
+            aqiJson = response,
             moonPhase = moonPhase
         )
     }

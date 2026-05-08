@@ -121,13 +121,16 @@ class WeatherChangeWorker(
         val windUnit = sharedPreferences.getString("wind_unit", "kmh") ?: "kmh"
         
         if (kotlin.math.abs(current.temperature - last.temperature) >= tempThreshold) {
-            val lastTemp = if (tempUnit == "fahrenheit") (last.temperature * 9/5 + 32).toInt().toString() + "°F" else last.temperature.toInt().toString() + "°C"
-            val currentTemp = if (tempUnit == "fahrenheit") (current.temperature * 9/5 + 32).toInt().toString() + "°F" else current.temperature.toInt().toString() + "°C"
+            val suffix = context.getString(if (tempUnit == "fahrenheit") R.string.temp_f_suffix else R.string.temp_c_suffix)
+            val lastTemp = "${last.temperature.toInt()}$suffix"
+            val currentTemp = "${current.temperature.toInt()}$suffix"
             changes.add(context.getString(R.string.temperature_change_msg, lastTemp, currentTemp))
         }
         
         if (current.windSpeed - last.windSpeed >= windThreshold) {
-            val displayWind = if (windUnit == "mph") (current.windSpeed * 0.621371).toInt().toString() + " mph" else current.windSpeed.toInt().toString() + " km/h"
+            val windVal = if (windUnit == "mph") (current.windSpeed * 0.621371).toInt() else current.windSpeed.toInt()
+            val suffix = context.getString(if (windUnit == "mph") R.string.wind_mph_suffix else R.string.wind_kmh_suffix)
+            val displayWind = "$windVal $suffix"
             changes.add(context.getString(R.string.wind_increase_msg, displayWind))
         }
         
@@ -157,7 +160,7 @@ class WeatherChangeWorker(
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "weather_change_alerts",
-                "Weather Change Alerts",
+                context.getString(R.string.weather_change_alerts_channel_name),
                 NotificationManager.IMPORTANCE_HIGH
             )
             notificationManager.createNotificationChannel(channel)

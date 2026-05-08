@@ -75,13 +75,15 @@ class WeatherWidget : GlanceAppWidget() {
             weatherInfo = context.getString(R.string.select_city_msg)
         }
 
+        val refreshDesc = context.getString(R.string.refresh_nav_desc)
+
         provideContent {
-            WeatherWidgetContent(locationName, tempString, weatherInfo, iconRes)
+            WeatherWidgetContent(locationName, tempString, weatherInfo, iconRes, refreshDesc)
         }
     }
 
     @Composable
-    private fun WeatherWidgetContent(name: String, temp: String, info: String, iconRes: Int? = null) {
+    private fun WeatherWidgetContent(name: String, temp: String, info: String, iconRes: Int? = null, refreshDesc: String) {
         Row(
             modifier = GlanceModifier
                 .fillMaxSize()
@@ -140,7 +142,7 @@ class WeatherWidget : GlanceAppWidget() {
             // Refresh Button
             Image(
                 provider = ImageProvider(android.R.drawable.ic_menu_rotate),
-                contentDescription = "Refresh",
+                contentDescription = refreshDesc,
                 modifier = GlanceModifier
                     .size(24.dp)
                     .clickable(actionRunCallback<RefreshActionCallback>())

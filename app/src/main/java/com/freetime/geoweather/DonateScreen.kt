@@ -66,10 +66,7 @@ fun DonateScreen(onBack: () -> Unit) {
             )
 
             DonateButton(text = stringResource(R.string.DonViaGHSponsors)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://github.com/sponsors/FreetimeMaker")
-                    putExtra("title", context.getString(R.string.DonViaGHSponsors))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://github.com/sponsors/FreetimeMaker"))
                 context.startActivity(intent)
             }
 
@@ -80,138 +77,87 @@ fun DonateScreen(onBack: () -> Unit) {
             )
 
             DonateButton(text = stringResource(R.string.DonViaOxaPay)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://pay.oxapay.com/13038067")
-                    putExtra("title", context.getString(R.string.DonViaOxaPay))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://pay.oxapay.com/13038067"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaBTC)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/60misly")
-                    putExtra("title", context.getString(R.string.DonViaBTC))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/60misly"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaETH)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/86fremd")
-                    putExtra("title", context.getString(R.string.DonViaETH))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/86fremd"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaUSDT)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/19tacit")
-                    putExtra("title", context.getString(R.string.DonViaUSDT))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/19tacit"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaUSDC)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/15snog")
-                    putExtra("title", context.getString(R.string.DonViaUSDC))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/15snog"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaSHIB)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/18spile")
-                    putExtra("title", context.getString(R.string.DonViaSHIB))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/18spile"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaDOGE)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/30allie")
-                    putExtra("title", context.getString(R.string.DonViaDOGE))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/30allie"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaTRON)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/15gown")
-                    putExtra("title", context.getString(R.string.DonViaTRON))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/15gown"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaLTC)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/77pudgy")
-                    putExtra("title", context.getString(R.string.DonViaLTC))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/77pudgy"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaBNB)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/02hanch")
-                    putExtra("title", context.getString(R.string.DonViaBNB))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/02hanch"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaPEPE)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/73enow")
-                    putExtra("title", context.getString(R.string.DonViaPEPE))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/73enow"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaSOL)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/54fled")
-                    putExtra("title", context.getString(R.string.DonViaSOL))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/54fled"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaDAI)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/27thio")
-                    putExtra("title", context.getString(R.string.DonViaDAI))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/27thio"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaTON)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/22frisk")
-                    putExtra("title", context.getString(R.string.DonViaTON))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/22frisk"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaPOL)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/23patas")
-                    putExtra("title", context.getString(R.string.DonViaPOL))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/23patas"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaOptimism)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/77salvy")
-                    putExtra("title", context.getString(R.string.DonViaOptimism))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/77salvy"))
                 context.startActivity(intent)
             }
 
             DonateButton(text = stringResource(R.string.DonViaARB)) {
-                val intent = Intent(context, DonateWebViewActivity::class.java).apply {
-                    putExtra("url", "https://ncwallet.net/pay/80arui")
-                    putExtra("title", context.getString(R.string.DonViaARB))
-                }
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/80arui"))
                 context.startActivity(intent)
             }
 

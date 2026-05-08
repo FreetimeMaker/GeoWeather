@@ -133,10 +133,10 @@ class WeatherNotificationWorker(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "weather_notifications",
-                "Weather Updates",
+                context.getString(R.string.weather_notifications_channel_name),
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
-                description = "Daily weather notifications"
+                description = context.getString(R.string.weather_notifications_channel_desc)
             }
             notificationManager.createNotificationChannel(channel)
         }

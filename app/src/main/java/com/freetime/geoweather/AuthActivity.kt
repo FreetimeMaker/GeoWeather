@@ -54,7 +54,7 @@ class AuthActivity : ComponentActivity() {
                         onLoginClick = {
                             scope.launch {
                                 try {
-                                    intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${ApiConstants.BASE_URL}/v1/auth/github"))
+                                    val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${ApiConstants.BASE_URL}/v1/auth/github"))
                                     startActivity(intent)
                                 } catch (e: Exception) {
                                     makeText(
@@ -99,10 +99,10 @@ private fun UserInfoScreen(
         topBar = {
             @OptIn(ExperimentalMaterial3Api::class)
             TopAppBar(
-                title = { Text(stringResource(R.string.account_title)) },
+                title = { Text(stringResource(R.string.account_title_label)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_nav_desc))
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_nav_desc_short))
                     }
                 }
             )
