@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.freetime.geoweather"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.freetime.geoweather"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = 26
+        targetSdk = 37
         versionCode = 51
         versionName = "1.6.0"
     }

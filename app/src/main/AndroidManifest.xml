@@ -36,7 +36,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="geoweather" />
+                    android:scheme="geoweather"
+                    android:host="auth" />
             </intent-filter>
         </activity>
         <activity

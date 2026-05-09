@@ -181,6 +181,9 @@ fun WeatherDetailScreen(
                     currentConditionCode = current.getInt("weathercode")
                     currentIsDay = current.optInt("is_day", 1) == 1
                     responseProvider = "open_meteo"
+                    
+                    // Pre-parse forecast from cache if possible
+                    forecastList = weatherRepository.parseOpenMeteoDaily(root.getJSONObject("daily"))
                 } catch (_: Exception) {}
 
                 scope.launch { 

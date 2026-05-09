@@ -132,7 +132,7 @@ class WeatherRepository(private val context: Context) {
         )
     }
 
-    private fun parseOpenMeteoDaily(daily: JSONObject): List<DailyForecast> {
+    fun parseOpenMeteoDaily(daily: JSONObject): List<DailyForecast> {
         val list = mutableListOf<DailyForecast>()
         val times = daily.getJSONArray("time")
         val tMax = daily.getJSONArray("temperature_2m_max")
@@ -148,7 +148,7 @@ class WeatherRepository(private val context: Context) {
         return list
     }
 
-    private fun parseOpenMeteoHourly(hourly: JSONObject): List<HourlyForecast> {
+    fun parseOpenMeteoHourly(hourly: JSONObject): List<HourlyForecast> {
         val list = mutableListOf<HourlyForecast>()
         val times = hourly.getJSONArray("time")
         val temps = hourly.getJSONArray("temperature_2m")

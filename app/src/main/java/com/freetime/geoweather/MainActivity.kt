@@ -67,6 +67,8 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 class MainActivity : ComponentActivity() {
+    private lateinit var authManager: AuthManager
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { _ -> }
@@ -87,6 +89,7 @@ class MainActivity : ComponentActivity() {
         hideSystemBars()
         checkNotificationPermission()
         
+        authManager = AuthManager.getInstance(this)
         val isAuthRedirect = intent?.data?.scheme == "geoweather"
         handleAuthCallback(intent)
 
@@ -208,11 +211,10 @@ class MainActivity : ComponentActivity() {
             val tier = data.getQueryParameter("tier") ?: "free"
 
             if (token != null) {
-                val authMgr = AuthManager.getInstance(this)
                 // If it's a legacy callback from API, we should ideally import it into Supabase session
                 // but for now we'll just ensure the profile is synced if possible
                 lifecycleScope.launch {
-                    authMgr.syncUserProfile()
+                    authManager.syncUserProfile()
                     LocationsViewModel(application).syncWithCloud()
                 }
                 
