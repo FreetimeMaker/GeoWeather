@@ -1,0 +1,5 @@
+• Fix: Resolved weather loading issues by adding robust fallbacks to Open-Meteo.
+• Fix: Home screen now correctly displays up-to-date weather data with automatic and manual refresh options.
+• Auth: Improved GitHub and Modrinth login stability and fixed deep-link redirection.
+• Icons: Added full icon support for Tomorrow.io, including day/night variations.
+• Stability: Enhanced local database caching to ensure weather data is available instantly.

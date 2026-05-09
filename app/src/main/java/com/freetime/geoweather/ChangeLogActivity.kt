@@ -96,6 +96,13 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.7.1" to listOf(
+            "Resolved weather loading issues by adding robust fallbacks to Open-Meteo.",
+            "Home screen now correctly displays up-to-date weather data with automatic and manual refresh options.",
+            "Improved GitHub and Modrinth login stability and fixed deep-link redirection.",
+            "Added full icon support for Tomorrow.io, including day/night variations.",
+            "Enhanced local database caching to ensure weather data is available instantly."
+        ),
         "v1.7.0" to listOf(
             "Architecture: Full transition to a local-first system. Weather data and geocoding are now fetched directly from providers.",
             "Auth: Added support for Modrinth login. GitHub login now uses the official Supabase SDK for better stability.",

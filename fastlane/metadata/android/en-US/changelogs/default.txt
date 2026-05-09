@@ -4,3 +4,8 @@
 • Multi-Provider: Integrated Tomorrow.io and Visual Crossing support (keys can be added in settings).
 • Performance: Added immediate cache display for weather to eliminate loading wait times.
 • Reliability: Fixed deep-link redirection and resolved various UI and translation bugs.
+• Fix: Resolved weather loading issues by adding robust fallbacks to Open-Meteo.
+• Fix: Home screen now correctly displays up-to-date weather data with automatic and manual refresh options.
+• Auth: Improved GitHub and Modrinth login stability and fixed deep-link redirection.
+• Icons: Added full icon support for Tomorrow.io, including day/night variations.
+• Stability: Enhanced local database caching to ensure weather data is available instantly.
