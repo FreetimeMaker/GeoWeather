@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.Settings
@@ -97,6 +98,7 @@ class MainActivity : ComponentActivity() {
 
         val viewModel = LocationsViewModel(application)
         viewModel.syncWithCloud()
+        viewModel.refreshAllWeathers() // Refresh weather on start
         
         lifecycleScope.launch {
             authManager.syncUserProfile()
@@ -266,6 +268,11 @@ fun MainScreen(
             LargeTopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
                 actions = {
+                    IconButton(
+                        onClick = { viewModel.refreshAllWeathers() }
+                    ) {
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh_nav_desc))
+                    }
                     IconButton(
                         onClick = {
                             if (ContextCompat.checkSelfPermission(
@@ -474,11 +481,12 @@ fun MainScreen(
 
                         ListItem(
                             leadingContent = {
-                                loc.currentWeatherCode?.let { code ->
+                                val weatherCode = loc.currentWeatherCode
+                                if (weatherCode != null) {
                                     Icon(
                                         painter = painterResource(
                                             id = WeatherIconMapper.getIcon(
-                                                code,
+                                                weatherCode,
                                                 loc.provider,
                                                 loc.isDay
                                             )

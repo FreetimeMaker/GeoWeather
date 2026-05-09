@@ -182,7 +182,6 @@ fun WeatherDetailScreen(
                     currentIsDay = current.optInt("is_day", 1) == 1
                     responseProvider = "open_meteo"
                     
-                    // Pre-parse forecast from cache if possible
                     forecastList = weatherRepository.parseOpenMeteoDaily(root.getJSONObject("daily"))
                 } catch (_: Exception) {}
 
@@ -198,6 +197,13 @@ fun WeatherDetailScreen(
                         currentConditionCode = result.weatherCode
                         currentIsDay = result.isDay
                         responseProvider = result.provider
+                        
+                        entity?.copy(
+                            weatherData = result.rawJson,
+                            lastUpdated = System.currentTimeMillis()
+                        )?.let {
+                            withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
+                        }
                     }
                 }
             } else {
@@ -215,10 +221,11 @@ fun WeatherDetailScreen(
                         currentIsDay = result.isDay
                         responseProvider = result.provider
                         
-                        if (result.provider == "open_meteo") {
-                            entity?.copy(weatherData = result.rawJson, lastUpdated = currentTime)?.let {
-                                withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
-                            }
+                        entity?.copy(
+                            weatherData = result.rawJson,
+                            lastUpdated = System.currentTimeMillis()
+                        )?.let {
+                            withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
                         }
                     }
                     is WeatherRepository.WeatherDataResult.Error -> {
@@ -278,7 +285,27 @@ fun WeatherDetailScreen(
             }
 
             if (weatherJson == null && isRefreshing) {
-                item { Box(Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
+                item {
+                    Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) { 
+                        CircularProgressIndicator() 
+                    }
+                }
+            }
+
+            if (weatherJson == null && !isRefreshing && errorMessage == null) {
+                item {
+                    Column(
+                        modifier = Modifier.fillParentMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(stringResource(R.string.no_locations_msg))
+                        Spacer(Modifier.height(16.dp))
+                        Button(onClick = { scope.launch { refreshWeatherData(true) } }) {
+                            Text(stringResource(R.string.refresh_nav_desc))
+                        }
+                    }
+                }
             }
 
             currentTemp?.let { temp ->

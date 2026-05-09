@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.freetime.geoweather.GeocodingRepository
 import com.freetime.geoweather.AuthManager
+import com.freetime.geoweather.WeatherRepository
 import com.freetime.geoweather.api.LocationSyncRequest
 import com.freetime.geoweather.data.LocationDao
 import com.freetime.geoweather.data.LocationDatabase
@@ -21,8 +22,24 @@ class LocationsViewModel(application: Application) : AndroidViewModel(applicatio
     private val locationDao: LocationDao = LocationDatabase.getDatabase(application).locationDao()
     private val geocodingRepository = GeocodingRepository()
     private val authManager = AuthManager.getInstance(application)
+    private val weatherRepository = WeatherRepository(application)
     
     val locations: LiveData<List<LocationEntity>> = locationDao.getAllLocations()
+
+    fun refreshAllWeathers() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentLocations = locationDao.getAllLocationsSync()
+            currentLocations.forEach { loc ->
+                val result = weatherRepository.getWeatherData(loc.latitude, loc.longitude, 1)
+                if (result is WeatherRepository.WeatherDataResult.Success) {
+                    locationDao.updateLocation(loc.copy(
+                        weatherData = result.rawJson,
+                        lastUpdated = System.currentTimeMillis()
+                    ))
+                }
+            }
+        }
+    }
 
     fun addLocation(name: String, latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -30,6 +47,7 @@ class LocationsViewModel(application: Application) : AndroidViewModel(applicatio
             val newLocation = LocationEntity(name = name, latitude = latitude, longitude = longitude, selected = true)
             locationDao.insertLocation(newLocation)
             syncWithCloud()
+            refreshAllWeathers()
         }
     }
 
@@ -64,8 +82,6 @@ class LocationsViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val currentLocations = locationDao.getAllLocationsSync()
-                val userId = authManager.userInfo?.id ?: return@launch
-                
                 val syncList = currentLocations.map { 
                     LocationSyncRequest(
                         name = it.name,

@@ -34,6 +34,12 @@ data class LocationEntity(
                         obj.getJSONObject("current_weather").getDouble("temperature")
                     } else if (obj.has("current")) {
                         obj.getJSONObject("current").getDouble("temp_c")
+                    } else if (obj.has("temperature_2m")) {
+                        // For some open-meteo variants
+                        obj.getDouble("temperature_2m")
+                    } else if (obj.has("timelines")) {
+                        // Tomorrow.io logic
+                        obj.getJSONObject("timelines").getJSONArray("daily").getJSONObject(0).getJSONObject("values").getDouble("temperatureAvg")
                     } else null
                 }
             } catch (e: Exception) {
@@ -49,7 +55,13 @@ data class LocationEntity(
                     if (obj.has("current_weather")) {
                         obj.getJSONObject("current_weather").getInt("weathercode")
                     } else if (obj.has("current")) {
-                        obj.getJSONObject("current").getJSONObject("condition").getInt("code")
+                        val current = obj.getJSONObject("current")
+                        if (current.has("condition")) current.getJSONObject("condition").getInt("code")
+                        else current.optInt("weathercode", 0)
+                    } else if (obj.has("weathercode")) {
+                        obj.getInt("weathercode")
+                    } else if (obj.has("timelines")) {
+                        obj.getJSONObject("timelines").getJSONArray("daily").getJSONObject(0).getJSONObject("values").getInt("weatherCodeMax")
                     } else null
                 }
             } catch (e: Exception) {
@@ -63,7 +75,9 @@ data class LocationEntity(
                 weatherData?.let { data ->
                     val obj = org.json.JSONObject(data)
                     if (obj.has("current")) {
-                        obj.getJSONObject("current").getInt("is_day") == 1
+                        obj.getJSONObject("current").optInt("is_day", 1) == 1
+                    } else if (obj.has("current_weather")) {
+                        obj.getJSONObject("current_weather").optInt("is_day", 1) == 1
                     } else true
                 } ?: true
             } catch (e: Exception) {
@@ -73,7 +87,14 @@ data class LocationEntity(
 
     val provider: String
         get() {
-            return if (weatherData?.contains("\"current\":") == true) "weatherapi" else "open_meteo"
+            val data = weatherData ?: return "unknown"
+            return when {
+                data.contains("\"current_weather\":") -> "open_meteo"
+                data.contains("\"current\":") -> "weatherapi"
+                data.contains("\"timelines\":") -> "tomorrow.io"
+                data.contains("\"currentConditions\":") -> "visualcrossing"
+                else -> "open_meteo"
+            }
         }
 
 }

@@ -31,10 +31,25 @@ object WeatherIconMapper {
     }
 
     fun getIcon(code: Int, provider: String = "open_meteo", isDay: Boolean = true): Int {
-        return if (provider.lowercase() == "weatherapi") {
-            getWeatherApiIcon(code, isDay)
-        } else {
-            getWeatherIcon(code, isDay)
+        return when (provider.lowercase()) {
+            "weatherapi" -> getWeatherApiIcon(code, isDay)
+            "tomorrow.io" -> getTomorrowIoIcon(code, isDay)
+            else -> getWeatherIcon(code, isDay)
+        }
+    }
+
+    private fun getTomorrowIoIcon(code: Int, isDay: Boolean): Int {
+        return when (code) {
+            1000 -> if (isDay) R.drawable.google_clear_day else R.drawable.google_clear_night
+            1100 -> if (isDay) R.drawable.google_mostly_clear_day else R.drawable.google_mostly_clear_night
+            1101 -> if (isDay) R.drawable.google_partly_cloudy_day else R.drawable.google_partly_cloudy_night
+            1102 -> R.drawable.google_cloudy
+            2000, 2100 -> R.drawable.google_fog
+            4000 -> R.drawable.google_drizzle
+            4001, 4200, 4201 -> if (isDay) R.drawable.google_rain_with_sunny_light else R.drawable.google_rain_with_sunny_dark
+            5000, 5001, 5100, 5101 -> if (isDay) R.drawable.google_snow_with_sunny_light else R.drawable.google_snow_with_sunny_dark
+            8000 -> R.drawable.isolated_scattered_thunderstorms_day
+            else -> if (isDay) R.drawable.google_cloudy_with_sunny_light else R.drawable.google_cloudy_with_sunny_dark
         }
     }
 

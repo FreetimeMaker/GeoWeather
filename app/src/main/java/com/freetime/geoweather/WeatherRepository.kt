@@ -12,17 +12,28 @@ class WeatherRepository(private val context: Context) {
     suspend fun getWeatherData(lat: Double, lon: Double, days: Int = 3): WeatherDataResult {
         val provider = sharedPrefs.getString("weather_provider", "open_meteo") ?: "open_meteo"
         val apiKey = sharedPrefs.getString("weather_api_key", "") ?: ""
+        val tomorrowKey = sharedPrefs.getString("tomorrow_io_key", "") ?: ""
+        val visualCrossingKey = sharedPrefs.getString("visual_crossing_key", "") ?: ""
 
         return try {
             when (provider) {
                 "weatherapi" -> if (apiKey.isNotEmpty()) fetchFromWeatherApi(lat, lon, apiKey, days) else fetchFromOpenMeteo(lat, lon, days)
-                "tomorrow" -> fetchFromTomorrowIo(lat, lon, days)
-                "visualcrossing" -> fetchFromVisualCrossing(lat, lon, days)
+                "tomorrow" -> if (tomorrowKey.isNotEmpty()) fetchFromTomorrowIo(lat, lon, tomorrowKey) else fetchFromOpenMeteo(lat, lon, days)
+                "visualcrossing" -> if (visualCrossingKey.isNotEmpty()) fetchFromVisualCrossing(lat, lon, visualCrossingKey) else fetchFromOpenMeteo(lat, lon, days)
                 "accuweather" -> fetchFromAccuWeather(lat, lon, days)
                 else -> fetchFromOpenMeteo(lat, lon, days)
             }
         } catch (e: Exception) {
-            WeatherDataResult.Error(e.message ?: context.getString(R.string.wc_unknown))
+            // Fallback to Open-Meteo on any error to ensure data is displayed
+            if (provider != "open_meteo") {
+                try {
+                    fetchFromOpenMeteo(lat, lon, days)
+                } catch (inner: Exception) {
+                    WeatherDataResult.Error(inner.message ?: context.getString(R.string.wc_unknown))
+                }
+            } else {
+                WeatherDataResult.Error(e.message ?: context.getString(R.string.wc_unknown))
+            }
         }
     }
 
@@ -38,28 +49,23 @@ class WeatherRepository(private val context: Context) {
         return parseWeatherApiData(JSONObject(response), response)
     }
 
-    private fun fetchFromTomorrowIo(lat: Double, lon: Double, days: Int): WeatherDataResult {
-        // We could fetch this key from a Supabase 'config' table
-        val apiKey = sharedPrefs.getString("tomorrow_io_key", "COMMUNITY_KEY") ?: "COMMUNITY_KEY"
+    private fun fetchFromTomorrowIo(lat: Double, lon: Double, apiKey: String): WeatherDataResult {
         val url = "https://api.tomorrow.io/v4/weather/forecast?location=$lat,$lon&apikey=$apiKey"
         val response = NetworkUtils.httpGet(url)
         return parseTomorrowIoData(JSONObject(response), response)
     }
 
-    private fun fetchFromVisualCrossing(lat: Double, lon: Double, days: Int): WeatherDataResult {
-        val apiKey = sharedPrefs.getString("visual_crossing_key", "COMMUNITY_KEY") ?: "COMMUNITY_KEY"
+    private fun fetchFromVisualCrossing(lat: Double, lon: Double, apiKey: String): WeatherDataResult {
         val url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/$lat,$lon?unitGroup=metric&key=$apiKey&contentType=json"
         val response = NetworkUtils.httpGet(url)
         return parseVisualCrossingData(JSONObject(response), response)
     }
 
     private fun fetchFromAccuWeather(lat: Double, lon: Double, days: Int): WeatherDataResult {
-        // AccuWeather needs a location key first, then the forecast
-        // This is a simplified version
         return WeatherDataResult.Error("AccuWeather local integration requires multi-step requests. Fallback to Open-Meteo.")
     }
 
-    // --- Parser Functions (Moved from API to local) ---
+    // --- Parser Functions ---
 
     private fun parseOpenMeteoData(json: JSONObject, rawResponse: String, lat: Double, lon: Double): WeatherDataResult {
         val current = if (json.has("current")) json.getJSONObject("current") else json.getJSONObject("current_weather")
@@ -101,7 +107,7 @@ class WeatherRepository(private val context: Context) {
             weatherCode = current.getJSONObject("condition").getInt("code"),
             isDay = current.getInt("is_day") == 1,
             dailyForecast = dailyList,
-            hourlyForecast = emptyList(), // Can be parsed if needed
+            hourlyForecast = emptyList(),
             rawJson = rawResponse
         )
     }
@@ -124,7 +130,7 @@ class WeatherRepository(private val context: Context) {
         return WeatherDataResult.Success(
             provider = "visualcrossing",
             temp = current.getDouble("temp"),
-            weatherCode = 0, // Needs mapping
+            weatherCode = 0,
             isDay = true,
             dailyForecast = emptyList(),
             hourlyForecast = emptyList(),
