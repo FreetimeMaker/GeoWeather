@@ -12,9 +12,10 @@
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" alt="4. Picture"  width="25%">
 </div>
 
+# Translations
 <div align="center">
 
-[![Translation status](https://hosted.weblate.org/widget/geoweather/geoweather/287x66-grey.png)](https://hosted.weblate.org/engage/geoweather/)
+If you find an similar app to weblate then please make an Issue with the link to it and more Informations because I had reached over the maximum strings on the Libre-Plan on weblate.
 </div>
 
 <div align="center">

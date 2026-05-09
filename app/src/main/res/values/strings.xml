@@ -12,7 +12,7 @@
     <string name="DonViaUSDC">Donate via USDC</string>
     <string name="DonViaSHIB">Donate via SHIB</string>
     <string name="DonViaDOGE">Donate via DOGE</string>
-    <string name="DonViaTRON">Donate via TRON</string>
+    <string name="DonateViaTRON">Donate via TRON</string>
     <string name="DonViaLTC">Donate via Litecoin</string>
     <string name="DonViaWallet">Donate via Wallet App</string>
     <string name="DonViaUSD">Donate USD to Crypto</string>

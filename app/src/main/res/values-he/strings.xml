@@ -14,7 +14,7 @@
     <string name="DonViaUSDC">Donate via USDC</string>
     <string name="DonViaSHIB">Donate via SHIB</string>
     <string name="DonViaDOGE">Donate via DOGE</string>
-    <string name="DonateViaTRON">Donate via TRON</string>
+    <string name="DonateViaTRON">תרומה באמצעות TRON</string>
     <string name="DonViaLTC">Donate via LTC</string>
     <string name="DonViaWallet">Donate with Wallet App</string>
     <string name="DonViaUSD">USD to Crypto Donation</string>
@@ -114,7 +114,7 @@
     <string name="whats_new_title">מה חדש?</string>
     <string name="wind_label">רוח</string>
     <string name="wind_speed_unit">יחידת מהירות רוח</string>
-    <string name="DonViaTRON">תרומה באמצעות TRON</string>
+
     <string name="donate_title">תרומה</string>
     <string name="wc_mainly_clear">בהיר לרוב</string>
     <string name="back_nav_desc">חזרה</string>

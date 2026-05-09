@@ -111,7 +111,7 @@ fun DonateScreen(onBack: () -> Unit) {
                 context.startActivity(intent)
             }
 
-            DonateButton(text = stringResource(R.string.DonViaTRON)) {
+            DonateButton(text = stringResource(R.string.DonateViaTRON)) {
                 val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/pay/15gown"))
                 context.startActivity(intent)
             }
