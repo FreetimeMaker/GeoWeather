@@ -1,6 +1,7 @@
 package com.freetime.geoweather
 
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import android.widget.Toast.makeText
 import androidx.activity.ComponentActivity
@@ -51,17 +52,23 @@ class AuthActivity : ComponentActivity() {
                     val scope = rememberCoroutineScope()
 
                     AuthScreenContent(
-                        onLoginClick = {
+                        onGitHubLogin = {
                             scope.launch {
                                 try {
-                                    val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${ApiConstants.BASE_URL}/api/v1/auth/github"))
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("${ApiConstants.BASE_URL}/api/v1/auth/github"))
                                     startActivity(intent)
                                 } catch (e: Exception) {
-                                    makeText(
-                                        context,
-                                        context.getString(R.string.gh_login_failed),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    makeText(context, context.getString(R.string.gh_login_failed), Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        },
+                        onModrinthLogin = {
+                            scope.launch {
+                                try {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("${ApiConstants.BASE_URL}/api/v1/auth/modrinth"))
+                                    startActivity(intent)
+                                } catch (e: Exception) {
+                                    makeText(context, context.getString(R.string.modrinth_login_failed), Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -147,7 +154,8 @@ private fun UserInfoScreen(
 
 @Composable
 private fun AuthScreenContent(
-    onLoginClick: () -> Unit
+    onGitHubLogin: () -> Unit,
+    onModrinthLogin: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -173,7 +181,7 @@ private fun AuthScreenContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = stringResource(R.string.github_login_desc),
+            text = stringResource(R.string.login_desc),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -182,16 +190,32 @@ private fun AuthScreenContent(
         Spacer(modifier = Modifier.height(48.dp))
 
         Button(
-            onClick = onLoginClick,
+            onClick = onGitHubLogin,
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium
         ) {
             Icon(
-                painter = painterResource(id = android.R.drawable.ic_menu_info_details), // Just a placeholder icon
+                painter = painterResource(id = android.R.drawable.ic_menu_info_details),
                 contentDescription = null
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(stringResource(R.string.login_with_github))
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Button(
+            onClick = onModrinthLogin,
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium,
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+        ) {
+            Icon(
+                painter = painterResource(id = android.R.drawable.ic_menu_info_details),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(R.string.login_with_modrinth))
         }
     }
 }

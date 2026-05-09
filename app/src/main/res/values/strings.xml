@@ -249,10 +249,14 @@
     <string name="no_history_msg">No weather history recorded yet.</string>
     <string name="history_nav_desc">View weather history</string>
     <string name="login_with_github">Login with GitHub</string>
+    <string name="login_with_modrinth">Login with Modrinth</string>
+    <string name="login_desc">Use your GitHub or Modrinth account to login and unlock additional features like cloud sync.</string>
     <string name="github_login_desc">Use your GitHub account to login and unlock additional features like 7-day forecast history.</string>
     <string name="login_success">Login successful!</string>
     <string name="login_failed">Login failed</string>
+    <string name="login_failed_desc">Login failed. Please check your connection and try again.</string>
     <string name="gh_login_failed">GitHub login failed. Please check your connection.</string>
+    <string name="modrinth_login_failed">Modrinth login failed. Please check your connection.</string>
     <string name="gh_login_failed_desc">GitHub login failed. Please check your connection.</string>
     <string name="sync_now">Sync with Cloud</string>
     <string name="last_synced">Last synced: %1$s</string>
