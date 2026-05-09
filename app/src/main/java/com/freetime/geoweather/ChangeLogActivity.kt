@@ -96,6 +96,9 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.6.0" to listOf(
+            "Added Modrinth Login and More"
+        ),
         "v1.5.8" to listOf(
           "Added support for multiple weather providers via custom API.",
           "Integrated subscription tiers (Free, Freemium, Premium) visibility.",
