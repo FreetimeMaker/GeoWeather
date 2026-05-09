@@ -148,6 +148,11 @@ fun WeatherDetailScreen(
     var forecastList by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
     var hourlyForecastList by remember { mutableStateOf<List<HourlyForecast>>(emptyList()) }
     var historicalData by remember { mutableStateOf<List<DailyForecast>>(emptyList()) }
+    var currentTemp by remember { mutableStateOf<Double?>(null) }
+    var currentConditionCode by remember { mutableStateOf<Int?>(null) }
+    var currentIsDay by remember { mutableStateOf(true) }
+    var responseProvider by remember { mutableStateOf("open_meteo") }
+    
     val localHistory by db.weatherHistoryDao().getHistoryForLocation(name).observeAsState(initial = emptyList())
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isRefreshing by remember { mutableStateOf(false) }
@@ -169,13 +174,30 @@ fun WeatherDetailScreen(
             if (!forceRefresh && entity?.weatherData != null && dataAgeMinutes < 30) {
                 val json = entity.weatherData
                 weatherJson = json
+                
+                // Parse basic info from cache immediately
+                try {
+                    val root = JSONObject(json)
+                    val current = if (root.has("current")) root.getJSONObject("current") else root.getJSONObject("current_weather")
+                    currentTemp = if (current.has("temperature_2m")) current.getDouble("temperature_2m") else current.getDouble("temperature")
+                    currentConditionCode = current.getInt("weathercode")
+                    currentIsDay = current.optInt("is_day", 1) == 1
+                    responseProvider = "open_meteo" // Assuming cache is Open-Meteo
+                } catch (_: Exception) {}
+
                 scope.launch { 
                     val result = weatherRepository.getWeatherData(lat, lon, forecastDays)
                     if (result is WeatherRepository.WeatherDataResult.Success) {
+                        weatherJson = result.rawJson
                         forecastList = result.dailyForecast
                         hourlyForecastList = result.hourlyForecast
                         aqiJson = result.aqiJson
                         moonPhaseName = result.moonPhase
+                        currentTemp = result.temp
+                        currentConditionCode = result.weatherCode
+                        currentIsDay = result.isDay
+                        responseProvider = result.provider
+                        errorMessage = null
                     }
                 }
             } else {
@@ -188,12 +210,17 @@ fun WeatherDetailScreen(
                         hourlyForecastList = result.hourlyForecast
                         aqiJson = result.aqiJson
                         moonPhaseName = result.moonPhase
+                        currentTemp = result.temp
+                        currentConditionCode = result.weatherCode
+                        currentIsDay = result.isDay
+                        responseProvider = result.provider
                         
                         if (result.provider == "open_meteo") {
                             entity?.copy(weatherData = result.rawJson, lastUpdated = currentTime)?.let {
                                 withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
                             }
                         }
+                        errorMessage = null
                     }
                     is WeatherRepository.WeatherDataResult.Error -> {
                         errorMessage = result.message
@@ -252,24 +279,31 @@ fun WeatherDetailScreen(
             }
 
             if (weatherJson == null && isRefreshing) {
-                item { Box(Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
+                item { 
+                    Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) { 
+                        CircularProgressIndicator() 
+                    }
+                }
             }
 
-            weatherJson?.let { json ->
-                val (temp, weatherCode, isDay, currentProvider) = if (weatherProvider == "weatherapi") {
-                    val current = JSONObject(json).getJSONObject("current")
-                    val condition = current.getJSONObject("condition")
-                    listOf(current.getDouble("temp_c"), condition.getInt("code"), current.getInt("is_day") == 1, "weatherapi")
-                } else {
-                    val root = JSONObject(json)
-                    val current = if (root.has("current")) root.getJSONObject("current") else root.getJSONObject("current_weather")
-                    val t = if (current.has("temperature_2m")) current.getDouble("temperature_2m") else current.getDouble("temperature")
-                    val code = current.getInt("weathercode")
-                    val day = current.optInt("is_day", 1) == 1
-                    listOf(t, code, day, "open_meteo")
+            if (weatherJson == null && !isRefreshing && errorMessage == null) {
+                item {
+                    Column(
+                        modifier = Modifier.fillParentMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(stringResource(R.string.no_locations_msg))
+                        Spacer(Modifier.height(16.dp))
+                        Button(onClick = { scope.launch { refreshWeatherData(true) } }) {
+                            Text(stringResource(R.string.refresh_nav_desc))
+                        }
+                    }
                 }
-                
-                val displayTemp = if (tempUnit == "fahrenheit") (temp as Double * 9/5 + 32).toInt() else (temp as Double).toInt()
+            }
+
+            currentTemp?.let { temp ->
+                val displayTemp = if (tempUnit == "fahrenheit") (temp * 9/5 + 32).toInt() else temp.toInt()
 
                 item {
                     val tempSuffix = if (tempUnit == "fahrenheit") stringResource(R.string.temp_f_suffix) else stringResource(R.string.temp_c_suffix)
@@ -278,20 +312,26 @@ fun WeatherDetailScreen(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Icon(
-                            painter = painterResource(id = WeatherIconMapper.getIcon(weatherCode as Int, currentProvider as String, isDay as Boolean)),
-                            contentDescription = null,
-                            modifier = Modifier.size(120.dp),
-                            tint = Color.Unspecified
-                        )
-                        Text("$displayTemp$tempSuffix", style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Bold)
-                        Text(WeatherCodes.getDescription(weatherCode as Int, context, currentProvider as String), style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        currentConditionCode?.let { code ->
+                            Icon(
+                                painter = painterResource(id = WeatherIconMapper.getIcon(code, responseProvider, currentIsDay)),
+                                contentDescription = null,
+                                modifier = Modifier.size(120.dp),
+                                tint = Color.Unspecified
+                            )
+                            Text("$displayTemp$tempSuffix", style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Bold)
+                            Text(WeatherCodes.getDescription(code, context, responseProvider), style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
                     }
                 }
 
-                item {
-                    WeatherDetailsGrid(JSONObject(json), tempUnit, windUnit, weatherProvider)
+                weatherJson?.let { json ->
+                    item {
+                        WeatherDetailsGrid(JSONObject(json), tempUnit, windUnit, responseProvider)
+                    }
                 }
+// ... rest of the items ...
+
 
                 if (hourlyForecastList.isNotEmpty()) {
                     item {

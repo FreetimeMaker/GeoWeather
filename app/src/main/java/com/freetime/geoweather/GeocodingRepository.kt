@@ -20,11 +20,12 @@ class GeocodingRepository {
 
     private fun fetchFromCustomApi(query: String, token: String): List<Triple<String, Double, Double>> {
         return try {
-            val url = "${ApiConstants.BASE_URL}/v1/geocoding/search?q=" + URLEncoder.encode(query, "UTF-8") + "&lang=" + Locale.getDefault().language
+            val url = "${ApiConstants.BASE_URL}/api/v1/geocoding/search?q=" + URLEncoder.encode(query, "UTF-8") + "&lang=" + Locale.getDefault().language
             val response = NetworkUtils.httpGet(url, token)
             parseResults(response)
         } catch (e: Exception) {
-            fetchFromOpenMeteo(query) // Fallback bei API-Fehler
+            // Fallback to Open-Meteo if custom API fails (e.g. 404/500)
+            fetchFromOpenMeteo(query)
         }
     }
 

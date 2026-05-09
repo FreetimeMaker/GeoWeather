@@ -86,27 +86,32 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         hideSystemBars()
         checkNotificationPermission()
+        
+        val isAuthRedirect = intent?.data?.scheme == "geoweather"
+        handleAuthCallback(intent)
 
         val viewModel = LocationsViewModel(application)
         viewModel.syncWithCloud()
 
-        val db = LocationDatabase.getDatabase(this)
-        lifecycleScope.launch {
-            val locations = withContext(Dispatchers.IO) {
-                db.locationDao().getAllLocationsSync()
-            }
+        if (!isAuthRedirect) {
+            val db = LocationDatabase.getDatabase(this)
+            lifecycleScope.launch {
+                val locations = withContext(Dispatchers.IO) {
+                    db.locationDao().getAllLocationsSync()
+                }
 
-            val defaultLoc = locations.find { it.isDefault }
-            val targetLoc = defaultLoc ?: if (locations.size == 1) locations.first() else null
+                val defaultLoc = locations.find { it.isDefault }
+                val targetLoc = defaultLoc ?: if (locations.size == 1) locations.first() else null
 
-            if (targetLoc != null) {
-                val intent =
-                    Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
-                        putExtra("name", targetLoc.name)
-                        putExtra("lat", targetLoc.latitude)
-                        putExtra("lon", targetLoc.longitude)
-                    }
-                startActivity(intent)
+                if (targetLoc != null) {
+                    val intent =
+                        Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
+                            putExtra("name", targetLoc.name)
+                            putExtra("lat", targetLoc.latitude)
+                            putExtra("lon", targetLoc.longitude)
+                        }
+                    startActivity(intent)
+                }
             }
         }
 
@@ -179,9 +184,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleAuthCallback(intent)
+    }
+
     private fun handleAuthCallback(intent: Intent?) {
         val data = intent?.data
-        if (data != null && data.scheme == "geoweather" && data.host == "auth") {
+        if (data != null && data.scheme == "geoweather") {
             val token = data.getQueryParameter("token")
             val refreshToken = data.getQueryParameter("refreshToken")
             val id = data.getQueryParameter("id")
@@ -208,6 +219,13 @@ class MainActivity : ComponentActivity() {
 
                 // Sync after login
                 LocationsViewModel(application).syncWithCloud()
+                
+                // Return to AuthActivity or refresh current state
+                // Since we are in singleTask MainActivity, AuthActivity might be on top.
+                // We should probably just stay here and the user can see they are logged in.
+            } else {
+                val error = data.getQueryParameter("error")
+                Toast.makeText(this, "Login error: ${error ?: "No token"}", Toast.LENGTH_LONG).show()
             }
         }
     }

@@ -54,7 +54,7 @@ class AuthActivity : ComponentActivity() {
                         onLoginClick = {
                             scope.launch {
                                 try {
-                                    val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${ApiConstants.BASE_URL}/v1/auth/github"))
+                                    val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${ApiConstants.BASE_URL}/api/v1/auth/github"))
                                     startActivity(intent)
                                 } catch (e: Exception) {
                                     makeText(

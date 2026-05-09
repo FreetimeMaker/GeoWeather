@@ -96,6 +96,13 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.5.8" to listOf(
+          "Added support for multiple weather providers via custom API.",
+          "Integrated subscription tiers (Free, Freemium, Premium) visibility.",
+          "Resolved endless loading screen when weather data fetching fails.",
+          "Improved Account screen with plan details and logout options.",
+          "Full transition from hardcoded text to localized resources."
+        ),
         "v1.5.7" to listOf(
             "Replaced all hardcoded German and non-English strings with English resources",
             "Improved UI localization and consistency",

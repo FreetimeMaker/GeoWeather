@@ -51,7 +51,7 @@ class ApiClient(private val baseUrl: String) {
 
     suspend fun syncLocations(locations: List<LocationSyncRequest>, token: String): Boolean {
         return try {
-            val response = post("/v1/locations/sync", LocationsSyncListRequest(locations), token)
+            val response = post("/api/v1/locations/sync", LocationsSyncListRequest(locations), token)
             response.status.isSuccess()
         } catch (e: Exception) {
             false

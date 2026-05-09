@@ -33,19 +33,38 @@ class WeatherRepository(private val context: Context) {
     }
 
     private fun fetchFromCustomApi(lat: Double, lon: Double, token: String, provider: String, days: Int): WeatherDataResult {
-        val url = "${ApiConstants.BASE_URL}/v1/weather?latitude=$lat&longitude=$lon&provider=$provider&days=$days"
-        val response = NetworkUtils.httpGet(url, token)
-        val json = JSONObject(response)
+        // Explicitly using /api prefix
+        val url = "${ApiConstants.BASE_URL}/api/v1/weather?latitude=$lat&longitude=$lon&provider=$provider&days=$days"
         
-        if (json.optBoolean("success", true)) {
-            val data = json.optJSONObject("data") ?: json
-            return if (provider == "weatherapi") {
-                parseWeatherApiData(data, response)
-            } else {
-                parseOpenMeteoData(data, response, lat, lon)
+        return try {
+            val response = NetworkUtils.httpGet(url, token)
+            val json = JSONObject(response)
+            
+            if (json.has("error")) {
+                return WeatherDataResult.Error("API Error: ${json.optString("error")}")
             }
-        } else {
-            return WeatherDataResult.Error(json.optString("message", context.getString(R.string.error_connection)))
+            
+            val weatherData = if (json.has("data")) json.optJSONObject("data") else json
+            
+            if (weatherData == null) {
+                return WeatherDataResult.Error("API returned empty data")
+            }
+
+            if (provider == "weatherapi") {
+                parseWeatherApiData(weatherData, response)
+            } else {
+                parseOpenMeteoData(weatherData, response, lat, lon)
+            }
+        } catch (e: Exception) {
+            val msg = e.message ?: ""
+            if (msg.contains("404") || msg.contains("500") || msg.contains("timeout")) {
+                // If it's a server error, not found, or timeout, fallback to Open-Meteo
+                val fallback = fetchFromOpenMeteo(lat, lon, days)
+                if (fallback is WeatherDataResult.Success) {
+                    return fallback.copy(provider = "open_meteo (fallback)")
+                }
+            }
+            WeatherDataResult.Error("Custom API failed: ${e.message}")
         }
     }
 
@@ -278,7 +297,7 @@ class WeatherRepository(private val context: Context) {
             val startDate = df.format(cal.time)
             
             val url = if (authManager.isAuthenticated) {
-                "${ApiConstants.BASE_URL}/v1/weather/history?latitude=$lat&longitude=$lon&start_date=$startDate&end_date=$endDate"
+                "${ApiConstants.BASE_URL}/api/v1/weather/history?latitude=$lat&longitude=$lon&start_date=$startDate&end_date=$endDate"
             } else {
                 "${ApiConstants.OPEN_METEO_ARCHIVE}?latitude=$lat&longitude=$lon&start_date=$startDate&end_date=$endDate&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto"
             }
