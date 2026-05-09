@@ -22,17 +22,32 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.lifecycleScope
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
-import com.freetime.geoweather.R
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.Github
+import io.github.jan.supabase.auth.providers.OAuthProvider
 import kotlinx.coroutines.launch
 
 class AuthActivity : ComponentActivity() {
+
+    object ModrinthProvider : OAuthProvider() {
+        override val name: String = "custom:modrinth-geoweather"
+    }
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         val authMgr = AuthManager.getInstance(this)
+
+        lifecycleScope.launch {
+            supabase.auth.sessionStatus.collect { status ->
+                if (status is io.github.jan.supabase.auth.status.SessionStatus.Authenticated) {
+                    authMgr.syncUserProfile()
+                }
+            }
+        }
 
         setContent {
             GeoWeatherTheme {
@@ -55,8 +70,7 @@ class AuthActivity : ComponentActivity() {
                         onGitHubLogin = {
                             scope.launch {
                                 try {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("${ApiConstants.BASE_URL}/api/v1/auth/github"))
-                                    startActivity(intent)
+                                    supabase.auth.signInWith(Github, redirectUrl = "geoweather://auth")
                                 } catch (e: Exception) {
                                     makeText(context, context.getString(R.string.gh_login_failed), Toast.LENGTH_SHORT).show()
                                 }
@@ -65,8 +79,7 @@ class AuthActivity : ComponentActivity() {
                         onModrinthLogin = {
                             scope.launch {
                                 try {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("${ApiConstants.BASE_URL}/api/v1/auth/modrinth"))
-                                    startActivity(intent)
+                                    supabase.auth.signInWith(ModrinthProvider, redirectUrl = "geoweather://auth")
                                 } catch (e: Exception) {
                                     makeText(context, context.getString(R.string.modrinth_login_failed), Toast.LENGTH_SHORT).show()
                                 }
@@ -142,7 +155,9 @@ private fun UserInfoScreen(
             Spacer(modifier = Modifier.height(32.dp))
             
             Button(
-                onClick = onLogout,
+                onClick = {
+                    onLogout()
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {

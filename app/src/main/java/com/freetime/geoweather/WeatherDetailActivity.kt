@@ -174,15 +174,13 @@ fun WeatherDetailScreen(
             if (!forceRefresh && entity?.weatherData != null && dataAgeMinutes < 30) {
                 val json = entity.weatherData
                 weatherJson = json
-                
-                // Parse basic info from cache immediately
                 try {
                     val root = JSONObject(json)
                     val current = if (root.has("current")) root.getJSONObject("current") else root.getJSONObject("current_weather")
                     currentTemp = if (current.has("temperature_2m")) current.getDouble("temperature_2m") else current.getDouble("temperature")
                     currentConditionCode = current.getInt("weathercode")
                     currentIsDay = current.optInt("is_day", 1) == 1
-                    responseProvider = "open_meteo" // Assuming cache is Open-Meteo
+                    responseProvider = "open_meteo"
                 } catch (_: Exception) {}
 
                 scope.launch { 
@@ -197,7 +195,6 @@ fun WeatherDetailScreen(
                         currentConditionCode = result.weatherCode
                         currentIsDay = result.isDay
                         responseProvider = result.provider
-                        errorMessage = null
                     }
                 }
             } else {
@@ -220,7 +217,6 @@ fun WeatherDetailScreen(
                                 withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
                             }
                         }
-                        errorMessage = null
                     }
                     is WeatherRepository.WeatherDataResult.Error -> {
                         errorMessage = result.message
@@ -279,31 +275,11 @@ fun WeatherDetailScreen(
             }
 
             if (weatherJson == null && isRefreshing) {
-                item { 
-                    Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) { 
-                        CircularProgressIndicator() 
-                    }
-                }
-            }
-
-            if (weatherJson == null && !isRefreshing && errorMessage == null) {
-                item {
-                    Column(
-                        modifier = Modifier.fillParentMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(stringResource(R.string.no_locations_msg))
-                        Spacer(Modifier.height(16.dp))
-                        Button(onClick = { scope.launch { refreshWeatherData(true) } }) {
-                            Text(stringResource(R.string.refresh_nav_desc))
-                        }
-                    }
-                }
+                item { Box(Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
             }
 
             currentTemp?.let { temp ->
-                val displayTemp = if (tempUnit == "fahrenheit") (temp * 9/5 + 32).toInt() else temp.toInt()
+                val displayTemp = if (tempUnit == "fahrenheit") (temp * 9 / 5 + 32).toInt() else temp.toInt()
 
                 item {
                     val tempSuffix = if (tempUnit == "fahrenheit") stringResource(R.string.temp_f_suffix) else stringResource(R.string.temp_c_suffix)
@@ -325,17 +301,15 @@ fun WeatherDetailScreen(
                     }
                 }
 
-                weatherJson?.let { json ->
+                if (weatherJson != null) {
                     item {
-                        WeatherDetailsGrid(JSONObject(json), tempUnit, windUnit, responseProvider)
+                        WeatherDetailsGrid(JSONObject(weatherJson!!), tempUnit, windUnit, responseProvider)
                     }
                 }
-// ... rest of the items ...
-
 
                 if (hourlyForecastList.isNotEmpty()) {
                     item {
-                        HourlyForecastSection(hourlyForecastList, tempUnit, weatherProvider)
+                        HourlyForecastSection(hourlyForecastList, tempUnit, responseProvider)
                     }
                 }
 
@@ -350,7 +324,7 @@ fun WeatherDetailScreen(
                                     forecast = forecast,
                                     tempUnit = tempUnit,
                                     isSelected = selectedDayIndex == index,
-                                    weatherProvider = weatherProvider,
+                                    weatherProvider = responseProvider,
                                     onClick = { selectedDayIndex = if (selectedDayIndex == index) -1 else index }
                                 )
                             }

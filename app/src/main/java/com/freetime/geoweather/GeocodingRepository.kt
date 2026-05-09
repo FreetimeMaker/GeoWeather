@@ -9,24 +9,8 @@ import java.util.*
 class GeocodingRepository {
 
     suspend fun searchLocations(context: Context, query: String): List<Triple<String, Double, Double>> {
-        val authManager = AuthManager.getInstance(context)
-        
-        return if (authManager.isAuthenticated) {
-            fetchFromCustomApi(query, authManager.getAccessToken())
-        } else {
-            fetchFromOpenMeteo(query)
-        }
-    }
-
-    private fun fetchFromCustomApi(query: String, token: String): List<Triple<String, Double, Double>> {
-        return try {
-            val url = "${ApiConstants.BASE_URL}/api/v1/geocoding/search?q=" + URLEncoder.encode(query, "UTF-8") + "&lang=" + Locale.getDefault().language
-            val response = NetworkUtils.httpGet(url, token)
-            parseResults(response)
-        } catch (e: Exception) {
-            // Fallback to Open-Meteo if custom API fails (e.g. 404/500)
-            fetchFromOpenMeteo(query)
-        }
+        // Direct local call to Open-Meteo Geocoding
+        return fetchFromOpenMeteo(query)
     }
 
     private fun fetchFromOpenMeteo(query: String): List<Triple<String, Double, Double>> {
@@ -53,13 +37,12 @@ class GeocodingRepository {
     private fun parseResults(json: String): List<Triple<String, Double, Double>> {
         return try {
             val obj = JSONObject(json)
-            val data = if (obj.has("data")) obj.optJSONObject("data") ?: obj else obj
             val list = mutableListOf<Triple<String, Double, Double>>()
             
-            val arr = if (data.has("results")) {
-                data.optJSONArray("results") ?: JSONArray()
-            } else if (data.has("name")) {
-                JSONArray().apply { put(data) }
+            val arr = if (obj.has("results")) {
+                obj.optJSONArray("results") ?: JSONArray()
+            } else if (obj.has("name")) {
+                JSONArray().apply { put(obj) }
             } else {
                 JSONArray()
             }

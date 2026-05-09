@@ -6,12 +6,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.freetime.geoweather.GeocodingRepository
 import com.freetime.geoweather.AuthManager
-import com.freetime.geoweather.ApiConstants
-import com.freetime.geoweather.api.ApiClient
 import com.freetime.geoweather.api.LocationSyncRequest
 import com.freetime.geoweather.data.LocationDao
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
+import com.freetime.geoweather.supabase
+import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,7 +21,6 @@ class LocationsViewModel(application: Application) : AndroidViewModel(applicatio
     private val locationDao: LocationDao = LocationDatabase.getDatabase(application).locationDao()
     private val geocodingRepository = GeocodingRepository()
     private val authManager = AuthManager.getInstance(application)
-    private val apiClient = ApiClient(ApiConstants.BASE_URL)
     
     val locations: LiveData<List<LocationEntity>> = locationDao.getAllLocations()
 
@@ -63,23 +62,28 @@ class LocationsViewModel(application: Application) : AndroidViewModel(applicatio
         if (!authManager.isAuthenticated) return
 
         viewModelScope.launch(Dispatchers.IO) {
-            val currentLocations = locationDao.getAllLocationsSync()
-            val token = authManager.getAccessToken()
-            
-            val syncList = currentLocations.map { 
-                LocationSyncRequest(
-                    name = it.name,
-                    latitude = it.latitude,
-                    longitude = it.longitude,
-                    notificationsEnabled = it.notificationsEnabled,
-                    notificationTime = it.notificationTime,
-                    changeAlertsEnabled = it.changeAlertsEnabled,
-                    changeAlertInterval = it.changeAlertInterval,
-                    isDefault = it.isDefault
-                )
+            try {
+                val currentLocations = locationDao.getAllLocationsSync()
+                val userId = authManager.userInfo?.id ?: return@launch
+                
+                val syncList = currentLocations.map { 
+                    LocationSyncRequest(
+                        name = it.name,
+                        latitude = it.latitude,
+                        longitude = it.longitude,
+                        notificationsEnabled = it.notificationsEnabled,
+                        notificationTime = it.notificationTime,
+                        changeAlertsEnabled = it.changeAlertsEnabled,
+                        changeAlertInterval = it.changeAlertInterval,
+                        isDefault = it.isDefault
+                    )
+                }
+                
+                // Direct upsert to Supabase
+                supabase.from("locations").upsert(syncList)
+            } catch (e: Exception) {
+                // Log sync error
             }
-            
-            apiClient.syncLocations(syncList, token)
         }
     }
 

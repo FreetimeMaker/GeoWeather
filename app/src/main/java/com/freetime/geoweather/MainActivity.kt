@@ -92,6 +92,10 @@ class MainActivity : ComponentActivity() {
 
         val viewModel = LocationsViewModel(application)
         viewModel.syncWithCloud()
+        
+        lifecycleScope.launch {
+            authManager.syncUserProfile()
+        }
 
         if (!isAuthRedirect) {
             val db = LocationDatabase.getDatabase(this)
@@ -205,24 +209,14 @@ class MainActivity : ComponentActivity() {
 
             if (token != null) {
                 val authMgr = AuthManager.getInstance(this)
-                authMgr.saveAuthData(
-                    token,
-                    refreshToken ?: "",
-                    id ?: "",
-                    email ?: "",
-                    name ?: "",
-                    tier,
-                    pic
-                )
-                Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT)
-                    .show()
-
-                // Sync after login
-                LocationsViewModel(application).syncWithCloud()
+                // If it's a legacy callback from API, we should ideally import it into Supabase session
+                // but for now we'll just ensure the profile is synced if possible
+                lifecycleScope.launch {
+                    authMgr.syncUserProfile()
+                    LocationsViewModel(application).syncWithCloud()
+                }
                 
-                // Return to AuthActivity or refresh current state
-                // Since we are in singleTask MainActivity, AuthActivity might be on top.
-                // We should probably just stay here and the user can see they are logged in.
+                Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
             } else {
                 val error = data.getQueryParameter("error")
                 Toast.makeText(this, "Login error: ${error ?: "No token"}", Toast.LENGTH_LONG).show()
