@@ -96,6 +96,14 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.7.0" to listOf(
+            "Architecture: Full transition to a local-first system. Weather data and geocoding are now fetched directly from providers.",
+            "Auth: Added support for Modrinth login. GitHub login now uses the official Supabase SDK for better stability.",
+            "Sync: Direct Supabase integration for location and user profile synchronization.",
+            "Multi-Provider: Integrated Tomorrow.io and Visual Crossing support (keys can be added in settings).",
+            "Performance: Added immediate cache display for weather to eliminate loading wait times.",
+            "Reliability: Fixed deep-link redirection and resolved various UI and translation bugs."
+        ),
         "v1.6.0" to listOf(
             "Added Modrinth Login and More"
         ),
