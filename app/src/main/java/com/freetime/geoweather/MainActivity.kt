@@ -56,6 +56,8 @@ import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.LocationsViewModel
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.user.UserSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -200,28 +202,40 @@ class MainActivity : ComponentActivity() {
     private fun handleAuthCallback(intent: Intent?) {
         val data = intent?.data
         if (data != null && data.scheme == "geoweather") {
-            val token = data.getQueryParameter("token")
-            val refreshToken = data.getQueryParameter("refreshToken")
-            val id = data.getQueryParameter("id")
-            val email = data.getQueryParameter("email")
-            val name = data.getQueryParameter("name")
-            val pic =
-                data.getQueryParameter("picture") ?: data.getQueryParameter("profile_picture")
-                ?: ""
-            val tier = data.getQueryParameter("tier") ?: "free"
-
-            if (token != null) {
-                // If it's a legacy callback from API, we should ideally import it into Supabase session
-                // but for now we'll just ensure the profile is synced if possible
-                lifecycleScope.launch {
-                    authManager.syncUserProfile()
-                    LocationsViewModel(application).syncWithCloud()
+            lifecycleScope.launch {
+                try {
+                    val fragment = data.fragment ?: ""
+                    if (fragment.contains("access_token")) {
+                        val params = fragment.split("&").associate { 
+                            val parts = it.split("=")
+                            parts[0] to parts.getOrElse(1) { "" } 
+                        }
+                        val accessToken = params["access_token"]
+                        val refreshToken = params["refresh_token"]
+                        if (accessToken != null && refreshToken != null) {
+                            val session = UserSession(
+                                accessToken = accessToken,
+                                refreshToken = refreshToken,
+                                expiresIn = 3600,
+                                tokenType = "bearer",
+                                user = null
+                            )
+                            supabase.auth.importSession(session)
+                            AuthManager.getInstance(this@MainActivity).syncUserProfile()
+                            Toast.makeText(this@MainActivity, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        // Support for token query param from custom API
+                        val token = data.getQueryParameter("token")
+                        if (token != null) {
+                            AuthManager.getInstance(this@MainActivity).syncUserProfile()
+                            Toast.makeText(this@MainActivity, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Fail silently or log
                 }
-                
-                Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
-            } else {
-                val error = data.getQueryParameter("error")
-                Toast.makeText(this, "Login error: ${error ?: "No token"}", Toast.LENGTH_LONG).show()
+                LocationsViewModel(application).syncWithCloud()
             }
         }
     }
@@ -324,7 +338,7 @@ fun MainScreen(
                                                 },
                                                 null
                                             )
-                                        } catch (e: SecurityException) {
+                                        } catch (e: Exception) {
                                             isLocating = false
                                         }
                                     } else {

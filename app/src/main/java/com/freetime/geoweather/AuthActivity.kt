@@ -45,6 +45,7 @@ class AuthActivity : ComponentActivity() {
             supabase.auth.sessionStatus.collect { status ->
                 if (status is io.github.jan.supabase.auth.status.SessionStatus.Authenticated) {
                     authMgr.syncUserProfile()
+                    finish() // Close login screen on success
                 }
             }
         }
