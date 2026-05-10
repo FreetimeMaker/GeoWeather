@@ -75,6 +75,7 @@ class WeatherDetailActivity : ComponentActivity() {
         val name = intent.getStringExtra("name") ?: getString(R.string.unknown_location)
         val lat = intent.getDoubleExtra("lat", 0.0)
         val lon = intent.getDoubleExtra("lon", 0.0)
+        val id = intent.getLongExtra("id", -1L)
 
         setContent {
             val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
@@ -89,6 +90,7 @@ class WeatherDetailActivity : ComponentActivity() {
                     name = name,
                     lat = lat,
                     lon = lon,
+                    id = id,
                     onBack = { finish() }
                 )
             }
@@ -125,6 +127,7 @@ fun WeatherDetailScreen(
     name: String,
     lat: Double,
     lon: Double,
+    id: Long,
     onBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -163,7 +166,13 @@ fun WeatherDetailScreen(
         try {
             isRefreshing = true
             errorMessage = null
-            val entity = withContext(Dispatchers.IO) { db.locationDao().findByCoordinates(lat, lon) }
+            
+            // Lookup entity by ID if available, otherwise fallback to coordinates
+            val entity = withContext(Dispatchers.IO) {
+                if (id != -1L) db.locationDao().findById(id)
+                else db.locationDao().findByCoordinates(lat, lon)
+            }
+            
             val currentTime = System.currentTimeMillis()
             
             val lastUpdated = entity?.lastUpdated
@@ -178,11 +187,14 @@ fun WeatherDetailScreen(
                     val root = JSONObject(json)
                     val current = if (root.has("current")) root.getJSONObject("current") else root.getJSONObject("current_weather")
                     currentTemp = if (current.has("temperature_2m")) current.getDouble("temperature_2m") else current.getDouble("temperature")
-                    currentConditionCode = current.getInt("weathercode")
+                    currentConditionCode = if (current.has("weathercode")) current.getInt("weathercode") else if (current.has("condition")) current.getJSONObject("condition").getInt("code") else 0
                     currentIsDay = current.optInt("is_day", 1) == 1
-                    responseProvider = "open_meteo"
+                    responseProvider = entity.provider
                     
-                    forecastList = weatherRepository.parseOpenMeteoDaily(root.getJSONObject("daily"))
+                    if (responseProvider == "open_meteo") {
+                        forecastList = weatherRepository.parseOpenMeteoDaily(root.getJSONObject("daily"))
+                        hourlyForecastList = weatherRepository.parseOpenMeteoHourly(root.getJSONObject("hourly"))
+                    }
                 } catch (_: Exception) {}
 
                 scope.launch { 
@@ -198,11 +210,14 @@ fun WeatherDetailScreen(
                         currentIsDay = result.isDay
                         responseProvider = result.provider
                         
-                        entity?.copy(
-                            weatherData = result.rawJson,
-                            lastUpdated = System.currentTimeMillis()
-                        )?.let {
-                            withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
+                        // Update cache in background
+                        entity?.let {
+                            withContext(Dispatchers.IO) {
+                                db.locationDao().updateLocation(it.copy(
+                                    weatherData = result.rawJson,
+                                    lastUpdated = System.currentTimeMillis()
+                                ))
+                            }
                         }
                     }
                 }
@@ -221,11 +236,13 @@ fun WeatherDetailScreen(
                         currentIsDay = result.isDay
                         responseProvider = result.provider
                         
-                        entity?.copy(
-                            weatherData = result.rawJson,
-                            lastUpdated = System.currentTimeMillis()
-                        )?.let {
-                            withContext(Dispatchers.IO) { db.locationDao().updateLocation(it) }
+                        entity?.let {
+                            withContext(Dispatchers.IO) {
+                                db.locationDao().updateLocation(it.copy(
+                                    weatherData = result.rawJson,
+                                    lastUpdated = System.currentTimeMillis()
+                                ))
+                            }
                         }
                     }
                     is WeatherRepository.WeatherDataResult.Error -> {
@@ -294,16 +311,8 @@ fun WeatherDetailScreen(
 
             if (weatherJson == null && !isRefreshing && errorMessage == null) {
                 item {
-                    Column(
-                        modifier = Modifier.fillParentMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(stringResource(R.string.no_locations_msg))
-                        Spacer(Modifier.height(16.dp))
-                        Button(onClick = { scope.launch { refreshWeatherData(true) } }) {
-                            Text(stringResource(R.string.refresh_nav_desc))
-                        }
+                    Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(stringResource(R.string.error_loading_weather))
                     }
                 }
             }

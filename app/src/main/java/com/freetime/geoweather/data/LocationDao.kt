@@ -18,8 +18,11 @@ interface LocationDao {
     @Query("SELECT COUNT(*) FROM locations")
     fun getCount(): Int
 
+    @Query("SELECT * FROM locations WHERE id = :id LIMIT 1")
+    suspend fun findById(id: Long): LocationEntity?
+
     @Query("SELECT * FROM locations WHERE latitude = :lat AND longitude = :lon LIMIT 1")
-    fun findByCoordinates(lat: Double, lon: Double): LocationEntity?
+    suspend fun findByCoordinates(lat: Double, lon: Double): LocationEntity?
 
     @Query("SELECT * FROM locations WHERE selected = 1 LIMIT 1")
     suspend fun getSelectedLocation(): LocationEntity?

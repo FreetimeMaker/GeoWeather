@@ -24,15 +24,14 @@ class WeatherRepository(private val context: Context) {
                 else -> fetchFromOpenMeteo(lat, lon, days)
             }
         } catch (e: Exception) {
-            // Fallback to Open-Meteo on any error to ensure data is displayed
             if (provider != "open_meteo") {
                 try {
                     fetchFromOpenMeteo(lat, lon, days)
                 } catch (inner: Exception) {
-                    WeatherDataResult.Error(inner.message ?: context.getString(R.string.wc_unknown))
+                    WeatherDataResult.Error("Fallback failed: ${inner.message}")
                 }
             } else {
-                WeatherDataResult.Error(e.message ?: context.getString(R.string.wc_unknown))
+                WeatherDataResult.Error("Request failed: ${e.message}")
             }
         }
     }

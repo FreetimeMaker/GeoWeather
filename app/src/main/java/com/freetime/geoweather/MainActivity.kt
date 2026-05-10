@@ -151,12 +151,13 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                     },
-                    onOpenDetail = { name, lat, lon ->
+                    onOpenDetail = { name, lat, lon, id ->
                         val intent =
                             Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
                                 putExtra("name", name)
                                 putExtra("lat", lat)
                                 putExtra("lon", lon)
+                                putExtra("id", id)
                             }
                         startActivity(intent)
                     },
@@ -199,6 +200,10 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         handleAuthCallback(intent)
+        
+        // Refresh weather when returning to the app
+        val viewModel = LocationsViewModel(application)
+        viewModel.refreshAllWeathers()
     }
 
     private fun handleAuthCallback(intent: Intent?) {
@@ -247,7 +252,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(
     onRequestLocationPermission: () -> Unit,
-    onOpenDetail: (String, Double, Double) -> Unit,
+    onOpenDetail: (String, Double, Double, Long) -> Unit,
     onOpenDonate: () -> Unit
 ) {
     val context = LocalContext.current
@@ -303,7 +308,8 @@ fun MainScreen(
                                     onOpenDetail(
                                         context.getString(R.string.current_location),
                                         bestLocation.latitude,
-                                        bestLocation.longitude
+                                        bestLocation.longitude,
+                                        -1L
                                     )
                                 } else {
                                     // Try request single update
@@ -329,7 +335,8 @@ fun MainScreen(
                                                         onOpenDetail(
                                                             context.getString(R.string.current_location),
                                                             location.latitude,
-                                                            location.longitude
+                                                            location.longitude,
+                                                            -1L
                                                         )
                                                     }
 
@@ -547,7 +554,7 @@ fun MainScreen(
                                 .fillMaxWidth()
                                 .clickable {
                                     viewModel.selectLocation(loc)
-                                    onOpenDetail(loc.name, loc.latitude, loc.longitude)
+                                    onOpenDetail(loc.name, loc.latitude, loc.longitude, loc.id)
                                 }
                         )
                         HorizontalDivider(

@@ -30,17 +30,18 @@ data class LocationEntity(
             return try {
                 weatherData?.let { data ->
                     val obj = org.json.JSONObject(data)
-                    if (obj.has("current_weather")) {
-                        obj.getJSONObject("current_weather").getDouble("temperature")
-                    } else if (obj.has("current")) {
-                        obj.getJSONObject("current").getDouble("temp_c")
-                    } else if (obj.has("temperature_2m")) {
-                        // For some open-meteo variants
-                        obj.getDouble("temperature_2m")
-                    } else if (obj.has("timelines")) {
-                        // Tomorrow.io logic
-                        obj.getJSONObject("timelines").getJSONArray("daily").getJSONObject(0).getJSONObject("values").getDouble("temperatureAvg")
-                    } else null
+                    when {
+                        obj.has("current_weather") -> obj.getJSONObject("current_weather").getDouble("temperature")
+                        obj.has("current") -> obj.getJSONObject("current").getDouble("temp_c")
+                        obj.has("timelines") -> {
+                            val timelines = obj.getJSONObject("timelines")
+                            if (timelines.has("minutely")) timelines.getJSONArray("minutely").getJSONObject(0).getJSONObject("values").getDouble("temperature")
+                            else timelines.getJSONArray("daily").getJSONObject(0).getJSONObject("values").getDouble("temperatureAvg")
+                        }
+                        obj.has("currentConditions") -> obj.getJSONObject("currentConditions").getDouble("temp")
+                        obj.has("temperature_2m") -> obj.getDouble("temperature_2m")
+                        else -> null
+                    }
                 }
             } catch (e: Exception) {
                 null
@@ -52,17 +53,18 @@ data class LocationEntity(
             return try {
                 weatherData?.let { data ->
                     val obj = org.json.JSONObject(data)
-                    if (obj.has("current_weather")) {
-                        obj.getJSONObject("current_weather").getInt("weathercode")
-                    } else if (obj.has("current")) {
-                        val current = obj.getJSONObject("current")
-                        if (current.has("condition")) current.getJSONObject("condition").getInt("code")
-                        else current.optInt("weathercode", 0)
-                    } else if (obj.has("weathercode")) {
-                        obj.getInt("weathercode")
-                    } else if (obj.has("timelines")) {
-                        obj.getJSONObject("timelines").getJSONArray("daily").getJSONObject(0).getJSONObject("values").getInt("weatherCodeMax")
-                    } else null
+                    when {
+                        obj.has("current_weather") -> obj.getJSONObject("current_weather").getInt("weathercode")
+                        obj.has("current") -> {
+                            val current = obj.getJSONObject("current")
+                            if (current.has("condition")) current.getJSONObject("condition").getInt("code")
+                            else current.optInt("weathercode", 0)
+                        }
+                        obj.has("timelines") -> obj.getJSONObject("timelines").getJSONArray("daily").getJSONObject(0).getJSONObject("values").getInt("weatherCodeMax")
+                        obj.has("currentConditions") -> 0 // Visual crossing needs mapping
+                        obj.has("weathercode") -> obj.getInt("weathercode")
+                        else -> null
+                    }
                 }
             } catch (e: Exception) {
                 null

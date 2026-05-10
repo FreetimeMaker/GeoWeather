@@ -96,6 +96,12 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.7.2" to listOf(
+            "Fixed Home screen weather display issues by switching to ID-based location lookups.",
+            "Resolved persistent loading issues with improved provider fallbacks.",
+            "Improved GitHub/Modrinth login reliability and automated profile syncing.",
+            "Added manual refresh button to the Home screen for instant updates."
+        ),
         "v1.7.1" to listOf(
             "Resolved weather loading issues by adding robust fallbacks to Open-Meteo.",
             "Home screen now correctly displays up-to-date weather data with automatic and manual refresh options.",
