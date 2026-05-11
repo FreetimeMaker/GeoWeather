@@ -21,7 +21,7 @@
     <string name="WalletTitle">Choose Your Wallet App</string>
     <string name="WalletDescription">Supported Wallets: Trust Wallet, MetaMask, Coinbase, Binance, Exodus, Atomic Wallet and more.</string>
     <string name="USDTitle">USD to Crypto Donation</string>
-    <string name="USDDescription">Pay with USD and we will automatically convert it to your chosen cryptocurrency.</string>
+    <string name="USDDescription">Paga en USD y lo convertiremos automáticamente a la criptomoneda que hayas elegido.</string>
     <string name="ViewSup">View Supporters</string>
     <string name="BackToWeaDash">Go Back to the Weather Dashboard</string>
     <string name="DelLoc">Delete location</string>
@@ -80,7 +80,6 @@
     <string name="PrecipitationChangeTXT">Precipitation chance increased to %1$s%%</string>
     <string name="ConditionChangeTXT">Weather condition changed from %1$s to %2$s</string>
     <string name="ErrorFetchingWeatherTXT">Error loading weather data. Please try again.</string>
-
     <string name="DonViaGHSponsors">Donar Usando Github Sponsors</string>
     <string name="change_log_title">Historial de Cambios</string>
     <string name="MoonCycleTXT">Fase Lunar.</string>
