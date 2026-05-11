@@ -15,7 +15,7 @@
 # Translations
 <div align="center">
 
-If you find an similar app to weblate then please make an Issue with the link to it and more Informations because I had reached over the maximum strings on the Libre-Plan on weblate.
+[![Translations Status](https://translate.codeberg.org/widget/geoweather/geoweather/287x66-grey.png)](https://translate.codeberg.org/engage/geoweather/)
 </div>
 
 <div align="center">
