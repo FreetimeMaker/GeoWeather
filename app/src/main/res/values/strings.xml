@@ -95,7 +95,7 @@
     <string name="sunrise_label">Sunrise</string>
     <string name="sunset_label">Sunset</string>
     <string name="hourly_label">Hourly</string>
-    <string name="forecast_3day_label">3-Day Forecast</string>
+    <string name="forecast_3day_label">7-Day Forecast</string>
     <string name="back_nav_desc">Back</string>
     <string name="refresh_nav_desc">Refresh</string>
     <string name="donate_nav_desc">Donate</string>

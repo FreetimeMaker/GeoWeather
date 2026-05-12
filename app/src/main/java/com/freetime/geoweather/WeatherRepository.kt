@@ -9,7 +9,7 @@ class WeatherRepository(private val context: Context) {
 
     private val sharedPrefs = context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
 
-    suspend fun getWeatherData(lat: Double, lon: Double, days: Int = 3): WeatherDataResult {
+    suspend fun getWeatherData(lat: Double, lon: Double, days: Int = 7): WeatherDataResult {
         val provider = sharedPrefs.getString("weather_provider", "open_meteo") ?: "open_meteo"
         val apiKey = sharedPrefs.getString("weather_api_key", "") ?: ""
         val tomorrowKey = sharedPrefs.getString("tomorrow_io_key", "") ?: ""
@@ -170,7 +170,7 @@ class WeatherRepository(private val context: Context) {
         return list
     }
 
-    suspend fun getHistoricalData(lat: Double, lon: Double, daysAgo: Int = 3): List<DailyForecast> {
+    suspend fun getHistoricalData(lat: Double, lon: Double, daysAgo: Int = 7): List<DailyForecast> {
         val cal = Calendar.getInstance()
         val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         cal.add(Calendar.DAY_OF_YEAR, -1)

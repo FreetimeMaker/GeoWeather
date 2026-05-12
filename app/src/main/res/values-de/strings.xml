@@ -138,7 +138,7 @@
     <string name="back_nav_desc_short">Zurück</string>
     <string name="account_title_label">Konto</string>
     <string name="show_historical_data">Historische Daten anzeigen</string>
-    <string name="show_historical_data_desc">Wettertrends der letzten 3 Tage anzeigen</string>
+    <string name="show_historical_data_desc">Wettertrends der letzten 7 Tage anzeigen</string>
     <string name="require_login_title">Login erforderlich</string>
     <string name="require_login_subtitle">Beim App-Start nach Login fragen</string>
     <string name="cloud_sync_available">Cloud Sync verfügbar</string>

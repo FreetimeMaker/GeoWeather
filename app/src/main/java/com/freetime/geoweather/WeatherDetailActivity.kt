@@ -178,7 +178,7 @@ fun WeatherDetailScreen(
             val lastUpdated = entity?.lastUpdated
             val dataAgeMinutes = if (lastUpdated != null) (currentTime - lastUpdated) / (1000 * 60) else Long.MAX_VALUE
 
-            val forecastDays = if (isPremium) 7 else 3
+            val forecastDays = 7
 
             if (!forceRefresh && entity?.weatherData != null && dataAgeMinutes < 30) {
                 val json = entity.weatherData
