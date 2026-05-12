@@ -6,16 +6,16 @@
     <string name="DonPers">Noch niemand hat gespendet.</string>
     <string name="DonTXT2">Wenn du diese und andere Apps unterstützen möchtest, spende und erstelle ein Ticket in meinem Discord‑Server mit deinem Namen und dem Zahlungsdienst, den du verwendet hast; ich werde dich dann hier aufführen.</string>
     <string name="DonTXT1">Hier sind Unterstützer aufgeführt, die diese und viele andere Apps pflegen.</string>
-    <string name="DonViaOxaPay">Spende via OxaPay</string>
+    <string name="DonViaOxaPay">Spende über OxaPay</string>
     <string name="DonViaCoin">Spende via Coinbase</string>
-    <string name="DonViaBTC">Spende via Bitcoin</string>
-    <string name="DonViaETH">Spende via Ethereum</string>
-    <string name="DonViaUSDT">Spende via USDT</string>
-    <string name="DonViaUSDC">Spende via USDC</string>
-    <string name="DonViaSHIB">Spende via SHIB</string>
-    <string name="DonViaDOGE">Spende via DOGE</string>
-    <string name="DonateViaTRON">Spende via TRON</string>
-    <string name="DonViaLTC">Spende via LTC</string>
+    <string name="DonViaBTC">Spende über Bitcoin</string>
+    <string name="DonViaETH">Spende über Ethereum</string>
+    <string name="DonViaUSDT">Spende über USDT</string>
+    <string name="DonViaUSDC">Spende über USDC</string>
+    <string name="DonViaSHIB">Spende über SHIB</string>
+    <string name="DonViaDOGE">Spende über DOGE</string>
+    <string name="DonateViaTRON">Spende über TRON</string>
+    <string name="DonViaLTC">Spende über LTC</string>
     <string name="DonViaWallet">Spende über Wallet‑App</string>
     <string name="DonViaUSD">Spende in USD an Krypto</string>
     <string name="DonViaGHSponsors">Über GitHub Sponsors spenden</string>
@@ -187,4 +187,8 @@
     <string name="WalletDescription">Unterstützte Wallets: Trust Wallet, MetaMask, Coinbase, Binance, Exodus, Atomic Wallet und mehr.</string>
     <string name="USDTitle">USD zu Krypto-Spende</string>
     <string name="USDDescription">Bezahlen in USD und wir wandeln es automatisch in deine gewählte Kryptowährung um.</string>
+    <string name="DonViaBNB">Spende über BNB</string>
+    <string name="DonViaPEPE">Spende über PEPE</string>
+    <string name="DonViaSOL">Spende über SOL</string>
+    <string name="DonViaShib">Spende über Shiba Inu</string>
 </resources>
