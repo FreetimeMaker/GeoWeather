@@ -110,12 +110,12 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             "Enhanced local database caching to ensure weather data is available instantly."
         ),
         "v1.7.0" to listOf(
-            "Architecture: Full transition to a local-first system. Weather data and geocoding are now fetched directly from providers.",
-            "Auth: Added support for Modrinth login. GitHub login now uses the official Supabase SDK for better stability.",
-            "Sync: Direct Supabase integration for location and user profile synchronization.",
-            "Multi-Provider: Integrated Tomorrow.io and Visual Crossing support (keys can be added in settings).",
-            "Performance: Added immediate cache display for weather to eliminate loading wait times.",
-            "Reliability: Fixed deep-link redirection and resolved various UI and translation bugs."
+            "Full transition to a local-first system. Weather data and geocoding are now fetched directly from providers.",
+            "Added support for Modrinth login. GitHub login now uses the official Supabase SDK for better stability.",
+            "Direct Supabase integration for location and user profile synchronization.",
+            "Integrated Tomorrow.io and Visual Crossing support (keys can be added in settings).",
+            "Added immediate cache display for weather to eliminate loading wait times.",
+            "Fixed deep-link redirection and resolved various UI and translation bugs."
         ),
         "v1.6.0" to listOf(
             "Added Modrinth Login and More"
@@ -169,42 +169,58 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             "Optimized background workers and widget for security"
         ),
         "v1.5.1" to listOf(
-            "Fixed a StartUp Error"
+            stringResource(R.string.fixed_label),
+            stringResource(R.string.cl_v143_fix_start)
         ),
         "v1.5.0" to listOf(
-            "Added my own API"
+            stringResource(R.string.added_label),
+            stringResource(R.string.cl_v142_added_api)
         ),
         "v1.4.1" to listOf(
-            "Added more Donation Options"
+            stringResource(R.string.added_label),
+            stringResource(R.string.cl_v141_more_dons)
         ),
         "v1.4.0" to listOf(
-            "Changed everything from 7 Days to 3 Days because I am working on an API for the App with Different optional plans."
+            stringResource(R.string.added_label),
+            stringResource(R.string.cl_v140_api)
         ),
         "v1.3.9" to listOf(
-            "Updated so it won't Crash when trying to Donate"
+            "${stringResource(R.string.fixed_label)}",
+            stringResource(R.string.cl_v139_fix_dons)
         ),
         "v1.3.8" to listOf(
-            "Changed back to Android only"
+            "${stringResource(R.string.changed_label)}",
+            "${stringResource(R.string.cl_v138_ca)}"
         ),
         "v1.3.7" to listOf(
-            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v137_ci_cd)}",
-            "${stringResource(R.string.fixed_label)} ${stringResource(R.string.cl_v137_signing)}",
-            "${stringResource(R.string.fixed_label)} ${stringResource(R.string.cl_v137_wasm)}"
+            "${stringResource(R.string.added_label)}",
+            "${stringResource(R.string.cl_v137_ci_cd)}",
+            "${stringResource(R.string.fixed_label)}",
+            "${stringResource(R.string.cl_v137_signing)}",
+            "${stringResource(R.string.fixed_label)}",
+            "${stringResource(R.string.cl_v137_wasm)}"
         ),
         "v1.3.6" to listOf(
-            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v136_auto_open)}",
-            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v136_default_location)}",
-            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v136_current_location)}",
-            "${stringResource(R.string.removed_label)} ${stringResource(R.string.cl_v136_degoogled)}",
-            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_v136_ui_ux)}",
-            "${stringResource(R.string.fixed_label)} ${stringResource(R.string.cl_v136_stability)}"
+            "${stringResource(R.string.added_label)}",
+            "${stringResource(R.string.cl_v136_auto_open)}",
+            "${stringResource(R.string.added_label)}",
+            "${stringResource(R.string.cl_v136_default_location)}",
+            "${stringResource(R.string.added_label)}",
+            "${stringResource(R.string.cl_v136_current_location)}",
+            "${stringResource(R.string.removed_label)}",
+            "${stringResource(R.string.cl_v136_degoogled)}",
+            "${stringResource(R.string.added_label)}",
+            "${stringResource(R.string.cl_v136_ui_ux)}",
+            "${stringResource(R.string.fixed_label)}",
+            "${stringResource(R.string.cl_v136_stability)}"
         ),
         "v1.3.5" to listOf(
             "${stringResource(R.string.added_label)} Added More Donation Links",
             "${stringResource(R.string.fixed_label)} Made Every Screen (Hopefully) like System when activated"
         ),
         "v1.3.4" to listOf(
-            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_material_you)}",
+            "${stringResource(R.string.added_label)}",
+            "${stringResource(R.string.cl_material_you)}",
             stringResource(R.string.cl_unit_switching),
             stringResource(R.string.cl_multi_service),
             stringResource(R.string.cl_historical_data),
@@ -215,23 +231,31 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             stringResource(R.string.cl_moon_phase)
         ),
         "v1.3.3" to listOf(
-            "${stringResource(R.string.added_label)} ${stringResource(R.string.cl_coordinate_search)}",
+            "${stringResource(R.string.added_label)}",
+            "${stringResource(R.string.cl_coordinate_search)}",
             stringResource(R.string.cl_state_in_search),
             stringResource(R.string.cl_material_you)
         ),
         "v1.3.2" to listOf(
-            "${stringResource(R.string.added_label)} ${stringResource(R.string.AddedMoreDons)}",
-            "${stringResource(R.string.fixed_label)} ${stringResource(R.string.HopefullyFixedFMSDK)}"
+            "${stringResource(R.string.added_label)}",
+            "${stringResource(R.string.AddedMoreDons)}",
+            "${stringResource(R.string.fixed_label)}",
+            "${stringResource(R.string.HopefullyFixedFMSDK)}"
         ),
         "v1.3.1" to listOf(
-            "${stringResource(R.string.fixed_label)} ${stringResource(R.string.FixActivities)}",
+            "${stringResource(R.string.fixed_label)}",
+            "${stringResource(R.string.FixActivities)}",
             stringResource(R.string.AddedMoonData),
-            "${stringResource(R.string.removed_label)} ${stringResource(R.string.changelog_remove_api_key)}"
+            "${stringResource(R.string.removed_label)}",
+            "${stringResource(R.string.changelog_remove_api_key)}"
         ),
         "v1.3.0" to listOf(
-            "${stringResource(R.string.added_label)} ${stringResource(R.string.AddedMoonData)}",
-            "${stringResource(R.string.fixed_label)} ${stringResource(R.string.FixFMSDK)}",
-            "${stringResource(R.string.removed_label)} ${stringResource(R.string.changelog_remove_coin)}"
+            "${stringResource(R.string.added_label)}",
+            "${stringResource(R.string.AddedMoonData)}",
+            "${stringResource(R.string.fixed_label)}",
+            "${stringResource(R.string.FixFMSDK)}",
+            "${stringResource(R.string.removed_label)}",
+            "${stringResource(R.string.changelog_remove_coin)}"
         )
     )
 

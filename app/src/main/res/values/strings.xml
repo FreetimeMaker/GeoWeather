@@ -44,6 +44,7 @@
     <string name="added_label">Added</string>
     <string name="fixed_label">Fixed</string>
     <string name="removed_label">Removed</string>
+    <string name="changed_label">Changed</string>
     <string name="whats_new_title">What\'s new?</string>
     <string name="FixFMSDK">Fixed Donations via FreetimeSDK</string>
     <string name="AddedMoonData">Added Moon Data for Real Now</string>
@@ -316,4 +317,11 @@
     <string name="WalletDescription">Supported wallets: Trust Wallet, MetaMask, Coinbase, Binance, Exodus, Atomic Wallet and more.</string>
     <string name="USDTitle">USD to Crypto Donation</string>
     <string name="USDDescription">Pay in USD and we will automatically convert it to your chosen cryptocurrency.</string>
+    <!-- New Changelogs -->
+    <string name="cl_v138_ca">Changed back to Android only</string>
+    <string name="cl_v139_fix_dons">Updated so it won't Crash when trying to Donate</string>
+    <string name="cl_v140_api">Changed everything from 7 Days to 3 Days because I am working on an API for the App with Different optional plans.</string>
+    <string name="cl_v141_more_dons">Added more Donation Options</string>
+    <string name="cl_v142_added_api">Added my own API</string>
+    <string name="cl_v143_fix_start">Fixed a StartUp Error</string>
 </resources>
