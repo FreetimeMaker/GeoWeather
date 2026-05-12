@@ -319,7 +319,7 @@
     <string name="USDDescription">Pay in USD and we will automatically convert it to your chosen cryptocurrency.</string>
     <!-- New Changelogs -->
     <string name="cl_v138_ca">Changed back to Android only</string>
-    <string name="cl_v139_fix_dons">Updated so it won't Crash when trying to Donate</string>
+    <string name="cl_v139_fix_dons">Updated so it won\'t Crash when trying to Donate</string>
     <string name="cl_v140_api">Changed everything from 7 Days to 3 Days because I am working on an API for the App with Different optional plans.</string>
     <string name="cl_v141_more_dons">Added more Donation Options</string>
     <string name="cl_v142_added_api">Added my own API</string>
