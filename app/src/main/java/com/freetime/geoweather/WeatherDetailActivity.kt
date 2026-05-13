@@ -251,7 +251,7 @@ fun WeatherDetailScreen(
                 }
                 
                 if (showHistoricalData) {
-                    historicalData = weatherRepository.getHistoricalData(lat, lon, 3)
+                    historicalData = weatherRepository.getHistoricalData(lat, lon, 7)
                 }
             }
         } catch (e: Exception) {
