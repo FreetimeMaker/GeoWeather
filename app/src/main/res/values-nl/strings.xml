@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">GeoWeather</string>
     <string name="backToSupPag">Go Back to the Support Page</string>
-    <string name="JoiOffDisSer">Join the Official Discord Server</string>
-    <string name="DonPers">No one made a Donation yet.</string>
+    <string name="JoiOffDisSer">Word lid van de Officiële Discord Server</string>
+    <string name="DonPers">Nog niemand heeft een donatie gemaakt.</string>
     <string name="DonTXT2">If you want to help maintain this and many other Apps simply make a Donation and make a Ticket in my Discord Server with Your Name and the Donation Provider you used and I will then list you here.</string>
     <string name="DonTXT1">Here are supporters that help maintain this and many other Apps.</string>
     <string name="DonViaOxaPay">Donate via OxaPay</string>
@@ -17,7 +17,7 @@
     <string name="DonateViaTRON">Donate via TRON</string>
     <string name="DonViaLTC">Donate via LTC</string>
     <string name="DonViaWallet">Donate with Wallet App</string>
-    <string name="DonViaUSD">USD to Crypto Donation</string>
+    <string name="DonViaUSD">USD naar Crypto donatie</string>
     <string name="WalletTitle">Choose Your Wallet App</string>
     <string name="WalletDescription">Supported Wallets: Trust Wallet, MetaMask, Coinbase, Binance, Exodus, Atomic Wallet and more.</string>
     <string name="USDTitle">USD to Crypto Donation</string>
@@ -80,4 +80,11 @@
     <string name="PrecipitationChangeTXT">Precipitation chance increased to %1$s%%</string>
     <string name="ConditionChangeTXT">Weather condition changed from %1$s to %2$s</string>
     <string name="ErrorFetchingWeatherTXT">Error loading weather data. Please try again.</string>
+    <string name="DonViaBNB">Doneer via BNB</string>
+    <string name="DonViaPEPE">Doneer via PEBE</string>
+    <string name="DonViaSOL">Doneer via SOL</string>
+    <string name="DonViaGHSponsors">Doneer via Github Sponsoren</string>
+    <string name="DonViaDAI">Doneer via DAI</string>
+    <string name="DonViaTON">Doneer via TON</string>
+    <string name="DonViaPOL">Doneer via POL</string>
 </resources>
