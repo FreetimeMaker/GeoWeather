@@ -96,6 +96,9 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.8.0" to listOf(
+            "Deleted the Repository Files so Weather Data will be coming from the Weather Detail Activity again."
+        ),
         "v1.7.2" to listOf(
             "Fixed Home screen weather display issues by switching to ID-based location lookups.",
             "Resolved persistent loading issues with improved provider fallbacks.",

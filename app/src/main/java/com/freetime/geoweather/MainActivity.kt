@@ -1,7 +1,6 @@
 package com.freetime.geoweather
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -31,8 +30,6 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -50,23 +47,16 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
-import coil3.ImageLoader
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.LocationsViewModel
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
-import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.user.UserSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
-import java.nio.charset.StandardCharsets
 import java.util.*
 
 class MainActivity : ComponentActivity() {
@@ -91,15 +81,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         hideSystemBars()
         checkNotificationPermission()
-        
+
         authManager = AuthManager.getInstance(this)
         val isAuthRedirect = intent?.data?.scheme == "geoweather"
         handleAuthCallback(intent)
 
         val viewModel = LocationsViewModel(application)
         viewModel.syncWithCloud()
-        viewModel.refreshAllWeathers() // Refresh weather on start
-        
+
         lifecycleScope.launch {
             authManager.syncUserProfile()
         }
@@ -200,10 +189,6 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         handleAuthCallback(intent)
-        
-        // Refresh weather when returning to the app
-        val viewModel = LocationsViewModel(application)
-        viewModel.refreshAllWeathers()
     }
 
     private fun handleAuthCallback(intent: Intent?) {
@@ -213,9 +198,9 @@ class MainActivity : ComponentActivity() {
                 try {
                     val fragment = data.fragment ?: ""
                     if (fragment.contains("access_token")) {
-                        val params = fragment.split("&").associate { 
+                        val params = fragment.split("&").associate {
                             val parts = it.split("=")
-                            parts[0] to parts.getOrElse(1) { "" } 
+                            parts[0] to parts.getOrElse(1) { "" }
                         }
                         val accessToken = params["access_token"]
                         val refreshToken = params["refresh_token"]
@@ -232,7 +217,6 @@ class MainActivity : ComponentActivity() {
                             Toast.makeText(this@MainActivity, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
                         }
                     } else {
-                        // Support for token query param from custom API
                         val token = data.getQueryParameter("token")
                         if (token != null) {
                             AuthManager.getInstance(this@MainActivity).syncUserProfile()
@@ -274,7 +258,7 @@ fun MainScreen(
                 title = { Text(stringResource(R.string.app_name)) },
                 actions = {
                     IconButton(
-                        onClick = { viewModel.refreshAllWeathers() }
+                        onClick = { viewModel.syncWithCloud() } // sync cloud instead of weather refresh
                     ) {
                         Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh_nav_desc))
                     }
@@ -312,7 +296,6 @@ fun MainScreen(
                                         -1L
                                     )
                                 } else {
-                                    // Try request single update
                                     val provider =
                                         if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                                             LocationManager.NETWORK_PROVIDER
@@ -479,46 +462,10 @@ fun MainScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(locations) { loc ->
-                        val sharedPrefs = LocalContext.current.getSharedPreferences(
-                            "geo_weather_prefs",
-                            Context.MODE_PRIVATE
-                        )
-                        val tempUnit =
-                            sharedPrefs.getString("temp_unit", "celsius") ?: "celsius"
-
                         ListItem(
-                            leadingContent = {
-                                val weatherCode = loc.currentWeatherCode
-                                if (weatherCode != null) {
-                                    Icon(
-                                        painter = painterResource(
-                                            id = WeatherIconMapper.getIcon(
-                                                weatherCode,
-                                                loc.provider,
-                                                loc.isDay
-                                            )
-                                        ),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(40.dp),
-                                        tint = Color.Unspecified
-                                    )
-                                }
-                            },
                             headlineContent = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(loc.name)
-                                    loc.currentTemp?.let { temp ->
-                                        val displayTemp =
-                                            if (tempUnit == "fahrenheit") (temp * 9 / 5 + 32).toInt() else temp.toInt()
-                                        val suffix =
-                                            if (tempUnit == "fahrenheit") "°F" else "°C"
-                                        Spacer(Modifier.width(8.dp))
-                                        Text(
-                                            text = "$displayTemp$suffix",
-                                            style = MaterialTheme.typography.titleMedium,
-                                            color = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
                                 }
                             },
                             supportingContent = {

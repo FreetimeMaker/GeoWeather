@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.freetime.geoweather.GeocodingRepository
+import com.freetime.geoweather.InlinedGeocodingRepository
 import com.freetime.geoweather.AuthManager
-import com.freetime.geoweather.WeatherRepository
+import com.freetime.geoweather.InlinedWeatherRepository
 import com.freetime.geoweather.api.LocationSyncRequest
 import com.freetime.geoweather.data.LocationDao
 import com.freetime.geoweather.data.LocationDatabase
@@ -20,18 +20,19 @@ import kotlinx.coroutines.withContext
 class LocationsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val locationDao: LocationDao = LocationDatabase.getDatabase(application).locationDao()
-    private val geocodingRepository = GeocodingRepository()
+    private val appContext = application
+    private val geocodingRepository = InlinedGeocodingRepository()
     private val authManager = AuthManager.getInstance(application)
-    private val weatherRepository = WeatherRepository(application)
-    
+    private val weatherRepository = InlinedWeatherRepository(application)
+
     val locations: LiveData<List<LocationEntity>> = locationDao.getAllLocations()
 
     fun refreshAllWeathers() {
         viewModelScope.launch(Dispatchers.IO) {
             val currentLocations = locationDao.getAllLocationsSync()
             currentLocations.forEach { loc ->
-                val result = weatherRepository.getWeatherData(loc.latitude, loc.longitude, 1)
-                if (result is WeatherRepository.WeatherDataResult.Success) {
+                val result = weatherRepository.getWeatherData(loc.latitude, loc.longitude, 1, appContext)
+                if (result is InlinedWeatherRepository.WeatherDataResult.Success) {
                     locationDao.updateLocation(loc.copy(
                         weatherData = result.rawJson,
                         lastUpdated = System.currentTimeMillis()

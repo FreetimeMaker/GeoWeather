@@ -103,6 +103,10 @@
     <string name="settings_nav_desc">Settings</string>
     <string name="no_locations_msg">No locations added yet.\nClick on the plus icon below.</string>
     <string name="error_loading_weather">Error loading weather</string>
+    <string name="no_weather_available">Weather data is currently disabled.</string>
+    <string name="fallback_failed_prefix">Fallback failed: </string>
+    <string name="request_failed_prefix">Request failed: </string>
+    <string name="accuweather_not_supported">AccuWeather local integration requires multi-step requests. Fallback to Open-Meteo.</string>
     <string name="unknown_location">Unknown</string>
     <!-- Changelog Strings -->
     <string name="cl_coordinate_search">Coordinate Searching function</string>
