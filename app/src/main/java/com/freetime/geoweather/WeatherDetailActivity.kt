@@ -136,7 +136,7 @@ fun WeatherDetailScreen(
 
 // --- Inlined repositories (moved from WeatherRepository.kt and GeocodingRepository.kt) ---
 
-class InlinedWeatherRepository(private val context: Context) {
+class WeatherRepository(private val context: Context) {
 
     private val sharedPrefs = context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
 
@@ -335,7 +335,7 @@ class InlinedWeatherRepository(private val context: Context) {
 data class DailyForecast(val date: String, val tempMax: Double, val tempMin: Double, val weatherCode: Int)
 data class HourlyForecast(val time: String, val temp: Double, val weatherCode: Int)
 
-class InlinedGeocodingRepository {
+class GeocodingRepository {
 
     suspend fun searchLocations(context: Context, query: String): List<Triple<String, Double, Double>> {
         // Direct local call to Open-Meteo Geocoding
