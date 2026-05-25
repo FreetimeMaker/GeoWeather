@@ -310,4 +310,8 @@
     <string name="cl_v142_added_api">He añadido mi propia API</string>
     <string name="cl_v143_fix_start">Se ha solucionado un error de inicio</string>
     <string name="widget_label">Pequeño widget de GeoWeather</string>
+    <string name="no_weather_available">Los datos meteorológicos están desactivados.</string>
+    <string name="fallback_failed_prefix">El plan alternativo ha fallado:</string>
+    <string name="request_failed_prefix">Error en la solicitud:</string>
+    <string name="accuweather_not_supported">La integración local de AccuWeather requiere solicitudes en varios pasos. Recurrir a Open-Meteo.</string>
 </resources>
