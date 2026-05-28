@@ -31,15 +31,6 @@ class WeatherNotificationWorker(
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             Log.d(TAG, "doWork started")
-
-            val sharedPrefs = applicationContext.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-            val authManager = AuthManager.getInstance(applicationContext)
-
-            if (authManager.isAuthenticated) {
-                Log.d(TAG, "Login required but not authenticated, skipping notification")
-                return@withContext Result.success()
-            }
-
             // Check notification permissions first
             if (!hasNotificationPermission()) {
                 Log.d(TAG, "No notification permission")
@@ -53,38 +44,24 @@ class WeatherNotificationWorker(
             
             if (selectedLocation != null && selectedLocation.notificationsEnabled) {
                 try {
-                    val weatherRepository = WeatherRepository(applicationContext)
-                    val result = weatherRepository.getWeatherData(selectedLocation.latitude, selectedLocation.longitude, 1)
-                    
-                    if (result is WeatherRepository.WeatherDataResult.Success) {
-                        val weatherDescription = WeatherCodes.getDescription(result.weatherCode, applicationContext, result.provider)
+                    // Fetch current weather data for the selected location
+                    val weatherData = fetchWeatherData(selectedLocation.latitude, selectedLocation.longitude)
+                    val temp = weatherData.getDouble("temperature")
+                    val weatherCode = weatherData.getInt("weathercode")
+                    val weatherDescription = WeatherCodes.getDescription(weatherCode, applicationContext)
 
-                        // Record to history
-                        val historyEntity = com.freetime.geoweather.data.WeatherHistoryEntity(
-                            location = selectedLocation.name,
-                            temperature = result.temp,
-                            conditions = weatherDescription,
-                            windSpeed = result.windSpeed
-                        )
-                        db.weatherHistoryDao().insertHistory(historyEntity)
-                        
-                        // Keep only 30 days of history
-                        val thirtyDaysAgo = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000)
-                        db.weatherHistoryDao().deleteOldHistory(thirtyDaysAgo)
+                    Log.d(TAG, "Preparing notification for ${selectedLocation.name}: $temp, $weatherDescription")
 
-                        Log.d(TAG, "Preparing notification for ${selectedLocation.name}: ${result.temp}, $weatherDescription")
-
-                        // Send notification for this location
-                        sendWeatherNotification(
-                            applicationContext, 
-                            selectedLocation.name, 
-                            selectedLocation.latitude,
-                            selectedLocation.longitude,
-                            result.temp, 
-                            weatherDescription,
-                            selectedLocation.id
-                        )
-                    }
+                    // Send notification for this location
+                    sendWeatherNotification(
+                        applicationContext, 
+                        selectedLocation.name, 
+                        selectedLocation.latitude,
+                        selectedLocation.longitude,
+                        temp, 
+                        weatherDescription,
+                        selectedLocation.id
+                    )
                 } catch (e: Exception) {
                     Log.e(TAG, "Error fetching weather for selected location", e)
                 }
@@ -100,6 +77,14 @@ class WeatherNotificationWorker(
         }
     }
 
+    private fun fetchWeatherData(lat: Double, lon: Double): JSONObject {
+        val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&timezone=auto"
+        val response = URL(url).readText()
+        val json = JSONObject(response)
+        // Return the current_weather object (contains temperature, windspeed, weathercode, etc.)
+        return if (json.has("current_weather")) json.getJSONObject("current_weather") else json
+    }
+    
     private fun hasNotificationPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ContextCompat.checkSelfPermission(
@@ -133,10 +118,10 @@ class WeatherNotificationWorker(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "weather_notifications",
-                context.getString(R.string.weather_notifications_channel_name),
+                "Weather Updates",
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
-                description = context.getString(R.string.weather_notifications_channel_desc)
+                description = "Daily weather notifications"
             }
             notificationManager.createNotificationChannel(channel)
         }

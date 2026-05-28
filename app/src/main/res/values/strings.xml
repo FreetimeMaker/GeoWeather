@@ -97,6 +97,7 @@
     <string name="sunset_label">Sunset</string>
     <string name="hourly_label">Hourly</string>
     <string name="forecast_3day_label">7-Day Forecast</string>
+    <string name="forecast_7day_label">7-Day Forecast</string>
     <string name="back_nav_desc">Back</string>
     <string name="refresh_nav_desc">Refresh</string>
     <string name="donate_nav_desc">Donate</string>
@@ -118,7 +119,7 @@
     <string name="cl_custom_notifs">Customizable weather notification thresholds</string>
     <string name="cl_widgets">Home screen weather widget</string>
     <string name="cl_multi_service">Added support for multiple weather providers (Open-Meteo &amp; WeatherAPI)</string>
-    <string name="cl_forecast_enhanced">Enhanced 3-day forecast with interactive details</string>
+    <string name="cl_forecast_enhanced">Enhanced 7-day forecast with interactive details</string>
     <string name="cl_widget_refresh">New Home Screen Widget with refresh button</string>
     <string name="cl_moon_phase">Added moon phase data support</string>
     <!-- Settings Strings -->

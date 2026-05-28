@@ -21,7 +21,6 @@ data class WeatherSnapshot(
     val windSpeed: Double,
     val precipitation: Double,
     val weatherCode: Int,
-    val provider: String,
     val timestamp: Long
 )
 
@@ -32,46 +31,35 @@ class WeatherChangeWorker(
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            val sharedPreferences = applicationContext.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
-            val authManager = AuthManager.getInstance(applicationContext)
-
-            if (authManager.isAuthenticated) {
-                return@withContext Result.success()
-            }
-
             val db = LocationDatabase.getDatabase(applicationContext)
+            val sharedPreferences = applicationContext.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
             
             val selectedLocation = db.locationDao().getSelectedLocation()
             
             if (selectedLocation != null && selectedLocation.changeAlertsEnabled) {
                 try {
-                    val weatherRepository = WeatherRepository(applicationContext)
-                    val result = weatherRepository.getWeatherData(selectedLocation.latitude, selectedLocation.longitude, 1)
-                    
-                    if (result is WeatherRepository.WeatherDataResult.Success) {
-                        val currentSnapshot = WeatherSnapshot(
-                            temperature = result.temp,
-                            windSpeed = result.windSpeed,
-                            precipitation = result.precipitation,
-                            weatherCode = result.weatherCode,
-                            provider = result.provider,
-                            timestamp = System.currentTimeMillis()
-                        )
+                    val currentWeather = fetchCurrentWeatherData(selectedLocation.latitude, selectedLocation.longitude)
+                    val currentSnapshot = WeatherSnapshot(
+                        temperature = currentWeather.getDouble("temperature"),
+                        windSpeed = currentWeather.optDouble("windspeed", 0.0),
+                        precipitation = currentWeather.optDouble("precipitation", 0.0),
+                        weatherCode = currentWeather.getInt("weathercode"),
+                        timestamp = System.currentTimeMillis()
+                    )
 
-                        val lastSnapshot = getLastWeatherSnapshot(applicationContext, selectedLocation.id)
+                    val lastSnapshot = getLastWeatherSnapshot(applicationContext, selectedLocation.id)
 
-                        if (lastSnapshot != null) {
-                            val tempThreshold = sharedPreferences.getInt("notif_temp_threshold", 5).toDouble()
-                            val windThreshold = sharedPreferences.getInt("notif_wind_threshold", 15).toDouble()
-                            
-                            val changes = detectWeatherChanges(applicationContext, lastSnapshot, currentSnapshot, tempThreshold, windThreshold)
-                            if (changes.isNotEmpty()) {
-                                sendWeatherChangeAlert(applicationContext, selectedLocation.name, changes, selectedLocation.id)
-                            }
+                    if (lastSnapshot != null) {
+                        val tempThreshold = sharedPreferences.getInt("notif_temp_threshold", 5).toDouble()
+                        val windThreshold = sharedPreferences.getInt("notif_wind_threshold", 15).toDouble()
+                        
+                        val changes = detectWeatherChanges(applicationContext, lastSnapshot, currentSnapshot, tempThreshold, windThreshold)
+                        if (changes.isNotEmpty()) {
+                            sendWeatherChangeAlert(applicationContext, selectedLocation.name, changes, selectedLocation.id)
                         }
-
-                        saveWeatherSnapshot(applicationContext, currentSnapshot, selectedLocation.id)
                     }
+
+                    saveWeatherSnapshot(applicationContext, currentSnapshot, selectedLocation.id)
                 } catch (_: Exception) {}
             }
             
@@ -81,6 +69,39 @@ class WeatherChangeWorker(
         }
     }
 
+    private fun fetchCurrentWeatherData(lat: Double, lon: Double): JSONObject {
+        val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=precipitation_probability,windspeed_10m&timezone=auto"
+        val response = URL(url).readText()
+        val json = JSONObject(response)
+        
+        val currentWeather = if (json.has("current_weather")) json.getJSONObject("current_weather") else JSONObject()
+        val hourly = if (json.has("hourly")) json.getJSONObject("hourly") else JSONObject()
+
+        val currentTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault()).format(Date())
+        if (hourly.has("time")) {
+            val times = hourly.getJSONArray("time")
+            var currentIndex = 0
+            for (i in 0 until times.length()) {
+                if (times.getString(i).startsWith(currentTime.substring(0, 13))) {
+                    currentIndex = i
+                    break
+                }
+            }
+            if (hourly.has("precipitation_probability")) {
+                try {
+                    currentWeather.put("precipitation", hourly.getJSONArray("precipitation_probability").getDouble(currentIndex))
+                } catch (_: Exception) {}
+            }
+            if (hourly.has("windspeed_10m")) {
+                try {
+                    currentWeather.put("windspeed", hourly.getJSONArray("windspeed_10m").getDouble(currentIndex))
+                } catch (_: Exception) {}
+            }
+        }
+
+        return currentWeather
+    }
+
     private fun getLastWeatherSnapshot(context: Context, locationId: Long): WeatherSnapshot? {
         return try {
             val sharedPreferences = context.getSharedPreferences("weather_change_$locationId", Context.MODE_PRIVATE)
@@ -88,11 +109,10 @@ class WeatherChangeWorker(
             val wind = sharedPreferences.getFloat("last_wind", Float.NaN).toDouble()
             val precip = sharedPreferences.getFloat("last_precip", Float.NaN).toDouble()
             val code = sharedPreferences.getInt("last_weather_code", -1)
-            val provider = sharedPreferences.getString("last_weather_provider", "open_meteo") ?: "open_meteo"
             val timestamp = sharedPreferences.getLong("last_weather_timestamp", 0)
             
             if (temp.isNaN() || wind.isNaN() || precip.isNaN() || code == -1 || timestamp == 0L) null
-            else WeatherSnapshot(temp, wind, precip, code, provider, timestamp)
+            else WeatherSnapshot(temp, wind, precip, code, timestamp)
         } catch (_: Exception) { null }
     }
 
@@ -103,7 +123,6 @@ class WeatherChangeWorker(
             .putFloat("last_wind", snapshot.windSpeed.toFloat())
             .putFloat("last_precip", snapshot.precipitation.toFloat())
             .putInt("last_weather_code", snapshot.weatherCode)
-            .putString("last_weather_provider", snapshot.provider)
             .putLong("last_weather_timestamp", snapshot.timestamp)
             .apply()
     }
@@ -121,16 +140,13 @@ class WeatherChangeWorker(
         val windUnit = sharedPreferences.getString("wind_unit", "kmh") ?: "kmh"
         
         if (kotlin.math.abs(current.temperature - last.temperature) >= tempThreshold) {
-            val suffix = context.getString(if (tempUnit == "fahrenheit") R.string.temp_f_suffix else R.string.temp_c_suffix)
-            val lastTemp = "${last.temperature.toInt()}$suffix"
-            val currentTemp = "${current.temperature.toInt()}$suffix"
+            val lastTemp = if (tempUnit == "fahrenheit") (last.temperature * 9/5 + 32).toInt().toString() + "°F" else last.temperature.toInt().toString() + "°C"
+            val currentTemp = if (tempUnit == "fahrenheit") (current.temperature * 9/5 + 32).toInt().toString() + "°F" else current.temperature.toInt().toString() + "°C"
             changes.add(context.getString(R.string.temperature_change_msg, lastTemp, currentTemp))
         }
         
         if (current.windSpeed - last.windSpeed >= windThreshold) {
-            val windVal = if (windUnit == "mph") (current.windSpeed * 0.621371).toInt() else current.windSpeed.toInt()
-            val suffix = context.getString(if (windUnit == "mph") R.string.wind_mph_suffix else R.string.wind_kmh_suffix)
-            val displayWind = "$windVal $suffix"
+            val displayWind = if (windUnit == "mph") (current.windSpeed * 0.621371).toInt().toString() + " mph" else current.windSpeed.toInt().toString() + " km/h"
             changes.add(context.getString(R.string.wind_increase_msg, displayWind))
         }
         
@@ -138,9 +154,9 @@ class WeatherChangeWorker(
             changes.add(context.getString(R.string.precip_increase_msg, current.precipitation.toInt()))
         }
         
-        if (last.weatherCode != current.weatherCode || last.provider != current.provider) {
-            val lastDesc = WeatherCodes.getDescription(last.weatherCode, context, last.provider)
-            val currentDesc = WeatherCodes.getDescription(current.weatherCode, context, current.provider)
+        if (last.weatherCode != current.weatherCode) {
+            val lastDesc = WeatherCodes.getDescription(last.weatherCode, context)
+            val currentDesc = WeatherCodes.getDescription(current.weatherCode, context)
             if (lastDesc != currentDesc) {
                 changes.add(context.getString(R.string.condition_change_msg, lastDesc, currentDesc))
             }
@@ -160,7 +176,7 @@ class WeatherChangeWorker(
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "weather_change_alerts",
-                context.getString(R.string.weather_change_alerts_channel_name),
+                "Weather Change Alerts",
                 NotificationManager.IMPORTANCE_HIGH
             )
             notificationManager.createNotificationChannel(channel)

@@ -2,6 +2,7 @@ package com.freetime.geoweather
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,11 +16,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.freetime.geoweather.ui.LocationsViewModel
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -69,19 +67,21 @@ class SettingsActivity : ComponentActivity() {
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     val context = LocalContext.current
-    val locationsViewModel: LocationsViewModel = viewModel()
     val sharedPreferences = remember { 
         context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) 
     }
     
-    var darkModeEnabled by remember { mutableStateOf(sharedPreferences.getBoolean("dark_mode_enabled", false)) }
-    var useSystemTheme by remember { mutableStateOf(sharedPreferences.getBoolean("use_system_theme", true)) }
-    var dynamicColor by remember { mutableStateOf(sharedPreferences.getBoolean("dynamic_color", true)) }
-    var showHistoricalData by remember { mutableStateOf(sharedPreferences.getBoolean("show_historical_data", true)) }
+    var darkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("dark_mode_enabled", false))
+    }
+    
+    var useSystemTheme by remember {
+        mutableStateOf(sharedPreferences.getBoolean("use_system_theme", true))
+    }
 
-    val authManager = remember { AuthManager.getInstance(context) }
-    var isAuthenticated by remember { mutableStateOf(authManager.isAuthenticated) }
-    val userInfo = authManager.userInfo
+    var dynamicColor by remember {
+        mutableStateOf(sharedPreferences.getBoolean("dynamic_color", true))
+    }
 
     val tempUnitState by sharedPreferences.collectStringAsState("temp_unit", "celsius")
     var tempUnit by remember { mutableStateOf(tempUnitState) }
@@ -95,13 +95,21 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     var weatherProvider by remember { mutableStateOf(weatherProviderState) }
     LaunchedEffect(weatherProviderState) { weatherProvider = weatherProviderState }
 
-    var weatherApiKey by remember { mutableStateOf(sharedPreferences.getString("weather_api_key", "") ?: "") }
-    var qweatherApiKey by remember { mutableStateOf(sharedPreferences.getString("qweather_api_key", "") ?: "") }
-    var tomorrowIoKey by remember { mutableStateOf(sharedPreferences.getString("tomorrow_io_key", "") ?: "") }
-    var visualCrossingKey by remember { mutableStateOf(sharedPreferences.getString("visual_crossing_key", "") ?: "") }
+    val weatherApiKeyState by sharedPreferences.collectStringAsState("weather_api_key", "")
+    var weatherApiKey by remember { mutableStateOf(weatherApiKeyState) }
+    LaunchedEffect(weatherApiKeyState) { weatherApiKey = weatherApiKeyState }
 
-    var tempThreshold by remember { mutableStateOf(sharedPreferences.getInt("notif_temp_threshold", 5)) }
-    var windThreshold by remember { mutableStateOf(sharedPreferences.getInt("notif_wind_threshold", 15)) }
+    val qweatherApiKeyState by sharedPreferences.collectStringAsState("qweather_api_key", "")
+    var qweatherApiKey by remember { mutableStateOf(qweatherApiKeyState) }
+    LaunchedEffect(qweatherApiKeyState) { qweatherApiKey = qweatherApiKeyState }
+
+    var tempThreshold by remember {
+        mutableStateOf(sharedPreferences.getInt("notif_temp_threshold", 5))
+    }
+
+    var windThreshold by remember {
+        mutableStateOf(sharedPreferences.getInt("notif_wind_threshold", 15))
+    }
 
     Column(
         modifier = modifier
@@ -110,78 +118,208 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Top Bar area
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            FilledTonalButton(onClick = onBack) { Text(stringResource(R.string.back_btn)) }
-            FilledTonalButton(onClick = { context.startActivity(Intent(context, ChangeLogActivity::class.java)) }) {
+            FilledTonalButton(onClick = onBack) {
+                Text(stringResource(R.string.back_btn))
+            }
+
+            FilledTonalButton(onClick = {
+                context.startActivity(Intent(context, ChangeLogActivity::class.java))
+            }) {
                 Text(stringResource(R.string.open_change_log))
             }
         }
-
-        Text(text = stringResource(R.string.account_title), style = MaterialTheme.typography.headlineSmall)
+        
+        Text(
+            text = stringResource(R.string.theme_settings_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
 
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
         ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (isAuthenticated && userInfo != null) {
-                    Text(text = stringResource(R.string.logged_in_as), style = MaterialTheme.typography.labelMedium)
-                    Text(text = userInfo.name, style = MaterialTheme.typography.titleMedium)
-                    
-                    val tierString = if (userInfo.subscriptionTier == "premium") stringResource(R.string.tier_premium) else if (userInfo.subscriptionTier == "freemium") stringResource(R.string.tier_freemium) else stringResource(R.string.tier_free)
-                    Text(text = stringResource(R.string.subscription_tier, tierString), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
-                    
-                    Button(onClick = { locationsViewModel.syncWithCloud() }, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.sync_now))
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                SettingsToggle(
+                    title = stringResource(R.string.dynamic_color_title),
+                    subtitle = stringResource(R.string.dynamic_color_subtitle),
+                    checked = dynamicColor,
+                    onCheckedChange = {
+                        dynamicColor = it
+                        sharedPreferences.edit().putBoolean("dynamic_color", it).apply()
                     }
-                    
-                    Button(onClick = { authManager.logout(); isAuthenticated = false }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) {
-                        Text(stringResource(R.string.logout_button))
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                SettingsToggle(
+                    title = stringResource(R.string.follow_system_theme),
+                    checked = useSystemTheme,
+                    onCheckedChange = {
+                        useSystemTheme = it
+                        sharedPreferences.edit().putBoolean("use_system_theme", it).apply()
                     }
-                } else {
-                    Button(onClick = { context.startActivity(Intent(context, AuthActivity::class.java)) }, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.login_title))
+                )
+
+                SettingsToggle(
+                    title = stringResource(R.string.force_dark_mode),
+                    subtitle = stringResource(R.string.override_system_setting),
+                    checked = darkModeEnabled,
+                    enabled = !useSystemTheme,
+                    onCheckedChange = {
+                        darkModeEnabled = it
+                        sharedPreferences.edit().putBoolean("dark_mode_enabled", it).apply()
                     }
-                }
-            }
-        }
-        
-        Text(text = stringResource(R.string.theme_settings_title), style = MaterialTheme.typography.headlineSmall)
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                SettingsToggle(title = stringResource(R.string.dynamic_color_title), checked = dynamicColor, onCheckedChange = { dynamicColor = it; sharedPreferences.edit().putBoolean("dynamic_color", it).apply() })
-                SettingsToggle(title = stringResource(R.string.follow_system_theme), checked = useSystemTheme, onCheckedChange = { useSystemTheme = it; sharedPreferences.edit().putBoolean("use_system_theme", it).apply() })
-                SettingsToggle(title = stringResource(R.string.force_dark_mode), checked = darkModeEnabled, enabled = !useSystemTheme, onCheckedChange = { darkModeEnabled = it; sharedPreferences.edit().putBoolean("dark_mode_enabled", it).apply() })
+                )
             }
         }
 
-        Text(text = stringResource(R.string.weather_provider_title), style = MaterialTheme.typography.headlineSmall)
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                listOf("open_meteo", "weatherapi", "tomorrow", "visualcrossing", "accuweather").forEach { p ->
+        Text(
+            text = stringResource(R.string.unit_settings_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Column {
+                    Text(stringResource(R.string.temperature_unit), style = MaterialTheme.typography.bodyLarge)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = weatherProvider == p, onClick = { 
-                            weatherProvider = p
-                            sharedPreferences.edit().putString("weather_provider", p).apply() 
+                        RadioButton(selected = tempUnit == "celsius", onClick = {
+                            tempUnit = "celsius"
+                            sharedPreferences.edit().putString("temp_unit", "celsius").apply()
                         })
-                        Text(p.replace("_", " ").replaceFirstChar { it.uppercase() })
+                        Text(stringResource(R.string.unit_celsius))
+                        Spacer(Modifier.width(16.dp))
+                        RadioButton(selected = tempUnit == "fahrenheit", onClick = {
+                            tempUnit = "fahrenheit"
+                            sharedPreferences.edit().putString("temp_unit", "fahrenheit").apply()
+                        })
+                        Text(stringResource(R.string.unit_fahrenheit))
                     }
                 }
 
-                if (weatherProvider == "weatherapi") {
-                    OutlinedTextField(value = weatherApiKey, onValueChange = { weatherApiKey = it; sharedPreferences.edit().putString("weather_api_key", it).apply() }, label = { Text("WeatherAPI Key") }, modifier = Modifier.fillMaxWidth())
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                Column {
+                    Text(stringResource(R.string.wind_speed_unit), style = MaterialTheme.typography.bodyLarge)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(selected = windUnit == "kmh", onClick = {
+                            windUnit = "kmh"
+                            sharedPreferences.edit().putString("wind_unit", "kmh").apply()
+                        })
+                        Text(stringResource(R.string.unit_kmh))
+                        Spacer(Modifier.width(16.dp))
+                        RadioButton(selected = windUnit == "mph", onClick = {
+                            windUnit = "mph"
+                            sharedPreferences.edit().putString("wind_unit", "mph").apply()
+                        })
+                        Text(stringResource(R.string.unit_mph))
+                    }
                 }
-                if (weatherProvider == "tomorrow") {
-                    OutlinedTextField(value = tomorrowIoKey, onValueChange = { tomorrowIoKey = it; sharedPreferences.edit().putString("tomorrow_io_key", it).apply() }, label = { Text("Tomorrow.io Key") }, modifier = Modifier.fillMaxWidth())
+            }
+        }
+
+        Text(
+            text = stringResource(R.string.notification_settings_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(stringResource(R.string.temp_threshold_label, tempThreshold))
+                Slider(
+                    value = tempThreshold.toFloat(),
+                    onValueChange = { tempThreshold = it.toInt() },
+                    onValueChangeFinished = { sharedPreferences.edit().putInt("notif_temp_threshold", tempThreshold).apply() },
+                    valueRange = 1f..15f,
+                    steps = 14
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                Text(stringResource(R.string.wind_threshold_label, windThreshold))
+                Slider(
+                    value = windThreshold.toFloat(),
+                    onValueChange = { windThreshold = it.toInt() },
+                    onValueChangeFinished = { sharedPreferences.edit().putInt("notif_wind_threshold", windThreshold).apply() },
+                    valueRange = 5f..50f,
+                    steps = 9
+                )
+            }
+        }
+
+        Text(
+            text = stringResource(R.string.weather_provider_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = weatherProvider == "open_meteo", onClick = {
+                        weatherProvider = "open_meteo"
+                        sharedPreferences.edit().putString("weather_provider", "open_meteo").apply()
+                    })
+                    Text(stringResource(R.string.provider_open_meteo))
                 }
-                if (weatherProvider == "visualcrossing") {
-                    OutlinedTextField(value = visualCrossingKey, onValueChange = { visualCrossingKey = it; sharedPreferences.edit().putString("visual_crossing_key", it).apply() }, label = { Text("Visual Crossing Key") }, modifier = Modifier.fillMaxWidth())
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = weatherProvider == "weatherapi", onClick = {
+                        weatherProvider = "weatherapi"
+                        sharedPreferences.edit().putString("weather_provider", "weatherapi").apply()
+                    })
+                    Text(stringResource(R.string.provider_weatherapi))
                 }
                 
-                OutlinedTextField(value = qweatherApiKey, onValueChange = { qweatherApiKey = it; sharedPreferences.edit().putString("qweather_api_key", it).apply() }, label = { Text("QWeather Key (Moon Data)") }, modifier = Modifier.fillMaxWidth())
+                if (weatherProvider == "weatherapi") {
+                    OutlinedTextField(
+                        value = weatherApiKey,
+                        onValueChange = {
+                            weatherApiKey = it
+                            sharedPreferences.edit().putString("weather_api_key", it).apply()
+                        },
+                        label = { Text(stringResource(R.string.weather_api_key_label)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                }
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                OutlinedTextField(
+                    value = qweatherApiKey,
+                    onValueChange = {
+                        qweatherApiKey = it
+                        sharedPreferences.edit().putString("qweather_api_key", it).apply()
+                    },
+                    label = { Text(stringResource(R.string.qweather_api_key_label)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
             }
         }
         
@@ -190,12 +328,32 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
 }
 
 @Composable
-fun SettingsToggle(title: String, subtitle: String? = null, checked: Boolean, enabled: Boolean = true, onCheckedChange: (Boolean) -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+fun SettingsToggle(
+    title: String,
+    subtitle: String? = null,
+    checked: Boolean,
+    enabled: Boolean = true,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.bodyLarge)
-            if (subtitle != null) Text(text = subtitle, style = MaterialTheme.typography.bodySmall)
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
-        Switch(checked = checked, enabled = enabled, onCheckedChange = onCheckedChange)
+        Switch(
+            checked = checked,
+            enabled = enabled,
+            onCheckedChange = onCheckedChange
+        )
     }
 }
