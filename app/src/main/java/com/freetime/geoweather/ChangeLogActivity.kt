@@ -96,6 +96,9 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.8.1" to listOf(
+            "Reseted the WeatherDetailActivity and more to v1.3.8"
+        )
         "v1.8.0" to listOf(
             "Deleted the Repository Files so Weather Data will be coming from the Weather Detail Activity again."
         ),
