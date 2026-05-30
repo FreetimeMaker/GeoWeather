@@ -163,7 +163,7 @@
     <string name="cl_custom_notifs">Umbrales personalizables para las notificaciones meteorológicas</string>
     <string name="cl_widgets">Widget del tiempo para la pantalla de inicio</string>
     <string name="cl_multi_service">Se ha añadido compatibilidad con varios proveedores de datos meteorológicos (Open-Meteo y WeatherAPI)</string>
-    <string name="cl_forecast_enhanced">Previsión mejorada para tres días con detalles interactivos</string>
+    <string name="cl_forecast_enhanced">Previsión mejorada para siete días con detalles interactivos</string>
     <string name="cl_widget_refresh">Nuevo widget para la pantalla de inicio con botón de actualización</string>
     <string name="cl_moon_phase">Se ha añadido compatibilidad con los datos de las fases lunares</string>
     <string name="dynamic_color_title">Colores dinámicos (Material You)</string>
@@ -314,4 +314,5 @@
     <string name="fallback_failed_prefix">El plan alternativo ha fallado:</string>
     <string name="request_failed_prefix">Error en la solicitud:</string>
     <string name="accuweather_not_supported">La integración local de AccuWeather requiere solicitudes en varios pasos. Recurrir a Open-Meteo.</string>
+    <string name="forecast_7day_label">Pronóstico para 7 días</string>
 </resources>
