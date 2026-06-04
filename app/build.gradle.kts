@@ -37,7 +37,7 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:auth-kt-android")
     implementation("io.github.jan-tennert.supabase:coil3-integration")
     implementation("io.coil-kt:coil-compose:2.7.0")
-    implementation("androidx.core:core-ktx:1.18.0")
+    implementation("androidx.core:core-ktx:1.19.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation(platform("androidx.compose:compose-bom:2026.05.01"))
