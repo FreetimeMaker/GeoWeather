@@ -39,11 +39,14 @@ class WeatherChangeWorker(
             if (selectedLocation != null && selectedLocation.changeAlertsEnabled) {
                 try {
                     val currentWeather = fetchCurrentWeatherData(selectedLocation.latitude, selectedLocation.longitude)
+                    val weatherCode = if (currentWeather.has("weather_code")) currentWeather.getInt("weather_code") 
+                                     else if (currentWeather.has("weathercode")) currentWeather.getInt("weathercode")
+                                     else 0
                     val currentSnapshot = WeatherSnapshot(
                         temperature = currentWeather.getDouble("temperature"),
                         windSpeed = currentWeather.optDouble("windspeed", 0.0),
                         precipitation = currentWeather.optDouble("precipitation", 0.0),
-                        weatherCode = currentWeather.getInt("weathercode"),
+                        weatherCode = weatherCode,
                         timestamp = System.currentTimeMillis()
                     )
 
@@ -70,7 +73,7 @@ class WeatherChangeWorker(
     }
 
     private fun fetchCurrentWeatherData(lat: Double, lon: Double): JSONObject {
-        val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=precipitation_probability,windspeed_10m&timezone=auto"
+        val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=precipitation_probability,wind_speed_10m&timezone=auto"
         val response = URL(url).readText()
         val json = JSONObject(response)
         
@@ -92,9 +95,10 @@ class WeatherChangeWorker(
                     currentWeather.put("precipitation", hourly.getJSONArray("precipitation_probability").getDouble(currentIndex))
                 } catch (_: Exception) {}
             }
-            if (hourly.has("windspeed_10m")) {
+            val windKey = if (hourly.has("wind_speed_10m")) "wind_speed_10m" else "windspeed_10m"
+            if (hourly.has(windKey)) {
                 try {
-                    currentWeather.put("windspeed", hourly.getJSONArray("windspeed_10m").getDouble(currentIndex))
+                    currentWeather.put("windspeed", hourly.getJSONArray(windKey).getDouble(currentIndex))
                 } catch (_: Exception) {}
             }
         }

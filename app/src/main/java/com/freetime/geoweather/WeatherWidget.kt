@@ -74,7 +74,10 @@ class WeatherWidget : GlanceAppWidget() {
                     current.getDouble("temp_c") to 0
                 } else {
                     val current = json.getJSONObject("current_weather")
-                    current.getDouble("temperature") to current.getInt("weathercode")
+                    val c = if (current.has("weather_code")) current.getInt("weather_code") 
+                            else if (current.has("weathercode")) current.getInt("weathercode")
+                            else 0
+                    current.getDouble("temperature") to c
                 }
                 
                 val displayTemp = if (tempUnit == "fahrenheit") (t * 9/5 + 32).toInt() else t.toInt()

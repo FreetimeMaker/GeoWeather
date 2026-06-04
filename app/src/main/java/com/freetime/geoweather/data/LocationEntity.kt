@@ -54,14 +54,19 @@ data class LocationEntity(
                 weatherData?.let { data ->
                     val obj = org.json.JSONObject(data)
                     when {
-                        obj.has("current_weather") -> obj.getJSONObject("current_weather").getInt("weathercode")
+                        obj.has("current_weather") -> {
+                            val cw = obj.getJSONObject("current_weather")
+                            if (cw.has("weather_code")) cw.getInt("weather_code") else cw.getInt("weathercode")
+                        }
                         obj.has("current") -> {
                             val current = obj.getJSONObject("current")
                             if (current.has("condition")) current.getJSONObject("condition").getInt("code")
+                            else if (current.has("weather_code")) current.getInt("weather_code")
                             else current.optInt("weathercode", 0)
                         }
                         obj.has("timelines") -> obj.getJSONObject("timelines").getJSONArray("daily").getJSONObject(0).getJSONObject("values").getInt("weatherCodeMax")
                         obj.has("currentConditions") -> 0 // Visual crossing needs mapping
+                        obj.has("weather_code") -> obj.getInt("weather_code")
                         obj.has("weathercode") -> obj.getInt("weathercode")
                         else -> null
                     }

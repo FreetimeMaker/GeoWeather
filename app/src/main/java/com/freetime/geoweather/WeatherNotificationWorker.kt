@@ -47,7 +47,9 @@ class WeatherNotificationWorker(
                     // Fetch current weather data for the selected location
                     val weatherData = fetchWeatherData(selectedLocation.latitude, selectedLocation.longitude)
                     val temp = weatherData.getDouble("temperature")
-                    val weatherCode = weatherData.getInt("weathercode")
+                    val weatherCode = if (weatherData.has("weather_code")) weatherData.getInt("weather_code") 
+                                     else if (weatherData.has("weathercode")) weatherData.getInt("weathercode")
+                                     else 0
                     val weatherDescription = WeatherCodes.getDescription(weatherCode, applicationContext)
 
                     Log.d(TAG, "Preparing notification for ${selectedLocation.name}: $temp, $weatherDescription")
