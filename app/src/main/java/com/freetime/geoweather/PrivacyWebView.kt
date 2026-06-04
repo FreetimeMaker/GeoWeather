@@ -1,6 +1,8 @@
 package com.freetime.geoweather
 
 import android.content.Context
+import android.content.Intent
+import android.content.ActivityNotFoundException
 import android.util.AttributeSet
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
@@ -43,6 +45,20 @@ class PrivacyWebView(context: Context, attrs: AttributeSet? = null) :
     }
 
     private class PrivacyClient : WebViewClient() {
+        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+            val url = request?.url ?: return false
+            if (url.scheme == "http" || url.scheme == "https") {
+                val context = view?.context ?: return false
+                try {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, url))
+                } catch (e: ActivityNotFoundException) {
+                    // no app available to open the link
+                }
+                return true
+            }
+            return false
+        }
+
 
         private val blockedHosts = listOf(
             "google-analytics.com",
