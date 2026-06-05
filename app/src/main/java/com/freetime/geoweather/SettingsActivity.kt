@@ -1,5 +1,6 @@
 package com.freetime.geoweather
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -64,6 +65,8 @@ class SettingsActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("ApplySharedPref")
+@SuppressLint("ApplySharedPref")
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     val context = LocalContext.current
@@ -232,6 +235,40 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
             }
         }
 
+
+        Text(
+            text = stringResource(R.string.webview_settings_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                SettingsToggle(
+                    title = stringResource(R.string.disable_private_view),
+                    subtitle = stringResource(R.string.disable_private_view_subtitle),
+                    checked = disablePrivateView,
+                    onCheckedChange = {
+                        disablePrivateView = it
+                        sharedPreferences.edit().putBoolean("disable_private_view", it).apply()
+                    }
+                )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                SettingsToggle(
+                    title = stringResource(R.string.open_external_browser),
+                    subtitle = stringResource(R.string.open_external_browser_subtitle),
+                    checked = openExternalBrowser,
+                    onCheckedChange = {
+                        openExternalBrowser = it
+                        sharedPreferences.edit().putBoolean("open_external_browser", it).apply()
+                    }
+                )
+            }
+        }
         Text(
             text = stringResource(R.string.notification_settings_title),
             style = MaterialTheme.typography.headlineSmall
@@ -357,3 +394,10 @@ fun SettingsToggle(
         )
     }
 }
+
+// Helper extension function for SharedPreferences
+@SuppressLint("ApplySharedPref")
+private inline fun SharedPreferences.editApply(block: SharedPreferences.Editor.() -> Unit) {
+    edit().apply(block).apply()
+}
+

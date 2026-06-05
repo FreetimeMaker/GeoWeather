@@ -328,5 +328,11 @@
     <string name="cl_v140_api">Changed everything from 7 Days to 3 Days because I am working on an API for the App with Different optional plans.</string>
     <string name="cl_v141_more_dons">Added more Donation Options</string>
     <string name="cl_v142_added_api">Added my own API</string>
-    <string name="cl_v143_fix_start">Fixed a StartUp Error</string>
-</resources>
+     <string name="cl_v143_fix_start">Fixed a StartUp Error</string>
+     <!-- WebView Settings -->
+     <string name="webview_settings_title">WebView Settings</string>
+     <string name="disable_private_view">Disable Private View</string>
+     <string name="disable_private_view_subtitle">Allow cookies and tracking</string>
+     <string name="open_external_browser">Open in External Browser</string>
+     <string name="open_external_browser_subtitle">Open links in external browser instead of app</string>
+ </resources>
