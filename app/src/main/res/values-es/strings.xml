@@ -315,4 +315,9 @@
     <string name="request_failed_prefix">Error en la solicitud:</string>
     <string name="accuweather_not_supported">La integración local de AccuWeather requiere solicitudes en varios pasos. Recurrir a Open-Meteo.</string>
     <string name="forecast_7day_label">Pronóstico para 7 días</string>
+    <string name="webview_settings_title">Configuración de WebView</string>
+    <string name="disable_private_view">Desactivar la vista privada</string>
+    <string name="disable_private_view_subtitle">Permitir cookies y seguimiento</string>
+    <string name="open_external_browser">Abrir en un navegador externo</string>
+    <string name="open_external_browser_subtitle">Abrir los enlaces en un navegador externo en lugar de en la aplicación</string>
 </resources>
