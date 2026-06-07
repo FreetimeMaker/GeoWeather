@@ -12,6 +12,10 @@ import android.webkit.WebViewClient
 class PrivacyWebView(context: Context, attrs: AttributeSet? = null) :
     WebView(context, attrs) {
     var disablePrivateView: Boolean = false
+        set(value) {
+            field = value
+            setupPrivacySettings()
+        }
     var openLinksInExternalBrowser: Boolean = false
     init {
         setupPrivacySettings()

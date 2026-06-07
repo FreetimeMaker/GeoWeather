@@ -150,6 +150,11 @@ fun WebViewScreen(
     title: String,
     onBack: () -> Unit
 ) {
+    val context = LocalContext.current
+    val sharedPreferences = remember { context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
+    val disablePrivateView = sharedPreferences.getBoolean("disable_private_view", false)
+    val openExternalBrowser = sharedPreferences.getBoolean("open_external_browser", false)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -165,6 +170,8 @@ fun WebViewScreen(
         AndroidView(
             factory = { ctx ->
                 PrivacyWebView(ctx).apply {
+                    this.disablePrivateView = disablePrivateView
+                    this.openLinksInExternalBrowser = openExternalBrowser
                     settings.javaScriptEnabled = true
                     loadUrl(url)
                 }

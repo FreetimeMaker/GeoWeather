@@ -66,7 +66,6 @@ class SettingsActivity : ComponentActivity() {
 }
 
 @SuppressLint("ApplySharedPref")
-@SuppressLint("ApplySharedPref")
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     val context = LocalContext.current
@@ -84,6 +83,14 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
 
     var dynamicColor by remember {
         mutableStateOf(sharedPreferences.getBoolean("dynamic_color", true))
+    }
+
+    var disablePrivateView by remember {
+        mutableStateOf(sharedPreferences.getBoolean("disable_private_view", false))
+    }
+
+    var openExternalBrowser by remember {
+        mutableStateOf(sharedPreferences.getBoolean("open_external_browser", false))
     }
 
     val tempUnitState by sharedPreferences.collectStringAsState("temp_unit", "celsius")
