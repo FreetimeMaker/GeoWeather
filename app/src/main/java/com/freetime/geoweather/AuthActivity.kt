@@ -58,8 +58,10 @@ class AuthActivity : ComponentActivity() {
                     UserInfoScreen(
                         authManager = authMgr,
                         onLogout = {
-                            authMgr.logout()
-                            isAuthenticated.value = false
+                            scope.launch {
+                                authMgr.logout()
+                                isAuthenticated.value = false
+                            }
                         },
                         onBack = { finish() }
                     )

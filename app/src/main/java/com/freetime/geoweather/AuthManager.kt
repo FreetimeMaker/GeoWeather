@@ -56,8 +56,12 @@ class AuthManager private constructor(private val context: Context) {
         }
     }
 
-    fun logout() {
-        // Supabase sign out is usually called from UI scope
+    suspend fun logout() {
+        try {
+            supabase.auth.signOut()
+        } catch (e: Exception) {
+            // Ignore logout failure
+        }
     }
 
     fun getAccessToken(): String = session?.accessToken ?: ""

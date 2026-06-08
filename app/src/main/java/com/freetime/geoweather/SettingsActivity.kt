@@ -14,6 +14,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +28,13 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
 class SettingsActivity : ComponentActivity() {
+    private var authRefreshTrigger by mutableStateOf(0)
+
+    override fun onResume() {
+        super.onResume()
+        authRefreshTrigger++
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,7 +52,8 @@ class SettingsActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     SettingsScreen(
                         modifier = Modifier.padding(innerPadding),
-                        onBack = { finish() }
+                        onBack = { finish() },
+                        authRefreshKey = authRefreshTrigger
                     )
                 }
             }
@@ -67,10 +78,17 @@ class SettingsActivity : ComponentActivity() {
 
 @SuppressLint("ApplySharedPref")
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
+fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit, authRefreshKey: Int = 0) {
     val context = LocalContext.current
     val sharedPreferences = remember { 
         context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) 
+    }
+    val authManager = remember { AuthManager.getInstance(context) }
+    val isAuthenticated = authManager.isAuthenticated
+    val userInfo = authManager.userInfo
+
+    LaunchedEffect(authRefreshKey) {
+        // Refresh auth state when the activity resumes after login/logout
     }
     
     var darkModeEnabled by remember {
@@ -144,6 +162,54 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
             }
         }
         
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.account_title_label),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+
+                Text(
+                    text = if (isAuthenticated) {
+                        userInfo?.name ?: userInfo?.email.orEmpty()
+                    } else {
+                        stringResource(R.string.login_desc)
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                if (isAuthenticated && userInfo?.email != null) {
+                    Text(
+                        text = userInfo.email,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        context.startActivity(Intent(context, AuthActivity::class.java))
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = if (isAuthenticated) {
+                            stringResource(R.string.account_title_label)
+                        } else {
+                            stringResource(R.string.login_title)
+                        }
+                    )
+                }
+            }
+        }
+
         Text(
             text = stringResource(R.string.theme_settings_title),
             style = MaterialTheme.typography.headlineSmall
