@@ -96,6 +96,9 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v1.9.0" to listOf(
+            "Added 2 new Settings for the Webview: You can disable the PrivacyWebView or you can open it in your External Browser."
+        ),
         "v1.8.1" to listOf(
             "Reseted the WeatherDetailActivity and more to v1.3.8"
         ),
@@ -175,57 +178,41 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             "Optimized background workers and widget for security"
         ),
         "v1.5.1" to listOf(
-            stringResource(R.string.fixed_label),
             stringResource(R.string.cl_v143_fix_start)
         ),
         "v1.5.0" to listOf(
-            stringResource(R.string.added_label),
             stringResource(R.string.cl_v142_added_api)
         ),
         "v1.4.1" to listOf(
-            stringResource(R.string.added_label),
             stringResource(R.string.cl_v141_more_dons)
         ),
         "v1.4.0" to listOf(
-            stringResource(R.string.added_label),
             stringResource(R.string.cl_v140_api)
         ),
         "v1.3.9" to listOf(
-            "${stringResource(R.string.fixed_label)}",
             stringResource(R.string.cl_v139_fix_dons)
         ),
         "v1.3.8" to listOf(
-            "${stringResource(R.string.changed_label)}",
             "${stringResource(R.string.cl_v138_ca)}"
         ),
         "v1.3.7" to listOf(
-            "${stringResource(R.string.added_label)}",
             "${stringResource(R.string.cl_v137_ci_cd)}",
-            "${stringResource(R.string.fixed_label)}",
             "${stringResource(R.string.cl_v137_signing)}",
-            "${stringResource(R.string.fixed_label)}",
             "${stringResource(R.string.cl_v137_wasm)}"
         ),
         "v1.3.6" to listOf(
-            "${stringResource(R.string.added_label)}",
             "${stringResource(R.string.cl_v136_auto_open)}",
-            "${stringResource(R.string.added_label)}",
             "${stringResource(R.string.cl_v136_default_location)}",
-            "${stringResource(R.string.added_label)}",
             "${stringResource(R.string.cl_v136_current_location)}",
-            "${stringResource(R.string.removed_label)}",
             "${stringResource(R.string.cl_v136_degoogled)}",
-            "${stringResource(R.string.added_label)}",
             "${stringResource(R.string.cl_v136_ui_ux)}",
-            "${stringResource(R.string.fixed_label)}",
             "${stringResource(R.string.cl_v136_stability)}"
         ),
         "v1.3.5" to listOf(
-            "${stringResource(R.string.added_label)} Added More Donation Links",
-            "${stringResource(R.string.fixed_label)} Made Every Screen (Hopefully) like System when activated"
+            "Added More Donation Links",
+            "Made Every Screen (Hopefully) like System when activated"
         ),
         "v1.3.4" to listOf(
-            "${stringResource(R.string.added_label)}",
             "${stringResource(R.string.cl_material_you)}",
             stringResource(R.string.cl_unit_switching),
             stringResource(R.string.cl_multi_service),
@@ -237,30 +224,22 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             stringResource(R.string.cl_moon_phase)
         ),
         "v1.3.3" to listOf(
-            "${stringResource(R.string.added_label)}",
-            "${stringResource(R.string.cl_coordinate_search)}",
+            "stringResource(R.string.cl_coordinate_search)",
             stringResource(R.string.cl_state_in_search),
             stringResource(R.string.cl_material_you)
         ),
         "v1.3.2" to listOf(
-            "${stringResource(R.string.added_label)}",
             "${stringResource(R.string.AddedMoreDons)}",
-            "${stringResource(R.string.fixed_label)}",
             "${stringResource(R.string.HopefullyFixedFMSDK)}"
         ),
         "v1.3.1" to listOf(
-            "${stringResource(R.string.fixed_label)}",
             "${stringResource(R.string.FixActivities)}",
             stringResource(R.string.AddedMoonData),
-            "${stringResource(R.string.removed_label)}",
             "${stringResource(R.string.changelog_remove_api_key)}"
         ),
         "v1.3.0" to listOf(
-            "${stringResource(R.string.added_label)}",
             "${stringResource(R.string.AddedMoonData)}",
-            "${stringResource(R.string.fixed_label)}",
             "${stringResource(R.string.FixFMSDK)}",
-            "${stringResource(R.string.removed_label)}",
             "${stringResource(R.string.changelog_remove_coin)}"
         )
     )
