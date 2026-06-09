@@ -48,6 +48,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Checkout Keystore Repository
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ secrets.KEYSTORE_REPOSITORY }}
+          token: ${{ secrets.KEYSTORE_ACCESS_TOKEN }}
+          path: keystore
+
       - name: Install Java
         uses: actions/setup-java@v5
         with:
@@ -72,13 +79,14 @@ jobs:
         run: |
           UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
           SIGNED_APK="GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk"
+          KEYSTORE_PATH="./keystore/GeoWeather-KeyStore.jks"
 
           echo "==> Signiere APK: $SIGNED_APK"
           "${{ steps.find_apksigner.outputs.apksigner }}" sign \
-            --ks ./GeoWeather-KeyStore.jks \
+            --ks "$KEYSTORE_PATH" \
             --ks-key-alias alle \
-            --ks-pass pass:KKKKKK \
-            --key-pass pass:KKKKKK \
+            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --key-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
             --out "$SIGNED_APK" \
             "$UNSIGNED_APK"
 
