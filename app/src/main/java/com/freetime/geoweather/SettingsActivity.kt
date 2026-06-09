@@ -207,6 +207,20 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit, authRefres
                         }
                     )
                 }
+
+                if (isAuthenticated) {
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Button(
+                        onClick = {
+                            context.startActivity(Intent(context, SubscriptionActivity::class.java))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                    ) {
+                        Text(stringResource(R.string.manage_subscription_button))
+                    }
+                }
             }
         }
 

@@ -60,9 +60,9 @@ fun DonateScreen(onBack: () -> Unit) {
             }
 
             Text(
-                text = stringResource(R.string.cash_label),
+                text = stringResource(R.string.billing_options_title),
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.align(Alignment.Start).padding(top = 8.dp)
+                modifier = Modifier.align(Alignment.Start).padding(top = 16.dp)
             )
 
             DonateButton(text = stringResource(R.string.DonViaGHSponsors)) {
@@ -168,6 +168,42 @@ fun DonateScreen(onBack: () -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(R.string.ViewSup))
+            }
+        }
+    }
+}
+
+@Composable
+fun SubscriptionTierCard(
+    title: String,
+    description: String,
+    buttonText: String?,
+    onButtonClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (buttonText != null) {
+                Spacer(Modifier.height(12.dp))
+                FilledTonalButton(
+                    onClick = onButtonClick,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(buttonText)
+                }
             }
         }
     }

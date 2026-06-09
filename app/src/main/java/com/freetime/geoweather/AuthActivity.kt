@@ -117,6 +117,7 @@ private fun UserInfoScreen(
     onBack: () -> Unit
 ) {
     val userInfo = authManager.userInfo
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -155,7 +156,19 @@ private fun UserInfoScreen(
             val tierString = if (userInfo?.subscriptionTier == "premium") stringResource(R.string.tier_premium) else if (userInfo?.subscriptionTier == "freemium") stringResource(R.string.tier_freemium) else stringResource(R.string.tier_free)
             Text(text = stringResource(R.string.subscription_tier, tierString), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
             
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    context.startActivity(Intent(context, SubscriptionActivity::class.java))
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            ) {
+                Text(stringResource(R.string.manage_subscription_button))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
             
             Button(
                 onClick = {

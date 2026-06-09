@@ -44,6 +44,9 @@
             android:name=".AuthActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".SubscriptionActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".WeatherDetailActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".DonateActivity"
