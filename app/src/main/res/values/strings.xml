@@ -254,6 +254,10 @@
     <string name="subscription_title">Subscription Plans</string>
     <string name="subscription_explain">Choose your account plan to get the right level of access and support.</string>
     <string name="subscription_login_required">Please log in to view and manage your subscription plans.</string>
+    <string name="subscription_payment_successful">Payment successful. Thank you!</string>
+    <string name="subscription_payment_cancelled">Payment cancelled. No changes were made.</string>
+    <string name="subscription_payment_failed">Payment failed. Please try again.</string>
+    <string name="subscription_payment_returned">Returned from subscription flow.</string>
     <string name="manage_subscription_button">Manage Subscription</string>
     <string name="tier_free_button">Choose Free</string>
     <string name="account_title">Account</string>

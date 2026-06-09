@@ -1,6 +1,7 @@
 package com.freetime.geoweather
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,16 +27,42 @@ import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
 class SubscriptionActivity : ComponentActivity() {
     private lateinit var authManager: AuthManager
+    private val subscriptionStatus = mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         hideSystemBars()
         authManager = AuthManager.getInstance(this)
+        handleSubscriptionIntent(intent)
 
         setContent {
             GeoWeatherTheme {
-                SubscriptionScreen(onBack = { finish() }, authManager = authManager)
+                SubscriptionScreen(
+                    onBack = { finish() },
+                    authManager = authManager,
+                    statusMessage = subscriptionStatus.value
+                )
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleSubscriptionIntent(intent)
+    }
+
+    private fun handleSubscriptionIntent(intent: Intent) {
+        intent.data?.let { uri ->
+            if (uri.scheme == "geoweather" && uri.host == "subscription") {
+                val status = uri.getQueryParameter("status")?.lowercase()
+                subscriptionStatus.value = when (status) {
+                    "success" -> getString(R.string.subscription_payment_successful)
+                    "cancel" -> getString(R.string.subscription_payment_cancelled)
+                    "failed" -> getString(R.string.subscription_payment_failed)
+                    else -> getString(R.string.subscription_payment_returned)
+                }
             }
         }
     }
@@ -56,7 +85,7 @@ class SubscriptionActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubscriptionScreen(onBack: () -> Unit, authManager: AuthManager) {
+fun SubscriptionScreen(onBack: () -> Unit, authManager: AuthManager, statusMessage: String?) {
     val context = LocalContext.current
     val isAuthenticated = authManager.isAuthenticated
 
@@ -114,7 +143,7 @@ fun SubscriptionScreen(onBack: () -> Unit, authManager: AuthManager) {
                     description = stringResource(R.string.tier_description_freemium),
                     buttonText = stringResource(R.string.support_freemium_button),
                     onButtonClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://pay.oxapay.com/13038067"))
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://geo-weather-api.vercel.app/subscribe?plan=freemium&redirect=geoweather://subscription"))
                         context.startActivity(intent)
                     }
                 )
@@ -124,7 +153,7 @@ fun SubscriptionScreen(onBack: () -> Unit, authManager: AuthManager) {
                     description = stringResource(R.string.tier_description_premium),
                     buttonText = stringResource(R.string.support_premium_button),
                     onButtonClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://pay.oxapay.com/13038068"))
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://geo-weather-api.vercel.app/subscribe?plan=premium&redirect=geoweather://subscription"))
                         context.startActivity(intent)
                     }
                 )
