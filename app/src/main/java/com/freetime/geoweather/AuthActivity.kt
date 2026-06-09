@@ -53,7 +53,8 @@ class AuthActivity : ComponentActivity() {
         setContent {
             GeoWeatherTheme {
                 val isAuthenticated = remember { mutableStateOf(authMgr.isAuthenticated) }
-                
+                val scope = rememberCoroutineScope()
+
                 if (isAuthenticated.value) {
                     UserInfoScreen(
                         authManager = authMgr,
@@ -67,7 +68,6 @@ class AuthActivity : ComponentActivity() {
                     )
                 } else {
                     val context = LocalContext.current
-                    val scope = rememberCoroutineScope()
 
                     AuthScreenContent(
                         onGitHubLogin = {
