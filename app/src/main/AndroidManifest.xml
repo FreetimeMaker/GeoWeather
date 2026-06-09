@@ -45,7 +45,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".SubscriptionActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
