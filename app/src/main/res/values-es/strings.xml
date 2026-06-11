@@ -320,4 +320,20 @@
     <string name="disable_private_view_subtitle">Permitir cookies y seguimiento</string>
     <string name="open_external_browser">Abrir en un navegador externo</string>
     <string name="open_external_browser_subtitle">Abrir los enlaces en un navegador externo en lugar de en la aplicación</string>
+    <string name="billing_options_title">Opciones de facturación</string>
+    <string name="subscription_tiers_title">Niveles de suscripción</string>
+    <string name="tier_description_free">Acceso básico con funciones limitadas y soporte estándar.</string>
+    <string name="tier_description_freemium">Desbloquea más funciones y apoya el desarrollo con una contribución moderada.</string>
+    <string name="support_freemium_button">Freemium</string>
+    <string name="tier_description_premium">Obtén acceso completo, actualizaciones prioritarias y soporte premium.</string>
+    <string name="support_premium_button">Premium</string>
+    <string name="subscription_title">Planes de suscripción</string>
+    <string name="subscription_explain">Elige tu plan para obtener el nivel de acceso y soporte adecuado.</string>
+    <string name="subscription_login_required">Por favor, onicie sesión para ver y administrar sus planes de suscripción.</string>
+    <string name="subscription_payment_successful">Pago realizado con éxito. ¡Gracias!</string>
+    <string name="subscription_payment_cancelled">Pago cancelado. No se realizaron cambios.</string>
+    <string name="subscription_payment_failed">El pago ha fallado. Por favor, inténtelo de nuevo.</string>
+    <string name="subscription_payment_returned">Regresar al proceso de suscripción.</string>
+    <string name="manage_subscription_button">Gestionar suscripción</string>
+    <string name="tier_free_button">Gratis</string>
 </resources>
