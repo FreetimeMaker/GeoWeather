@@ -160,6 +160,7 @@
     <string name="donate_title">Donate</string>
     <string name="support_development">Support development</string>
     <string name="select_option_msg">Choose one of the following options to support the project.</string>
+    <string name="billing_options_title">Billing options</string>
     <string name="crypto_label">Cryptocurrencies</string>
     <string name="cash_label">Cash &amp; Others</string>
     <string name="supporters_title">Supporters</string>
