@@ -187,7 +187,7 @@ fun WeatherDetailScreen(
                         val moonUrl = "https://devapi.qweather.com/v7/astronomy/moon?location=$lon,$lat&key=$qweatherApiKey"
                         val mq = withContext(Dispatchers.IO) { httpGet(moonUrl) }
                         val obj = JSONObject(mq).getJSONArray("moonPhase").getJSONObject(0)
-                        moonPhaseName = obj.optString("name", null)
+                        moonPhaseName = obj.optString("name").takeIf { it.isNotBlank() }
                     } catch (_: Exception) {}
                 }
             }
@@ -253,15 +253,23 @@ fun WeatherDetailScreen(
             }
 
             weatherJson?.let { json ->
+                val jsonObj = JSONObject(json)
                 val (temp, weatherCode) = if (weatherProvider == "weatherapi") {
-                    val current = JSONObject(json).getJSONObject("current")
+                    val current = jsonObj.getJSONObject("current")
                     current.getDouble("temp_c") to 0
                 } else {
-                    val current = JSONObject(json).getJSONObject("current_weather")
-                    val c = if (current.has("weather_code")) current.getInt("weather_code") 
-                            else if (current.has("weathercode")) current.getInt("weathercode")
-                            else 0
-                    current.getDouble("temperature") to c
+                    val current = jsonObj.optJSONObject("current") ?: jsonObj.optJSONObject("current_weather")
+                    val temperature = current?.optDouble("temperature_2m")
+                        ?: current?.optDouble("temperature")
+                        ?: 0.0
+                    val code = current?.let {
+                        when {
+                            it.has("weather_code") -> it.getInt("weather_code")
+                            it.has("weathercode") -> it.getInt("weathercode")
+                            else -> 0
+                        }
+                    } ?: 0
+                    temperature to code
                 }
                 
                 val displayTemp = if (tempUnit == "fahrenheit") (temp * 9/5 + 32).toInt() else temp.toInt()
