@@ -336,4 +336,7 @@
     <string name="subscription_payment_returned">Regresar al proceso de suscripción.</string>
     <string name="manage_subscription_button">Gestionar suscripción</string>
     <string name="tier_free_button">Gratis</string>
+    <string name="rain_label">Lluvia</string>
+    <string name="air_label">Aire</string>
+    <string name="rain_amount_label">%1$s</string>
 </resources>
