@@ -215,6 +215,9 @@
     <string name="wind_mph_suffix">mph</string>
     <string name="temp_deg_suffix">°</string>
     <string name="humidity_suffix">%</string>
+    <string name="rain_label">Rain</string>
+    <string name="air_label">Air</string>
+    <string name="rain_amount_label">%1$s</string>
     <!-- ChangeLogs of v1.3.6 & v1.3.7 -->
     <string name="cl_v136_auto_open">Auto-navigation to default or single location on startup</string>
     <string name="cl_v136_default_location">Set favorite locations as default with a star icon</string>
