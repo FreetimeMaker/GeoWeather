@@ -30,29 +30,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:scheme="geoweather"
-                    android:host="auth" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".AuthActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".SubscriptionActivity"
-            android:screenOrientation="portrait"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="geoweather" android:host="subscription" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".WeatherDetailActivity"
@@ -62,6 +39,8 @@
         <activity android:name=".DonateWebViewActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".DonatorActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".WalletAddressActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".SettingsActivity"
             android:screenOrientation="portrait" />

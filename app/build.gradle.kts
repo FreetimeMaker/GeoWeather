@@ -33,10 +33,6 @@ room {
 }
 
 dependencies {
-    implementation(platform("io.github.jan-tennert.supabase:bom:3.6.0"))
-    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-    implementation("io.github.jan-tennert.supabase:auth-kt-android")
-    implementation("io.github.jan-tennert.supabase:coil3-integration")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("androidx.core:core-ktx:1.19.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")

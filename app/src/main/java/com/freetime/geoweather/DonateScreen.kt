@@ -70,6 +70,10 @@ fun DonateScreen(onBack: () -> Unit) {
                 context.startActivity(intent)
             }
 
+            DonateButton(text = stringResource(R.string.show_wallet_addresses)) {
+                context.startActivity(Intent(context, WalletAddressActivity::class.java))
+            }
+
             Text(
                 text = stringResource(R.string.crypto_label),
                 style = MaterialTheme.typography.titleMedium,
@@ -168,42 +172,6 @@ fun DonateScreen(onBack: () -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(R.string.ViewSup))
-            }
-        }
-    }
-}
-
-@Composable
-fun SubscriptionTierCard(
-    title: String,
-    description: String,
-    buttonText: String?,
-    onButtonClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(Modifier.height(6.dp))
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            if (buttonText != null) {
-                Spacer(Modifier.height(12.dp))
-                FilledTonalButton(
-                    onClick = onButtonClick,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(buttonText)
-                }
             }
         }
     }

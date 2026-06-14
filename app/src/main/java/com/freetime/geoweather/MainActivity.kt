@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
@@ -127,9 +126,6 @@ class MainActivity : ComponentActivity() {
                     },
                     onOpenDonate = {
                         startActivity(Intent(this, DonateActivity::class.java))
-                    },
-                    onOpenAuth = {
-                        startActivity(Intent(this, AuthActivity::class.java))
                     }
                 )
             }
@@ -165,8 +161,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     onRequestLocationPermission: () -> Unit,
     onOpenDetail: (String, Double, Double) -> Unit,
-    onOpenDonate: () -> Unit,
-    onOpenAuth: () -> Unit
+    onOpenDonate: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -250,9 +245,6 @@ fun MainScreen(
                     }
                     IconButton(onClick = onOpenDonate) {
                         Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.donate_nav_desc), tint = MaterialTheme.colorScheme.primary)
-                    }
-                    IconButton(onClick = onOpenAuth) {
-                        Icon(Icons.Default.AccountCircle, contentDescription = stringResource(R.string.account_title_label))
                     }
                     IconButton(onClick = {
                         context.startActivity(Intent(context, SettingsActivity::class.java))
