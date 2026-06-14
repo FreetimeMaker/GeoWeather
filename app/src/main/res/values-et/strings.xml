@@ -181,9 +181,7 @@
     <string name="dai">DAI</string>
     <string name="ton">TON</string>
     <string name="pol">POL</string>
-    <string name="login_error_format">Viga: %1$s</string>
     <string name="back_nav_desc_short">Tagasi</string>
-    <string name="account_title_label">Kasutajakonto</string>
     <string name="support_development">Toeta arendust</string>
     <string name="provider_visualcrossing">Visual Crossing</string>
     <string name="provider_tomorrow">Tomorrow.io</string>
@@ -215,13 +213,4 @@
     <string name="wind_increase_msg">Tuulekiirus on kasvanud ja on nüüd %1$s</string>
     <string name="precip_increase_msg">Sademete võimalus: %1$d%%</string>
     <string name="condition_change_msg">Tingimus: %1$s → %2$s</string>
-    <string name="login_title">Logi sisse</string>
-    <string name="register_title">Registreeru</string>
-    <string name="email_label">E-posti aadress</string>
-    <string name="password_label">Salasõna</string>
-    <string name="name_label">Nimi</string>
-    <string name="logout_button">Logi välja</string>
-    <string name="no_account_msg">Sul pole kasutajakontot? Registreeru</string>
-    <string name="have_account_msg">Sul on kasutajakonto juba olemas? Logi sisse</string>
-    <string name="fill_all_fields">Palun täida kõik väljad</string>
 </resources>
