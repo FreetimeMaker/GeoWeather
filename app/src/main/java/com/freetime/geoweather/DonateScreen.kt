@@ -70,15 +70,15 @@ fun DonateScreen(onBack: () -> Unit) {
                 context.startActivity(intent)
             }
 
-            DonateButton(text = stringResource(R.string.show_wallet_addresses)) {
-                context.startActivity(Intent(context, WalletAddressActivity::class.java))
-            }
-
             Text(
                 text = stringResource(R.string.crypto_label),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.align(Alignment.Start).padding(top = 8.dp)
             )
+
+            DonateButton(text = stringResource(R.string.show_wallet_addresses)) {
+                context.startActivity(Intent(context, WalletAddressActivity::class.java))
+            }
 
             DonateButton(text = stringResource(R.string.DonViaOxaPay)) {
                 val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://pay.oxapay.com/13038067"))

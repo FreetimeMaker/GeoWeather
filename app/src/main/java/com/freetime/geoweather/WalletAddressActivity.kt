@@ -71,6 +71,7 @@ fun WalletAddressScreen(onBack: () -> Unit) {
     
     val walletAddresses = listOf(
         "Bitcoin (BTC)" to "1DsCAVrzvGokrzXpe6YR33QuTo5EppiKRE",
+        "Ethereum (ETH only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc",
         "Litecoin (LTC)" to "LU2ERRXKTeKnzpuieQcpsBteViEY7ff5Wg"
     )
 
