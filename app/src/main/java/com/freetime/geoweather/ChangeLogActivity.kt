@@ -96,6 +96,9 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v2.0.0" to listOf(
+            "Added More Weather Provider and changed a few things"
+        ),
         "v1.9.0" to listOf(
             "Added 2 new Settings for the Webview: You can disable the PrivacyWebView or you can open it in your External Browser."
         ),

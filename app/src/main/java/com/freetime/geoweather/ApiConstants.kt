@@ -12,8 +12,19 @@ object ApiConstants {
     const val WEATHER_API_FORECAST = "https://api.weatherapi.com/v1/forecast.json"
     const val WEATHER_API_CURRENT = "https://api.weatherapi.com/v1/current.json"
     
-    // QWeather
-    const val QWEATHER_API_KEY = "" // Fill with your key or leave empty
+    // Tomorrow.io
+    const val TOMORROW_IO_API = "https://api.tomorrow.io/v4/weather/forecast"
+    
+    // Visual Crossing
+    const val VISUAL_CROSSING_API = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline"
+    
+    // OpenWeatherMap
+    const val OPEN_WEATHER_MAP_FORECAST = "https://api.openweathermap.org/data/2.5/forecast"
+    const val OPEN_WEATHER_MAP_CURRENT = "https://api.openweathermap.org/data/2.5/weather"
+    
+    // QWeather (Moon data and astronomical information)
+    const val QWEATHER_MOON = "https://devapi.qweather.com/v7/astronomy/moon"
+    const val QWEATHER_SUN = "https://devapi.qweather.com/v7/astronomy/sun"
 
     fun getAirQualityUrl(lat: Double, lon: Double): String {
         return "$OPEN_METEO_AIR_QUALITY?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"

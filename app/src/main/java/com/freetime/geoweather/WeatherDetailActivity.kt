@@ -136,6 +136,9 @@ fun WeatherDetailScreen(
     val weatherProvider by sharedPreferences.collectStringAsState("weather_provider", "open_meteo")
     val weatherApiKey by sharedPreferences.collectStringAsState("weather_api_key", "")
     val qweatherApiKey by sharedPreferences.collectStringAsState("qweather_api_key", "")
+    val tomorrowIoApiKey by sharedPreferences.collectStringAsState("tomorrow_io_api_key", "")
+    val visualCrossingApiKey by sharedPreferences.collectStringAsState("visual_crossing_api_key", "")
+    val openWeatherMapApiKey by sharedPreferences.collectStringAsState("open_weather_map_api_key", "")
 
     var weatherJson by remember { mutableStateOf<String?>(null) }
     var aqiJson by remember { mutableStateOf<String?>(null) }
@@ -167,10 +170,22 @@ fun WeatherDetailScreen(
                 json = cachedWeatherData
                 weatherJson = json
             } else {
-                val url = if (weatherProvider == "weatherapi" && weatherApiKey.isNotEmpty()) {
-                    "https://api.weatherapi.com/v1/forecast.json?key=$weatherApiKey&q=$lat,$lon&days=7&aqi=yes"
-                } else {
-                    "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,relative_humidity_2m,pressure_msl,apparent_temperature,precipitation,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=auto"
+                val url = when {
+                    weatherProvider == "weatherapi" && weatherApiKey.isNotEmpty() -> {
+                        "https://api.weatherapi.com/v1/forecast.json?key=$weatherApiKey&q=$lat,$lon&days=16&aqi=yes"
+                    }
+                    weatherProvider == "tomorrow_io" && tomorrowIoApiKey.isNotEmpty() -> {
+                        "https://api.tomorrow.io/v4/weather/forecast?location=$lat,$lon&apikey=$tomorrowIoApiKey&timesteps=1h,1d"
+                    }
+                    weatherProvider == "visualcrossing" && visualCrossingApiKey.isNotEmpty() -> {
+                        "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/$lat,$lon?unitGroup=metric&include=hours,days&key=$visualCrossingApiKey"
+                    }
+                    weatherProvider == "openweathermap" && openWeatherMapApiKey.isNotEmpty() -> {
+                        "https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&units=metric&appid=$openWeatherMapApiKey"
+                    }
+                    else -> {
+                        "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,relative_humidity_2m,pressure_msl,apparent_temperature,precipitation,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=auto"
+                    }
                 }
 
                 val histUrl = "https://archive-api.open-meteo.com/v1/archive?latitude=$lat&longitude=$lon&start_date=${getYesterdayDate(-7)}&end_date=${getYesterdayDate(0)}&daily=temperature_2m_max,temperature_2m_min&timezone=auto"
@@ -203,10 +218,41 @@ fun WeatherDetailScreen(
             weatherJson = json
             aqiJson = aqiJsonResponse
             if (json != null) {
+                try {
+                    val jsonObj = JSONObject(json)
+                    // Extract sunrise and sunset times for day/night icon support
+                    val sunrise: String? = if (weatherProvider == "weatherapi") {
+                        jsonObj.getJSONObject("forecast").getJSONArray("forecastday")
+                            .getJSONObject(0).getJSONObject("astro").optString("sunrise")
+                    } else {
+                        jsonObj.getJSONObject("daily").getJSONArray("sunrise").optString(0)
+                    }
+                    val sunset: String? = if (weatherProvider == "weatherapi") {
+                        jsonObj.getJSONObject("forecast").getJSONArray("forecastday")
+                            .getJSONObject(0).getJSONObject("astro").optString("sunset")
+                    } else {
+                        jsonObj.getJSONObject("daily").getJSONArray("sunset").optString(0)
+                    }
+                    // Set sunrise and sunset times for WeatherIconMapper
+                    WeatherIconMapper.setSunTimes(sunrise, sunset)
+                } catch (e: Exception) {
+                    // If extraction fails, icons will default to day
+                }
+                
                 if (weatherProvider == "weatherapi") {
                     parseWeatherApiData(json).let {
                         forecastList = it.first
                         hourlyForecastList = it.second
+                    }
+                } else if (weatherProvider in listOf("tomorrow_io", "visualcrossing", "openweathermap")) {
+                    // Other providers fallback to open-meteo parsing for now
+                    // Custom parsing can be added per provider as needed
+                    try {
+                        forecastList = parseForecastData(json)
+                        hourlyForecastList = parseHourlyForecastData(json)
+                    } catch (_: Exception) {
+                        forecastList = emptyList()
+                        hourlyForecastList = emptyList()
                     }
                 } else {
                     forecastList = parseForecastData(json)

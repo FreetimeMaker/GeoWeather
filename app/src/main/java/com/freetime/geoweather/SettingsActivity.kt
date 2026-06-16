@@ -112,6 +112,18 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     var weatherApiKey by remember { mutableStateOf(weatherApiKeyState) }
     LaunchedEffect(weatherApiKeyState) { weatherApiKey = weatherApiKeyState }
 
+    val tomorrowIoApiKeyState by sharedPreferences.collectStringAsState("tomorrow_io_api_key", "")
+    var tomorrowIoApiKey by remember { mutableStateOf(tomorrowIoApiKeyState) }
+    LaunchedEffect(tomorrowIoApiKeyState) { tomorrowIoApiKey = tomorrowIoApiKeyState }
+
+    val visualCrossingApiKeyState by sharedPreferences.collectStringAsState("visual_crossing_api_key", "")
+    var visualCrossingApiKey by remember { mutableStateOf(visualCrossingApiKeyState) }
+    LaunchedEffect(visualCrossingApiKeyState) { visualCrossingApiKey = visualCrossingApiKeyState }
+
+    val openWeatherMapApiKeyState by sharedPreferences.collectStringAsState("open_weather_map_api_key", "")
+    var openWeatherMapApiKey by remember { mutableStateOf(openWeatherMapApiKeyState) }
+    LaunchedEffect(openWeatherMapApiKeyState) { openWeatherMapApiKey = openWeatherMapApiKeyState }
+
     val qweatherApiKeyState by sharedPreferences.collectStringAsState("qweather_api_key", "")
     var qweatherApiKey by remember { mutableStateOf(qweatherApiKeyState) }
     LaunchedEffect(qweatherApiKeyState) { qweatherApiKey = qweatherApiKeyState }
@@ -327,46 +339,157 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                // Open-Meteo (Free, no API key required)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = weatherProvider == "open_meteo", onClick = {
                         weatherProvider = "open_meteo"
                         sharedPreferences.edit().putString("weather_provider", "open_meteo").apply()
                     })
-                    Text(stringResource(R.string.provider_open_meteo))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.provider_open_meteo))
+                        Text("Free • No API key needed", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                // WeatherAPI
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = weatherProvider == "weatherapi", onClick = {
                         weatherProvider = "weatherapi"
                         sharedPreferences.edit().putString("weather_provider", "weatherapi").apply()
                     })
-                    Text(stringResource(R.string.provider_weatherapi))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.provider_weatherapi))
+                        Text("Premium features available", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
-                
                 if (weatherProvider == "weatherapi") {
                     OutlinedTextField(
                         value = weatherApiKey,
-                        onValueChange = {
-                            weatherApiKey = it
-                            sharedPreferences.edit().putString("weather_api_key", it).apply()
+                        onValueChange = { newValue ->
+                            weatherApiKey = newValue
+                            sharedPreferences.edit().putString("weather_api_key", newValue).apply()
                         },
-                        label = { Text(stringResource(R.string.weather_api_key_label)) },
-                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("4b8e41d9bef94794b34135527260305") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                         singleLine = true
                     )
                 }
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
 
-                OutlinedTextField(
-                    value = qweatherApiKey,
-                    onValueChange = {
-                        qweatherApiKey = it
-                        sharedPreferences.edit().putString("qweather_api_key", it).apply()
-                    },
-                    label = { Text(stringResource(R.string.qweather_api_key_label)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
+                // Tomorrow.io
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = weatherProvider == "tomorrow_io", onClick = {
+                        weatherProvider = "tomorrow_io"
+                        sharedPreferences.edit().putString("weather_provider", "tomorrow_io").apply()
+                    })
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Tomorrow.io")
+                        Text("Real-time data & forecasts", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+                if (weatherProvider == "tomorrow_io") {
+                    OutlinedTextField(
+                        value = tomorrowIoApiKey,
+                        onValueChange = { newValue ->
+                            tomorrowIoApiKey = newValue
+                            sharedPreferences.edit().putString("tomorrow_io_api_key", newValue).apply()
+                        },
+                        label = { Text("1juesmq1kUlzS1yEgrrlQ7vcsBjnn0rK") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        singleLine = true
+                    )
+                }
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                // Visual Crossing
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = weatherProvider == "visualcrossing", onClick = {
+                        weatherProvider = "visualcrossing"
+                        sharedPreferences.edit().putString("weather_provider", "visualcrossing").apply()
+                    })
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Visual Crossing")
+                        Text("Historical & detailed forecasts", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+                if (weatherProvider == "visualcrossing") {
+                    OutlinedTextField(
+                        value = visualCrossingApiKey,
+                        onValueChange = { newValue ->
+                            visualCrossingApiKey = newValue
+                            sharedPreferences.edit().putString("visual_crossing_api_key", newValue).apply()
+                        },
+                        label = { Text("DEARG386HZK9BMA24V49NT6A9") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        singleLine = true
+                    )
+                }
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                // OpenWeatherMap
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = weatherProvider == "openweathermap", onClick = {
+                        weatherProvider = "openweathermap"
+                        sharedPreferences.edit().putString("weather_provider", "openweathermap").apply()
+                    })
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("OpenWeatherMap")
+                        Text("Comprehensive weather data", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+                if (weatherProvider == "openweathermap") {
+                    OutlinedTextField(
+                        value = openWeatherMapApiKey,
+                        onValueChange = { newValue ->
+                            openWeatherMapApiKey = newValue
+                            sharedPreferences.edit().putString("open_weather_map_api_key", newValue).apply()
+                        },
+                        label = { Text("a11917f9dbb0347bf7a11c311c007d83") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        singleLine = true
+                    )
+                }
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                // QWeather (Moon data & astronomical data)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = weatherProvider == "qweather", onClick = {
+                        weatherProvider = "qweather"
+                        sharedPreferences.edit().putString("weather_provider", "qweather").apply()
+                    })
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("QWeather")
+                        Text("Moon phase & astronomical data", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+                if (weatherProvider == "qweather") {
+                    OutlinedTextField(
+                        value = qweatherApiKey,
+                        onValueChange = { newValue ->
+                            qweatherApiKey = newValue
+                            sharedPreferences.edit().putString("qweather_api_key", newValue).apply()
+                        },
+                        label = { Text("d5184299458c441b92ab98075c4a7928") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        singleLine = true
+                    )
+                }
             }
         }
         
