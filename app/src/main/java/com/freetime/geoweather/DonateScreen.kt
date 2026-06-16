@@ -80,6 +80,11 @@ fun DonateScreen(onBack: () -> Unit) {
                 context.startActivity(Intent(context, WalletAddressActivity::class.java))
             }
 
+            DonateButton(text = "Donate via NOWPayments") {
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://nowpayments.io/donation/GeoWeather"))
+                context.startActivity(intent)
+            }
+
             DonateButton(text = stringResource(R.string.DonViaOxaPay)) {
                 val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://pay.oxapay.com/13038067"))
                 context.startActivity(intent)
