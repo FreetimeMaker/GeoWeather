@@ -65,9 +65,25 @@ fun DonateScreen(onBack: () -> Unit) {
                 modifier = Modifier.align(Alignment.Start).padding(top = 16.dp)
             )
 
+            Text(
+                text = stringResource(R.string.cash_label),
+                style = aterialTheme.typography.titleMedium,
+                modifier = Modifier.align(Alignment.Start).padding(top = 8.dp)
+            )
+
             DonateButton(text = stringResource(R.string.DonViaGHSponsors)) {
                 val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://github.com/sponsors/FreetimeMaker"))
                 context.startActivity(intent)
+            }
+
+            DonateButton(text = "Donate via Open Collective to Freetime Maker) {
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://opencollective.com/freetimemaker"))
+                content.startActivity(intent)
+            }
+
+            DonateButton(text = "Donate via Open Collective to GeoWeather) {
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://opencollective.com/freetimemaker/projects/geoweather"))
+                content.startActivity(intent)
             }
 
             Text(
