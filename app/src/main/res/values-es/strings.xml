@@ -281,4 +281,8 @@
     <string name="rain_label">Lluvia</string>
     <string name="air_label">Aire</string>
     <string name="rain_amount_label">%1$s</string>
+    <string name="show_wallet_addresses">Mostrar direcciones de monedero</string>
+    <string name="wallet_addresses_title">Direcciones de monederos</string>
+    <string name="address_copied">Dirección copiada al portapapeles</string>
+    <string name="copy_address">Copiar dirección</string>
 </resources>
