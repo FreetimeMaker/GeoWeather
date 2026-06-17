@@ -271,4 +271,18 @@
     <string name="cl_v141_more_dons">添加了更多捐赠选项</string>
     <string name="cl_v142_added_api">添加了我自己的 API</string>
     <string name="cl_v143_fix_start">修复了启动错误</string>
+    <string name="billing_options_title"></string>
+    <string name="rain_label"></string>
+    <string name="air_label"></string>
+    <string name="rain_amount_label"></string>
+    <string name="open_external_browser"></string>
+    <string name="forecast_7day_label"></string>
+    <string name="show_wallet_addresses"></string>
+    <string name="wallet_addresses_title"></string>
+    <string name="copy_address"></string>
+    <string name="address_copied"></string>
+    <string name="webview_settings_title"></string>
+    <string name="disable_private_view"></string>
+    <string name="disable_private_view_subtitle"></string>
+    <string name="open_external_browser_subtitle"></string>
 </resources>
