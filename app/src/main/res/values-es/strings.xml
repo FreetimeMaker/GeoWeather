@@ -202,7 +202,7 @@
     <string name="support_development">Apoyar el desarrollo</string>
     <string name="select_option_msg">Elige una de las siguientes opciones para apoyar el proyecto.</string>
     <string name="crypto_label">Criptomonedas</string>
-    <string name="cash_label">Efectivo y otros</string>
+    <string name="cash_label">Efectivo</string>
     <string name="supporters_title">Seguidores</string>
     <string name="back_to_support">Volver a la página de asistencia</string>
     <string name="search_placeholder">p. ej., Nueva York o 40,71, -74,00</string>
@@ -277,7 +277,7 @@
     <string name="disable_private_view_subtitle">Permitir cookies y seguimiento</string>
     <string name="open_external_browser">Abrir en un navegador externo</string>
     <string name="open_external_browser_subtitle">Abrir los enlaces en un navegador externo en lugar de en la aplicación</string>
-    <string name="billing_options_title">Opciones de facturación</string>
+    <string name="billing_options_title">Opciones de donación</string>
     <string name="rain_label">Lluvia</string>
     <string name="air_label">Aire</string>
     <string name="rain_amount_label">%1$s</string>
