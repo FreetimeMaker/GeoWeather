@@ -41,7 +41,7 @@
     <string name="SunriseTXT">Amanecer: %1$s</string>
     <string name="SunsetText">Atardecer: %1$s</string>
     <string name="PrecipitationTXT">Precipitaciones: %1$s%%</string>
-    <string name="MaxWindTXT">Racha de viento máxima: %1$s km/h</string>
+    <string name="MaxWindTXT">Racha de viento máxima: %1$s km/h</string>
     <string name="HourlyForecastTXT">Previsión por horas</string>
     <string name="SevenDayForecastTXT">Previsión para los próximos 7 días</string>
     <string name="WeatherDetailsTXT">Detalles meteorológicos</string>
