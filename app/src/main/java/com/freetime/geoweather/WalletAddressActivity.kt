@@ -110,7 +110,7 @@ fun WalletAddressScreen(onBack: () -> Unit) {
         "HSH (BEP only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc",
         "ARB (Arbitrum only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc",
         "Optimism (Optimism only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc",
-        "USDS (ETH only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc",
+        "USDS (ETH only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc"
     )
 
     Scaffold(
