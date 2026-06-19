@@ -51,6 +51,12 @@ class WeatherNotificationWorker(
                                      else if (weatherData.has("weathercode")) weatherData.getInt("weathercode")
                                      else 0
                     val weatherDescription = WeatherCodes.getDescription(weatherCode, applicationContext)
+                    val windSpeed = weatherData.optDouble("windspeed", 0.0)
+
+                    // Check for severe weather
+                    if (weatherCode in listOf(95, 96, 99) || windSpeed > 75.0 || temp > 35.0 || temp < -15.0) {
+                        sendSevereWeatherAlert(applicationContext, selectedLocation.name, weatherCode, temp, windSpeed)
+                    }
 
                     Log.d(TAG, "Preparing notification for ${selectedLocation.name}: $temp, $weatherDescription")
 
@@ -162,5 +168,41 @@ class WeatherNotificationWorker(
         // Use location ID for unique notification ID
         notificationManager.notify(locationId.toInt(), notification)
         Log.d(TAG, "Notification sent for $locationName (id=${locationId.toInt()})")
+    }
+
+    private fun sendSevereWeatherAlert(
+        context: Context,
+        locationName: String,
+        weatherCode: Int,
+        temp: Double,
+        windSpeed: Double
+    ) {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "severe_weather_alerts",
+                "Severe Weather Alerts",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val message = when {
+            weatherCode in listOf(95, 96, 99) -> context.getString(R.string.alert_thunderstorm)
+            windSpeed > 75.0 -> context.getString(R.string.alert_storm)
+            temp > 35.0 -> context.getString(R.string.alert_heat)
+            else -> context.getString(R.string.severe_weather_alert)
+        }
+
+        val notification = NotificationCompat.Builder(context, "severe_weather_alerts")
+            .setSmallIcon(R.mipmap.icon)
+            .setContentTitle(context.getString(R.string.severe_weather_alert))
+            .setContentText("$locationName: $message")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager.notify(999, notification)
     }
 }

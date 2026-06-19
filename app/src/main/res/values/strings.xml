@@ -96,8 +96,8 @@
     <string name="sunrise_label">Sunrise</string>
     <string name="sunset_label">Sunset</string>
     <string name="hourly_label">Hourly</string>
-    <string name="forecast_3day_label">7-Day Forecast</string>
-    <string name="forecast_7day_label">7-Day Forecast</string>
+    <string name="forecast_3day_label">16-Day Forecast</string>
+    <string name="forecast_7day_label">16-Day Forecast</string>
     <string name="back_nav_desc">Back</string>
     <string name="refresh_nav_desc">Refresh</string>
     <string name="donate_nav_desc">Donate</string>
@@ -119,7 +119,7 @@
     <string name="cl_custom_notifs">Customizable weather notification thresholds</string>
     <string name="cl_widgets">Home screen weather widget</string>
     <string name="cl_multi_service">Added support for multiple weather providers (Open-Meteo &amp; WeatherAPI)</string>
-    <string name="cl_forecast_enhanced">Enhanced 7-day forecast with interactive details</string>
+    <string name="cl_forecast_enhanced">Enhanced 16-day forecast with interactive details</string>
     <string name="cl_widget_refresh">New Home Screen Widget with refresh button</string>
     <string name="cl_moon_phase">Added moon phase data support</string>
     <!-- Settings Strings -->
@@ -228,7 +228,7 @@
     <string name="cl_v137_wasm">Fixed WebAssembly (Wasm) build issues caused by external dependencies</string>
     <string name="show_historical_data">Show Historical Data</string>
     <string name="show_historical_data_desc">Show weather trends from the last 3 days</string>
-    <string name="SevenDayForecastTXT">7-Day Forecast</string>
+    <string name="SevenDayForecastTXT">16-Day Forecast</string>
     <string name="weather_change_alerts_channel_name">Weather Change Alerts</string>
     <string name="weather_notifications_channel_name">Weather Updates</string>
     <string name="weather_notifications_channel_desc">Daily weather notifications</string>
@@ -333,4 +333,43 @@
     <string name="provider_owm_desc">Comprehensive weather data</string>
     <string name="provider_qweather_desc">Moon phase &amp; astronomical data</string>
     <string name="api_key_placeholder">Enter your API key</string>
+    <!-- Advanced Features -->
+    <string name="oled_black_title">OLED Black Mode</string>
+    <string name="oled_black_subtitle">Pure black background for AMOLED screens</string>
+    <string name="severe_weather_alert">Severe Weather Warning!</string>
+    <string name="on_this_day_title">On This Day (Last Year)</string>
+    <string name="pollutants_title">Air Pollutants</string>
+    <string name="pm2_5_label">PM2.5</string>
+    <string name="pm10_label">PM10</string>
+    <string name="no2_label">NO₂</string>
+    <string name="o3_label">O₃</string>
+    <!-- Technical & Geological -->
+    <string name="visibility_label">Visibility</string>
+    <string name="cloud_base_label">Cloud Base</string>
+    <string name="pressure_trend_label">Pressure Trend</string>
+    <string name="earthquake_monitor_title">Nearby Earthquakes</string>
+    <string name="no_earthquakes_msg">No recent earthquakes nearby</string>
+    <string name="magnitude_label">Mag %1$.1f</string>
+    <string name="pressure_stable">Stable</string>
+    <string name="pressure_rising">Rising</string>
+    <string name="pressure_falling">Falling</string>
+    <!-- Specialized Features -->
+    <string name="altitude_label">Altitude</string>
+    <string name="timezone_label">Timezone</string>
+    <string name="activity_score_title">Outdoor Activities</string>
+    <string name="score_jogging">Jogging</string>
+    <string name="score_laundry">Laundry</string>
+    <string name="score_gardening">Gardening</string>
+    <string name="score_perfect">Perfect</string>
+    <string name="score_good">Good</string>
+    <string name="score_poor">Poor</string>
+    <string name="score_avoid">Avoid</string>
+    <string name="chart_wind_label">Wind (km/h)</string>
+    <string name="app_icon_theme_title">App Icon Theme</string>
+    <string name="icon_theme_google">Google Style</string>
+    <string name="icon_theme_minimal">Minimalist</string>
+    <string name="icon_theme_retro">Retro</string>
+    <string name="laundry_score_desc">Best conditions for drying outside</string>
+    <string name="jogging_score_desc">Ideal weather for a run</string>
+    <string name="gardening_score_desc">Check for frost or watering needs</string>
 </resources>

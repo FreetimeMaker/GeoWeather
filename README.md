@@ -44,7 +44,7 @@ GeoWeather is a modern Android weather application that allows you to monitor we
 
 - 🏙️ **Multiple Cities**: Add and manage unlimited cities with ease
 - 🌡️ **Unit Switching**: Switch between Celsius/Fahrenheit and km/h/mph
-- 📅 **7-Day Weather Forecast**: Detailed weather predictions for the entire week
+- 📅 **16-Day Weather Forecast**: Detailed weather predictions for more than two weeks
 - ⏰ **Hourly Forecast**: Precise weather data on an hourly basis
 - 🎨 **Material YOU**: Dynamic colors based on your wallpaper (Android 12+)
 - 🎨 **Weather Icons**: Visual representation of weather conditions

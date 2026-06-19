@@ -43,7 +43,7 @@
     <string name="PrecipitationTXT">Precipitation: %1$s%%</string>
     <string name="MaxWindTXT">Max Wind: %1$s km/h</string>
     <string name="HourlyForecastTXT">Hourly Forecast</string>
-    <string name="SevenDayForecastTXT">7-Day Forecast</string>
+    <string name="SevenDayForecastTXT">16-Day Forecast</string>
     <string name="WeatherDetailsTXT">Weather Details</string>
     <string name="AirQualityTXT">Air Quality Index</string>
     <string name="AQIGoodTXT">Good</string>

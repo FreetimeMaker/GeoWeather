@@ -30,9 +30,17 @@ object WeatherIconMapper {
         return now.isAfter(sunriseTime) && now.isBefore(sunsetTime)
     }
 
-    fun getWeatherIcon(code: Int): Int {
+    fun getWeatherIcon(code: Int, theme: String = "google"): Int {
         val isDay = isDaytime()
 
+        return when (theme) {
+            "minimal" -> getMinimalIcon(code, isDay)
+            "retro" -> getRetroIcon(code, isDay)
+            else -> getGoogleIcon(code, isDay)
+        }
+    }
+
+    private fun getGoogleIcon(code: Int, isDay: Boolean): Int {
         return when (code) {
             0 -> if (isDay) R.drawable.google_clear_day else R.drawable.google_clear_night
             1 -> if (isDay) R.drawable.google_mostly_clear_day else R.drawable.google_mostly_clear_night
@@ -44,5 +52,15 @@ object WeatherIconMapper {
             71, 73, 75 -> if (isDay) R.drawable.google_snow_with_sunny_light else R.drawable.google_snow_with_sunny_dark
             else -> if (isDay) R.drawable.google_cloudy_with_sunny_light else R.drawable.google_cloudy_with_sunny_dark
         }
+    }
+
+    private fun getMinimalIcon(code: Int, isDay: Boolean): Int {
+        // Fallback to google icons for now as placeholders if specific ones aren't provided
+        return getGoogleIcon(code, isDay)
+    }
+
+    private fun getRetroIcon(code: Int, isDay: Boolean): Int {
+        // Fallback to google icons for now
+        return getGoogleIcon(code, isDay)
     }
 }

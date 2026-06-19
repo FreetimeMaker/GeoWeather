@@ -52,10 +52,11 @@ class SettingsActivity : ComponentActivity() {
             val useSystemTheme = sharedPreferences.collectAsState(key = "use_system_theme", defaultValue = true)
             val darkModeEnabled = sharedPreferences.collectAsState(key = "dark_mode_enabled", defaultValue = false)
             val dynamicColor = sharedPreferences.collectAsState(key = "dynamic_color", defaultValue = true)
+            val oledBlackState = sharedPreferences.collectAsState(key = "oled_black", defaultValue = false)
 
             val darkTheme = if (useSystemTheme.value) isSystemInDarkTheme() else darkModeEnabled.value
             
-            GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor.value) {
+            GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor.value, oledBlack = oledBlackState.value) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     SettingsScreen(
                         modifier = Modifier.padding(innerPadding),
@@ -187,6 +188,10 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
         mutableStateOf(sharedPreferences.getBoolean("dynamic_color", true))
     }
 
+    var oledBlack by remember {
+        mutableStateOf(sharedPreferences.getBoolean("oled_black", false))
+    }
+
     var disablePrivateView by remember {
         mutableStateOf(sharedPreferences.getBoolean("disable_private_view", false))
     }
@@ -226,6 +231,10 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     val qweatherApiKeyState by sharedPreferences.collectStringAsState("qweather_api_key", "")
     var qweatherApiKey by remember { mutableStateOf(qweatherApiKeyState) }
     LaunchedEffect(qweatherApiKeyState) { qweatherApiKey = qweatherApiKeyState }
+
+    val iconThemeState by sharedPreferences.collectStringAsState("icon_theme", "google")
+    var iconTheme by remember { mutableStateOf(iconThemeState) }
+    LaunchedEffect(iconThemeState) { iconTheme = iconThemeState }
 
     var tempThreshold by remember {
         mutableStateOf(sharedPreferences.getInt("notif_temp_threshold", 5))
@@ -280,6 +289,41 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         sharedPreferences.edit().putBoolean("dynamic_color", it).apply()
                     }
                 )
+
+                SettingsToggle(
+                    title = stringResource(R.string.oled_black_title),
+                    subtitle = stringResource(R.string.oled_black_subtitle),
+                    checked = oledBlack,
+                    onCheckedChange = {
+                        oledBlack = it
+                        sharedPreferences.edit().putBoolean("oled_black", it).apply()
+                    }
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                    Text(stringResource(R.string.app_icon_theme_title), style = MaterialTheme.typography.bodyLarge)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(selected = iconTheme == "google", onClick = {
+                            iconTheme = "google"
+                            sharedPreferences.edit().putString("icon_theme", "google").apply()
+                        })
+                        Text(stringResource(R.string.icon_theme_google))
+                        Spacer(Modifier.width(8.dp))
+                        RadioButton(selected = iconTheme == "minimal", onClick = {
+                            iconTheme = "minimal"
+                            sharedPreferences.edit().putString("icon_theme", "minimal").apply()
+                        })
+                        Text(stringResource(R.string.icon_theme_minimal))
+                        Spacer(Modifier.width(8.dp))
+                        RadioButton(selected = iconTheme == "retro", onClick = {
+                            iconTheme = "retro"
+                            sharedPreferences.edit().putString("icon_theme", "retro").apply()
+                        })
+                        Text(stringResource(R.string.icon_theme_retro))
+                    }
+                }
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
 

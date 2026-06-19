@@ -43,7 +43,7 @@
     <string name="PrecipitationTXT">降水概率：%1$s%%</string>
     <string name="MaxWindTXT">最大风速：%1$s km/h</string>
     <string name="HourlyForecastTXT">逐时预报</string>
-    <string name="SevenDayForecastTXT">7-Day Forecast</string>
+    <string name="SevenDayForecastTXT">16-Day Forecast</string>
     <string name="WeatherDetailsTXT">天气详情</string>
     <string name="AirQualityTXT">空气质量指数</string>
     <string name="AQIGoodTXT">良好</string>

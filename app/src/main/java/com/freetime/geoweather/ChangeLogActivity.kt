@@ -34,10 +34,11 @@ class ChangeLogActivity : ComponentActivity() {
             val useSystemTheme = sharedPreferences.collectAsState(key = "use_system_theme", defaultValue = true)
             val darkModeEnabled = sharedPreferences.collectAsState(key = "dark_mode_enabled", defaultValue = false)
             val dynamicColor = sharedPreferences.collectAsState(key = "dynamic_color", defaultValue = true)
+            val oledBlack = sharedPreferences.collectAsState(key = "oled_black", defaultValue = false)
             
             val darkTheme = if (useSystemTheme.value) isSystemInDarkTheme() else darkModeEnabled.value
             
-            GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor.value) {
+            GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor.value, oledBlack = oledBlack.value) {
                 ChangeLogScreen(onBack = { finish() })
             }
         }
