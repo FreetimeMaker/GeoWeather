@@ -300,4 +300,37 @@
     <string name="wallet_addresses_title">Wallet Addresses</string>
     <string name="copy_address">Copy Address</string>
     <string name="address_copied">Address copied to clipboard</string>
+    <!-- Backup & Restore -->
+    <string name="backup_restore_title">Backup &amp; Restore</string>
+    <string name="export_locations">Export Locations</string>
+    <string name="import_locations">Import Locations</string>
+    <string name="export_success">Locations exported successfully</string>
+    <string name="import_success">Locations imported successfully</string>
+    <string name="export_failed">Export failed</string>
+    <string name="import_failed">Import failed</string>
+    <string name="pollen_alnus">Alder Pollen</string>
+    <string name="pollen_betula">Birch Pollen</string>
+    <string name="pollen_grass">Grass Pollen</string>
+    <string name="uv_index_label">UV Index: %1$s</string>
+    <string name="golden_hour_label">Golden Hour</string>
+    <string name="blue_hour_label">Blue Hour</string>
+    <string name="wind_direction_label">Direction</string>
+    <string name="gusts_label">Gusts</string>
+    <string name="weather_alerts_title">Weather Alerts</string>
+    <string name="alert_storm">Severe Storm Warning</string>
+    <string name="alert_snow">Heavy Snowfall Warning</string>
+    <string name="alert_thunderstorm">Thunderstorm Warning</string>
+    <string name="alert_heat">Extreme Heat Warning</string>
+    <string name="chart_temp_label">Temperature (°C)</string>
+    <string name="chart_rain_label">Rain Chance (%)</string>
+    <string name="open_weather_radar">Open Weather Radar</string>
+    <string name="chart_24h_title">24h Trend</string>
+    <string name="pollen_count_title">Pollen Count</string>
+    <string name="provider_free_desc">Free • No API key needed</string>
+    <string name="provider_premium_desc">Premium features available</string>
+    <string name="provider_tomorrow_desc">Real-time data &amp; forecasts</string>
+    <string name="provider_visual_desc">Historical &amp; detailed forecasts</string>
+    <string name="provider_owm_desc">Comprehensive weather data</string>
+    <string name="provider_qweather_desc">Moon phase &amp; astronomical data</string>
+    <string name="api_key_placeholder">Enter your API key</string>
 </resources>

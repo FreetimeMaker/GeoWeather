@@ -41,6 +41,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
+import android.graphics.drawable.Icon
 import androidx.lifecycle.lifecycleScope
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
@@ -85,6 +88,8 @@ class MainActivity : ComponentActivity() {
                 db.locationDao().getAllLocationsSync()
             }
             
+            updateAppShortcuts(locations)
+
             val defaultLoc = locations.find { it.isDefault }
             val targetLoc = defaultLoc ?: if (locations.size == 1) locations.first() else null
             
@@ -129,6 +134,26 @@ class MainActivity : ComponentActivity() {
                     }
                 )
             }
+        }
+    }
+
+    private fun updateAppShortcuts(locations: List<LocationEntity>) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            val shortcutManager = getSystemService(ShortcutManager::class.java)
+            val shortcuts = locations.take(3).map { loc ->
+                ShortcutInfo.Builder(this, "loc_${loc.id}")
+                    .setShortLabel(loc.name)
+                    .setLongLabel("Weather for ${loc.name}")
+                    .setIcon(Icon.createWithResource(this, R.mipmap.icon))
+                    .setIntent(Intent(this, WeatherDetailActivity::class.java).apply {
+                        action = Intent.ACTION_VIEW
+                        putExtra("name", loc.name)
+                        putExtra("lat", loc.latitude)
+                        putExtra("lon", loc.longitude)
+                    })
+                    .build()
+            }
+            shortcutManager.dynamicShortcuts = shortcuts
         }
     }
 

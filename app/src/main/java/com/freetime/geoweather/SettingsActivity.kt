@@ -27,6 +27,20 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import com.freetime.geoweather.data.LocationDatabase
+import com.freetime.geoweather.data.LocationEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+
 class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,8 +86,93 @@ class SettingsActivity : ComponentActivity() {
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val sharedPreferences = remember { 
         context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) 
+    }
+    val db = remember { LocationDatabase.getDatabase(context) }
+
+    val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        if (uri != null) {
+            scope.launch(Dispatchers.IO) {
+                try {
+                    val locations = db.locationDao().getAllLocationsSync()
+                    val root = JSONObject()
+                    val array = JSONArray()
+                    locations.forEach { loc ->
+                        val obj = JSONObject()
+                        obj.put("name", loc.name)
+                        obj.put("lat", loc.latitude)
+                        obj.put("lon", loc.longitude)
+                        obj.put("notif_enabled", loc.notificationsEnabled)
+                        obj.put("notif_time", loc.notificationTime)
+                        obj.put("alert_enabled", loc.changeAlertsEnabled)
+                        obj.put("alert_interval", loc.changeAlertInterval)
+                        obj.put("is_default", loc.isDefault)
+                        array.put(obj)
+                    }
+                    root.put("locations", array)
+                    root.put("version", 1)
+
+                    context.contentResolver.openOutputStream(uri)?.use { os ->
+                        OutputStreamWriter(os).use { writer ->
+                            writer.write(root.toString(4))
+                        }
+                    }
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, context.getString(R.string.export_success), Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        val errorMsg = context.getString(R.string.export_failed)
+                        Toast.makeText(context, "$errorMsg: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    val importLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            scope.launch(Dispatchers.IO) {
+                try {
+                    context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                        val reader = BufferedReader(InputStreamReader(inputStream))
+                        val content = reader.readText()
+                        val root = JSONObject(content)
+                        val array = root.getJSONArray("locations")
+                        
+                        for (i in 0 until array.length()) {
+                            val obj = array.getJSONObject(i)
+                            val lat = obj.getDouble("lat")
+                            val lon = obj.getDouble("lon")
+                            
+                            val existing = db.locationDao().findByCoordinates(lat, lon)
+                            if (existing == null) {
+                                db.locationDao().insertLocation(LocationEntity(
+                                    name = obj.getString("name"),
+                                    latitude = lat,
+                                    longitude = lon,
+                                    notificationsEnabled = obj.optBoolean("notif_enabled", false),
+                                    notificationTime = obj.optString("notif_time", "08:00"),
+                                    changeAlertsEnabled = obj.optBoolean("alert_enabled", false),
+                                    changeAlertInterval = obj.optString("alert_interval", "3"),
+                                    isDefault = obj.optBoolean("is_default", false)
+                                ))
+                            }
+                        }
+                    }
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, context.getString(R.string.import_success), Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        val errorMsg = context.getString(R.string.import_failed)
+                        Toast.makeText(context, "$errorMsg: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
     }
     
     var darkModeEnabled by remember {
@@ -347,7 +446,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     })
                     Column(modifier = Modifier.weight(1f)) {
                         Text(stringResource(R.string.provider_open_meteo))
-                        Text("Free • No API key needed", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.provider_free_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
 
@@ -361,7 +460,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     })
                     Column(modifier = Modifier.weight(1f)) {
                         Text(stringResource(R.string.provider_weatherapi))
-                        Text("Premium features available", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.provider_premium_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 if (weatherProvider == "weatherapi") {
@@ -371,7 +470,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             weatherApiKey = newValue
                             sharedPreferences.edit().putString("weather_api_key", newValue).apply()
                         },
-                        label = { Text("4b8e41d9bef94794b34135527260305") },
+                        label = { Text(stringResource(R.string.api_key_placeholder)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -389,7 +488,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     })
                     Column(modifier = Modifier.weight(1f)) {
                         Text("Tomorrow.io")
-                        Text("Real-time data & forecasts", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.provider_tomorrow_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 if (weatherProvider == "tomorrow_io") {
@@ -399,7 +498,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             tomorrowIoApiKey = newValue
                             sharedPreferences.edit().putString("tomorrow_io_api_key", newValue).apply()
                         },
-                        label = { Text("1juesmq1kUlzS1yEgrrlQ7vcsBjnn0rK") },
+                        label = { Text(stringResource(R.string.api_key_placeholder)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -417,7 +516,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     })
                     Column(modifier = Modifier.weight(1f)) {
                         Text("Visual Crossing")
-                        Text("Historical & detailed forecasts", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.provider_visual_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 if (weatherProvider == "visualcrossing") {
@@ -427,7 +526,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             visualCrossingApiKey = newValue
                             sharedPreferences.edit().putString("visual_crossing_api_key", newValue).apply()
                         },
-                        label = { Text("DEARG386HZK9BMA24V49NT6A9") },
+                        label = { Text(stringResource(R.string.api_key_placeholder)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -445,7 +544,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     })
                     Column(modifier = Modifier.weight(1f)) {
                         Text("OpenWeatherMap")
-                        Text("Comprehensive weather data", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.provider_owm_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 if (weatherProvider == "openweathermap") {
@@ -455,7 +554,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             openWeatherMapApiKey = newValue
                             sharedPreferences.edit().putString("open_weather_map_api_key", newValue).apply()
                         },
-                        label = { Text("a11917f9dbb0347bf7a11c311c007d83") },
+                        label = { Text(stringResource(R.string.api_key_placeholder)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -473,7 +572,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     })
                     Column(modifier = Modifier.weight(1f)) {
                         Text("QWeather")
-                        Text("Moon phase & astronomical data", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.provider_qweather_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 if (weatherProvider == "qweather") {
@@ -483,12 +582,41 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             qweatherApiKey = newValue
                             sharedPreferences.edit().putString("qweather_api_key", newValue).apply()
                         },
-                        label = { Text("d5184299458c441b92ab98075c4a7928") },
+                        label = { Text(stringResource(R.string.api_key_placeholder)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                         singleLine = true
                     )
+                }
+            }
+        }
+
+        Text(
+            text = stringResource(R.string.backup_restore_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Button(
+                    onClick = { exportLauncher.launch("geoweather_backup.json") },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.export_locations))
+                }
+                
+                OutlinedButton(
+                    onClick = { importLauncher.launch(arrayOf("application/json")) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.import_locations))
                 }
             }
         }
