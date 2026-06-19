@@ -372,4 +372,9 @@
     <string name="laundry_score_desc">Best conditions for drying outside</string>
     <string name="jogging_score_desc">Ideal weather for a run</string>
     <string name="gardening_score_desc">Check for frost or watering needs</string>
+    <string name="donation_mission_title">Why support GeoWeather?</string>
+    <string name="donation_mission_text">GeoWeather is 100% free, open-source, and has no ads or trackers. Your donations help cover API costs and support the ongoing development of this and other privacy-focused apps. Every contribution, no matter how small, keeps this project alive. Thank you! ❤️</string>
+    <string name="main_donation_hint">Enjoying GeoWeather? Support the development</string>
+    <string name="about_developer_title">About the Developer</string>
+    <string name="about_developer_text">Hi! I\'m Freetime Maker, the creator of GeoWeather. I started this project because I wanted a weather app that is clean, fast, and respects user privacy above all else. This app is developed in my spare time with passion for open-source software. Your support allows me to keep improving it and exploring new features for the community!</string>
 </resources>

@@ -224,4 +224,9 @@
     <string name="laundry_score_desc">Beste Bedingungen zum Trocknen im Freien</string>
     <string name="jogging_score_desc">Ideales Wetter für eine Laufrunde</string>
     <string name="gardening_score_desc">Prüfe auf Frostgefahr oder Bewässerungsbedarf</string>
+    <string name="donation_mission_title">Warum GeoWeather unterstützen?</string>
+    <string name="donation_mission_text">GeoWeather ist 100 % kostenlos, quelloffen und enthält keine Werbung oder Tracker. Deine Spenden helfen dabei, die API-Kosten zu decken und die kontinuierliche Entwicklung dieser und anderer datenschutzorientierter Apps zu unterstützen. Jeder Beitrag, egal wie klein, hält dieses Projekt am Leben. Vielen Dank! ❤️</string>
+    <string name="main_donation_hint">Gefällt dir GeoWeather? Unterstütze die Entwicklung</string>
+    <string name="about_developer_title">Über den Entwickler</string>
+    <string name="about_developer_text">Hallo! Ich bin Freetime Maker, der Schöpfer von GeoWeather. Ich habe dieses Projekt gestartet, weil ich eine Wetter-App wollte, die schlank und schnell ist und die Privatsphäre der Nutzer über alles andere stellt. Diese App wird in meiner Freizeit mit Leidenschaft für Open-Source-Software entwickelt. Deine Unterstützung ermöglicht es mir, sie weiter zu verbessern und neue Funktionen für die Community zu erforschen!</string>
 </resources>
