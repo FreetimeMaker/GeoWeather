@@ -353,4 +353,9 @@
     <string name="score_perfect">Perfecta</string>
     <string name="score_good">Buena</string>
     <string name="open_weather_radar">Abrir radar meteorológico</string>
+    <string name="donation_mission_title">¿Por qué apoyar a GeoWeather?</string>
+    <string name="donation_mission_text">GeoWeather es 100% gratuito, de código abierto y libre de anuncios o rastreadores. Tus donaciones nos ayudan a cubrir los gastos y a mantener el desarrollo de esta y otras aplicaciones enfocadas en la privacidad. Cada aporte, por pequeño que sea, ayuda a que este proyecto siga adelante. ¡Muchas gracias! ❤️</string>
+    <string name="main_donation_hint">¿Te gusta GeoWeather? Apoya su desarrollo</string>
+    <string name="about_developer_title">Acerca del desarrollador</string>
+    <string name="about_developer_text">¡Buenas! Soy Freetime Maker, creador de GeoWeather. Diseñé esta aplicación porque buscaba una herramienta del clima que fuese ágil, limpia y, sobre todo, respetuosa con la privacidad. Desarrollo este proyecto en mis ratos libres, impulsado por mi pasión hacia el software libre. ¡Gracias a tu apoyo puedo seguir optimizándola y creando nuevas opciones para toda la comunidad!</string>
 </resources>
