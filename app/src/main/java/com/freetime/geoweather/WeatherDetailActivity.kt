@@ -377,7 +377,7 @@ fun WeatherDetailScreen(
                 }
 
                 item {
-                    HourlyForecastSection(hourlyForecastList, tempUnit)
+                    HourlyForecastSection(hourlyForecastList, tempUnit, iconTheme)
                 }
 
                 item {
@@ -388,6 +388,7 @@ fun WeatherDetailScreen(
                             ForecastItemRow(
                                 forecast = forecast,
                                 tempUnit = tempUnit,
+                                iconTheme = iconTheme,
                                 isSelected = selectedDayIndex == index,
                                 onClick = { selectedDayIndex = if (selectedDayIndex == index) -1 else index }
                             )
@@ -421,7 +422,7 @@ fun WeatherDetailScreen(
 
                 if (onThisDayData != null) {
                     item {
-                        OnThisDaySection(onThisDayData!!, tempUnit)
+                        OnThisDaySection(onThisDayData!!, tempUnit, iconTheme)
                     }
                 }
 
@@ -516,7 +517,7 @@ fun SnowEffect(transition: InfiniteTransition) {
 }
 
 @Composable
-fun ForecastItemRow(forecast: DailyForecast, tempUnit: String, isSelected: Boolean, onClick: () -> Unit) {
+fun ForecastItemRow(forecast: DailyForecast, tempUnit: String, iconTheme: String, isSelected: Boolean, onClick: () -> Unit) {
     val tempSuffix = stringResource(R.string.temp_deg_suffix)
     val displayMax = if (tempUnit == "fahrenheit") (forecast.tempMax * 9/5 + 32).toInt() else forecast.tempMax.toInt()
     val displayMin = if (tempUnit == "fahrenheit") (forecast.tempMin * 9/5 + 32).toInt() else forecast.tempMin.toInt()
@@ -533,8 +534,7 @@ fun ForecastItemRow(forecast: DailyForecast, tempUnit: String, isSelected: Boole
                 supportingContent = { Text(WeatherCodes.getDescription(forecast.weatherCode, LocalContext.current)) },
                 trailingContent = { Text("$displayMax$tempSuffix / $displayMin$tempSuffix", fontWeight = FontWeight.Bold) },
                 leadingContent = { 
-                    val iconTheme = remember { mutableStateOf("google") } // Placeholder, better if passed as param
-                    Icon(painter = painterResource(WeatherIconMapper.getWeatherIcon(forecast.weatherCode, "google")), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified) 
+                    Icon(painter = painterResource(WeatherIconMapper.getWeatherIcon(forecast.weatherCode, iconTheme)), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified)
                 },
                 colors = ListItemDefaults.colors(containerColor = Color.Transparent)
             )
@@ -550,7 +550,7 @@ fun ForecastItemRow(forecast: DailyForecast, tempUnit: String, isSelected: Boole
 }
 
 @Composable
-fun OnThisDaySection(data: DailyForecast, tempUnit: String) {
+fun OnThisDaySection(data: DailyForecast, tempUnit: String, iconTheme: String) {
     val tempSuffix = stringResource(R.string.temp_deg_suffix)
     val displayMax = if (tempUnit == "fahrenheit") (data.tempMax * 9/5 + 32).toInt() else data.tempMax.toInt()
     val displayMin = if (tempUnit == "fahrenheit") (data.tempMin * 9/5 + 32).toInt() else data.tempMin.toInt()
@@ -900,7 +900,7 @@ fun DetailItem(label: String, value: String, valueColor: Color = MaterialTheme.c
 }
 
 @Composable
-fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String) {
+fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String, iconTheme: String) {
     val tempSuffix = if (tempUnit == "fahrenheit") stringResource(R.string.temp_f_suffix) else stringResource(R.string.temp_c_suffix)
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(stringResource(R.string.hourly_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
@@ -911,7 +911,7 @@ fun HourlyForecastSection(list: List<HourlyForecast>, tempUnit: String) {
                 Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest)) {
                     Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(forecast.time, style = MaterialTheme.typography.labelMedium)
-                        Icon(painter = painterResource(WeatherIconMapper.getWeatherIcon(forecast.weatherCode)), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified)
+                        Icon(painter = painterResource(WeatherIconMapper.getWeatherIcon(forecast.weatherCode, iconTheme)), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified)
                         Text("$displayTemp$tempSuffix", style = MaterialTheme.typography.titleSmall)
                         Text(text = stringResource(R.string.rain_amount_label, formatRainAmount(forecast.precipitationMm)), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                     }
