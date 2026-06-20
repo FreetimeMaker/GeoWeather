@@ -1,42 +1,44 @@
-GeoWeather - Your Modern Weather App for Android
+GeoWeather - Your Modern, Privacy-First Weather App
 
-Experience an intuitive weather application inspired by the Swiss MeteoSwiss app. GeoWeather provides you with precise weather information for multiple cities with an elegant user interface.
+Experience an intuitive weather application inspired by the Swiss MeteoSwiss app. GeoWeather provides you with precise weather information for multiple cities with an elegant, Material You interface.
 
 🌟 KEY FEATURES:
 
-🏙️ MULTIPLE CITIES
+🏙️ MULTIPLE CITIES & SHORTCUTS
 - Add unlimited cities to your list
-- Quick switching between different locations
-- Personal favorites list
+- Quick switching between locations
+- App Shortcuts: Jump to your top cities directly from the homescreen
 
-📅 3 to 7-DAY FORECAST
-- Detailed weather predictions for the entire week (With Premium Plan)
-- Temperature trends and precipitation probability
-- Wind speed and humidity information
+📅 UP TO 16-DAY FORECAST
+- Extended 16-day weather predictions (Open-Meteo)
+- 24h Trend charts for temperature and precipitation
+- Wind speed, gusts, and humidity information
 
-⏰ HOURLY UPDATES
-- Precise weather data on an hourly basis
-- Optimal planning for your day
-- Real-time updates for weather changes
+⏰ TECHNICAL & GEOLOGICAL DATA
+- Wind Compass for direction and speed
+- Barometer with 3h pressure trends
+- Visibility and Cloud Base height
+- Integrated Earthquake monitor for nearby geological activity
 
-🎨 VISUAL REPRESENTATION
-- Beautiful weather icons for every condition
-- Clear and comprehensive graphics
-- Modern Material Design interface
+🏥 HEALTH & ENVIRONMENT
+- UV-Index with color-coded risk levels
+- Air Pollutants (PM2.5, PM10, NO2, O3)
+- Pollen count (Alder, Birch, Grass)
+- Outdoor Activity Score (Jogging, Laundry, Gardening)
 
-🔔 SMART NOTIFICATIONS
-- Weather alerts for your locations
-- Personal notification settings
-- Daily weather summaries
+🌗 ASTRONOMY & PHOTOGRAPHY
+- Graphical Moon Phase display
+- Golden Hour and Blue Hour windows for photographers
+- Precise sunrise and sunset times
 
-💳 DONATION FEATURE
-- Support continued development
-- Voluntary support for open source
-- More Saving and more Features (With Premium Plan)
+🎨 CUSTOMIZATION
+- Material You: Dynamic colors based on your wallpaper
+- OLED Black Mode for AMOLED screens
+- Custom App Icon Themes (Google, Minimalist, Retro)
 
-🛠️ MODERN TECHNOLOGY
-- Developed with Jetpack Compose for smooth performance
-- Native Android development with Kotlin
-- Regular updates and new features
+🛡️ 100% PRIVATE & OPEN SOURCE
+- No account required, no login needed
+- No trackers, no advertisements
+- Local JSON Backup & Restore for your cities
 
-Perfect for daily weather checks, travel planning, or simply staying informed. Download GeoWeather now and experience weather in a whole new way!
+Perfect for daily weather checks, travel planning, or simply staying informed without being tracked. Download GeoWeather now!

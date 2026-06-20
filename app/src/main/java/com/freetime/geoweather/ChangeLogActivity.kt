@@ -97,6 +97,25 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v2.1.0" to listOf(
+            "Extended forecast to 16 days for Open-Meteo.",
+            "Added 24h Trend charts for temperature and precipitation.",
+            "Added Wind Compass and Gust information.",
+            "Integrated Weather Radar via Windy.com.",
+            "Added UV-Index and detailed Air Quality/Pollutants (PM2.5, NO2, O3).",
+            "Added Pollen count information.",
+            "Added Earthquake monitor for nearby geological activity.",
+            "Added local JSON Backup & Restore for locations.",
+            "Added OLED Black Mode for AMOLED screens.",
+            "Enhanced Moon Phase display with graphical icons.",
+            "Added Photography info: Golden Hour and Blue Hour.",
+            "Added technical data: Altitude, Timezone, Visibility, and Cloud Base.",
+            "Added App Icon Themes: choose between Google Style, Minimalist, or Retro.",
+            "Added Outdoor Activity Score (Jogging, Laundry, Gardening).",
+            "Added App Shortcuts: jump to top 3 cities from your homescreen.",
+            "Fixed background notifications and added per-city notification toggles.",
+            "Removed all account and login requirements for total privacy."
+        ),
         "v2.0.0" to listOf(
             "Added More Weather Provider and changed a few things"
         ),
@@ -228,7 +247,7 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             stringResource(R.string.cl_moon_phase)
         ),
         "v1.3.3" to listOf(
-            "stringResource(R.string.cl_coordinate_search)",
+            stringResource(R.string.cl_coordinate_search),
             stringResource(R.string.cl_state_in_search),
             stringResource(R.string.cl_material_you)
         ),
