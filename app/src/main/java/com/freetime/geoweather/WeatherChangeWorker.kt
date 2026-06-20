@@ -34,36 +34,38 @@ class WeatherChangeWorker(
             val db = LocationDatabase.getDatabase(applicationContext)
             val sharedPreferences = applicationContext.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE)
             
-            val selectedLocation = db.locationDao().getSelectedLocation()
+            val alertLocations = db.locationDao().getAllLocationsSync().filter { it.changeAlertsEnabled }
             
-            if (selectedLocation != null && selectedLocation.changeAlertsEnabled) {
-                try {
-                    val currentWeather = fetchCurrentWeatherData(selectedLocation.latitude, selectedLocation.longitude)
-                    val weatherCode = if (currentWeather.has("weather_code")) currentWeather.getInt("weather_code") 
-                                     else if (currentWeather.has("weathercode")) currentWeather.getInt("weathercode")
-                                     else 0
-                    val currentSnapshot = WeatherSnapshot(
-                        temperature = currentWeather.getDouble("temperature"),
-                        windSpeed = currentWeather.optDouble("windspeed", 0.0),
-                        precipitation = currentWeather.optDouble("precipitation", 0.0),
-                        weatherCode = weatherCode,
-                        timestamp = System.currentTimeMillis()
-                    )
+            if (alertLocations.isNotEmpty()) {
+                alertLocations.forEach { location ->
+                    try {
+                        val currentWeather = fetchCurrentWeatherData(location.latitude, location.longitude)
+                        val weatherCode = if (currentWeather.has("weather_code")) currentWeather.getInt("weather_code") 
+                                         else if (currentWeather.has("weathercode")) currentWeather.getInt("weathercode")
+                                         else 0
+                        val currentSnapshot = WeatherSnapshot(
+                            temperature = currentWeather.getDouble("temperature"),
+                            windSpeed = currentWeather.optDouble("windspeed", 0.0),
+                            precipitation = currentWeather.optDouble("precipitation", 0.0),
+                            weatherCode = weatherCode,
+                            timestamp = System.currentTimeMillis()
+                        )
 
-                    val lastSnapshot = getLastWeatherSnapshot(applicationContext, selectedLocation.id)
+                        val lastSnapshot = getLastWeatherSnapshot(applicationContext, location.id)
 
-                    if (lastSnapshot != null) {
-                        val tempThreshold = sharedPreferences.getInt("notif_temp_threshold", 5).toDouble()
-                        val windThreshold = sharedPreferences.getInt("notif_wind_threshold", 15).toDouble()
-                        
-                        val changes = detectWeatherChanges(applicationContext, lastSnapshot, currentSnapshot, tempThreshold, windThreshold)
-                        if (changes.isNotEmpty()) {
-                            sendWeatherChangeAlert(applicationContext, selectedLocation.name, changes, selectedLocation.id)
+                        if (lastSnapshot != null) {
+                            val tempThreshold = sharedPreferences.getInt("notif_temp_threshold", 5).toDouble()
+                            val windThreshold = sharedPreferences.getInt("notif_wind_threshold", 15).toDouble()
+                            
+                            val changes = detectWeatherChanges(applicationContext, lastSnapshot, currentSnapshot, tempThreshold, windThreshold)
+                            if (changes.isNotEmpty()) {
+                                sendWeatherChangeAlert(applicationContext, location.name, changes, location.id)
+                            }
                         }
-                    }
 
-                    saveWeatherSnapshot(applicationContext, currentSnapshot, selectedLocation.id)
-                } catch (_: Exception) {}
+                        saveWeatherSnapshot(applicationContext, currentSnapshot, location.id)
+                    } catch (_: Exception) {}
+                }
             }
             
             Result.success()

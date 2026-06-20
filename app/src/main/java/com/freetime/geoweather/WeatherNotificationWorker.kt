@@ -39,42 +39,38 @@ class WeatherNotificationWorker(
             
             val db = LocationDatabase.getDatabase(applicationContext)
             
-            // Only send notifications for the selected location
-            val selectedLocation = db.locationDao().getSelectedLocation()
+            val notificationLocations = db.locationDao().getAllLocationsSync().filter { it.notificationsEnabled }
             
-            if (selectedLocation != null && selectedLocation.notificationsEnabled) {
-                try {
-                    // Fetch current weather data for the selected location
-                    val weatherData = fetchWeatherData(selectedLocation.latitude, selectedLocation.longitude)
-                    val temp = weatherData.getDouble("temperature")
-                    val weatherCode = if (weatherData.has("weather_code")) weatherData.getInt("weather_code") 
-                                     else if (weatherData.has("weathercode")) weatherData.getInt("weathercode")
-                                     else 0
-                    val weatherDescription = WeatherCodes.getDescription(weatherCode, applicationContext)
-                    val windSpeed = weatherData.optDouble("windspeed", 0.0)
+            if (notificationLocations.isNotEmpty()) {
+                notificationLocations.forEach { location ->
+                    try {
+                        val weatherData = fetchWeatherData(location.latitude, location.longitude)
+                        val temp = weatherData.getDouble("temperature")
+                        val weatherCode = if (weatherData.has("weather_code")) weatherData.getInt("weather_code") 
+                                         else if (weatherData.has("weathercode")) weatherData.getInt("weathercode")
+                                         else 0
+                        val weatherDescription = WeatherCodes.getDescription(weatherCode, applicationContext)
+                        val windSpeed = weatherData.optDouble("windspeed", 0.0)
 
-                    // Check for severe weather
-                    if (weatherCode in listOf(95, 96, 99) || windSpeed > 75.0 || temp > 35.0 || temp < -15.0) {
-                        sendSevereWeatherAlert(applicationContext, selectedLocation.name, weatherCode, temp, windSpeed)
+                        if (weatherCode in listOf(95, 96, 99) || windSpeed > 75.0 || temp > 35.0 || temp < -15.0) {
+                            sendSevereWeatherAlert(applicationContext, location.name, weatherCode, temp, windSpeed)
+                        }
+
+                        sendWeatherNotification(
+                            applicationContext, 
+                            location.name, 
+                            location.latitude,
+                            location.longitude,
+                            temp, 
+                            weatherDescription,
+                            location.id
+                        )
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error fetching weather for ${location.name}", e)
                     }
-
-                    Log.d(TAG, "Preparing notification for ${selectedLocation.name}: $temp, $weatherDescription")
-
-                    // Send notification for this location
-                    sendWeatherNotification(
-                        applicationContext, 
-                        selectedLocation.name, 
-                        selectedLocation.latitude,
-                        selectedLocation.longitude,
-                        temp, 
-                        weatherDescription,
-                        selectedLocation.id
-                    )
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error fetching weather for selected location", e)
                 }
             } else {
-                Log.d(TAG, "No selected location with notifications enabled")
+                Log.d(TAG, "No locations with notifications enabled")
             }
             
             Result.success()

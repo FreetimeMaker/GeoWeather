@@ -112,16 +112,6 @@ fun DonateScreen(onBack: () -> Unit) {
                 context.startActivity(intent)
             }
 
-            DonateButton(text = "Donate via Open Collective (Freetime Maker)") {
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://opencollective.com/freetimemaker"))
-                context.startActivity(intent)
-            }
-
-            DonateButton(text = "Donate via Open Collective (GeoWeather)") {
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://opencollective.com/freetimemaker/projects/geoweather"))
-                context.startActivity(intent)
-            }
-
             Text(
                 text = stringResource(R.string.crypto_label),
                 style = MaterialTheme.typography.titleMedium,

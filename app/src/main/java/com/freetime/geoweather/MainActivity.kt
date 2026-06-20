@@ -26,6 +26,8 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -309,6 +311,17 @@ fun MainScreen(
                         supportingContent = { Text(stringResource(R.string.coordinates_label, loc.latitude, loc.longitude)) },
                         trailingContent = {
                             Row {
+                                IconButton(onClick = {
+                                    scope.launch(Dispatchers.IO) {
+                                        db.locationDao().updateLocation(loc.copy(notificationsEnabled = !loc.notificationsEnabled))
+                                    }
+                                }) {
+                                    Icon(
+                                        if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
+                                        contentDescription = "Toggle Notifications",
+                                        tint = if (loc.notificationsEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                                 IconButton(onClick = {
                                     scope.launch(Dispatchers.IO) {
                                         if (loc.isDefault) {

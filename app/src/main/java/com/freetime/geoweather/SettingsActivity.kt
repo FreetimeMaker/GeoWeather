@@ -93,6 +93,11 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     }
     val db = remember { LocationDatabase.getDatabase(context) }
 
+    val exportSuccess = stringResource(R.string.export_success)
+    val exportFailed = stringResource(R.string.export_failed)
+    val importSuccess = stringResource(R.string.import_success)
+    val importFailed = stringResource(R.string.import_failed)
+
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         if (uri != null) {
             scope.launch(Dispatchers.IO) {
@@ -121,12 +126,11 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         }
                     }
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, context.getString(R.string.export_success), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, exportSuccess, Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        val errorMsg = context.getString(R.string.export_failed)
-                        Toast.makeText(context, "$errorMsg: ${e.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "$exportFailed: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -164,12 +168,11 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         }
                     }
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, context.getString(R.string.import_success), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, importSuccess, Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        val errorMsg = context.getString(R.string.import_failed)
-                        Toast.makeText(context, "$errorMsg: ${e.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "$importFailed: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
             }
