@@ -98,107 +98,108 @@ fun ReleaseCard(
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
         "v2.1.0" to listOf(
-            "Extended forecast to 16 days for Open-Meteo.",
-            "Added 24h Trend charts for temperature and precipitation.",
-            "Added Wind Compass and Gust information.",
-            "Integrated Weather Radar via Windy.com.",
-            "Added UV-Index and detailed Air Quality/Pollutants (PM2.5, NO2, O3).",
-            "Added Pollen count information.",
-            "Added Earthquake monitor for nearby geological activity.",
-            "Added local JSON Backup & Restore for locations.",
-            "Added OLED Black Mode for AMOLED screens.",
-            "Enhanced Moon Phase display with graphical icons.",
-            "Added Photography info: Golden Hour and Blue Hour.",
-            "Added technical data: Altitude, Timezone, Visibility, and Cloud Base.",
-            "Added App Icon Themes: choose between Google Style, Minimalist, or Retro.",
-            "Added Outdoor Activity Score (Jogging, Laundry, Gardening).",
-            "Added App Shortcuts: jump to top 3 cities from your homescreen.",
-            "Fixed background notifications and added per-city notification toggles.",
-            "Removed all account and login requirements for total privacy."
+            stringResource(R.string.cl_210_forecast),
+            stringResource(R.string.cl_210_charts),
+            stringResource(R.string.cl_210_wind),
+            stringResource(R.string.cl_210_radar),
+            stringResource(R.string.cl_210_aqi),
+            stringResource(R.string.cl_210_pollen),
+            stringResource(R.string.cl_210_earthquake),
+            stringResource(R.string.cl_210_backup),
+            stringResource(R.string.cl_210_oled),
+            stringResource(R.string.cl_210_moon),
+            stringResource(R.string.cl_210_photography),
+            stringResource(R.string.cl_210_technical),
+            stringResource(R.string.cl_210_icons),
+            stringResource(R.string.cl_210_scores),
+            stringResource(R.string.cl_210_shortcuts),
+            stringResource(R.string.cl_210_notifs),
+            stringResource(R.string.cl_210_privacy),
+            stringResource(R.string.cl_210_noads)
         ),
         "v2.0.0" to listOf(
-            "Added More Weather Provider and changed a few things"
+            stringResource(R.string.cl_200_desc)
         ),
         "v1.9.0" to listOf(
-            "Added 2 new Settings for the Webview: You can disable the PrivacyWebView or you can open it in your External Browser."
+            stringResource(R.string.cl_190_webview)
         ),
         "v1.8.1" to listOf(
-            "Reseted the WeatherDetailActivity and more to v1.3.8"
+            stringResource(R.string.cl_181_reset)
         ),
         "v1.8.0" to listOf(
-            "Deleted the Repository Files so Weather Data will be coming from the Weather Detail Activity again."
+            stringResource(R.string.cl_180_repository)
         ),
         "v1.7.2" to listOf(
-            "Fixed Home screen weather display issues by switching to ID-based location lookups.",
-            "Resolved persistent loading issues with improved provider fallbacks.",
-            "Improved GitHub/Modrinth login reliability and automated profile syncing.",
-            "Added manual refresh button to the Home screen for instant updates."
+            stringResource(R.string.cl_172_home),
+            stringResource(R.string.cl_172_fallbacks),
+            stringResource(R.string.cl_172_login),
+            stringResource(R.string.cl_172_refresh)
         ),
         "v1.7.1" to listOf(
-            "Resolved weather loading issues by adding robust fallbacks to Open-Meteo.",
-            "Home screen now correctly displays up-to-date weather data with automatic and manual refresh options.",
-            "Improved GitHub and Modrinth login stability and fixed deep-link redirection.",
-            "Added full icon support for Tomorrow.io, including day/night variations.",
-            "Enhanced local database caching to ensure weather data is available instantly."
+            stringResource(R.string.cl_171_weather),
+            stringResource(R.string.cl_171_home_refresh),
+            stringResource(R.string.cl_171_login_stable),
+            stringResource(R.string.cl_171_tomorrow_icons),
+            stringResource(R.string.cl_171_cache)
         ),
         "v1.7.0" to listOf(
-            "Full transition to a local-first system. Weather data and geocoding are now fetched directly from providers.",
-            "Added support for Modrinth login. GitHub login now uses the official Supabase SDK for better stability.",
-            "Direct Supabase integration for location and user profile synchronization.",
-            "Integrated Tomorrow.io and Visual Crossing support (keys can be added in settings).",
-            "Added immediate cache display for weather to eliminate loading wait times.",
-            "Fixed deep-link redirection and resolved various UI and translation bugs."
+            stringResource(R.string.cl_170_local),
+            stringResource(R.string.cl_170_supabase),
+            stringResource(R.string.cl_170_sync),
+            stringResource(R.string.cl_170_providers),
+            stringResource(R.string.cl_170_cache_display),
+            stringResource(R.string.cl_170_fixes)
         ),
         "v1.6.0" to listOf(
-            "Added Modrinth Login and More"
+            stringResource(R.string.cl_160_modrinth)
         ),
         "v1.5.8" to listOf(
-          "Added support for multiple weather providers via custom API.",
-          "Integrated subscription tiers (Free, Freemium, Premium) visibility.",
-          "Resolved endless loading screen when weather data fetching fails.",
-          "Improved Account screen with plan details and logout options.",
-          "Full transition from hardcoded text to localized resources."
+            stringResource(R.string.cl_158_providers),
+            stringResource(R.string.cl_158_tiers),
+            stringResource(R.string.cl_158_loading),
+            stringResource(R.string.cl_158_account),
+            stringResource(R.string.cl_158_localization)
         ),
         "v1.5.7" to listOf(
-            "Replaced all hardcoded German and non-English strings with English resources",
-            "Improved UI localization and consistency",
-            "Updated versioning and internal string management"
+            stringResource(R.string.cl_157_strings),
+            stringResource(R.string.cl_157_localization),
+            stringResource(R.string.cl_157_versioning)
         ),
         "v1.5.6" to listOf(
-            "Updated Authentication flow with improved Bearer token support",
-            "Added background synchronization for smoother user experience",
-            "Integrated authenticated weather data fetching",
-            "Added new translations (Mara)",
-            "Improved app stability and fixed minor UI issues"
+            stringResource(R.string.cl_156_auth),
+            stringResource(R.string.cl_156_bg_sync),
+            stringResource(R.string.cl_156_weather),
+            stringResource(R.string.cl_156_translations),
+            stringResource(R.string.cl_156_stability)
         ),
         "v1.5.5" to listOf(
-            "Added Cloud Synchronization for favorite locations",
-            "Added manual 'Sync with Cloud' button in Account settings",
-            "Automatic background synchronization on startup and login",
-            "Improved data persistence and cross-device availability"
+            stringResource(R.string.cl_155_cloud),
+            stringResource(R.string.cl_155_sync_btn),
+            stringResource(R.string.cl_155_auto_sync),
+            stringResource(R.string.cl_155_persistence)
         ),
         "v1.5.4" to listOf(
-            "Added support for user profile pictures from API",
-            "Moved weather history section to Weather Detail view",
-            "Improved Open-Meteo API compatibility and weather loading",
-            "Fixed weather history icon in Main Screen",
-            "Added image loading support with Coil"
+            stringResource(R.string.cl_154_profile),
+            stringResource(R.string.cl_154_history),
+            stringResource(R.string.cl_154_openmeteo),
+            stringResource(R.string.cl_154_icons),
+            stringResource(R.string.cl_154_coil)
         ),
         "v1.5.3" to listOf(
-            "Implemented GitHub OAuth authentication via API",
-            "Login is now optional and managed via Settings",
-            "Improved deep link handling for authentication callback",
-            "Fixed resource merging and translation issues",
-            "Updated Weather Icon mapping for better day/night accuracy"
+            stringResource(R.string.cl_153_github),
+            stringResource(R.string.cl_153_optional),
+            stringResource(R.string.cl_153_deeplink),
+            stringResource(R.string.cl_153_merge),
+            stringResource(R.string.cl_153_icons)
         ),
         "v1.5.2" to listOf(
-            "Added Authentication & User Profile support",
-            "Added 'Require Login' security setting",
-            "Added Historical Weather Trends (Last 3 days)",
-            "Added 7-day forecast support for PRO users",
-            "Improved API error handling and stability",
-            "Added date labels to historical charts",
-            "Optimized background workers and widget for security"
+            stringResource(R.string.cl_152_auth),
+            stringResource(R.string.cl_152_login_setting),
+            stringResource(R.string.cl_152_history),
+            stringResource(R.string.cl_152_pro),
+            stringResource(R.string.cl_152_api),
+            stringResource(R.string.cl_152_charts),
+            stringResource(R.string.cl_152_workers)
         ),
         "v1.5.1" to listOf(
             stringResource(R.string.cl_v143_fix_start)
@@ -216,27 +217,27 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             stringResource(R.string.cl_v139_fix_dons)
         ),
         "v1.3.8" to listOf(
-            "${stringResource(R.string.cl_v138_ca)}"
+            stringResource(R.string.cl_v138_ca)
         ),
         "v1.3.7" to listOf(
-            "${stringResource(R.string.cl_v137_ci_cd)}",
-            "${stringResource(R.string.cl_v137_signing)}",
-            "${stringResource(R.string.cl_v137_wasm)}"
+            stringResource(R.string.cl_v137_ci_cd),
+            stringResource(R.string.cl_v137_signing),
+            stringResource(R.string.cl_v137_wasm)
         ),
         "v1.3.6" to listOf(
-            "${stringResource(R.string.cl_v136_auto_open)}",
-            "${stringResource(R.string.cl_v136_default_location)}",
-            "${stringResource(R.string.cl_v136_current_location)}",
-            "${stringResource(R.string.cl_v136_degoogled)}",
-            "${stringResource(R.string.cl_v136_ui_ux)}",
-            "${stringResource(R.string.cl_v136_stability)}"
+            stringResource(R.string.cl_v136_auto_open),
+            stringResource(R.string.cl_v136_default_location),
+            stringResource(R.string.cl_v136_current_location),
+            stringResource(R.string.cl_v136_degoogled),
+            stringResource(R.string.cl_v136_ui_ux),
+            stringResource(R.string.cl_v136_stability)
         ),
         "v1.3.5" to listOf(
-            "Added More Donation Links",
-            "Made Every Screen (Hopefully) like System when activated"
+            stringResource(R.string.cl_135_donations),
+            stringResource(R.string.cl_135_system_theme)
         ),
         "v1.3.4" to listOf(
-            "${stringResource(R.string.cl_material_you)}",
+            stringResource(R.string.cl_material_you),
             stringResource(R.string.cl_unit_switching),
             stringResource(R.string.cl_multi_service),
             stringResource(R.string.cl_historical_data),
@@ -252,18 +253,18 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             stringResource(R.string.cl_material_you)
         ),
         "v1.3.2" to listOf(
-            "${stringResource(R.string.AddedMoreDons)}",
-            "${stringResource(R.string.HopefullyFixedFMSDK)}"
+            stringResource(R.string.AddedMoreDons),
+            stringResource(R.string.HopefullyFixedFMSDK)
         ),
         "v1.3.1" to listOf(
-            "${stringResource(R.string.FixActivities)}",
+            stringResource(R.string.FixActivities),
             stringResource(R.string.AddedMoonData),
-            "${stringResource(R.string.changelog_remove_api_key)}"
+            stringResource(R.string.changelog_remove_api_key)
         ),
         "v1.3.0" to listOf(
-            "${stringResource(R.string.AddedMoonData)}",
-            "${stringResource(R.string.FixFMSDK)}",
-            "${stringResource(R.string.changelog_remove_coin)}"
+            stringResource(R.string.AddedMoonData),
+            stringResource(R.string.FixFMSDK),
+            stringResource(R.string.changelog_remove_coin)
         )
     )
 

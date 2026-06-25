@@ -534,7 +534,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         sharedPreferences.edit().putString("weather_provider", "tomorrow_io").apply()
                     })
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Tomorrow.io")
+                        Text(stringResource(R.string.provider_tomorrow))
                         Text(stringResource(R.string.provider_tomorrow_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
@@ -562,7 +562,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         sharedPreferences.edit().putString("weather_provider", "visualcrossing").apply()
                     })
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Visual Crossing")
+                        Text(stringResource(R.string.provider_visualcrossing))
                         Text(stringResource(R.string.provider_visual_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
@@ -590,7 +590,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         sharedPreferences.edit().putString("weather_provider", "openweathermap").apply()
                     })
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("OpenWeatherMap")
+                        Text(stringResource(R.string.provider_owm))
                         Text(stringResource(R.string.provider_owm_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
@@ -618,7 +618,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         sharedPreferences.edit().putString("weather_provider", "qweather").apply()
                     })
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("QWeather")
+                        Text(stringResource(R.string.provider_qweather))
                         Text(stringResource(R.string.provider_qweather_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }

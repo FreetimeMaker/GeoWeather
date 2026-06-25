@@ -377,4 +377,177 @@
     <string name="main_donation_hint">Enjoying GeoWeather? Support the development</string>
     <string name="about_developer_title">About the Developer</string>
     <string name="about_developer_text">Hi! I\'m Freetime Maker, the creator of GeoWeather. I started this project because I wanted a weather app that is clean, fast, and respects user privacy above all else. This app is developed in my spare time with passion for open-source software. Your support allows me to keep improving it and exploring new features for the community!</string>
+    <string name="affiliate_links_label">Support via Affiliate Links</string>
+    <string name="affiliate_nowpayments">Create NOWPayments Account</string>
+    <string name="affiliate_oxapay">Create OxaPay Account</string>
+    <string name="affiliate_ncwallet">Join NC Wallet</string>
+    <string name="affiliate_unmineable">Start Mining with unMineable</string>
+    <string name="affiliate_kryptex">Start Mining with Kryptex</string>
+    <string name="affiliate_kryptex_pool">Start Mining with Kryptex Pool</string>
+    <string name="affiliate_rollercoin">Join RollerCoin</string>
+    <string name="affiliate_cudominer">Start Mining with Cudo Miner</string>
+    <string name="affiliate_freecash">Join Freecash</string>
+    <string name="provider_owm">OpenWeatherMap</string>
+    <string name="don_nowpayments_via">Donate via NOWPayments</string>
+    <!-- Wallets -->
+    <string name="wallet_btc">BTC (BTC only)</string>
+    <string name="wallet_eth">ETH (ETH only)</string>
+    <string name="wallet_usdt_tron">USDT (Tron only)</string>
+    <string name="wallet_usdt_eth">USDT (ETH only)</string>
+    <string name="wallet_usdt_polygon">USDT (Polygon only)</string>
+    <string name="wallet_usdt_bsc">USDT (BSC only)</string>
+    <string name="wallet_usdt_sol">USDT (SOL only)</string>
+    <string name="wallet_usdt_ton">USDT (TON only)</string>
+    <string name="wallet_usdt_optimism">USDT (Optimism only)</string>
+    <string name="wallet_usdc_eth">USDC (ETH only)</string>
+    <string name="wallet_usdc_polygon">USDC (Polygon only)</string>
+    <string name="wallet_usdc_bsc">USDC (BSC only)</string>
+    <string name="wallet_usdc_sol">USDC (SOL only)</string>
+    <string name="wallet_usdc_arbitrum">USDC (Arbitrum only)</string>
+    <string name="wallet_usdc_optimism">USDC (Optimism only)</string>
+    <string name="wallet_shib_eth">SHIB (ETH only)</string>
+    <string name="wallet_shib_bsc">SHIB (BSC only)</string>
+    <string name="wallet_ctc_polygon">CTC (Polygon only)</string>
+    <string name="wallet_bnb_bsc">BNB (BSC only)</string>
+    <string name="wallet_sol">SOL (SOL only)</string>
+    <string name="wallet_rox_sol">ROX (SOL only)</string>
+    <string name="wallet_rox_polygon">ROX (Polygon only)</string>
+    <string name="wallet_rox_bsc">ROX (BSC only)</string>
+    <string name="wallet_pepe_eth">PEPE (ETH only)</string>
+    <string name="wallet_dai_bep">DAI (BEP only)</string>
+    <string name="wallet_dai_polygon">DAI (Polygon only)</string>
+    <string name="wallet_dai_eth">DAI (ETH only)</string>
+    <string name="wallet_tron_label">TRON (Tron only)</string>
+    <string name="wallet_tron_bep">TRON (BEP only)</string>
+    <string name="wallet_bch">Bitcoin Cash (BCH only)</string>
+    <string name="wallet_doge_label">DOGE (DOGE only)</string>
+    <string name="wallet_doge_bep">DOGE (BEP only)</string>
+    <string name="wallet_pol_polygon">POL (Polygon only)</string>
+    <string name="wallet_pol_eth">POL (ETH only)</string>
+    <string name="wallet_hsh_bep">HSH (BEP only)</string>
+    <string name="wallet_arb_label">ARB (Arbitrum only)</string>
+    <string name="wallet_optimism_label">Optimism (Optimism only)</string>
+    <string name="wallet_usds_eth">USDS (ETH only)</string>
+    <string name="wallet_sol_all">Every SOL based Token or NFT</string>
+    <string name="wallet_eth_all">Every ETH based Token or NFT</string>
+    <string name="wallet_monad">Monad (ETH only)</string>
+    <string name="wallet_base_all">Every BASE based Token or NFT</string>
+    <string name="wallet_sui_label">SUI</string>
+    <string name="wallet_pol_all">Every POL based Token or NFT</string>
+    <string name="wallet_hype">HYPE (ETH only)</string>
+    <string name="wallet_xmr_label">XMR</string>
+    <string name="wallet_dash_label">DASH</string>
+    <string name="wallet_zec_label">ZEC</string>
+    <string name="wallet_cosa">COSA</string>
+    <string name="wallet_pirate_cash">Pirate Cash</string>
+    <!-- Changelog v2.1.0 -->
+    <string name="cl_210_forecast">Extended forecast to 16 days for Open-Meteo.</string>
+    <string name="cl_210_charts">Added 24h Trend charts for temperature and precipitation.</string>
+    <string name="cl_210_wind">Added Wind Compass and Gust information.</string>
+    <string name="cl_210_radar">Integrated Weather Radar via Windy.com.</string>
+    <string name="cl_210_aqi">Added UV-Index and detailed Air Quality/Pollutants (PM2.5, NO2, O3).</string>
+    <string name="cl_210_pollen">Added Pollen count information.</string>
+    <string name="cl_210_earthquake">Added Earthquake monitor for nearby geological activity.</string>
+    <string name="cl_210_backup">Added local JSON Backup &amp; Restore for locations.</string>
+    <string name="cl_210_oled">Added OLED Black Mode for AMOLED screens.</string>
+    <string name="cl_210_moon">Enhanced Moon Phase display with graphical icons.</string>
+    <string name="cl_210_photography">Added Photography info: Golden Hour and Blue Hour.</string>
+    <string name="cl_210_technical">Added technical data: Altitude, Timezone, Visibility, and Cloud Base.</string>
+    <string name="cl_210_icons">Added App Icon Themes: choose between Google Style, Minimalist, or Retro.</string>
+    <string name="cl_210_scores">Added Outdoor Activity Score (Jogging, Laundry, Gardening).</string>
+    <string name="cl_210_shortcuts">Added App Shortcuts: jump to top 3 cities from your homescreen.</string>
+    <string name="cl_210_notifs">Fixed background notifications and added per-city notification toggles.</string>
+    <string name="cl_210_privacy">Removed all account and login requirements for total privacy.</string>
+    <string name="cl_210_noads">Removed all advertisements and in-app purchases.</string>
+
+    <!-- Changelog v2.0.0 -->
+    <string name="cl_200_desc">Added More Weather Provider and changed a few things</string>
+
+    <!-- Changelog v1.9.0 -->
+    <string name="cl_190_webview">Added 2 new Settings for the Webview: You can disable the PrivacyWebView or you can open it in your External Browser.</string>
+
+    <!-- Changelog v1.8.1 -->
+    <string name="cl_181_reset">Reseted the WeatherDetailActivity and more to v1.3.8</string>
+
+    <!-- Changelog v1.8.0 -->
+    <string name="cl_180_repository">Deleted the Repository Files so Weather Data will be coming from the Weather Detail Activity again.</string>
+
+    <!-- Changelog v1.7.2 -->
+    <string name="cl_172_home">Fixed Home screen weather display issues by switching to ID-based location lookups.</string>
+    <string name="cl_172_fallbacks">Resolved persistent loading issues with improved provider fallbacks.</string>
+    <string name="cl_172_login">Improved GitHub/Modrinth login reliability and automated profile syncing.</string>
+    <string name="cl_172_refresh">Added manual refresh button to the Home screen for instant updates.</string>
+
+    <!-- Changelog v1.7.1 -->
+    <string name="cl_171_weather">Resolved weather loading issues by adding robust fallbacks to Open-Meteo.</string>
+    <string name="cl_171_home_refresh">Home screen now correctly displays up-to-date weather data with automatic and manual refresh options.</string>
+    <string name="cl_171_login_stable">Improved GitHub and Modrinth login stability and fixed deep-link redirection.</string>
+    <string name="cl_171_tomorrow_icons">Added full icon support for Tomorrow.io, including day/night variations.</string>
+    <string name="cl_171_cache">Enhanced local database caching to ensure weather data is available instantly.</string>
+
+    <!-- Changelog v1.7.0 -->
+    <string name="cl_170_local">Full transition to a local-first system. Weather data and geocoding are now fetched directly from providers.</string>
+    <string name="cl_170_supabase">Added support for Modrinth login. GitHub login now uses the official Supabase SDK for better stability.</string>
+    <string name="cl_170_sync">Direct Supabase integration for location and user profile synchronization.</string>
+    <string name="cl_170_providers">Integrated Tomorrow.io and Visual Crossing support (keys can be added in settings).</string>
+    <string name="cl_170_cache_display">Added immediate cache display for weather to eliminate loading wait times.</string>
+    <string name="cl_170_fixes">Fixed deep-link redirection and resolved various UI and translation bugs.</string>
+
+    <!-- Changelog v1.6.0 -->
+    <string name="cl_160_modrinth">Added Modrinth Login and More</string>
+
+    <!-- Changelog v1.5.8 -->
+    <string name="cl_158_providers">Added support for multiple weather providers via custom API.</string>
+    <string name="cl_158_tiers">Integrated subscription tiers (Free, Freemium, Premium) visibility.</string>
+    <string name="cl_158_loading">Resolved endless loading screen when weather data fetching fails.</string>
+    <string name="cl_158_account">Improved Account screen with plan details and logout options.</string>
+    <string name="cl_158_localization">Full transition from hardcoded text to localized resources.</string>
+
+    <!-- Changelog v1.5.7 -->
+    <string name="cl_157_strings">Replaced all hardcoded German and non-English strings with English resources</string>
+    <string name="cl_157_localization">Improved UI localization and consistency</string>
+    <string name="cl_157_versioning">Updated versioning and internal string management</string>
+
+    <!-- Changelog v1.5.6 -->
+    <string name="cl_156_auth">Updated Authentication flow with improved Bearer token support</string>
+    <string name="cl_156_bg_sync">Added background synchronization for smoother user experience</string>
+    <string name="cl_156_weather">Integrated authenticated weather data fetching</string>
+    <string name="cl_156_translations">Added new translations (Mara)</string>
+    <string name="cl_156_stability">Improved app stability and fixed minor UI issues</string>
+
+    <!-- Changelog v1.5.5 -->
+    <string name="cl_155_cloud">Added Cloud Synchronization for favorite locations</string>
+    <string name="cl_155_sync_btn">Added manual \'Sync with Cloud\' button in Account settings</string>
+    <string name="cl_155_auto_sync">Automatic background synchronization on startup and login</string>
+    <string name="cl_155_persistence">Improved data persistence and cross-device availability</string>
+
+    <!-- Changelog v1.5.4 -->
+    <string name="cl_154_profile">Added support for user profile pictures from API</string>
+    <string name="cl_154_history">Moved weather history section to Weather Detail view</string>
+    <string name="cl_154_openmeteo">Improved Open-Meteo API compatibility and weather loading</string>
+    <string name="cl_154_icons">Fixed weather history icon in Main Screen</string>
+    <string name="cl_154_coil">Added image loading support with Coil</string>
+
+    <!-- Changelog v1.5.3 -->
+    <string name="cl_153_github">Implemented GitHub OAuth authentication via API</string>
+    <string name="cl_153_optional">Login is now optional and managed via Settings</string>
+    <string name="cl_153_deeplink">Improved deep link handling for authentication callback</string>
+    <string name="cl_153_merge">Fixed resource merging and translation issues</string>
+    <string name="cl_153_icons">Updated Weather Icon mapping for better day/night accuracy</string>
+
+    <!-- Changelog v1.5.2 -->
+    <string name="cl_152_auth">Added Authentication &amp; User Profile support</string>
+    <string name="cl_152_login_setting">Added \'Require Login\' security setting</string>
+    <string name="cl_152_history">Added Historical Weather Trends (Last 3 days)</string>
+    <string name="cl_152_pro">Added 7-day forecast support for PRO users</string>
+    <string name="cl_152_api">Improved API error handling and stability</string>
+    <string name="cl_152_charts">Added date labels to historical charts</string>
+    <string name="cl_152_workers">Optimized background workers and widget for security</string>
+
+    <!-- Changelog v1.3.5 -->
+    <string name="cl_135_donations">Added More Donation Links</string>
+    <string name="cl_135_system_theme">Made Every Screen (Hopefully) like System when activated</string>
+    <string name="provider_qweather">QWeather</string>
+    <string name="wallet_ltc">Litecoin</string>
+    <string name="wallet_ton">TON</string>
 </resources>
