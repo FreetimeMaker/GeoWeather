@@ -358,4 +358,12 @@
     <string name="main_donation_hint">¿Te gusta GeoWeather? Apoya su desarrollo</string>
     <string name="about_developer_title">Acerca del desarrollador</string>
     <string name="about_developer_text">¡Buenas! Soy Freetime Maker, creador de GeoWeather. Diseñé esta aplicación porque buscaba una herramienta del clima que fuese ágil, limpia y, sobre todo, respetuosa con la privacidad. Desarrollo este proyecto en mis ratos libres, impulsado por mi pasión hacia el software libre. ¡Gracias a tu apoyo puedo seguir optimizándola y creando nuevas opciones para toda la comunidad!</string>
+    <string name="affiliate_links_label">Soporte a través de enlaces de afiliados</string>
+    <string name="affiliate_nowpayments">Crear una cuenta en NOWPayments</string>
+    <string name="affiliate_oxapay">Crear una cuenta en OxaPay</string>
+    <string name="affiliate_ncwallet">Únete a NC Wallet</string>
+    <string name="affiliate_unmineable">Empieza a minar con unMineable</string>
+    <string name="affiliate_kryptex">Empieza a minar con Kryptex</string>
+    <string name="affiliate_kryptex_pool">Empieza a minar con Kryptex Pool</string>
+    <string name="affiliate_rollercoin">Únete a RollerCoin</string>
 </resources>
