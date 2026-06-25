@@ -292,6 +292,10 @@
     <string name="wallet_zec_label">ZEC</string>
     <string name="wallet_cosa">COSA</string>
     <string name="wallet_pirate_cash">Pirate Cash</string>
+    <!-- Changelog v2.1.1 -->
+    <string name="cl_211_localization">Vollständige Lokalisierungs-Bereinigung: Alle hartkodierten Texte externalisiert.</string>
+    <string name="cl_211_stability">Code-Stabilität verbessert und kleinere Fehler behoben.</string>
+
     <!-- Changelog v2.1.0 -->
     <string name="cl_210_forecast">Vorhersage für Open-Meteo auf 16 Tage erweitert.</string>
     <string name="cl_210_charts">24h-Trend-Diagramme für Temperatur und Niederschlag hinzugefügt.</string>
@@ -311,6 +315,7 @@
     <string name="cl_210_notifs">Hintergrundbenachrichtigungen korrigiert und stadtweise Benachrichtigungseinstellungen hinzugefügt.</string>
     <string name="cl_210_privacy">Alle Account- und Login-Anforderungen für totale Privatsphäre entfernt.</string>
     <string name="cl_210_noads">Alle Werbeanzeigen und In-App-Käufe entfernt.</string>
+    <string name="cl_210_affiliate">Affiliate-Links zur Unterstützung des Projekts hinzugefügt.</string>
 
     <!-- Changelog v2.0.0 -->
     <string name="cl_200_desc">Weitere Wetteranbieter hinzugefügt und einige Dinge geändert</string>

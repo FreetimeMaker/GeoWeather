@@ -1,0 +1,2 @@
+• Full localization cleanup: Externalized all hardcoded UI strings.
+• Code stability improvements and minor bug fixes.
