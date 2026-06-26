@@ -6,5 +6,4 @@
 • Astronomy: Graphical Moon Phases and Golden/Blue Hour info.
 • Customization: OLED Black Mode and App Icon Themes.
 • User Experience: Activity Scores, App Shortcuts, and fixed notifications.
-• Support: Added Affiliate Links to support the project.
 • Privacy: Removed all account/login requirements, ads, and in-app purchases. App is now 100% free and account-free.

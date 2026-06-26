@@ -229,16 +229,6 @@
     <string name="main_donation_hint">Gefällt dir GeoWeather? Unterstütze die Entwicklung</string>
     <string name="about_developer_title">Über den Entwickler</string>
     <string name="about_developer_text">Hallo! Ich bin Freetime Maker, der Schöpfer von GeoWeather. Ich habe dieses Projekt gestartet, weil ich eine Wetter-App wollte, die schlank und schnell ist und die Privatsphäre der Nutzer über alles andere stellt. Diese App wird in meiner Freizeit mit Leidenschaft für Open-Source-Software entwickelt. Deine Unterstützung ermöglicht es mir, sie weiter zu verbessern und neue Funktionen für die Community zu erforschen!</string>
-    <string name="affiliate_links_label">Unterstützung über Affiliate-Links</string>
-    <string name="affiliate_nowpayments">NOWPayments Konto erstellen</string>
-    <string name="affiliate_oxapay">OxaPay Konto erstellen</string>
-    <string name="affiliate_ncwallet">NC Wallet beitreten</string>
-    <string name="affiliate_unmineable">Mining mit unMineable starten</string>
-    <string name="affiliate_kryptex">Mining mit Kryptex starten</string>
-    <string name="affiliate_kryptex_pool">Mining mit Kryptex Pool starten</string>
-    <string name="affiliate_rollercoin">RollerCoin beitreten</string>
-    <string name="affiliate_cudominer">Mining mit Cudo Miner starten</string>
-    <string name="affiliate_freecash">Freecash beitreten</string>
     <string name="provider_owm">OpenWeatherMap</string>
     <string name="don_nowpayments_via">Spenden über NOWPayments</string>
     <!-- Wallets -->
@@ -315,7 +305,6 @@
     <string name="cl_210_notifs">Hintergrundbenachrichtigungen korrigiert und stadtweise Benachrichtigungseinstellungen hinzugefügt.</string>
     <string name="cl_210_privacy">Alle Account- und Login-Anforderungen für totale Privatsphäre entfernt.</string>
     <string name="cl_210_noads">Alle Werbeanzeigen und In-App-Käufe entfernt.</string>
-    <string name="cl_210_affiliate">Affiliate-Links zur Unterstützung des Projekts hinzugefügt.</string>
 
     <!-- Changelog v2.0.0 -->
     <string name="cl_200_desc">Weitere Wetteranbieter hinzugefügt und einige Dinge geändert</string>

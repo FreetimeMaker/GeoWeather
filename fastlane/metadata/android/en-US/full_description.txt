@@ -39,7 +39,6 @@ Experience an intuitive weather application inspired by the Swiss MeteoSwiss app
 🛡️ 100% PRIVATE & OPEN SOURCE
 - No account required, no login needed
 - No trackers, no advertisements
-- Support via direct donations or Affiliate Links
 - Local JSON Backup & Restore for your cities
 
 Perfect for daily weather checks, travel planning, or simply staying informed without being tracked. Download GeoWeather now!

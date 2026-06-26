@@ -377,16 +377,6 @@
     <string name="main_donation_hint">Enjoying GeoWeather? Support the development</string>
     <string name="about_developer_title">About the Developer</string>
     <string name="about_developer_text">Hi! I\'m Freetime Maker, the creator of GeoWeather. I started this project because I wanted a weather app that is clean, fast, and respects user privacy above all else. This app is developed in my spare time with passion for open-source software. Your support allows me to keep improving it and exploring new features for the community!</string>
-    <string name="affiliate_links_label">Support via Affiliate Links</string>
-    <string name="affiliate_nowpayments">Create NOWPayments Account</string>
-    <string name="affiliate_oxapay">Create OxaPay Account</string>
-    <string name="affiliate_ncwallet">Join NC Wallet</string>
-    <string name="affiliate_unmineable">Start Mining with unMineable</string>
-    <string name="affiliate_kryptex">Start Mining with Kryptex</string>
-    <string name="affiliate_kryptex_pool">Start Mining with Kryptex Pool</string>
-    <string name="affiliate_rollercoin">Join RollerCoin</string>
-    <string name="affiliate_cudominer">Start Mining with Cudo Miner</string>
-    <string name="affiliate_freecash">Join Freecash</string>
     <string name="provider_owm">OpenWeatherMap</string>
     <string name="don_nowpayments_via">Donate via NOWPayments</string>
     <!-- Wallets -->
@@ -463,7 +453,6 @@
     <string name="cl_210_notifs">Fixed background notifications and added per-city notification toggles.</string>
     <string name="cl_210_privacy">Removed all account and login requirements for total privacy.</string>
     <string name="cl_210_noads">Removed all advertisements and in-app purchases.</string>
-    <string name="cl_210_affiliate">Added Affiliate Links to support the project.</string>
 
     <!-- Changelog v2.0.0 -->
     <string name="cl_200_desc">Added More Weather Provider and changed a few things</string>

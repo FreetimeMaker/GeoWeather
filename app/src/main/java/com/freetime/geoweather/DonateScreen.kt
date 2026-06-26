@@ -212,57 +212,6 @@ fun DonateScreen(onBack: () -> Unit) {
                 context.startActivity(intent)
             }
 
-            Text(
-                text = stringResource(R.string.affiliate_links_label),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.align(Alignment.Start).padding(top = 16.dp)
-            )
-
-            DonateButton(text = stringResource(R.string.affiliate_nowpayments)) {
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://account.nowpayments.io/create-account?link_id=3520431119"))
-                context.startActivity(intent)
-            }
-
-            DonateButton(text = stringResource(R.string.affiliate_oxapay)) {
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://oxapay.com/?ref=72063983"))
-                context.startActivity(intent)
-            }
-
-            DonateButton(text = stringResource(R.string.affiliate_ncwallet)) {
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://ncwallet.net/invite/THP30C3P?lang=de"))
-                context.startActivity(intent)
-            }
-
-            DonateButton(text = stringResource(R.string.affiliate_unmineable)) {
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://unmineable.com/?ref=U-DROJL9"))
-                context.startActivity(intent)
-            }
-
-            DonateButton(text = stringResource(R.string.affiliate_kryptex)) {
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://www.kryptex.com/?ref=7dce4054"))
-                context.startActivity(intent)
-            }
-
-            DonateButton(text = stringResource(R.string.affiliate_kryptex_pool)) {
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://pool.kryptex.com/?ref=7dce4054"))
-                context.startActivity(intent)
-            }
-
-            DonateButton(text = stringResource(R.string.affiliate_rollercoin)) {
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://rollercoin.com/?r=m8kcpzb3"))
-                context.startActivity(intent)
-            }
-
-            DonateButton(text = stringResource(R.string.affiliate_cudominer)) {
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://www.cudominer.com/?a=M0wYpKt6T"))
-                context.startActivity(intent)
-            }
-
-            DonateButton(text = stringResource(R.string.affiliate_freecash)) {
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://freecash.com/r/2KC8KL"))
-                context.startActivity(intent)
-            }
-
             Spacer(Modifier.height(16.dp))
 
             FilledTonalButton(

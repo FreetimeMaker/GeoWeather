@@ -119,8 +119,7 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             stringResource(R.string.cl_210_shortcuts),
             stringResource(R.string.cl_210_notifs),
             stringResource(R.string.cl_210_privacy),
-            stringResource(R.string.cl_210_noads),
-            stringResource(R.string.cl_210_affiliate)
+            stringResource(R.string.cl_210_noads)
         ),
         "v2.0.0" to listOf(
             stringResource(R.string.cl_200_desc)
