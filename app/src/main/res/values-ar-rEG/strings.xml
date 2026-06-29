@@ -1,3 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    </resources>
+    <string name="app_name">طقس جيو</string>
+    <string name="JoiOffDisSer">قم بالإنضمام إلى سيرفر الديسكورد الرسمي</string>
+    <string name="DonPers">لم يقم أحد بالتبرع بعد.</string>
+    <string name="DonTXT2">إذا أردت أن تساعد في الحفاظ على هذا التطبيق أو تطبيقات غيره ، قم بالتبرع و إصنع تذكرة في سيرفر الديسكورد الخاص بي بإسمك و وسيلة التبرع خاصتك و سأقوم بضمينك هنا</string>
+    <string name="DonTXT1">هؤلاء هم المتبرعين خاصتنا الذين يساعدوننا في الحفاظ على هذا التطبيق و تطبيقات عديدة أخرى</string>
+    <string name="DonViaOxaPay">التبرع من خلال OxyPay</string>
+    <string name="DonViaBTC">التبرع من خلال البيتكوين</string>
+    <string name="DonViaETH">التبرع من خلال Ethereum</string>
+    <string name="DonViaUSDT">التبرع من خلال USDT</string>
+    <string name="DonViaUSDC">التبرع من خلال USDC</string>
+    <string name="DonViaSHIB">التبرع من خلال SHIB</string>
+    <string name="DonViaDOGE">التبرع من خلال DOGE</string>
+    <string name="DonateViaTRON">التبرع من خلال TRON</string>
+    <string name="DonViaLTC">التبرع من خلال Litecoin</string>
+    <string name="DonViaWallet">التبرع من خلال تطبيق محفظة جوجل</string>
+    <string name="DonViaUSD">التبرع ب USD to Crypto</string>
+    <string name="DonViaBNB">التبرع من خلال BNB</string>
+    <string name="DonViaPEPE">التبرع من خلال PEPE</string>
+    <string name="DonViaSOL">التبرع من خلال SOL</string>
+    <string name="DonViaGHSponsors">التبرع من خلال مُعلني GitHub</string>
+    <string name="DonViaDAI">التبرع من خلال DAI</string>
+    <string name="DonViaTON">التبرع من خلال TON</string>
+    <string name="DonViaPOL">التبرع من خلال POL</string>
+    <string name="whats_new_title">ما الجديد ؟</string>
+</resources>
