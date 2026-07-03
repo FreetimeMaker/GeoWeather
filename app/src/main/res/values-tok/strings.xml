@@ -1,3 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    </resources>
+    <string name="JoiOffDisSer">tomo mi pi ilo Siko la o kama pona</string>
+    <string name="DonViaOxaPay">o pana mani kepeken ilo mani Okape</string>
+    <string name="DonPers">tenpo ni la jan ale li pana ala mani tawa ni.</string>
+    <string name="DelTXT">o weka e ni</string>
+    <string name="CancelTXT">o pali ala</string>
+    <string name="SearchBTNTXT">o alasa</string>
+    <string name="DelLoc">ma ni la o kute ala</string>
+    <string name="removed_label">ni li weka</string>
+    <string name="changed_label">ni li ante</string>
+    <string name="force_dark_mode">o kama pimeja taso</string>
+    <string name="added_label">ni li lon</string>
+    <string name="fixed_label">ni li pona sin</string>
+    <string name="back_btn">← monsi</string>
+    <string name="open_change_log">o open e lipu ante</string>
+    <string name="whats_new_title">seme li sin?</string>
+    <string name="SunriseSunsetLabel">tenpo pi suno meso</string>
+    <string name="SunriseOnly">suno sin</string>
+    <string name="SunsetOnly">suno lon meso pi tawa anpa</string>
+    <string name="cancel_btn">o pali ala</string>
+    <string name="change_log_title">lipu ante</string>
+    <string name="ok_btn">ale li pona</string>
+    <string name="sunrise_label">lon suno</string>
+    <string name="sunset_label">tenpo pi weka suno</string>
+    <string name="back_nav_desc">monsi</string>
+    <string name="back_nav_desc_short">monsi</string>
+    <string name="cash_label">mani</string>
+    <string name="wc_drizzle">kon telo</string>
+    <string name="wc_freezing_drizzle">kon telo lete</string>
+    <string name="wc_rain">kama telo</string>
+    <string name="wc_freezing_rain">kama pi telo lete</string>
+    <string name="wc_snowfall">ko lete</string>
+    <string name="wc_snow_grains">ko lete lili</string>
+    <string name="wc_rain_showers">kama telo mute</string>
+    <string name="wc_snow_showers">ko lete mute</string>
+    <string name="wc_thunderstorm">wawa pakala</string>
+    <string name="wc_thunderstorm_hail">wawa pakala pi kiwen lete</string>
+    <string name="wc_unknown">mi sona ala</string>
+    <string name="widget_loading">sona ilo li kama...</string>
+    <string name="MoonPhaseTXT">lukin mun</string>
+    <string name="moonrise_label">lon mun</string>
+    <string name="moonset_label">weka mun</string>
+    <string name="settings_nav_desc">ilo ante</string>
+    <string name="theme_settings_title">ilo pi ante lukin</string>
+    <string name="app_name">KejoWeta</string>
+</resources>
