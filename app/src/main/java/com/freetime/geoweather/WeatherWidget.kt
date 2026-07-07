@@ -49,8 +49,6 @@ class WeatherWidget : GlanceAppWidget() {
         }
         
         val tempUnit = sharedPreferences.getString("temp_unit", "celsius") ?: "celsius"
-        val weatherProvider = sharedPreferences.getString("weather_provider", "open_meteo") ?: "open_meteo"
-        val weatherApiKey = sharedPreferences.getString("weather_api_key", "") ?: ""
 
         var weatherInfo = context.getString(R.string.widget_loading)
         var tempString = ""
@@ -58,27 +56,18 @@ class WeatherWidget : GlanceAppWidget() {
 
         if (location != null) {
             try {
-                val url = if (weatherProvider == "weatherapi" && weatherApiKey.isNotEmpty()) {
-                    "https://api.weatherapi.com/v1/current.json?key=$weatherApiKey&q=${location.latitude},${location.longitude}"
-                } else {
-                    "https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true&timezone=auto"
-                }
+                val url = "https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true&timezone=auto"
 
                 val response = withContext(Dispatchers.IO) {
                     httpGet(url)
                 }
                 val json = JSONObject(response)
                 
-                val (t, code) = if (weatherProvider == "weatherapi") {
-                    val current = json.getJSONObject("current")
-                    current.getDouble("temp_c") to 0
-                } else {
-                    val current = json.getJSONObject("current_weather")
-                    val c = if (current.has("weather_code")) current.getInt("weather_code") 
-                            else if (current.has("weathercode")) current.getInt("weathercode")
-                            else 0
-                    current.getDouble("temperature") to c
-                }
+                val current = json.getJSONObject("current_weather")
+                val code = if (current.has("weather_code")) current.getInt("weather_code") 
+                        else if (current.has("weathercode")) current.getInt("weathercode")
+                        else 0
+                val t = current.getDouble("temperature")
                 
                 val displayTemp = if (tempUnit == "fahrenheit") (t * 9/5 + 32).toInt() else t.toInt()
                 val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
