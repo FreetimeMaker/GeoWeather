@@ -122,11 +122,11 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 
 ## 🌟 Star History
 
-<a href="https://www.star-history.com/#FreetimeMaker/GeoWeather&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=FreetimeMaker%2FGeoWeather&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=FreetimeMaker/GeoWeather&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=FreetimeMaker/GeoWeather&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=FreetimeMaker/GeoWeather&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=FreetimeMaker/GeoWeather&type=date&theme=dark&legend=top-left&sealed_token=Hqnhxg2dGmm2y8EEo-vOBlQcAp19vIQwHcBhzQtPCxusKPLS3EpQycRH4V76LLdWl_yyObhxZ00MZXZFANHqGi6l9Cw4MwogxSHX3nECrxptAv-NFOhmNQ" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=FreetimeMaker/GeoWeather&type=date&legend=top-left&sealed_token=Hqnhxg2dGmm2y8EEo-vOBlQcAp19vIQwHcBhzQtPCxusKPLS3EpQycRH4V76LLdWl_yyObhxZ00MZXZFANHqGi6l9Cw4MwogxSHX3nECrxptAv-NFOhmNQ" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=FreetimeMaker/GeoWeather&type=date&legend=top-left&sealed_token=Hqnhxg2dGmm2y8EEo-vOBlQcAp19vIQwHcBhzQtPCxusKPLS3EpQycRH4V76LLdWl_yyObhxZ00MZXZFANHqGi6l9Cw4MwogxSHX3nECrxptAv-NFOhmNQ" />
  </picture>
 </a>
 
