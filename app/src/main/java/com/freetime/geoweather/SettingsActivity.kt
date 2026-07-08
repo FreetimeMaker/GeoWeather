@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -97,6 +98,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     val exportFailed = stringResource(R.string.export_failed)
     val importSuccess = stringResource(R.string.import_success)
     val importFailed = stringResource(R.string.import_failed)
+    val feedbackSubject = stringResource(R.string.feedback_subject)
 
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         if (uri != null) {
@@ -441,6 +443,39 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         Text(stringResource(R.string.provider_open_meteo))
                         Text(stringResource(R.string.provider_free_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
+                }
+            }
+        }
+
+        Text(
+            text = stringResource(R.string.feedback_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Button(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:")
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf("jamieachatz@gmail.com"))
+                            putExtra(Intent.EXTRA_SUBJECT, feedbackSubject)
+                        }
+                        try {
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "No email app found", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.feedback_btn))
                 }
             }
         }

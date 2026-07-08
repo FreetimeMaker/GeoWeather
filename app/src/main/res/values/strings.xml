@@ -308,6 +308,9 @@
     <string name="import_success">Locations imported successfully</string>
     <string name="export_failed">Export failed</string>
     <string name="import_failed">Import failed</string>
+    <string name="feedback_title">Feedback</string>
+    <string name="feedback_btn">Send Feedback via Email</string>
+    <string name="feedback_subject">GeoWeather Feedback</string>
     <string name="pollen_alnus">Alder Pollen</string>
     <string name="pollen_betula">Birch Pollen</string>
     <string name="pollen_grass">Grass Pollen</string>
