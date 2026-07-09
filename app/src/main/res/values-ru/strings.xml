@@ -111,5 +111,4 @@
     <string name="cl_212_russian">Добавлена полная поддержка русского языка.</string>
     <string name="cl_212_lang_select">Добавлен ручной выбор языка в настройках.</string>
     <string name="cl_212_persistent">Добавлено постоянное уведомление в строке состояния для текущей погоды.</string>
-
 </resources>
