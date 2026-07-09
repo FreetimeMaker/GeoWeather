@@ -532,7 +532,10 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                 Slider(
                     value = tempThreshold.toFloat(),
                     onValueChange = { tempThreshold = it.toInt() },
-                    onValueChangeFinished = { sharedPreferences.edit().putInt("notif_temp_threshold", tempThreshold).apply() },
+                    onValueChangeFinished = {
+                        sharedPreferences.edit().putInt("notif_temp_threshold", tempThreshold)
+                            .apply()
+                    },
                     valueRange = 1f..15f,
                     steps = 14
                 )
@@ -543,7 +546,10 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                 Slider(
                     value = windThreshold.toFloat(),
                     onValueChange = { windThreshold = it.toInt() },
-                    onValueChangeFinished = { sharedPreferences.edit().putInt("notif_wind_threshold", windThreshold).apply() },
+                    onValueChangeFinished = {
+                        sharedPreferences.edit().putInt("notif_wind_threshold", windThreshold)
+                            .apply()
+                    },
                     valueRange = 5f..50f,
                     steps = 9
                 )
@@ -565,32 +571,6 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         }
                     }
                 )
-            }
-        }
-
-        Text(
-            text = stringResource(R.string.weather_provider_title),
-            style = MaterialTheme.typography.headlineSmall
-        )
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Open-Meteo (Free, no API key required)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(selected = true, onClick = {
-                        sharedPreferences.edit().putString("weather_provider", "open_meteo").apply()
-                    })
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(stringResource(R.string.provider_open_meteo))
-                        Text(stringResource(R.string.provider_free_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                }
             }
         }
 
