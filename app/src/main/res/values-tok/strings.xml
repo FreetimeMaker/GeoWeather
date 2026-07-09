@@ -17,7 +17,7 @@
     <string name="whats_new_title">seme li sin?</string>
     <string name="SunriseSunsetLabel">tenpo pi suno meso</string>
     <string name="SunriseOnly">suno sin</string>
-    <string name="SunsetOnly">suno lon meso pi tawa anpa</string>
+    <string name="SunsetOnly">weka suno</string>
     <string name="cancel_btn">o pali ala</string>
     <string name="change_log_title">lipu ante</string>
     <string name="ok_btn">ale li pona</string>
@@ -44,4 +44,16 @@
     <string name="settings_nav_desc">ilo ante</string>
     <string name="theme_settings_title">ilo pi ante lukin</string>
     <string name="app_name">KejoWeta</string>
+    <string name="wind_label">kon tawa</string>
+    <string name="feels_like_label">pilin sama</string>
+    <string name="humidity_label">kon telo</string>
+    <string name="sol">mani Solana</string>
+    <string name="refresh_nav_desc">lipu o sin</string>
+    <string name="donate_nav_desc">o pana mani</string>
+    <string name="donate_title">o pana mani</string>
+    <string name="crypto_label">mani ilo</string>
+    <string name="chart_temp_label">seli (°C)</string>
+    <string name="chart_rain_label">nanpa ken pi kama telo (%)</string>
+    <string name="notification_settings_title">ilo ante pi ilo mu</string>
+    <string name="unit_celsius">seli Sesi (°C)</string>
 </resources>
