@@ -98,7 +98,10 @@ fun ReleaseCard(
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
         "v2.1.2" to listOf(
-            "Added Feedback System and removed Affiliate Links"
+            "Added Feedback System and removed Affiliate Links",
+            stringResource(R.string.cl_212_russian),
+            stringResource(R.string.cl_212_lang_select),
+            stringResource(R.string.cl_212_persistent)
         ),
         "v2.1.1" to listOf(
             stringResource(R.string.cl_211_localization),

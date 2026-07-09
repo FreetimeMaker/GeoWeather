@@ -18,6 +18,18 @@ android {
         versionName = "2.1.2"
     }
 
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("fdroid") {
+            dimension = "distribution"
+            versionNameSuffix = "-fdroid"
+        }
+        create("play") {
+            dimension = "distribution"
+            versionNameSuffix = "-play"
+        }
+    }
+
     buildFeatures {
         compose = true
     }

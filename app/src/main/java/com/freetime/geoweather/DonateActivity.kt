@@ -229,7 +229,7 @@ fun DonatorScreen(
             )
 
             Button(
-                onClick = { openDiscordInvite(context) },
+                onClick = { openEmailClient(context) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(R.string.JoiOffDisSer))
@@ -238,7 +238,9 @@ fun DonatorScreen(
     }
 }
 
-fun openDiscordInvite(context: Context) {
-    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/zPFvwK9pNh"))
-    context.startActivity(webIntent)
+fun openEmailClient(context: Context) {
+    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse("mailto:jamieachatzgmail.com")
+    }
+    context.startActivity(emailIntent)
 }

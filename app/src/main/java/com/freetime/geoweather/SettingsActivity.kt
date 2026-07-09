@@ -9,8 +9,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -31,6 +34,8 @@ import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import kotlinx.coroutines.Dispatchers
@@ -221,6 +226,16 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
         mutableStateOf(sharedPreferences.getInt("notif_wind_threshold", 15))
     }
 
+    var persistentNotif by remember {
+        mutableStateOf(sharedPreferences.getBoolean("persistent_notif", false))
+    }
+
+    val currentAppLocale = remember {
+        AppCompatDelegate.getApplicationLocales().toLanguageTags().ifEmpty { "system" }
+    }
+    var appLanguage by remember { mutableStateOf(currentAppLocale) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -298,6 +313,120 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         sharedPreferences.edit().putBoolean("dark_mode_enabled", it).apply()
                     }
                 )
+            }
+        }
+
+        Text(
+            text = stringResource(R.string.language_settings_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                val currentLangLabel = when (appLanguage) {
+                    "system", "" -> stringResource(R.string.lang_system)
+                    "en" -> stringResource(R.string.lang_en)
+                    "ru" -> stringResource(R.string.lang_ru)
+                    "de" -> stringResource(R.string.lang_de)
+                    "es" -> "Español"
+                    "fr" -> "Français"
+                    "it" -> "Italiano"
+                    "zh" -> "中文"
+                    "ja" -> "日本語"
+                    "ko" -> "한국어"
+                    "pt" -> "Português"
+                    "nl" -> "Nederlands"
+                    "pl" -> "Polski"
+                    "tr" -> "Türkçe"
+                    "cs" -> "Čeština"
+                    "uk" -> "Українська"
+                    "ar" -> "العربية"
+                    else -> appLanguage
+                }
+
+                Text(stringResource(R.string.select_language), style = MaterialTheme.typography.bodyLarge)
+                
+                Button(
+                    onClick = { showLanguageDialog = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(currentLangLabel)
+                }
+
+                if (showLanguageDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showLanguageDialog = false },
+                        title = { Text(stringResource(R.string.select_language)) },
+                        text = {
+                            val languages = listOf(
+                                "system" to stringResource(R.string.lang_system),
+                                "en" to stringResource(R.string.lang_en),
+                                "ru" to stringResource(R.string.lang_ru),
+                                "de" to stringResource(R.string.lang_de),
+                                "es" to "Español",
+                                "fr" to "Français",
+                                "it" to "Italiano",
+                                "zh" to "中文",
+                                "ja" to "日本語",
+                                "ko" to "한국어",
+                                "pt" to "Português",
+                                "nl" to "Nederlands",
+                                "pl" to "Polski",
+                                "tr" to "Türkçe",
+                                "cs" to "Čeština",
+                                "uk" to "Українська",
+                                "ar" to "العربية"
+                            )
+                            LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = 400.dp)) {
+                                items(languages) { item ->
+                                    val (tag, label) = item
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                appLanguage = tag
+                                                val appLocale: LocaleListCompat = if (tag == "system") {
+                                                    LocaleListCompat.getEmptyLocaleList()
+                                                } else {
+                                                    LocaleListCompat.forLanguageTags(tag)
+                                                }
+                                                AppCompatDelegate.setApplicationLocales(appLocale)
+                                                showLanguageDialog = false
+                                            }
+                                            .padding(vertical = 12.dp)
+                                    ) {
+                                        RadioButton(
+                                            selected = appLanguage == tag || (tag == "system" && (appLanguage == "system" || appLanguage == "")),
+                                            onClick = {
+                                                appLanguage = tag
+                                                val appLocale: LocaleListCompat = if (tag == "system") {
+                                                    LocaleListCompat.getEmptyLocaleList()
+                                                } else {
+                                                    LocaleListCompat.forLanguageTags(tag)
+                                                }
+                                                AppCompatDelegate.setApplicationLocales(appLocale)
+                                                showLanguageDialog = false
+                                            }
+                                        )
+                                        Text(label, modifier = Modifier.padding(start = 8.dp))
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            TextButton(onClick = { showLanguageDialog = false }) {
+                                Text(stringResource(R.string.cancel_btn))
+                            }
+                        }
+                    )
+                }
             }
         }
 
@@ -417,6 +546,24 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     onValueChangeFinished = { sharedPreferences.edit().putInt("notif_wind_threshold", windThreshold).apply() },
                     valueRange = 5f..50f,
                     steps = 9
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                SettingsToggle(
+                    title = stringResource(R.string.persistent_notif_title),
+                    subtitle = stringResource(R.string.persistent_notif_subtitle),
+                    checked = persistentNotif,
+                    onCheckedChange = {
+                        persistentNotif = it
+                        sharedPreferences.edit().putBoolean("persistent_notif", it).apply()
+                        val serviceIntent = Intent(context, WeatherForegroundService::class.java)
+                        if (it) {
+                            context.startForegroundService(serviceIntent)
+                        } else {
+                            context.stopService(serviceIntent)
+                        }
+                    }
                 )
             }
         }

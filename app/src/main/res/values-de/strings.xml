@@ -48,6 +48,12 @@
     <string name="SunsetOnly">Sonnenuntergang</string>
     <string name="AQILabel">AQI: %1$s</string>
     <string name="theme_settings_title">Thema-Einstellungen</string>
+    <string name="language_settings_title">Spracheinstellungen</string>
+    <string name="select_language">Sprache auswählen</string>
+    <string name="lang_system">System</string>
+    <string name="lang_en">Englisch</string>
+    <string name="lang_ru">Russisch</string>
+    <string name="lang_de">Deutsch</string>
     <string name="follow_system_theme">Systemthema verwenden</string>
     <string name="force_dark_mode">Dunkelmodus erzwingen</string>
     <string name="override_system_setting">Systemeinstellung überschreiben</string>
@@ -282,6 +288,11 @@
     <string name="wallet_zec_label">ZEC</string>
     <string name="wallet_cosa">COSA</string>
     <string name="wallet_pirate_cash">Pirate Cash</string>
+    <!-- Changelog v2.1.2 -->
+    <string name="cl_212_russian">Vollständige russische Sprachunterstützung hinzugefügt.</string>
+    <string name="cl_212_lang_select">Manuelle Sprachauswahl in den Einstellungen hinzugefügt.</string>
+    <string name="cl_212_persistent">Dauerhafte Statusleisten-Benachrichtigung für aktuelles Wetter hinzugefügt.</string>
+
     <!-- Changelog v2.1.1 -->
     <string name="cl_211_localization">Vollständige Lokalisierungs-Bereinigung: Alle hartkodierten Texte externalisiert.</string>
     <string name="cl_211_stability">Code-Stabilität verbessert und kleinere Fehler behoben.</string>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GeoWeather</string>
-    <string name="JoiOffDisSer">Join the Official Discord Server</string>
+    <string name="JoiOffDisSer">Contact via Email</string>
     <string name="DonPers">No one made a Donation yet.</string>
     <string name="DonTXT2">If you want to help maintain this and many other Apps simply make a Donation and make a Ticket in my Discord Server with Your Name and the Donation Provider you used and I will then list you here.</string>
     <string name="DonTXT1">Here are supporters that help maintain this and many other Apps.</string>
@@ -311,6 +311,14 @@
     <string name="feedback_title">Feedback</string>
     <string name="feedback_btn">Send Feedback via Email</string>
     <string name="feedback_subject">GeoWeather Feedback</string>
+    <string name="language_settings_title">Language Settings</string>
+    <string name="select_language">Select Language</string>
+    <string name="lang_system">System</string>
+    <string name="lang_en">English</string>
+    <string name="lang_ru">Russian</string>
+    <string name="lang_de">German</string>
+    <string name="persistent_notif_title">Persistent Weather Notification</string>
+    <string name="persistent_notif_subtitle">Show current temperature in the status bar</string>
     <string name="pollen_alnus">Alder Pollen</string>
     <string name="pollen_betula">Birch Pollen</string>
     <string name="pollen_grass">Grass Pollen</string>
@@ -433,6 +441,11 @@
     <string name="wallet_zec_label">ZEC</string>
     <string name="wallet_cosa">COSA</string>
     <string name="wallet_pirate_cash">Pirate Cash</string>
+    <!-- Changelog v2.1.2 -->
+    <string name="cl_212_russian">Added full Russian language support.</string>
+    <string name="cl_212_lang_select">Added manual language selection in settings.</string>
+    <string name="cl_212_persistent">Added persistent status bar notification for current weather.</string>
+
     <!-- Changelog v2.1.1 -->
     <string name="cl_211_localization">Full localization cleanup: Externalized all hardcoded UI strings.</string>
     <string name="cl_211_stability">Code stability improvements and minor bug fixes.</string>
