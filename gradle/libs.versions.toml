@@ -1,6 +1,6 @@
 [versions]
 agp = "9.3.0"
-kotlin = "2.4.0"
+kotlin = "2.4.10"
 ktor = "3.5.1"
 room = "2.8.4"
 sqlite = "2.7.0"
