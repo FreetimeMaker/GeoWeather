@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">GeoWeather</string>
     <string name="backToSupPag">Volver a la página de asistencia</string>
-    <string name="JoiOffDisSer">Únete a nuestro Discord</string>
+    <string name="JoiOffDisSer">Contacta por correo electrónico</string>
     <string name="DonPers">Todavía nadie ha hecho una donación.</string>
     <string name="DonTXT2">Si quieres ayudar a mantener esta y muchas otras aplicaciones, simplemente haz una donación y crea un ticket en mi servidor de Discord con tu nombre y el proveedor de donaciones que utilizaste, y te incluiré en esta lista.</string>
     <string name="DonTXT1">Estos son los colaboradores que ayudan a mantener esta y muchas otras aplicaciones.</string>
@@ -358,4 +358,16 @@
     <string name="main_donation_hint">¿Te gusta GeoWeather? Apoya su desarrollo</string>
     <string name="about_developer_title">Acerca del desarrollador</string>
     <string name="about_developer_text">¡Buenas! Soy Freetime Maker, creador de GeoWeather. Diseñé esta aplicación porque buscaba una herramienta del clima que fuese ágil, limpia y, sobre todo, respetuosa con la privacidad. Desarrollo este proyecto en mis ratos libres, impulsado por mi pasión hacia el software libre. ¡Gracias a tu apoyo puedo seguir optimizándola y creando nuevas opciones para toda la comunidad!</string>
+    <string name="feedback_title">Comentario</string>
+    <string name="feedback_btn">Envíe sus comentarios y sugerencias por correo electrónico</string>
+    <string name="feedback_subject">Comentarios de GeoWeather</string>
+    <string name="language_settings_title">Configuración del idioma</string>
+    <string name="select_language">Selecciona el idioma</string>
+    <string name="lang_system">Del sistema</string>
+    <string name="lang_en">Inglés</string>
+    <string name="lang_ru">Ruso</string>
+    <string name="lang_de">Alemán</string>
+    <string name="persistent_notif_title">Notificación meteorológica persistente</string>
+    <string name="persistent_notif_subtitle">Muestra la temperatura actual en la barra de estado</string>
+    <string name="provider_owm">OpenWeatherMap</string>
 </resources>
