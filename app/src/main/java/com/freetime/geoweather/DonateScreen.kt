@@ -1,6 +1,8 @@
 package com.freetime.geoweather
 
+import android.app.Activity
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,10 +16,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
+import com.freetime.sdk.FreetimePay
+import com.freetime.sdk.PaymentRequest
+import com.freetime.sdk.PaymentResult
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DonateScreen(onBack: () -> Unit) {
     val context = LocalContext.current
+    val activity = context as? Activity
 
     Scaffold(
         topBar = {
@@ -117,6 +124,29 @@ fun DonateScreen(onBack: () -> Unit) {
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.align(Alignment.Start).padding(top = 8.dp)
             )
+
+            DonateButton(text = stringResource(R.string.DonViaFMSDK)) {
+                if (activity != null) {
+                    val request = PaymentRequest(
+                        amount = 5.0, // Example amount
+                        currency = "USD",
+                        description = "GeoWeather Donation"
+                    )
+                    GeoWeatherApp.freetimePay.showPaymentSheet(activity, request) { result ->
+                        when (result) {
+                            is PaymentResult.Success -> {
+                                Toast.makeText(context, "Thank you for your donation!", Toast.LENGTH_LONG).show()
+                            }
+                            is PaymentResult.Error -> {
+                                Toast.makeText(context, "Error: ${result.message}", Toast.LENGTH_LONG).show()
+                            }
+                            PaymentResult.Cancelled -> {
+                                // Handled by SDK UI usually
+                            }
+                        }
+                    }
+                }
+            }
 
             DonateButton(text = stringResource(R.string.show_wallet_addresses)) {
                 context.startActivity(Intent(context, WalletAddressActivity::class.java))

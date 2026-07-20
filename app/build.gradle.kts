@@ -59,5 +59,6 @@ dependencies {
     implementation(libs.sqlite.bundled)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
+    implementation(project(":SDK"))
     ksp(libs.room.compiler)
 }
