@@ -97,6 +97,13 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v2.2.0" to listOf(
+            stringResource(R.string.cl_220_sdk),
+            stringResource(R.string.cl_220_tools),
+            stringResource(R.string.cl_220_lang),
+            stringResource(R.string.cl_220_trans),
+            stringResource(R.string.cl_220_fixes)
+        ),
         "v2.1.2" to listOf(
             "Added Feedback System and removed Affiliate Links",
             stringResource(R.string.cl_212_russian),

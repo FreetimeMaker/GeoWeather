@@ -1,0 +1,4 @@
+• Integrated FreetimeSDK for crypto donations
+• Updated Kotlin and Gradle tools
+• Added new language changer and updated translations
+• General bug fixes and performance improvements

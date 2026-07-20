@@ -446,6 +446,13 @@
     <string name="cl_212_lang_select">Added manual language selection in settings.</string>
     <string name="cl_212_persistent">Added persistent status bar notification for current weather.</string>
 
+    <!-- Changelog v2.2.0 -->
+    <string name="cl_220_sdk">Integrated FreetimeSDK for crypto donations.</string>
+    <string name="cl_220_tools">Updated Kotlin to 2.4.10 and AGP to 9.3.0.</string>
+    <string name="cl_220_lang">Added manual language changer in settings.</string>
+    <string name="cl_220_trans">Improved and updated translations for multiple languages.</string>
+    <string name="cl_220_fixes">General bug fixes and performance improvements.</string>
+
     <!-- Changelog v2.1.1 -->
     <string name="cl_211_localization">Full localization cleanup: Externalized all hardcoded UI strings.</string>
     <string name="cl_211_stability">Code stability improvements and minor bug fixes.</string>
