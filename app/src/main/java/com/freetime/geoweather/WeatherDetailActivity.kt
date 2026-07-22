@@ -143,6 +143,7 @@ fun WeatherDetailScreen(
     
     val tempUnit by sharedPreferences.collectStringAsState("temp_unit", "celsius")
     val windUnit by sharedPreferences.collectStringAsState("wind_unit", "kmh")
+    val pressureUnit by sharedPreferences.collectStringAsState("pressure_unit", "hpa")
     val errorLoadingWeather = stringResource(R.string.error_loading_weather)
 
     var weatherJson by remember { mutableStateOf<String?>(null) }
@@ -178,7 +179,8 @@ fun WeatherDetailScreen(
                 json = cachedWeatherData
                 weatherJson = json
             } else {
-                val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl&hourly=temperature_2m,weather_code,relative_humidity_2m,pressure_msl,apparent_temperature,precipitation,precipitation_probability,visibility,cloud_base,wind_speed_10m,wind_gusts_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&forecast_days=16&timezone=auto"
+                val lang = Locale.getDefault().language
+                val url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl&hourly=temperature_2m,weather_code,relative_humidity_2m,pressure_msl,apparent_temperature,precipitation,precipitation_probability,visibility,cloud_base,wind_speed_10m,wind_gusts_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&forecast_days=16&timezone=auto&language=$lang"
                 val histUrl = "https://archive-api.open-meteo.com/v1/archive?latitude=$lat&longitude=$lon&start_date=${getYesterdayDate(-7)}&end_date=${getYesterdayDate(0)}&daily=temperature_2m_max,temperature_2m_min&timezone=auto"
                 val onThisDayUrl = "https://archive-api.open-meteo.com/v1/archive?latitude=$lat&longitude=$lon&start_date=${getOneYearAgoDate()}&end_date=${getOneYearAgoDate()}&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto"
 
@@ -294,21 +296,13 @@ fun WeatherDetailScreen(
                 }
 
                 item {
-                    WeatherDetailsGrid(jsonObj, healthData, tempUnit, windUnit, lat, lon)
+                    WeatherDetailsGrid(jsonObj, healthData, tempUnit, windUnit, pressureUnit, lat, lon)
                 }
 
                 if (earthquakeList.isNotEmpty()) {
                     item {
                         EarthquakeSection(earthquakeList)
                     }
-                }
-
-                item {
-                    HourlyWeatherChart(hourlyForecastList, tempUnit, windUnit)
-                }
-
-                item {
-                    ActivityScoreSection(jsonObj, healthData)
                 }
 
                 item {
@@ -567,7 +561,7 @@ fun HistoricalTrendsSection(data: List<DailyForecast>, tempUnit: String) {
 }
 
 @Composable
-fun WeatherDetailsGrid(weatherObj: JSONObject, healthData: HealthData?, tempUnit: String, windUnit: String, lat: Double, lon: Double) {
+fun WeatherDetailsGrid(weatherObj: JSONObject, healthData: HealthData?, tempUnit: String, windUnit: String, pressureUnit: String, lat: Double, lon: Double) {
     val context = LocalContext.current
     val locale = LocalConfiguration.current.locales[0]
     
@@ -598,6 +592,8 @@ fun WeatherDetailsGrid(weatherObj: JSONObject, healthData: HealthData?, tempUnit
     val displayFeelsLike = if (tempUnit == "fahrenheit") (feelsVal * 9/5 + 32).toInt() else feelsVal.toInt()
     val tempSuffix = if (tempUnit == "fahrenheit") stringResource(R.string.temp_f_suffix) else stringResource(R.string.temp_c_suffix)
     val displayGusts = if (windUnit == "mph") (gustsVal * 0.621371).toInt() else gustsVal.toInt()
+    val displayPressure = if (pressureUnit == "mmhg") (pressureVal * 0.750062).toInt() else pressureVal.toInt()
+    val pressureSuffix = if (pressureUnit == "mmhg") stringResource(R.string.unit_mmhg) else stringResource(R.string.unit_hpa)
 
     Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -615,6 +611,10 @@ fun WeatherDetailsGrid(weatherObj: JSONObject, healthData: HealthData?, tempUnit
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 DetailItem(label = stringResource(R.string.visibility_label), value = String.format(locale, "%.1f km", visibilityVal / 1000.0))
                 DetailItem(label = stringResource(R.string.cloud_base_label), value = String.format(locale, "%.0f m", cloudBaseVal))
+            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                DetailItem(label = stringResource(R.string.pressure_label), value = "$displayPressure $pressureSuffix")
                 DetailItem(label = stringResource(R.string.pressure_trend_label), value = pressureTrend)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)

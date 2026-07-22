@@ -218,6 +218,10 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     var windUnit by remember { mutableStateOf(windUnitState) }
     LaunchedEffect(windUnitState) { windUnit = windUnitState }
 
+    val pressureUnitState by sharedPreferences.collectStringAsState("pressure_unit", "hpa")
+    var pressureUnit by remember { mutableStateOf(pressureUnitState) }
+    LaunchedEffect(pressureUnitState) { pressureUnit = pressureUnitState }
+
     var tempThreshold by remember {
         mutableStateOf(sharedPreferences.getInt("notif_temp_threshold", 5))
     }
@@ -234,7 +238,6 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
         AppCompatDelegate.getApplicationLocales().toLanguageTags().ifEmpty { "system" }
     }
     var appLanguage by remember { mutableStateOf(currentAppLocale) }
-    var showLanguageDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -353,79 +356,12 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                 Text(stringResource(R.string.select_language), style = MaterialTheme.typography.bodyLarge)
                 
                 Button(
-                    onClick = { showLanguageDialog = true },
+                    onClick = { 
+                        context.startActivity(Intent(context, LanguageSettingsActivity::class.java))
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(currentLangLabel)
-                }
-
-                if (showLanguageDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showLanguageDialog = false },
-                        title = { Text(stringResource(R.string.select_language)) },
-                        text = {
-                            val languages = listOf(
-                                "system" to stringResource(R.string.lang_system),
-                                "en" to stringResource(R.string.lang_en),
-                                "ru" to stringResource(R.string.lang_ru),
-                                "de" to stringResource(R.string.lang_de),
-                                "es" to "Español",
-                                "fr" to "Français",
-                                "it" to "Italiano",
-                                "zh" to "中文",
-                                "ja" to "日本語",
-                                "ko" to "한국어",
-                                "pt" to "Português",
-                                "nl" to "Nederlands",
-                                "pl" to "Polski",
-                                "tr" to "Türkçe",
-                                "cs" to "Čeština",
-                                "uk" to "Українська",
-                                "ar" to "العربية"
-                            )
-                            LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = 400.dp)) {
-                                items(languages) { item ->
-                                    val (tag, label) = item
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                appLanguage = tag
-                                                val appLocale: LocaleListCompat = if (tag == "system") {
-                                                    LocaleListCompat.getEmptyLocaleList()
-                                                } else {
-                                                    LocaleListCompat.forLanguageTags(tag)
-                                                }
-                                                AppCompatDelegate.setApplicationLocales(appLocale)
-                                                showLanguageDialog = false
-                                            }
-                                            .padding(vertical = 12.dp)
-                                    ) {
-                                        RadioButton(
-                                            selected = appLanguage == tag || (tag == "system" && (appLanguage == "system" || appLanguage == "")),
-                                            onClick = {
-                                                appLanguage = tag
-                                                val appLocale: LocaleListCompat = if (tag == "system") {
-                                                    LocaleListCompat.getEmptyLocaleList()
-                                                } else {
-                                                    LocaleListCompat.forLanguageTags(tag)
-                                                }
-                                                AppCompatDelegate.setApplicationLocales(appLocale)
-                                                showLanguageDialog = false
-                                            }
-                                        )
-                                        Text(label, modifier = Modifier.padding(start = 8.dp))
-                                    }
-                                }
-                            }
-                        },
-                        confirmButton = {
-                            TextButton(onClick = { showLanguageDialog = false }) {
-                                Text(stringResource(R.string.cancel_btn))
-                            }
-                        }
-                    )
                 }
             }
         }
@@ -476,6 +412,25 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             sharedPreferences.edit().putString("wind_unit", "mph").apply()
                         })
                         Text(stringResource(R.string.unit_mph))
+                    }
+                }
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                Column {
+                    Text(stringResource(R.string.pressure_unit), style = MaterialTheme.typography.bodyLarge)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(selected = pressureUnit == "hpa", onClick = {
+                            pressureUnit = "hpa"
+                            sharedPreferences.edit().putString("pressure_unit", "hpa").apply()
+                        })
+                        Text(stringResource(R.string.unit_hpa))
+                        Spacer(Modifier.width(16.dp))
+                        RadioButton(selected = pressureUnit == "mmhg", onClick = {
+                            pressureUnit = "mmhg"
+                            sharedPreferences.edit().putString("pressure_unit", "mmhg").apply()
+                        })
+                        Text(stringResource(R.string.unit_mmhg))
                     }
                 }
             }
@@ -591,7 +546,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     onClick = {
                         val intent = Intent(Intent.ACTION_SENDTO).apply {
                             data = Uri.parse("mailto:")
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("jamieachatz@gmail.com"))
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf("9ndlzdct@anonaddy.me"))
                             putExtra(Intent.EXTRA_SUBJECT, feedbackSubject)
                         }
                         try {

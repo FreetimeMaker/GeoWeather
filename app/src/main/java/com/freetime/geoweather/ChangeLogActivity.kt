@@ -97,6 +97,10 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v2.2.1" to listOf(
+            "Added ScrollView in FreetimeSDK Donation Screen",
+            "Changed the E-Mail Address"
+        ),
         "v2.2.0" to listOf(
             stringResource(R.string.cl_220_sdk),
             stringResource(R.string.cl_220_tools),

@@ -54,6 +54,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".SettingsActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".LanguageSettingsActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".ChangeLogActivity"
             android:screenOrientation="portrait" />
 
