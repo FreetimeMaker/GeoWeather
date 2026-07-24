@@ -109,7 +109,11 @@
     <string name="ConditionChangeTXT">Wetterbedingung änderte sich von %1$s zu %2$s</string>
     <string name="ErrorFetchingWeatherTXT">Fehler beim Laden der Wetterdaten. Bitte versuche es erneut.</string>
     <string name="processing_payment">Zahlung wird bearbeitet...</string>
-    <string name="select_donation_amount">Spenden anzahl auswählen</string>
+    <string name="select_donation_amount">Spendenbetrag auswählen</string>
+    <string name="custom_amount_label">Eigener Betrag</string>
+    <string name="enter_amount_hint">Betrag in USD eingeben</string>
+    <string name="invalid_amount_msg">Bitte einen gültigen Betrag eingeben</string>
+    <string name="donate_btn">Spenden</string>
     <string name="payment_failed">Zahlung fehlgeschlagen</string>
     <string name="payment_successful">Bezahlung erfolgreich!</string>
     <string name="select_payment_method">Zahlungsmethode auswählen</string>
@@ -140,6 +144,14 @@
     <string name="dai">DAI</string>
     <string name="ton">TON</string>
     <string name="pol">POL</string>
+    <string name="dir_n">N</string>
+    <string name="dir_ne">NO</string>
+    <string name="dir_e">O</string>
+    <string name="dir_se">SO</string>
+    <string name="dir_s">S</string>
+    <string name="dir_sw">SW</string>
+    <string name="dir_w">W</string>
+    <string name="dir_nw">NW</string>
     <string name="back_nav_desc_short">Zurück</string>
     <string name="show_historical_data">Historische Daten anzeigen</string>
     <string name="show_historical_data_desc">Wettertrends der letzten 7 Tage anzeigen</string>

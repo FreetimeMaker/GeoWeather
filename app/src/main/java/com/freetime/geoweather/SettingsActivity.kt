@@ -412,6 +412,12 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             sharedPreferences.edit().putString("wind_unit", "mph").apply()
                         })
                         Text(stringResource(R.string.unit_mph))
+                        Spacer(Modifier.width(16.dp))
+                        RadioButton(selected = windUnit == "ms", onClick = {
+                            windUnit = "ms"
+                            sharedPreferences.edit().putString("wind_unit", "ms").apply()
+                        })
+                        Text(stringResource(R.string.unit_ms))
                     }
                 }
 

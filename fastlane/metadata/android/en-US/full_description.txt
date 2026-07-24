@@ -34,11 +34,10 @@ Experience an intuitive weather application inspired by the Swiss MeteoSwiss app
 🎨 CUSTOMIZATION
 - Material You: Dynamic colors based on your wallpaper
 - OLED Black Mode for AMOLED screens
-- Custom App Icon Themes (Google, Minimalist, Retro)
 
 🛡️ 100% PRIVATE & OPEN SOURCE
 - No account required, no login needed
-- No trackers, no advertisements
+- No trackers
 - Local JSON Backup & Restore for your cities
 
 Perfect for daily weather checks, travel planning, or simply staying informed without being tracked. Download GeoWeather now!

@@ -15,16 +15,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 
 import com.freetime.sdk.FreetimePay
 import com.freetime.sdk.PaymentRequest
 import com.freetime.sdk.PaymentResult
+import com.freetime.sdk.PromotionView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DonateScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val activity = context as? Activity
+    var showAmountDialog by remember { mutableStateOf(false) }
+
+    if (showAmountDialog && activity != null) {
+        DonationAmountDialog(
+            onDismiss = { showAmountDialog = false },
+            onAmountSelected = { amount ->
+                showAmountDialog = false
+                val request = PaymentRequest(
+                    amount = amount,
+                    currency = "USD",
+                    description = "GeoWeather Donation"
+                )
+                GeoWeatherApp.freetimePay.showPaymentSheet(activity, request) { result ->
+                    when (result) {
+                        is PaymentResult.Success -> {
+                            Toast.makeText(context, "Thank you for your donation!", Toast.LENGTH_LONG).show()
+                        }
+                        is PaymentResult.Error -> {
+                            Toast.makeText(context, "Error: ${result.message}", Toast.LENGTH_LONG).show()
+                        }
+                        PaymentResult.Cancelled -> {}
+                    }
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -47,6 +75,15 @@ fun DonateScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            AndroidView(
+                factory = { ctx ->
+                    PromotionView(ctx).apply {
+                        loadPromotion(GeoWeatherApp.freetimePay.config)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
@@ -126,26 +163,7 @@ fun DonateScreen(onBack: () -> Unit) {
             )
 
             DonateButton(text = stringResource(R.string.DonViaFMSDK)) {
-                if (activity != null) {
-                    val request = PaymentRequest(
-                        amount = 5.0, // Example amount
-                        currency = "USD",
-                        description = "GeoWeather Donation"
-                    )
-                    GeoWeatherApp.freetimePay.showPaymentSheet(activity, request) { result ->
-                        when (result) {
-                            is PaymentResult.Success -> {
-                                Toast.makeText(context, "Thank you for your donation!", Toast.LENGTH_LONG).show()
-                            }
-                            is PaymentResult.Error -> {
-                                Toast.makeText(context, "Error: ${result.message}", Toast.LENGTH_LONG).show()
-                            }
-                            PaymentResult.Cancelled -> {
-                                // Handled by SDK UI usually
-                            }
-                        }
-                    }
-                }
+                showAmountDialog = true
             }
 
             DonateButton(text = stringResource(R.string.show_wallet_addresses)) {
@@ -262,4 +280,94 @@ fun DonateButton(text: String, onClick: () -> Unit) {
     ) {
         Text(text)
     }
+}
+
+@Composable
+fun DonationAmountDialog(
+    onDismiss: () -> Unit,
+    onAmountSelected: (Double) -> Unit
+) {
+    val predefinedAmounts = listOf(2.0, 5.0, 10.0, 25.0, 50.0)
+    var customAmount by remember { mutableStateOf("") }
+    var selectedPredefined by remember { mutableStateOf<Double?>(null) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    val invalidAmountMsg = stringResource(R.string.invalid_amount_msg)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.select_donation_amount)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Text(stringResource(R.string.billing_options_title), style = MaterialTheme.typography.labelMedium)
+                
+                // Predefined amounts grid
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    val chunks = predefinedAmounts.chunked(3)
+                    chunks.forEach { chunk ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            chunk.forEach { amount ->
+                                FilterChip(
+                                    selected = selectedPredefined == amount && customAmount.isEmpty(),
+                                    onClick = {
+                                        selectedPredefined = amount
+                                        customAmount = ""
+                                        error = null
+                                    },
+                                    label = { Text("$${amount.toInt()}") },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                            // Fill empty slots in the row if any
+                            repeat(3 - chunk.size) { Spacer(Modifier.weight(1f)) }
+                        }
+                    }
+                }
+
+                HorizontalDivider()
+
+                OutlinedTextField(
+                    value = customAmount,
+                    onValueChange = {
+                        customAmount = it
+                        selectedPredefined = null
+                        error = null
+                    },
+                    label = { Text(stringResource(R.string.custom_amount_label)) },
+                    placeholder = { Text(stringResource(R.string.enter_amount_hint)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = error != null,
+                    supportingText = { error?.let { Text(it) } }
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val finalAmount = if (customAmount.isNotEmpty()) {
+                        customAmount.toDoubleOrNull()
+                    } else {
+                        selectedPredefined
+                    }
+
+                    if (finalAmount != null && finalAmount > 0) {
+                        onAmountSelected(finalAmount)
+                    } else {
+                        error = invalidAmountMsg
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.donate_btn))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel_btn))
+            }
+        }
+    )
 }

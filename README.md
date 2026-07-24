@@ -43,10 +43,11 @@ GeoWeather is a modern Android weather application that allows you to monitor we
 ## ✨ Key Features
 
 - 🏙️ **Multiple Cities**: Add and manage unlimited cities with ease
-- 🌡️ **Unit Switching**: Switch between Celsius/Fahrenheit and km/h/mph
+- 🌡️ **Unit Switching**: Switch between Celsius/Fahrenheit, km/h/mph, and **hPa/mmHg**
 - 📅 **16-Day Weather Forecast**: Detailed weather predictions for more than two weeks
 - ⏰ **Hourly Forecast**: Precise weather data on an hourly basis
 - 🎨 **Material YOU**: Dynamic colors based on your wallpaper (Android 12+)
+- 🌍 **Localization**: Full support for English, German, **Russian**, and many more with a dedicated language selector
 - 🎨 **Weather Icons**: Visual representation of weather conditions
 - 🔔 **Notifications**: Receive weather alerts and updates
 - 📝 **Integrated Change Log**: Track version updates directly in the app
@@ -104,6 +105,7 @@ GeoWeather is 100% free. No ads. No tracking.
 - ⭐ **[Star](https://github.com/FreetimeMaker/GeoWeather/star)** this repository
 - 🐛 **[Report](https://github.com/FreetimeMaker/GeoWeather/issues)** bugs and issues
 - 💡 **[Suggest](https://github.com/FreetimeMaker/GeoWeather/discussions)** new features
+- 📧 **[Contact](mailto:9ndlzdct@anonaddy.me)** via Email
 - 💳 **[Sponsor](#-donations)** the developer
 
 ---

@@ -587,18 +587,31 @@ fun WeatherDetailsGrid(weatherObj: JSONObject, healthData: HealthData?, tempUnit
     val timezone = weatherObj.optString("timezone", "UTC")
     val timezoneAbbr = weatherObj.optString("timezone_abbreviation", "")
 
-    val windSuffix = if (windUnit == "mph") stringResource(R.string.wind_mph_suffix) else stringResource(R.string.wind_kmh_suffix)
-    val displayWind = if (windUnit == "mph") (windVal * 0.621371).toInt() else windVal.toInt()
+    val windSuffix = when (windUnit) {
+        "mph" -> stringResource(R.string.wind_mph_suffix)
+        "ms" -> stringResource(R.string.unit_ms)
+        else -> stringResource(R.string.wind_kmh_suffix)
+    }
+    val displayWindText = when (windUnit) {
+        "mph" -> (windVal * 0.621371).toInt().toString()
+        "ms" -> String.format(locale, "%.1f", windVal / 3.6)
+        else -> windVal.toInt().toString()
+    }
     val displayFeelsLike = if (tempUnit == "fahrenheit") (feelsVal * 9/5 + 32).toInt() else feelsVal.toInt()
     val tempSuffix = if (tempUnit == "fahrenheit") stringResource(R.string.temp_f_suffix) else stringResource(R.string.temp_c_suffix)
-    val displayGusts = if (windUnit == "mph") (gustsVal * 0.621371).toInt() else gustsVal.toInt()
+    
+    val displayGustsText = when (windUnit) {
+        "mph" -> (gustsVal * 0.621371).toInt().toString()
+        "ms" -> String.format(locale, "%.1f", gustsVal / 3.6)
+        else -> gustsVal.toInt().toString()
+    }
     val displayPressure = if (pressureUnit == "mmhg") (pressureVal * 0.750062).toInt() else pressureVal.toInt()
     val pressureSuffix = if (pressureUnit == "mmhg") stringResource(R.string.unit_mmhg) else stringResource(R.string.unit_hpa)
 
     Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                DetailItem(label = stringResource(R.string.wind_label), value = "$displayWind$windSuffix")
+                DetailItem(label = stringResource(R.string.wind_label), value = "$displayWindText $windSuffix")
                 DetailItem(label = stringResource(R.string.feels_like_label), value = "$displayFeelsLike$tempSuffix")
                 DetailItem(label = stringResource(R.string.humidity_label), value = "$humVal%")
             }
@@ -622,9 +635,13 @@ fun WeatherDetailsGrid(weatherObj: JSONObject, healthData: HealthData?, tempUnit
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(stringResource(R.string.wind_direction_label), style = MaterialTheme.typography.labelMedium)
                     Spacer(Modifier.height(4.dp))
-                    WindCompass(direction = dirVal.toFloat())
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        WindCompass(direction = dirVal.toFloat())
+                        Spacer(Modifier.width(8.dp))
+                        Text(getCardinalDirection(dirVal.toFloat(), context), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    }
                 }
-                DetailItem(label = stringResource(R.string.gusts_label), value = "$displayGusts$windSuffix")
+                DetailItem(label = stringResource(R.string.gusts_label), value = "$displayGustsText $windSuffix")
                 if (healthData?.uvIndex != null) {
                     DetailItem(label = "UV", value = String.format(locale, "%.1f", healthData.uvIndex), valueColor = getUvIndexColor(healthData.uvIndex))
                 }
@@ -1166,4 +1183,13 @@ fun formatTime(timeString: String): String {
 
 fun formatRainAmount(amountMm: Double): String {
     return if (amountMm < 0.1) "0 mm" else String.format(Locale.getDefault(), "%.1f mm", amountMm)
+}
+
+fun getCardinalDirection(degrees: Float, context: Context): String {
+    val directions = listOf(
+        R.string.dir_n, R.string.dir_ne, R.string.dir_e, R.string.dir_se,
+        R.string.dir_s, R.string.dir_sw, R.string.dir_w, R.string.dir_nw, R.string.dir_n
+    )
+    val index = ((degrees + 22.5) / 45).toInt()
+    return context.getString(directions[index])
 }

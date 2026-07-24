@@ -131,6 +131,10 @@
     <string name="qweather_api_key">Clave de QWeather</string>
     <string name="qweather_key_label">Clave de QWeather</string>
     <string name="select_donation_amount">Selecciona el importe de la donación</string>
+    <string name="custom_amount_label">Cantidad personalizada</string>
+    <string name="enter_amount_hint">Introduce el importe en USD</string>
+    <string name="invalid_amount_msg">Por favor, introduce un importe válido</string>
+    <string name="donate_btn">Donar</string>
     <string name="select_payment_method">Selecciona la forma de pago</string>
     <string name="wallet_connected">Cartera conectada</string>
     <string name="unit_settings_title">Configuración de unidades</string>

@@ -76,6 +76,10 @@
     <string name="qweather_api_key">QWeather API Key</string>
     <string name="qweather_key_label">QWeather API Key</string>
     <string name="select_donation_amount">Select Donation Amount</string>
+    <string name="custom_amount_label">Custom Amount</string>
+    <string name="enter_amount_hint">Enter amount in USD</string>
+    <string name="invalid_amount_msg">Please enter a valid amount</string>
+    <string name="donate_btn">Donate</string>
     <string name="select_payment_method">Select Payment Method</string>
     <string name="select_time_title">Select Time</string>
     <string name="wallet_connected">Wallet Connected</string>
@@ -90,6 +94,7 @@
     <string name="unit_fahrenheit">Fahrenheit (°F)</string>
     <string name="unit_kmh">km/h</string>
     <string name="unit_mph">mph</string>
+    <string name="unit_ms">m/s</string>
     <string name="unit_hpa">hPa</string>
     <string name="unit_mmhg">mmHg</string>
     <!-- Weather Detail Strings -->
@@ -157,6 +162,14 @@
     <string name="dai">DAI</string>
     <string name="ton">TON</string>
     <string name="pol">POL</string>
+    <string name="dir_n">N</string>
+    <string name="dir_ne">NE</string>
+    <string name="dir_e">E</string>
+    <string name="dir_se">SE</string>
+    <string name="dir_s">S</string>
+    <string name="dir_sw">SW</string>
+    <string name="dir_w">W</string>
+    <string name="dir_nw">NW</string>
     <string name="back_nav_desc_short">Back</string>
     <!-- Donation Strings -->
     <string name="donate_title">Donate</string>

@@ -1,1 +1,1 @@
-Modern weather app with 3 to 16-day forecast for multiple cities
+Modern weather app with 16-day forecast for multiple cities
