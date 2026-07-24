@@ -58,6 +58,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ChangeLogActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".RadarActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".WeatherForegroundService"

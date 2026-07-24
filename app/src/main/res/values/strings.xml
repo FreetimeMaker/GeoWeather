@@ -107,6 +107,9 @@
     <string name="hourly_label">Hourly</string>
     <string name="forecast_3day_label">16-Day Forecast</string>
     <string name="forecast_7day_label">16-Day Forecast</string>
+    <string name="show_more_forecast">Show more ⏬</string>
+    <string name="show_less_forecast">Show less 🔝</string>
+    <string name="radar_title">Weather Radar</string>
     <string name="back_nav_desc">Back</string>
     <string name="refresh_nav_desc">Refresh</string>
     <string name="donate_nav_desc">Donate</string>

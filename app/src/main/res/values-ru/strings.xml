@@ -44,6 +44,9 @@
     <string name="MaxWindTXT">Макс. ветер: %1$s км/ч</string>
     <string name="HourlyForecastTXT">Почасовой прогноз</string>
     <string name="SevenDayForecastTXT">Прогноз на 16 дней</string>
+    <string name="show_more_forecast">Показать больше ⏬</string>
+    <string name="show_less_forecast">Показать меньше 🔝</string>
+    <string name="radar_title">Погодный радар</string>
     <string name="WeatherDetailsTXT">Детали погоды</string>
     <string name="AirQualityTXT">Индекс качества воздуха</string>
     <string name="AQIGoodTXT">Хорошо</string>

@@ -159,6 +159,9 @@
     <string name="provider_visualcrossing">Visual Crossing</string>
     <string name="provider_tomorrow">Tomorrow.io</string>
     <string name="provider_accuweather">AccuWeather (Premium)</string>
+    <string name="show_more_forecast">Mehr anzeigen ⏬</string>
+    <string name="show_less_forecast">Weniger anzeigen 🔝</string>
+    <string name="radar_title">Wetter-Radar</string>
     <string name="weather_change_alerts_channel_name">Wetteränderungswarnungen</string>
     <string name="weather_notifications_channel_name">Wetter-Updates</string>
     <string name="weather_notifications_channel_desc">Tägliche Wetterbenachrichtigungen</string>

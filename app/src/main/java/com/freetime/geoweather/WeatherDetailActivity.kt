@@ -157,6 +157,7 @@ fun WeatherDetailScreen(
     var earthquakeList by remember { mutableStateOf<List<Earthquake>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isRefreshing by remember { mutableStateOf(false) }
+    var isForecastExpanded by remember { mutableStateOf(false) }
     
     var selectedDayIndex by remember { mutableStateOf(-1) }
 
@@ -313,13 +314,29 @@ fun WeatherDetailScreen(
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                         Text(stringResource(R.string.forecast_7day_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(8.dp))
-                        forecastList.forEachIndexed { index, forecast ->
+                        
+                        val initialDays = 7
+                        val visibleForecast = if (isForecastExpanded) forecastList else forecastList.take(initialDays)
+                        
+                        visibleForecast.forEachIndexed { index, forecast ->
                             ForecastItemRow(
                                 forecast = forecast,
                                 tempUnit = tempUnit,
                                 isSelected = selectedDayIndex == index,
                                 onClick = { selectedDayIndex = if (selectedDayIndex == index) -1 else index }
                             )
+                        }
+
+                        if (forecastList.size > initialDays) {
+                            TextButton(
+                                onClick = { isForecastExpanded = !isForecastExpanded },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = if (isForecastExpanded) stringResource(R.string.show_less_forecast) else stringResource(R.string.show_more_forecast),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
                         }
                     }
                 }
@@ -609,72 +626,75 @@ fun WeatherDetailsGrid(weatherObj: JSONObject, healthData: HealthData?, tempUnit
     val pressureSuffix = if (pressureUnit == "mmhg") stringResource(R.string.unit_mmhg) else stringResource(R.string.unit_hpa)
 
     Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 DetailItem(label = stringResource(R.string.wind_label), value = "$displayWindText $windSuffix")
                 DetailItem(label = stringResource(R.string.feels_like_label), value = "$displayFeelsLike$tempSuffix")
                 DetailItem(label = stringResource(R.string.humidity_label), value = "$humVal%")
             }
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                DetailItem(label = stringResource(R.string.altitude_label), value = "${altitude.toInt()} m")
-                DetailItem(label = stringResource(R.string.timezone_label), value = "$timezone ($timezoneAbbr)")
-            }
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                DetailItem(label = stringResource(R.string.visibility_label), value = String.format(locale, "%.1f km", visibilityVal / 1000.0))
-                DetailItem(label = stringResource(R.string.cloud_base_label), value = String.format(locale, "%.0f m", cloudBaseVal))
-            }
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                DetailItem(label = stringResource(R.string.pressure_label), value = "$displayPressure $pressureSuffix")
-                DetailItem(label = stringResource(R.string.pressure_trend_label), value = pressureTrend)
-            }
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(R.string.wind_direction_label), style = MaterialTheme.typography.labelMedium)
-                    Spacer(Modifier.height(4.dp))
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+                    Text(stringResource(R.string.wind_direction_label), style = MaterialTheme.typography.labelSmall)
+                    Spacer(Modifier.height(2.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         WindCompass(direction = dirVal.toFloat())
-                        Spacer(Modifier.width(8.dp))
-                        Text(getCardinalDirection(dirVal.toFloat(), context), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.width(4.dp))
+                        Text(getCardinalDirection(dirVal.toFloat(), context), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                     }
                 }
-                DetailItem(label = stringResource(R.string.gusts_label), value = "$displayGustsText $windSuffix")
+                DetailItem(label = stringResource(R.string.gusts_label), value = "$displayGustsText $windSuffix", modifier = Modifier.weight(1f))
                 if (healthData?.uvIndex != null) {
-                    DetailItem(label = "UV", value = String.format(locale, "%.1f", healthData.uvIndex), valueColor = getUvIndexColor(healthData.uvIndex))
+                    DetailItem(label = "UV", value = String.format(locale, "%.1f", healthData.uvIndex), valueColor = getUvIndexColor(healthData.uvIndex), modifier = Modifier.weight(1f))
+                } else {
+                    Spacer(Modifier.weight(1f))
                 }
             }
-            if (weatherObj.has("daily") || healthData?.europeanAqi != null) {
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    if (weatherObj.has("daily")) {
-                        val daily = weatherObj.getJSONObject("daily")
-                        val sunrise = formatTime(daily.getJSONArray("sunrise").getString(0))
-                        val sunset = formatTime(daily.getJSONArray("sunset").getString(0))
-                        DetailItem(label = stringResource(R.string.sunrise_label), value = sunrise)
-                        DetailItem(label = stringResource(R.string.sunset_label), value = sunset)
-                    }
-                    healthData?.europeanAqi?.let { aqi ->
-                        DetailItem(label = stringResource(R.string.air_label), value = aqi.toInt().toString(), valueColor = getEuropeanAqiColor(aqi))
-                    }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                DetailItem(label = stringResource(R.string.pressure_label), value = "$displayPressure $pressureSuffix", modifier = Modifier.weight(1f))
+                DetailItem(label = stringResource(R.string.visibility_label), value = String.format(locale, "%.1f km", visibilityVal / 1000.0), modifier = Modifier.weight(1f))
+                DetailItem(label = stringResource(R.string.cloud_base_label), value = String.format(locale, "%.0f m", cloudBaseVal), modifier = Modifier.weight(1f))
+            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                if (weatherObj.has("daily")) {
+                    val daily = weatherObj.getJSONObject("daily")
+                    val sunrise = formatTime(daily.getJSONArray("sunrise").getString(0))
+                    val sunset = formatTime(daily.getJSONArray("sunset").getString(0))
+                    DetailItem(label = stringResource(R.string.sunrise_label), value = sunrise, modifier = Modifier.weight(1f))
+                    DetailItem(label = stringResource(R.string.sunset_label), value = sunset, modifier = Modifier.weight(1f))
+                }
+                healthData?.europeanAqi?.let { aqi ->
+                    DetailItem(label = stringResource(R.string.air_label), value = aqi.toInt().toString(), valueColor = getEuropeanAqiColor(aqi), modifier = Modifier.weight(1f))
                 }
             }
-            if (weatherObj.has("daily")) {
-                val daily = weatherObj.getJSONObject("daily")
-                val sunrise = daily.getJSONArray("sunrise").getString(0)
-                val sunset = daily.getJSONArray("sunset").getString(0)
-                val goldenHour = calculateGoldenHour(sunrise, sunset)
-                val blueHour = calculateBlueHour(sunrise, sunset)
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    DetailItem(label = stringResource(R.string.golden_hour_label), value = goldenHour)
-                    DetailItem(label = stringResource(R.string.blue_hour_label), value = blueHour)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                if (weatherObj.has("daily")) {
+                    val daily = weatherObj.getJSONObject("daily")
+                    val sunrise = daily.getJSONArray("sunrise").getString(0)
+                    val sunset = daily.getJSONArray("sunset").getString(0)
+                    val goldenHour = calculateGoldenHour(sunrise, sunset)
+                    val blueHour = calculateBlueHour(sunrise, sunset)
+                    DetailItem(label = stringResource(R.string.golden_hour_label), value = goldenHour, modifier = Modifier.weight(1f))
+                    DetailItem(label = stringResource(R.string.blue_hour_label), value = blueHour, modifier = Modifier.weight(1f))
                 }
+                DetailItem(label = stringResource(R.string.altitude_label), value = "${altitude.toInt()} m", modifier = Modifier.weight(1f))
             }
-            Button(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.windy.com/?$lat,$lon,8"))) }, modifier = Modifier.fillMaxWidth().padding(top = 8.dp), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)) {
-                Text(stringResource(R.string.open_weather_radar))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                DetailItem(label = stringResource(R.string.pressure_trend_label), value = pressureTrend, modifier = Modifier.weight(1f))
+                DetailItem(label = stringResource(R.string.timezone_label), value = "$timezone ($timezoneAbbr)", modifier = Modifier.weight(2f))
+            }
+            Button(onClick = { 
+                val intent = Intent(context, RadarActivity::class.java).apply {
+                    putExtra("lat", lat)
+                    putExtra("lon", lon)
+                }
+                context.startActivity(intent)
+            }, modifier = Modifier.fillMaxWidth().height(40.dp), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary), contentPadding = PaddingValues(0.dp)) {
+                Text(stringResource(R.string.open_weather_radar), style = MaterialTheme.typography.labelLarge)
             }
         }
     }
@@ -843,10 +863,10 @@ fun HourlyWeatherChart(list: List<HourlyForecast>, tempUnit: String, windUnit: S
 }
 
 @Composable
-fun DetailItem(label: String, value: String, valueColor: Color = MaterialTheme.colorScheme.onSurface) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = valueColor)
+fun DetailItem(label: String, value: String, valueColor: Color = MaterialTheme.colorScheme.onSurface, modifier: Modifier = Modifier) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
+        Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = valueColor)
     }
 }
 
