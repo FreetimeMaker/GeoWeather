@@ -374,4 +374,20 @@
     <string name="persistent_notif_title">Notificación meteorológica persistente</string>
     <string name="persistent_notif_subtitle">Muestra la temperatura actual en la barra de estado</string>
     <string name="provider_owm">OpenWeatherMap</string>
+    <string name="pressure_unit">Unidad de presión</string>
+    <string name="unit_ms">m/s</string>
+    <string name="unit_hpa">hPa</string>
+    <string name="unit_mmhg">mmHg</string>
+    <string name="pressure_label">Presión</string>
+    <string name="show_more_forecast">Mostrar más ⏬</string>
+    <string name="show_less_forecast">Mostrar menos 🔝</string>
+    <string name="radar_title">Radar meteorológico</string>
+    <string name="dir_n">N</string>
+    <string name="dir_ne">NE</string>
+    <string name="dir_e">E</string>
+    <string name="dir_se">SE</string>
+    <string name="dir_s">S</string>
+    <string name="dir_sw">SO</string>
+    <string name="dir_w">O</string>
+    <string name="dir_nw">NO</string>
 </resources>
