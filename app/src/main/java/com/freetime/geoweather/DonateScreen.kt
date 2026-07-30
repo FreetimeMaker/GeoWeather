@@ -2,6 +2,7 @@ package com.freetime.geoweather
 
 import android.app.Activity
 import android.content.Intent
+import android.view.View
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -39,16 +40,20 @@ fun DonateScreen(onBack: () -> Unit) {
                     currency = "USD",
                     description = "GeoWeather Donation"
                 )
-                GeoWeatherApp.freetimePay.showPaymentSheet(activity, request) { result ->
-                    when (result) {
-                        is PaymentResult.Success -> {
-                            Toast.makeText(context, "Thank you for your donation!", Toast.LENGTH_LONG).show()
+                try {
+                    GeoWeatherApp.freetimePay.showPaymentSheet(activity, request) { result ->
+                        when (result) {
+                            is PaymentResult.Success -> {
+                                Toast.makeText(context, "Thank you for your donation!", Toast.LENGTH_LONG).show()
+                            }
+                            is PaymentResult.Error -> {
+                                Toast.makeText(context, "Error: ${result.message}", Toast.LENGTH_LONG).show()
+                            }
+                            PaymentResult.Cancelled -> {}
                         }
-                        is PaymentResult.Error -> {
-                            Toast.makeText(context, "Error: ${result.message}", Toast.LENGTH_LONG).show()
-                        }
-                        PaymentResult.Cancelled -> {}
                     }
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Error starting payment", Toast.LENGTH_SHORT).show()
                 }
             }
         )
@@ -77,8 +82,12 @@ fun DonateScreen(onBack: () -> Unit) {
         ) {
             AndroidView(
                 factory = { ctx ->
-                    PromotionView(ctx).apply {
-                        loadPromotion(GeoWeatherApp.freetimePay.config)
+                    try {
+                        PromotionView(ctx).apply {
+                            loadPromotion(GeoWeatherApp.freetimePay.config)
+                        }
+                    } catch (e: Exception) {
+                        View(ctx) // Fallback to empty view on crash
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -282,6 +291,7 @@ fun DonateButton(text: String, onClick: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DonationAmountDialog(
     onDismiss: () -> Unit,

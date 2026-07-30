@@ -2,7 +2,6 @@ package com.freetime.geoweather
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,19 +15,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 
 class ChangeLogActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        hideSystemBars()
         setContent {
             val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
             val useSystemTheme = sharedPreferences.collectAsState(key = "use_system_theme", defaultValue = true)
@@ -42,21 +36,6 @@ class ChangeLogActivity : ComponentActivity() {
                 ChangeLogScreen(onBack = { finish() })
             }
         }
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            hideSystemBars()
-        }
-    }
-
-    private fun hideSystemBars() {
-        val windowInsetsController =
-            WindowCompat.getInsetsController(window, window.decorView)
-        windowInsetsController.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
     }
 }
 
@@ -97,11 +76,14 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
-        "v2.2.1" to listOf(
-            "Added ScrollView in FreetimeSDK Donation Screen",
-            "Changed the E-Mail Address"
+        "v2.2.2" to listOf(
+            "Expandable 16-day forecast for a cleaner UI",
+            "Integrated In-App Weather Radar",
+            "Optimized compact weather details grid",
+            "Added m/s wind speed unit",
+            "Cardinal wind direction text added"
         ),
-        "v2.2.0" to listOf(
+        "v2.2.1" to listOf(
             stringResource(R.string.cl_220_sdk),
             stringResource(R.string.cl_220_tools),
             stringResource(R.string.cl_220_lang),
