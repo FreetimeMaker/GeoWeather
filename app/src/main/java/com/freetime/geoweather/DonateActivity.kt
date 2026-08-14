@@ -184,7 +184,7 @@ fun DonatorScreen(
 
 fun openEmailClient(context: Context) {
     val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-        data = Uri.parse("mailto:9ndlzdct@anonaddy.me")
+        data = Uri.parse("mailto:FreetimeMaker@prtoton.me")
     }
     context.startActivity(emailIntent)
 }
