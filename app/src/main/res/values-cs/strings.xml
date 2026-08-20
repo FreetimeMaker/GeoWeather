@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">GeoWeather</string>
     <string name="backToSupPag">Go Back to the Support Page</string>
-    <string name="JoiOffDisSer">Připoj se na Oficiální Discord Server</string>
+    <string name="ConViaEMail">Připoj se na Oficiální Discord Server</string>
     <string name="DonPers">Nikdo ještě nic nedaroval.</string>
     <string name="DonTXT2">Pokud chceš pomoci udržet tuto či jinou aplikaci, tak můžeš udělat Dar a nechat si vytvořit Ticket v mém Discord Serveru s tvým Jménem a s zřizovatelem Daru který jsi využil. A já tě pak přidám sem na tento list.</string>
     <string name="DonTXT1">Zde jsou podporovatelé kteří pomáhají udržet tuto i jiné aplikace v chodu.</string>

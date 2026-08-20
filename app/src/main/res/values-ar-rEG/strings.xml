@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">طقس جيو</string>
-    <string name="JoiOffDisSer">قم بالإنضمام إلى سيرفر الديسكورد الرسمي</string>
+    <string name="ConViaEMail">قم بالإنضمام إلى سيرفر الديسكورد الرسمي</string>
     <string name="DonPers">لم يقم أحد بالتبرع بعد.</string>
     <string name="DonTXT2">إذا أردت أن تساعد في الحفاظ على هذا التطبيق أو تطبيقات غيره ، قم بالتبرع و إصنع تذكرة في سيرفر الديسكورد الخاص بي بإسمك و وسيلة التبرع خاصتك و سأقوم بضمينك هنا</string>
     <string name="DonTXT1">هؤلاء هم المتبرعين خاصتنا الذين يساعدوننا في الحفاظ على هذا التطبيق و تطبيقات عديدة أخرى</string>

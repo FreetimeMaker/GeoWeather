@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">GeoWeather</string>
     <string name="backToSupPag">Go Back to the Support Page</string>
-    <string name="JoiOffDisSer">通过电子邮件联系</string>
+    <string name="ConViaEMail">通过电子邮件联系</string>
     <string name="DonPers">尚未有人进行捐赠。</string>
     <string name="DonTXT2">如果您想帮助维护此应用及许多其他应用，只需进行捐赠，并在我的 Discord 服务器中提交一个工单，附上您的姓名和所使用的捐赠提供商，我就会将您列在这里。</string>
     <string name="DonTXT1">以下是帮助维护此应用及许多其他应用的支持者。</string>

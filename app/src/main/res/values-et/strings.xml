@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">GeoWeather</string>
     <string name="backToSupPag">Tagasi toetuste lehele</string>
-    <string name="JoiOffDisSer">Võta ühendust e-posti teel</string>
+    <string name="ConViaEMail">Võta ühendust e-posti teel</string>
     <string name="DonPers">Keegi pole veel rahaliselt toetanud.</string>
     <string name="DonTXT2">Kui soovid aidata seda ja paljusid teisi rakendusi arendada ja hallata, tee lihtsalt annetus ja ava minu Discordi serveris pilet, märkides sinna oma nime ja kasutatud annetusplatvormi - siis lisan su nime siia nimekirja.</string>
     <string name="DonTXT1">Järgnevas on toetajad, kes aitavad arendada ja hallata seda ning muid rakendusi.</string>

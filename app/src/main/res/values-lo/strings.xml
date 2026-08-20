@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GeoWeather</string>
-    <string name="JoiOffDisSer">ເຂົ້າຮ່ວມເຊີບເວີ Discord ທາງການ</string>
+    <string name="ConViaEMail">ເຂົ້າຮ່ວມເຊີບເວີ Discord ທາງການ</string>
     <string name="DonPers">ຍັງບໍ່ມີໃຜບໍລິຈາກເທື່ອ.</string>
     <string name="DonTXT2">ຖ້າທ່ານຕ້ອງການຊ່ວຍຮັກສາແອັບນີ້ ແລະ ແອັບອື່ນໆອີກຫຼາຍແອັບ ພຽງແຕ່ບໍລິຈາກ ແລະ ສ້າງປີ້ (Ticket) ໃນເຊີບເວີ Discord ຂອງຂ້ອຍ ໂດຍລະບຸຊື່ຂອງທ່ານ ແລະ ຊ່ອງທາງການບໍລິຈາກທີ່ທ່ານໃຊ້ ແລ້ວຂ້ອຍຈະເພີ່ມລາຍຊື່ທ່ານໄວ້ບ່ອນນີ້.</string>
     <string name="DonTXT1">ນີ້ຄືລາຍຊື່ຜູ້ສະໜັບສະໜູນທີ່ຊ່ວຍຮັກສາແອັບນີ້ ແລະ ແອັບອື່ນໆອີກຫຼາຍແອັບ.</string>

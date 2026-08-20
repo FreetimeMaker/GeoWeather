@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="JoiOffDisSer">tomo mi pi ilo Siko la o kama pona</string>
+    <string name="ConViaEMail">tomo mi pi ilo Siko la o kama pona</string>
     <string name="DonViaOxaPay">o pana mani kepeken ilo mani Okape</string>
     <string name="DonPers">tenpo ni la jan ale li pana ala mani tawa ni.</string>
     <string name="DelTXT">o weka e ni</string>
