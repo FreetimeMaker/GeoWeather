@@ -532,7 +532,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     onClick = {
                         val intent = Intent(Intent.ACTION_SENDTO).apply {
                             data = Uri.parse("mailto:")
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("9ndlzdct@anonaddy.me"))
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf("FreetimeMaker@proton.me"))
                             putExtra(Intent.EXTRA_SUBJECT, feedbackSubject)
                         }
                         try {
