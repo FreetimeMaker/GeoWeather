@@ -115,5 +115,5 @@ jobs:
           tag_name: v${{ needs.prepare_android_app.outputs.version }}
           files: |
             GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk
-          draft: true
+          draft: false
           generate_release_notes: true
