@@ -176,7 +176,7 @@ fun DonatorScreen(
                 onClick = { openEmailClient(context) },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.JoiOffDisSer))
+                Text(stringResource(R.string.ConViaEMail))
             }
         }
     }

@@ -76,6 +76,13 @@ fun ReleaseCard(
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v2.3.0" to listOf(
+            "Enhanced the Weather Widget with responsive hourly Forecast and made it better",
+            "Added Safety Wrappers around FreetimeSDK's FreetimePay and fixed the Promotion Rendering in DonateScreen for Freetime SDK",
+            "Improved FreetimeSDK Reliability by adding error handler and more for Promotions",
+            "Updated E-Mail address for Feedback (The Provider (addy.io) I used for Sending it to the Mail Address didn't work anymore)",
+            "Updated Dependencies"
+        ),
         "v2.2.2" to listOf(
             "Expandable 16-day forecast for a cleaner UI",
             "Integrated In-App Weather Radar",

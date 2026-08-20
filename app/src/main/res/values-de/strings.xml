@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">GeoWeather</string>
     <string name="backToSupPag">Zurück zur Supportseite</string>
-    <string name="JoiOffDisSer">Tritt dem offiziellen Discord‑Server bei</string>
+    <string name="ConViaEMail">Per E-Mail kontaktieren</string>
     <string name="DonPers">Noch niemand hat gespendet.</string>
     <string name="DonTXT2">Wenn du diese und andere Apps unterstützen möchtest, spende und erstelle ein Ticket in meinem Discord‑Server mit deinem Namen und dem Zahlungsdienst, den du verwendet hast; ich werde dich dann hier aufführen.</string>
     <string name="DonTXT1">Hier sind Unterstützer aufgeführt, die diese und viele andere Apps pflegen.</string>
@@ -110,8 +110,11 @@
     <string name="ErrorFetchingWeatherTXT">Fehler beim Laden der Wetterdaten. Bitte versuche es erneut.</string>
     <string name="processing_payment">Zahlung wird bearbeitet...</string>
     <string name="select_donation_amount">Spendenbetrag auswählen</string>
+    <string name="currency_label">Währung</string>
+    <string name="select_currency_title">Währung auswählen</string>
     <string name="custom_amount_label">Eigener Betrag</string>
     <string name="enter_amount_hint">Betrag in USD eingeben</string>
+    <string name="amount_in_currency_hint">Betrag in %1$s</string>
     <string name="invalid_amount_msg">Bitte einen gültigen Betrag eingeben</string>
     <string name="donate_btn">Spenden</string>
     <string name="payment_failed">Zahlung fehlgeschlagen</string>

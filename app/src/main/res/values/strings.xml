@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GeoWeather</string>
-    <string name="JoiOffDisSer">Contact via Email</string>
+    <string name="ConViaEMail">Contact via Email</string>
     <string name="DonPers">No one made a Donation yet.</string>
     <string name="DonTXT2">If you want to help maintain this and many other Apps simply make a Donation and make a Ticket in my Discord Server with Your Name and the Donation Provider you used and I will then list you here.</string>
     <string name="DonTXT1">Here are supporters that help maintain this and many other Apps.</string>
@@ -76,8 +76,11 @@
     <string name="qweather_api_key">QWeather API Key</string>
     <string name="qweather_key_label">QWeather API Key</string>
     <string name="select_donation_amount">Select Donation Amount</string>
+    <string name="currency_label">Currency</string>
+    <string name="select_currency_title">Select Currency</string>
     <string name="custom_amount_label">Custom Amount</string>
     <string name="enter_amount_hint">Enter amount in USD</string>
+    <string name="amount_in_currency_hint">Amount in %1$s</string>
     <string name="invalid_amount_msg">Please enter a valid amount</string>
     <string name="donate_btn">Donate</string>
     <string name="select_payment_method">Select Payment Method</string>

@@ -33,11 +33,11 @@ fun DonateScreen(onBack: () -> Unit) {
     if (showAmountDialog && activity != null) {
         DonationAmountDialog(
             onDismiss = { showAmountDialog = false },
-            onAmountSelected = { amount ->
+            onAmountSelected = { amount, currency ->
                 showAmountDialog = false
                 val request = PaymentRequest(
                     amount = amount,
-                    currency = "USD",
+                    currency = currency,
                     description = "GeoWeather Donation"
                 )
                 try {
@@ -295,12 +295,26 @@ fun DonateButton(text: String, onClick: () -> Unit) {
 @Composable
 fun DonationAmountDialog(
     onDismiss: () -> Unit,
-    onAmountSelected: (Double) -> Unit
+    onAmountSelected: (Double, String) -> Unit
 ) {
     val predefinedAmounts = listOf(2.0, 5.0, 10.0, 25.0, 50.0)
+    val fiatCurrencies = listOf("USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "HKD", "NZD")
+    val cryptoCurrencies = remember {
+        GeoWeatherApp.freetimePay.getAvailableProviders().map { provider ->
+            if (provider.name.contains("(") && provider.name.contains(")")) {
+                provider.name.substringAfterLast("(").substringBefore(")")
+            } else {
+                provider.name
+            }
+        }.filter { it.length <= 5 && !it.contains("/") && !it.contains(" ") && it != "Mock" }.distinct()
+    }
+    val currencies = fiatCurrencies + cryptoCurrencies
+
+    var selectedCurrency by remember { mutableStateOf("USD") }
     var customAmount by remember { mutableStateOf("") }
     var selectedPredefined by remember { mutableStateOf<Double?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
+    var expanded by remember { mutableStateOf(false) }
 
     val invalidAmountMsg = stringResource(R.string.invalid_amount_msg)
 
@@ -310,6 +324,34 @@ fun DonationAmountDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(stringResource(R.string.billing_options_title), style = MaterialTheme.typography.labelMedium)
+
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded }
+                ) {
+                    OutlinedTextField(
+                        value = selectedCurrency,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.currency_label)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        currencies.forEach { currency ->
+                            DropdownMenuItem(
+                                text = { Text(currency) },
+                                onClick = {
+                                    selectedCurrency = currency
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
                 
                 // Predefined amounts grid
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -327,7 +369,21 @@ fun DonationAmountDialog(
                                         customAmount = ""
                                         error = null
                                     },
-                                    label = { Text("$${amount.toInt()}") },
+                                    label = { 
+                                        val symbol = when(selectedCurrency) {
+                                            "USD" -> "$"
+                                            "EUR" -> "€"
+                                            "GBP" -> "£"
+                                            "JPY" -> "¥"
+                                            "CNY" -> "¥"
+                                            else -> null
+                                        }
+                                        if (symbol != null) {
+                                            Text("$symbol${amount.toInt()}")
+                                        } else {
+                                            Text("${amount.toInt()} $selectedCurrency")
+                                        }
+                                    },
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -347,7 +403,9 @@ fun DonationAmountDialog(
                         error = null
                     },
                     label = { Text(stringResource(R.string.custom_amount_label)) },
-                    placeholder = { Text(stringResource(R.string.enter_amount_hint)) },
+                    placeholder = { 
+                        Text(stringResource(R.string.amount_in_currency_hint, selectedCurrency)) 
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     isError = error != null,
@@ -365,7 +423,7 @@ fun DonationAmountDialog(
                     }
 
                     if (finalAmount != null && finalAmount > 0) {
-                        onAmountSelected(finalAmount)
+                        onAmountSelected(finalAmount, selectedCurrency)
                     } else {
                         error = invalidAmountMsg
                     }
