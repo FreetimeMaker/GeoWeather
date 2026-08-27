@@ -43,10 +43,12 @@ import androidx.core.content.ContextCompat
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.freetime.geoweather.data.LocationDatabase
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -80,28 +82,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         checkNotificationPermission()
 
-        val db = LocationDatabase.getDatabase(this)
-        lifecycleScope.launch {
-            val locations = withContext(Dispatchers.IO) {
-                db.locationDao().getAllLocationsSync()
-            }
-            
-            updateAppShortcuts(locations)
-
-            val defaultLoc = locations.find { it.isDefault }
-            val targetLoc = defaultLoc ?: if (locations.size == 1) locations.first() else null
-            
-            if (targetLoc != null) {
-                val intent = Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
-                    putExtra("name", targetLoc.name)
-                    putExtra("lat", targetLoc.latitude)
-                    putExtra("lon", targetLoc.longitude)
-                }
-                startActivity(intent)
-            }
-        }
-        
         setContent {
+            val sessionStatus by AuthManager.sessionStatus.collectAsState()
+            val context = LocalContext.current
+            val db = remember { LocationDatabase.getDatabase(context) }
+
             val sharedPreferences = remember { getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) }
             val useSystemTheme = sharedPreferences.collectAsState(key = "use_system_theme", defaultValue = true)
             val darkModeEnabled = sharedPreferences.collectAsState(key = "dark_mode_enabled", defaultValue = false)
@@ -111,27 +96,68 @@ class MainActivity : ComponentActivity() {
             val darkTheme = if (useSystemTheme.value) isSystemInDarkTheme() else darkModeEnabled.value
             
             GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor.value, oledBlack = oledBlack.value) {
-                MainScreen(
-                    onRequestLocationPermission = {
-                        requestLocationPermissionLauncher.launch(
-                            arrayOf(
-                                Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.ACCESS_COARSE_LOCATION
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    when (sessionStatus) {
+                        is SessionStatus.Authenticated -> {
+                            var hasCheckedAutoNav by remember { mutableStateOf(false) }
+                            
+                            LaunchedEffect(Unit) {
+                                if (!hasCheckedAutoNav) {
+                                    val locations = withContext(Dispatchers.IO) {
+                                        db.locationDao().getAllLocationsSync()
+                                    }
+                                    updateAppShortcuts(locations)
+                                    
+                                    val defaultLoc = locations.find { it.isDefault }
+                                    val targetLoc = defaultLoc ?: if (locations.size == 1) locations.first() else null
+                                    
+                                    if (targetLoc != null) {
+                                        val intent = Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
+                                            putExtra("name", targetLoc.name)
+                                            putExtra("lat", targetLoc.latitude)
+                                            putExtra("lon", targetLoc.longitude)
+                                        }
+                                        startActivity(intent)
+                                    }
+                                    hasCheckedAutoNav = true
+                                }
+                            }
+
+                            MainScreen(
+                                onRequestLocationPermission = {
+                                    requestLocationPermissionLauncher.launch(
+                                        arrayOf(
+                                            Manifest.permission.ACCESS_FINE_LOCATION,
+                                            Manifest.permission.ACCESS_COARSE_LOCATION
+                                        )
+                                    )
+                                },
+                                onOpenDetail = { name, lat, lon ->
+                                    val intent = Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
+                                        putExtra("name", name)
+                                        putExtra("lat", lat)
+                                        putExtra("lon", lon)
+                                    }
+                                    startActivity(intent)
+                                },
+                                onOpenDonate = {
+                                    startActivity(Intent(this, DonateActivity::class.java))
+                                }
                             )
-                        )
-                    },
-                    onOpenDetail = { name, lat, lon ->
-                        val intent = Intent(this@MainActivity, WeatherDetailActivity::class.java).apply {
-                            putExtra("name", name)
-                            putExtra("lat", lat)
-                            putExtra("lon", lon)
                         }
-                        startActivity(intent)
-                    },
-                    onOpenDonate = {
-                        startActivity(Intent(this, DonateActivity::class.java))
+                        is SessionStatus.Initializing -> {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                        else -> {
+                            LoginScreen()
+                        }
                     }
-                )
+                }
             }
         }
     }

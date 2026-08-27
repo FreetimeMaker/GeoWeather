@@ -53,11 +53,6 @@ class GeoWeatherApp : Application() {
         )
         
         freetimePay.registerDefaultCryptoProviders(walletAddresses)
-
-        // Register RevenueCat for fiat payments
-        freetimePay.registerProvider(
-            RevenueCatWebProvider("https://pay.rev.cat/gttbrbhajlebigbj/", "One-Time 2 USD Donation")
-        )
     }
 
     private fun scheduleWeatherWork() {

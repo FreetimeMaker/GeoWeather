@@ -78,6 +78,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
         context.getSharedPreferences("geo_weather_prefs", Context.MODE_PRIVATE) 
     }
     val db = remember { LocationDatabase.getDatabase(context) }
+    val currentTier by SubscriptionManager.currentTier.collectAsState()
 
     val exportSuccess = stringResource(R.string.export_success)
     val exportFailed = stringResource(R.string.export_failed)
@@ -549,6 +550,49 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
         }
 
         Text(
+            text = stringResource(R.string.subscription_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                val tierName = when (currentTier) {
+                    SubscriptionTier.FREE -> stringResource(R.string.tier_free)
+                    SubscriptionTier.MINI -> stringResource(R.string.tier_mini)
+                    SubscriptionTier.STANDARD -> stringResource(R.string.tier_standard)
+                    SubscriptionTier.PRO -> stringResource(R.string.tier_pro)
+                    SubscriptionTier.BUSINESS -> stringResource(R.string.tier_business)
+                    SubscriptionTier.ENTERPRISE -> stringResource(R.string.tier_enterprise)
+                    SubscriptionTier.MAX -> stringResource(R.string.tier_max)
+                }
+                Text(
+                    text = stringResource(R.string.current_plan_label, tierName),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+                Text(
+                    text = "Includes ${currentTier.maxForecastDays}-day forecast",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                
+                Button(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://all-api-frontend.vercel.app/dashboard/subscriptions"))
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Manage Subscription")
+                }
+            }
+        }
+
+        Text(
             text = stringResource(R.string.backup_restore_title),
             style = MaterialTheme.typography.headlineSmall
         )
@@ -575,6 +619,19 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                     Text(stringResource(R.string.import_locations))
                 }
             }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = {
+                AuthManager.signOut()
+                onBack()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+        ) {
+            Text(stringResource(R.string.logout_button), color = MaterialTheme.colorScheme.onError)
         }
         
         Spacer(modifier = Modifier.height(32.dp))

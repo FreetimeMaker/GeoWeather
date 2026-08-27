@@ -1,11 +1,12 @@
 [versions]
-agp = "9.3.1"
+agp = "9.3.2"
 kotlin = "2.4.10"
 ktor = "3.5.2"
 room = "2.8.4"
 sqlite = "2.7.0"
 ksp = "2.3.11"
-androidx-glance = "1.1.1"
+androidx-glance = "1.2.0"
+supabase = "3.7.0"
 
 [libraries]
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
@@ -18,6 +19,9 @@ room-gradle-plugin = { module = "androidx.room:room-gradle-plugin", version.ref 
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "androidx-glance" }
 androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "androidx-glance" }
+supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "supabase" }
+supabase-auth = { module = "io.github.jan-tennert.supabase:auth-kt" }
+supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

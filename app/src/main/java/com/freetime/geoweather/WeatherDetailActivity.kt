@@ -126,6 +126,8 @@ fun WeatherDetailScreen(
     val windUnit by sharedPreferences.collectStringAsState("wind_unit", "kmh")
     val pressureUnit by sharedPreferences.collectStringAsState("pressure_unit", "hpa")
     val errorLoadingWeather = stringResource(R.string.error_loading_weather)
+    
+    val currentTier by SubscriptionManager.currentTier.collectAsState()
 
     var weatherJson by remember { mutableStateOf<String?>(null) }
     var aqiJson by remember { mutableStateOf<String?>(null) }
@@ -296,8 +298,11 @@ fun WeatherDetailScreen(
                         Text(stringResource(R.string.forecast_7day_label), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(8.dp))
                         
-                        val initialDays = 7
-                        val visibleForecast = if (isForecastExpanded) forecastList else forecastList.take(initialDays)
+                        val maxDays = currentTier.maxForecastDays
+                        val initialDays = if (maxDays > 3) 3 else maxDays
+                        
+                        val availableForecast = forecastList.take(maxDays)
+                        val visibleForecast = if (isForecastExpanded) availableForecast else availableForecast.take(initialDays)
                         
                         visibleForecast.forEachIndexed { index, forecast ->
                             ForecastItemRow(
@@ -308,7 +313,7 @@ fun WeatherDetailScreen(
                             )
                         }
 
-                        if (forecastList.size > initialDays) {
+                        if (availableForecast.size > initialDays) {
                             TextButton(
                                 onClick = { isForecastExpanded = !isForecastExpanded },
                                 modifier = Modifier.fillMaxWidth()
@@ -318,6 +323,22 @@ fun WeatherDetailScreen(
                                     style = MaterialTheme.typography.labelLarge
                                 )
                             }
+                        }
+                        
+                        if (currentTier != SubscriptionTier.PREMIUM) {
+                            Text(
+                                text = "Upgrade to Premium for 16-day forecast",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp)
+                                    .clickable {
+                                        // Optional: trigger donation/upgrade flow
+                                        context.startActivity(Intent(context, DonateActivity::class.java))
+                                    },
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            )
                         }
                     }
                 }

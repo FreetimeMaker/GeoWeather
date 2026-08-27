@@ -408,4 +408,22 @@
     <string name="wallet_ltc">Litecoin</string>
     <string name="wallet_ton">TON</string>
     <string name="changed_label">Geändert</string>
+    <!-- Login Strings -->
+    <string name="login_title">Anmelden</string>
+    <string name="email_label">E-Mail</string>
+    <string name="password_label">Passwort</string>
+    <string name="login_button">Einloggen</string>
+    <string name="error_invalid_credentials">Ungültige E-Mail oder Passwort</string>
+    <string name="error_unknown">Ein Fehler ist aufgetreten. Bitte erneut versuchen.</string>
+    <string name="logging_in">Anmeldung erfolgt...</string>
+    <string name="logout_button">Abmelden</string>
+    <string name="subscription_title">Abonnement</string>
+    <string name="current_plan_label">Aktueller Plan: %1$s</string>
+    <string name="tier_free">Kostenlos</string>
+    <string name="tier_mini">Mini</string>
+    <string name="tier_standard">Standard</string>
+    <string name="tier_pro">Pro</string>
+    <string name="tier_business">Business</string>
+    <string name="tier_enterprise">Enterprise</string>
+    <string name="tier_max">Max</string>
 </resources>

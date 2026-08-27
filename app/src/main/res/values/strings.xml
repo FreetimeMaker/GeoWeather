@@ -590,4 +590,22 @@
     <string name="provider_qweather">QWeather</string>
     <string name="wallet_ltc">Litecoin</string>
     <string name="wallet_ton">TON</string>
+    <!-- Login Strings -->
+    <string name="login_title">Login</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="login_button">Sign In</string>
+    <string name="error_invalid_credentials">Invalid email or password</string>
+    <string name="error_unknown">An error occurred. Please try again.</string>
+    <string name="logging_in">Logging in...</string>
+    <string name="logout_button">Sign Out</string>
+    <string name="subscription_title">Subscription</string>
+    <string name="current_plan_label">Current Plan: %1$s</string>
+    <string name="tier_free">Free</string>
+    <string name="tier_mini">Mini</string>
+    <string name="tier_standard">Standard</string>
+    <string name="tier_pro">Pro</string>
+    <string name="tier_business">Business</string>
+    <string name="tier_enterprise">Enterprise</string>
+    <string name="tier_max">Max</string>
 </resources>
