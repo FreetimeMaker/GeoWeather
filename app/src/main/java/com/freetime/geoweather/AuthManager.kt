@@ -1,7 +1,8 @@
 package com.freetime.geoweather
 
 import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.auth.providers.Github
+import io.github.jan.supabase.auth.providers.Gitlab
 import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,12 +21,18 @@ object AuthManager {
             initialValue = SessionStatus.Initializing
         )
 
-    suspend fun signIn(email: String, password: String): Result<Unit> {
+    suspend fun signInWithGithub(): Result<Unit> {
         return try {
-            SupabaseConfig.client.auth.signInWith(Email) {
-                this.email = email
-                this.password = password
-            }
+            SupabaseConfig.client.auth.signInWith(Github)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun signInWithGitlab(): Result<Unit> {
+        return try {
+            SupabaseConfig.client.auth.signInWith(Gitlab)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

@@ -563,12 +563,9 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
             ) {
                 val tierName = when (currentTier) {
                     SubscriptionTier.FREE -> stringResource(R.string.tier_free)
-                    SubscriptionTier.MINI -> stringResource(R.string.tier_mini)
-                    SubscriptionTier.STANDARD -> stringResource(R.string.tier_standard)
-                    SubscriptionTier.PRO -> stringResource(R.string.tier_pro)
-                    SubscriptionTier.BUSINESS -> stringResource(R.string.tier_business)
-                    SubscriptionTier.ENTERPRISE -> stringResource(R.string.tier_enterprise)
-                    SubscriptionTier.MAX -> stringResource(R.string.tier_max)
+                    SubscriptionTier.FREEMIUM -> stringResource(R.string.tier_freemium)
+                    SubscriptionTier.PREMIUM -> stringResource(R.string.tier_premium)
+                    SubscriptionTier.ULTRIMIUM -> stringResource(R.string.tier_ultrimium)
                 }
                 Text(
                     text = stringResource(R.string.current_plan_label, tierName),

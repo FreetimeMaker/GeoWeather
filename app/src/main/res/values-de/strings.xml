@@ -71,7 +71,9 @@
     <string name="cancel_btn">Abbrechen</string>
     <string name="MaxWindTXT">Max Wind: %1$s km/h</string>
     <string name="HourlyForecastTXT">Stündliche Vorhersage</string>
-    <string name="SevenDayForecastTXT">16-Tage Vorhersage</string>
+    <string name="SevenDayForecastTXT">Erweiterte Vorhersage</string>
+    <string name="forecast_3day_label">Erweiterte Vorhersage</string>
+    <string name="forecast_7day_label">Erweiterte Vorhersage</string>
     <string name="WeatherDetailsTXT">Wetterdetails</string>
     <string name="AirQualityTXT">Luftqualitätsindex</string>
     <string name="AQIGoodTXT">Gut</string>
@@ -410,20 +412,15 @@
     <string name="changed_label">Geändert</string>
     <!-- Login Strings -->
     <string name="login_title">Anmelden</string>
-    <string name="email_label">E-Mail</string>
-    <string name="password_label">Passwort</string>
-    <string name="login_button">Einloggen</string>
-    <string name="error_invalid_credentials">Ungültige E-Mail oder Passwort</string>
+    <string name="login_github">Mit GitHub anmelden</string>
+    <string name="login_gitlab">Mit GitLab anmelden</string>
     <string name="error_unknown">Ein Fehler ist aufgetreten. Bitte erneut versuchen.</string>
     <string name="logging_in">Anmeldung erfolgt...</string>
     <string name="logout_button">Abmelden</string>
     <string name="subscription_title">Abonnement</string>
     <string name="current_plan_label">Aktueller Plan: %1$s</string>
     <string name="tier_free">Kostenlos</string>
-    <string name="tier_mini">Mini</string>
-    <string name="tier_standard">Standard</string>
-    <string name="tier_pro">Pro</string>
-    <string name="tier_business">Business</string>
-    <string name="tier_enterprise">Enterprise</string>
-    <string name="tier_max">Max</string>
+    <string name="tier_freemium">Freemium</string>
+    <string name="tier_premium">Premium</string>
+    <string name="tier_ultrimium">Ultrimium</string>
 </resources>

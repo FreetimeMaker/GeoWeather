@@ -325,9 +325,9 @@ fun WeatherDetailScreen(
                             }
                         }
                         
-                        if (currentTier.maxForecastDays < 16) {
+                        if (currentTier.maxForecastDays < 14) {
                             Text(
-                                text = "Upgrade to Pro for 16-day forecast",
+                                text = "Upgrade to Ultrimium for 14-day forecast",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier

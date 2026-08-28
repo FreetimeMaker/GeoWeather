@@ -14,7 +14,10 @@ object SupabaseConfig {
             supabaseUrl = SUPABASE_URL,
             supabaseKey = SUPABASE_ANON_KEY
         ) {
-            install(Auth)
+            install(Auth) {
+                scheme = "geoweather"
+                host = "login-callback"
+            }
             install(Postgrest)
         }
     }

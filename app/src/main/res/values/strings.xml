@@ -108,8 +108,8 @@
     <string name="sunrise_label">Sunrise</string>
     <string name="sunset_label">Sunset</string>
     <string name="hourly_label">Hourly</string>
-    <string name="forecast_3day_label">16-Day Forecast</string>
-    <string name="forecast_7day_label">16-Day Forecast</string>
+    <string name="forecast_3day_label">Extended Forecast</string>
+    <string name="forecast_7day_label">Extended Forecast</string>
     <string name="show_more_forecast">Show more ⏬</string>
     <string name="show_less_forecast">Show less 🔝</string>
     <string name="radar_title">Weather Radar</string>
@@ -251,7 +251,7 @@
     <string name="cl_v137_wasm">Fixed WebAssembly (Wasm) build issues caused by external dependencies</string>
     <string name="show_historical_data">Show Historical Data</string>
     <string name="show_historical_data_desc">Show weather trends from the last 3 days</string>
-    <string name="SevenDayForecastTXT">16-Day Forecast</string>
+    <string name="SevenDayForecastTXT">Extended Forecast</string>
     <string name="weather_change_alerts_channel_name">Weather Change Alerts</string>
     <string name="weather_notifications_channel_name">Weather Updates</string>
     <string name="weather_notifications_channel_desc">Daily weather notifications</string>
@@ -591,21 +591,16 @@
     <string name="wallet_ltc">Litecoin</string>
     <string name="wallet_ton">TON</string>
     <!-- Login Strings -->
-    <string name="login_title">Login</string>
-    <string name="email_label">Email</string>
-    <string name="password_label">Password</string>
-    <string name="login_button">Sign In</string>
-    <string name="error_invalid_credentials">Invalid email or password</string>
+    <string name="login_title">Sign In</string>
+    <string name="login_github">Sign in with GitHub</string>
+    <string name="login_gitlab">Sign in with GitLab</string>
     <string name="error_unknown">An error occurred. Please try again.</string>
     <string name="logging_in">Logging in...</string>
     <string name="logout_button">Sign Out</string>
     <string name="subscription_title">Subscription</string>
     <string name="current_plan_label">Current Plan: %1$s</string>
     <string name="tier_free">Free</string>
-    <string name="tier_mini">Mini</string>
-    <string name="tier_standard">Standard</string>
-    <string name="tier_pro">Pro</string>
-    <string name="tier_business">Business</string>
-    <string name="tier_enterprise">Enterprise</string>
-    <string name="tier_max">Max</string>
+    <string name="tier_freemium">Freemium</string>
+    <string name="tier_premium">Premium</string>
+    <string name="tier_ultrimium">Ultrimium</string>
 </resources>
