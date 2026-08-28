@@ -325,9 +325,9 @@ fun WeatherDetailScreen(
                             }
                         }
                         
-                        if (currentTier != SubscriptionTier.PREMIUM) {
+                        if (currentTier.maxForecastDays < 16) {
                             Text(
-                                text = "Upgrade to Premium for 16-day forecast",
+                                text = "Upgrade to Pro for 16-day forecast",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier

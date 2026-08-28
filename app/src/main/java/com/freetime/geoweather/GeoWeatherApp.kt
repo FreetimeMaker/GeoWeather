@@ -9,7 +9,6 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.freetime.sdk.DeveloperConfig
 import com.freetime.sdk.FreetimePay
-import com.freetime.sdk.providers.RevenueCatWebProvider
 import java.util.concurrent.TimeUnit
 
 class GeoWeatherApp : Application() {

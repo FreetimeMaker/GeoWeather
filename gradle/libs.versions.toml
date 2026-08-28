@@ -6,7 +6,7 @@ room = "2.8.4"
 sqlite = "2.7.0"
 ksp = "2.3.11"
 androidx-glance = "1.2.0"
-supabase = "3.7.0"
+supabase = "3.8.0"
 
 [libraries]
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }

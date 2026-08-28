@@ -69,7 +69,7 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
-@SuppressLint("ApplySharedPref")
+@SuppressLint("ApplySharedPref", "UseKtx")
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     val context = LocalContext.current
@@ -582,7 +582,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                 
                 Button(
                     onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://all-api-frontend.vercel.app/dashboard/subscriptions"))
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://free-time.me/shop"))
                         context.startActivity(intent)
                     },
                     modifier = Modifier.fillMaxWidth()
