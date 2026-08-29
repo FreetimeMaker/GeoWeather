@@ -391,7 +391,8 @@ fun WeatherDetailScreen(
 fun WeatherAlertsSection(weatherCode: Int) {
     val alert = when (weatherCode) {
         in 95..99 -> stringResource(R.string.alert_thunderstorm)
-        in 71..86 -> stringResource(R.string.alert_snow)
+        80, 81, 82 -> stringResource(R.string.RainAlertTXT, "100") // Heavy/Violent Rain
+        in 71..77, 85, 86 -> stringResource(R.string.alert_snow)
         else -> null
     }
 
