@@ -93,7 +93,6 @@
     <string name="unit_ms">м/с</string>
     <string name="unit_hpa">гПа</string>
     <string name="unit_mmhg">мм рт. ст.</string>
-
     <!-- Weather Detail Strings -->
     <string name="wind_label">Ветер</string>
     <string name="pressure_label">Давление</string>
@@ -112,7 +111,6 @@
     <string name="error_loading_weather">Ошибка загрузки погоды</string>
     <string name="no_weather_available">Данные о погоде временно недоступны.</string>
     <string name="unknown_location">Неизвестно</string>
-
     <string name="altitude_label">Высота</string>
     <string name="timezone_label">Часовой пояс</string>
     <string name="visibility_label">Видимость</string>
