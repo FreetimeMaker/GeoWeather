@@ -388,7 +388,7 @@
     <string name="jogging_score_desc">Cuaca yang ideal untuk berlari</string>
     <string name="gardening_score_desc">Cek untuk adanya embun beku atau kebutuhan penyiraman</string>
     <string name="donation_mission_title">Kenapa mendukung GeoWeather?</string>
-    <string name="donation_mission_text">GeoWeather itu 100% gratis, bersumber terbuka, dan tidak memiliki iklan atau pelacak. Donasi Anda dapat membantu menutupi biaya API dan mendukung pengembangan aplikasi ini yang sedang berlangsung dan aplikasi berorientasi privasi lainnya. Setiap kontribusi, tidak peduli seberapa kecil, dapat membantu proyek ini tetap hidup. Terima kasih! ❤️</string>
+    <string name="donation_mission_text">GeoWeather itu 100% gratis, bersumber terbuka, dan tidak memiliki iklan atau pelacak. Donasi Anda dapat membantu menutupi biaya API, Biaya Server, dan lebih banyak lagi. Dukung pengembangan aplikasi ini yang sedang berlangsung dan aplikasi berorientasi privasi lainnya. Setiap kontribusi, tidak peduli seberapa kecil, dapat membantu proyek ini tetap hidup. Terima kasih! ❤️</string>
     <string name="main_donation_hint">Menikmati GeoWeather? Dukung pengembangannya</string>
     <string name="about_developer_title">Tentang Pengembang</string>
     <string name="about_developer_text">Hai! Saya Freetime Maker, pencipta GeoWeather. Saya memulai proyek ini karena saya menginginkan sebuah aplikasi cuaca yang bersih, cepat, dan menghormati privasi pengguna di atas segalanya. Aplikasi ini dikembangkan pada waktu senggang saya dengan antusiasme terhadap perangkat lunak sumber terbuka. Dukungan Anda memungkinkan saya untuk tetap meningkatkannya dan menjelajahi fitur baru untuk komunitas!</string>
