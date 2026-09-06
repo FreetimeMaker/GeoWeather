@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">GeoWeather</string>
+    <string name="login_title">Connexion à GeoWeather</string>
+    <string name="login_subtitle">Connectez-vous pour accéder aux prévisions</string>
+    <string name="login_github">Se connecter avec GitHub</string>
+    <string name="login_gitlab">Se connecter avec GitLab</string>
+    <string name="main_plan">Forfait : %1$s</string>
+    <string name="main_add_location">Ajouter un lieu</string>
+    <string name="main_delete_location">Supprimer le lieu</string>
+    <string name="main_open_radar">Ouvrir le radar météo</string>
+    <string name="main_no_locations">Aucun lieu ajouté</string>
+    <string name="main_forecast">Prévisions</string>
+    <string name="main_hourly_forecast">Prévisions horaires</string>
+    <string name="search_title">Rechercher une ville</string>
+    <string name="search_hint">Nom de la ville</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_logout">Se déconnecter</string>
+    <string name="donate_title">Soutenir le projet</string>
+    <string name="back_nav_desc">Retour</string>
+    <string name="weather_feels_like">Ressenti</string>
+    <string name="weather_humidity">Humidité</string>
+    <string name="weather_precipitation">Pluie</string>
+    <string name="weather_wind">Vent</string>
+    <string name="weather_pressure">Pression</string>
+    <string name="weather_uv">Indice UV</string>
+    <string name="weather_visibility">Visibilité</string>
+    <string name="weather_cloud_cover">Couverture nuageuse</string>
+    <string name="historical_trends_label">Tendances historiques</string>
+    <string name="unit_settings_title">Unités</string>
+    <string name="backup_restore_title">Sauvegarde et restauration</string>
+    <string name="language_settings_title">Paramètres de langue</string>
+    <string name="whats_new_title">Nouveautés</string>
+</resources>

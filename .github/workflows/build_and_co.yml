@@ -1,4 +1,4 @@
-name: Build, Sign and Release Android App
+name: Build and Release GeoWeather
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 jobs:
-  prepare_android_app:
+  prepare_release:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.versioncheck.outputs.version }}
@@ -26,7 +26,8 @@ jobs:
       - name: Detect version & create tag
         id: versioncheck
         run: |
-          VERSION=$(grep 'versionName' app/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
+          # Use androidApp for version detection
+          VERSION=$(grep 'versionName' androidApp/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
           git fetch --tags
@@ -39,8 +40,8 @@ jobs:
             echo "create_tag=true" >> "$GITHUB_OUTPUT"
           fi
 
-  build_sign_and_release_android_app:
-    needs: prepare_android_app
+  build_all:
+    needs: prepare_release
     runs-on: ubuntu-latest
 
     steps:
@@ -61,14 +62,21 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
           cache: 'gradle'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Build Android App
-        run: ./gradlew :app:assembleRelease
+      - name: Build SDK
+        run: ./gradlew :SDK:SDK:assemble
+
+      - name: Build Android App (Release)
+        run: ./gradlew :androidApp:assembleRelease
+
+      - name: Build Desktop App (Release)
+        # assembleDistributable creates the platform-specific package
+        run: ./gradlew :desktopApp:packageReleaseDistributionForCurrentOS
 
       - name: Find APKSIGNER
         id: find_apksigner
@@ -76,11 +84,11 @@ jobs:
           APKSIGNER=$(find /usr/local/lib/android/sdk/build-tools -name apksigner | head -n 1)
           echo "apksigner=$APKSIGNER" >> $GITHUB_OUTPUT
 
-      - name: Sign Android
+      - name: Sign Android APK
         id: sign_apk
         run: |
-          UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
-          SIGNED_APK="GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk"
+          UNSIGNED_APK="androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk"
+          SIGNED_APK="GeoWeather-v${{ needs.prepare_release.outputs.version }}-android.apk"
           KEYSTORE_PATH="./keystore/GeoWeather-KeyStore.jks"
 
           echo "==> Signiere APK: $SIGNED_APK"
@@ -96,24 +104,37 @@ jobs:
 
       - name: Verify APK Signature
         run: |
-          echo "==> Überprüfe Signatur"
           "${{ steps.find_apksigner.outputs.apksigner }}" verify --verbose \
             "${{ steps.sign_apk.outputs.signed_apk }}"
 
-      - name: Upload APK as build artifact
+      - name: Prepare Desktop Artifact
+        run: |
+          # Move the desktop output to a predictable location
+          # Usually in desktopApp/build/compose/binaries/main/deb (or similar on linux)
+          # Since we run on ubuntu-latest, we look for deb or tar.gz
+          DIST_DIR="desktopApp/build/compose/binaries/main"
+          DEB_FILE=$(find $DIST_DIR -name "*.deb" | head -n 1)
+          if [ -f "$DEB_FILE" ]; then
+            cp "$DEB_FILE" "GeoWeather-v${{ needs.prepare_release.outputs.version }}-linux.deb"
+          fi
+
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk
-          path: GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk
-          if-no-files-found: error
+          name: GeoWeather-Builds
+          path: |
+            *.apk
+            *.deb
+          if-no-files-found: warn
           retention-days: 90
 
-      - name: Upload APK to Release
-        if: needs.prepare_android_app.outputs.create_tag == 'true'
+      - name: Create Release and Upload Assets
+        if: needs.prepare_release.outputs.create_tag == 'true'
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: v${{ needs.prepare_android_app.outputs.version }}
+          tag_name: v${{ needs.prepare_release.outputs.version }}
           files: |
-            GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk
+            *.apk
+            *.deb
           draft: false
           generate_release_notes: true

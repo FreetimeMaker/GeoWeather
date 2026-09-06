@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">GeoWeather</string>
+    <string name="login_title">Вход в GeoWeather</string>
+    <string name="login_subtitle">Войдите, чтобы получить прогноз погоды</string>
+    <string name="login_github">Войти через GitHub</string>
+    <string name="login_gitlab">Войти через GitLab</string>
+    <string name="main_plan">План: %1$s</string>
+    <string name="main_add_location">Добавить местоположение</string>
+    <string name="main_delete_location">Удалить местоположение</string>
+    <string name="main_open_radar">Открыть погодный радар</string>
+    <string name="main_no_locations">Местоположения не добавлены</string>
+    <string name="main_forecast">Прогноз</string>
+    <string name="main_hourly_forecast">Почасовой прогноз</string>
+    <string name="search_title">Поиск города</string>
+    <string name="search_hint">Название города</string>
+    <string name="settings_title">Настройки</string>
+    <string name="settings_logout">Выйти</string>
+    <string name="donate_title">Поддержать проект</string>
+    <string name="back_nav_desc">Назад</string>
+    <string name="weather_feels_like">Ощущается как</string>
+    <string name="weather_humidity">Влажность</string>
+    <string name="weather_precipitation">Осадки</string>
+    <string name="weather_wind">Ветер</string>
+    <string name="weather_pressure">Давление</string>
+    <string name="weather_uv">УФ-индекс</string>
+    <string name="weather_visibility">Видимость</string>
+    <string name="weather_cloud_cover">Облачность</string>
+    <string name="historical_trends_label">Исторические тенденции</string>
+    <string name="unit_settings_title">Единицы измерения</string>
+    <string name="backup_restore_title">Резервная копия и восстановление</string>
+    <string name="language_settings_title">Языковые настройки</string>
+    <string name="whats_new_title">Что нового?</string>
+</resources>

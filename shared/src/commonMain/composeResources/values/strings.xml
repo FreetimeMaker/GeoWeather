@@ -1,0 +1,152 @@
+<resources>
+    <string name="app_name">GeoWeather</string>
+    <string name="login_title">GeoWeather Login</string>
+    <string name="login_subtitle">Sign in with your provider to access forecast data</string>
+    <string name="login_github">Sign in with GitHub</string>
+    <string name="login_gitlab">Sign in with GitLab</string>
+
+    <string name="main_plan">Plan: %1$s</string>
+    <string name="main_add_location">Add Location</string>
+    <string name="main_delete_location">Delete location</string>
+    <string name="main_open_radar">Open weather radar</string>
+    <string name="main_no_locations">No locations added</string>
+    <string name="main_last_updated">Last updated: %1$s</string>
+    <string name="main_forecast">Forecast</string>
+    <string name="main_hourly_forecast">Hourly forecast</string>
+    <string name="weather_feels_like">Feels like</string>
+    <string name="weather_humidity">Humidity</string>
+    <string name="weather_precipitation">Rain</string>
+    <string name="weather_wind">Wind</string>
+    <string name="weather_pressure">Pressure</string>
+    <string name="weather_uv">UV index</string>
+    <string name="weather_visibility">Visibility</string>
+    <string name="weather_cloud_cover">Cloud cover</string>
+
+    <string name="search_title">Search City</string>
+    <string name="search_hint">City Name</string>
+
+    <!-- Navigation & General -->
+    <string name="back_nav_desc">Back</string>
+    <string name="settings_title">Settings</string>
+    <string name="donate_title">Donate &amp; Support</string>
+    <string name="about_title">About</string>
+
+    <!-- Settings -->
+    <string name="settings_account_section">Account</string>
+    <string name="settings_logout">Logout</string>
+    <string name="settings_theme">Theme Settings</string>
+    <string name="settings_units">Unit Settings</string>
+
+    <!-- Donations -->
+    <string name="support_development">Support Development</string>
+    <string name="select_option_msg">Select a donation option below</string>
+    <string name="about_developer_title">About the Developer</string>
+    <string name="about_developer_text">Hi! I\'m Freetime Maker, the creator of GeoWeather. I build free, open-source apps for everyone.</string>
+    <string name="donation_mission_title">Why support GeoWeather?</string>
+    <string name="donation_mission_text">GeoWeather is 100% free, open-source, and has no ads or trackers. Your donations help cover API costs and keep the project alive.</string>
+    <string name="cash_label">Cash &amp; Credits</string>
+    <string name="crypto_label">Crypto Donations</string>
+    <string name="DonViaGHSponsors">GitHub Sponsors</string>
+    <string name="DonViaFMSDK">FreetimeSDK (In-App)</string>
+    <string name="show_wallet_addresses">Show Wallet Addresses</string>
+    <string name="don_nowpayments_via">NOWPayments</string>
+    <string name="DonViaOxaPay">OxaPay</string>
+    <string name="ViewSup">View Supporters</string>
+
+    <!-- Donation Dialog -->
+    <string name="select_donation_amount">Select Donation Amount</string>
+    <string name="currency_label">Currency</string>
+    <string name="custom_amount_label">Custom Amount</string>
+    <string name="amount_in_currency_hint">Amount in %1$s</string>
+    <string name="invalid_amount_msg">Please enter a valid amount</string>
+    <string name="donate_btn">Donate</string>
+    <string name="cancel_btn">Cancel</string>
+    <string name="billing_options_title">Billing Options</string>
+
+    <!-- Weather Details -->
+    <string name="wind_label">Wind</string>
+    <string name="humidity_label">Humidity</string>
+    <string name="pressure_label">Pressure</string>
+    <string name="feels_like_label">Feels like</string>
+    <string name="sunrise_label">Sunrise</string>
+    <string name="sunset_label">Sunset</string>
+    <string name="visibility_label">Visibility</string>
+    <string name="unit_settings_title">Unit Settings</string>
+    <string name="temperature_unit">Temperature Unit</string>
+    <string name="wind_speed_unit">Wind Speed Unit</string>
+    <string name="pressure_unit">Pressure Unit</string>
+    <string name="unit_celsius">Celsius (°C)</string>
+    <string name="unit_fahrenheit">Fahrenheit (°F)</string>
+    <string name="unit_kmh">km/h</string>
+    <string name="unit_mph">mph</string>
+    <string name="unit_ms">m/s</string>
+    <string name="unit_hpa">hPa</string>
+    <string name="unit_mmhg">mmHg</string>
+    <string name="show_more_forecast">Show more</string>
+    <string name="show_less_forecast">Show less</string>
+    <string name="radar_title">Weather Radar</string>
+    <string name="refresh_nav_desc">Refresh</string>
+    <string name="no_locations_msg">No locations added yet.</string>
+    <string name="error_loading_weather">Error loading weather</string>
+    <string name="weather_alerts_title">Weather Alerts</string>
+    <string name="no_alerts">No active weather alerts</string>
+    <string name="alert_storm">Severe storm warning</string>
+    <string name="alert_snow">Heavy snowfall warning</string>
+    <string name="alert_thunderstorm">Thunderstorm warning</string>
+    <string name="alert_heat">Extreme heat warning</string>
+    <string name="chart_24h_title">24h Trend</string>
+    <string name="chart_temp_label">Temperature (°C)</string>
+    <string name="chart_rain_label">Rain chance (%)</string>
+    <string name="wind_direction_label">Direction</string>
+    <string name="gusts_label">Gusts</string>
+    <string name="historical_trends_label">Historical Trends</string>
+    <string name="trend_max">Max</string>
+    <string name="trend_min">Min</string>
+    <string name="pollen_count_title">Pollen Count</string>
+    <string name="pollen_alnus">Alder pollen</string>
+    <string name="pollen_betula">Birch pollen</string>
+    <string name="pollen_grass">Grass pollen</string>
+    <string name="pollutants_title">Air Pollutants</string>
+    <string name="pm2_5_label">PM2.5</string>
+    <string name="pm10_label">PM10</string>
+    <string name="no2_label">NO2</string>
+    <string name="o3_label">O3</string>
+    <string name="air_quality_label">Air Quality Index</string>
+    <string name="aqi_good">Good</string>
+    <string name="aqi_moderate">Moderate</string>
+    <string name="aqi_unhealthy">Unhealthy</string>
+    <string name="moon_phase_label">Moon phase</string>
+    <string name="moonrise_label">Moonrise</string>
+    <string name="moonset_label">Moonset</string>
+    <string name="illumination_label">Illumination</string>
+    <string name="golden_hour_label">Golden Hour</string>
+    <string name="blue_hour_label">Blue Hour</string>
+    <string name="activity_score_title">Outdoor Activities</string>
+    <string name="score_jogging">Jogging</string>
+    <string name="score_laundry">Laundry</string>
+    <string name="score_gardening">Gardening</string>
+    <string name="backup_restore_title">Backup &amp; Restore</string>
+    <string name="export_locations">Export Locations</string>
+    <string name="import_locations">Import Locations</string>
+    <string name="export_success">Locations exported successfully</string>
+    <string name="import_success">Locations imported successfully</string>
+    <string name="export_failed">Export failed</string>
+    <string name="import_failed">Import failed</string>
+    <string name="language_settings_title">Language Settings</string>
+    <string name="select_language">Select Language</string>
+    <string name="lang_system">System</string>
+    <string name="lang_en">English</string>
+    <string name="lang_de">German</string>
+    <string name="lang_ru">Russian</string>
+    <string name="notification_settings_title">Notification Settings</string>
+    <string name="enable_notifications">Enable daily weather updates</string>
+    <string name="notification_time">Notification Time</string>
+    <string name="weather_change_alerts">Weather Change Alerts</string>
+    <string name="enable_change_alerts">Enable alerts on weather changes</string>
+    <string name="save_settings">Save Settings</string>
+    <string name="widget_label">GeoWeather</string>
+    <string name="widget_loading">Loading...</string>
+    <string name="no_location_selected">No location</string>
+    <string name="change_log_title">Change Log</string>
+    <string name="whats_new_title">What's new?</string>
+</resources>
