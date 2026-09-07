@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Sonne -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="
+            M54,26
+            a14,14 0 1,0 0,28
+            a14,14 0 1,0 0,-28
+        " />
+
+    <!-- Wolke -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="
+            M32,62
+            c0,-8 6,-14 14,-14
+            c4,0 7,2 9,4
+            c2,-3 5,-5 9,-5
+            c7,0 12,5 12,12
+            c0,7 -5,12 -12,12
+            h-24
+            c-6,0 -10,-4 -10,-9z
+        " />
+</vector>
