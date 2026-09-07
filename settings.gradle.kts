@@ -21,6 +21,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "GeoWeather"
-include(":app")
-include(":SDK")
-project(":SDK").projectDir = file("SDK/SDK")
+include(":androidApp")
+include(":shared")
+include(":desktopApp")
+include(":SDK:SDK")
