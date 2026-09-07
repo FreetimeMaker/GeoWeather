@@ -28,7 +28,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.freetime.geoweather"
-            packageVersion = "1.0.0"
+            packageVersion = "2.3.0"
         }
     }
 }

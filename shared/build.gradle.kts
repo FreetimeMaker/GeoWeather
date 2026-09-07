@@ -49,7 +49,7 @@ kotlin {
             api("com.russhwolf:multiplatform-settings:1.3.0")
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime)
-            api(project(":SDK:SDK"))
+            api(project(":freetime-sdk"))
         }
         
         androidMain.dependencies {

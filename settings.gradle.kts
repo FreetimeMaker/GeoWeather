@@ -24,4 +24,7 @@ rootProject.name = "GeoWeather"
 include(":androidApp")
 include(":shared")
 include(":desktopApp")
-include(":SDK:SDK")
+
+// Map the SDK project directly to its subdirectory to avoid issues with parent projects
+include(":freetime-sdk")
+project(":freetime-sdk").projectDir = file("SDK/SDK")
