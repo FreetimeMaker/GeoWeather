@@ -18,6 +18,7 @@ sealed class Screen {
     data object Donate : Screen()
     data object ChangeLog : Screen()
     data object Radar : Screen()
+    data object About : Screen()
 }
 
 @Composable
@@ -69,7 +70,8 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                     SettingsScreen(
                         appSettings = appSettings,
                         onBack = { currentScreen = Screen.Main },
-                        onChangeLogClick = { currentScreen = Screen.ChangeLog }
+                        onChangeLogClick = { currentScreen = Screen.ChangeLog },
+                        onAboutClick = { currentScreen = Screen.About }
                     )
                 }
                 is Screen.Donate -> {
@@ -84,6 +86,11 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 }
                 is Screen.Radar -> {
                     RadarScreen(
+                        onBack = { currentScreen = Screen.Main }
+                    )
+                }
+                is Screen.About -> {
+                    AboutScreen(
                         onBack = { currentScreen = Screen.Main }
                     )
                 }

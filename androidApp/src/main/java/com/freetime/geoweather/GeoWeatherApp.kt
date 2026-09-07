@@ -16,6 +16,7 @@ class GeoWeatherApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        setAndroidContext(this)
         initDependencies()
         scheduleWeatherWork()
     }

@@ -17,7 +17,8 @@ import org.jetbrains.compose.resources.stringResource
 fun SettingsScreen(
     appSettings: AppSettings,
     onBack: () -> Unit,
-    onChangeLogClick: () -> Unit
+    onChangeLogClick: () -> Unit,
+    onAboutClick: () -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
     val useSystemTheme by appSettings.useSystemTheme.collectAsState()
@@ -61,6 +62,10 @@ fun SettingsScreen(
             Spacer(Modifier.height(24.dp))
             Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(Res.string.open_change_log))
+            }
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(onClick = onAboutClick, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(Res.string.about_title))
             }
         }
     }

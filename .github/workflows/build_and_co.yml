@@ -75,6 +75,9 @@ jobs:
       - name: Build Android App (Release)
         run: ./gradlew :androidApp:assembleRelease
 
+      - name: Build Desktop App (Linux Deb)
+        run: ./gradlew :desktopApp:packageDeb
+
       - name: Find APKSIGNER
         id: find_apksigner
         run: |
@@ -85,7 +88,7 @@ jobs:
         id: sign_apk
         run: |
           UNSIGNED_APK="androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk"
-          SIGNED_APK="GeoWeather-v${{ needs.prepare_release.outputs.version }}-android.apk"
+          SIGNED_APK="GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk"
           KEYSTORE_PATH="./keystore/GeoWeather-KeyStore.jks"
 
           echo "==> Signiere APK: $SIGNED_APK"
@@ -106,11 +109,14 @@ jobs:
 
       - name: Prepare Desktop Artifact
         run: |
-          DIST_DIR="desktopApp/build/compose/binaries/main"
-          # On Ubuntu, look for deb
-          DEB_FILE=$(find $DIST_DIR -name "*.deb" | head -n 1)
-          if [ -f "$DEB_FILE" ]; then
-            cp "$DEB_FILE" "GeoWeather-v${{ needs.prepare_release.outputs.version }}-linux.deb"
+          # The packageDeb task typically outputs to build/compose/binaries/main/deb/
+          DEB_FILE=$(find desktopApp/build/compose/binaries/main -name "*.deb" | head -n 1)
+          if [ -n "$DEB_FILE" ]; then
+            echo "Moving $DEB_FILE to GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb"
+            cp "$DEB_FILE" "GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb"
+          else
+            echo "Error: No .deb file found in desktopApp/build/compose/binaries/main"
+            exit 1
           fi
 
       - name: Upload Artifacts

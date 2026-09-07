@@ -68,6 +68,29 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
+// Workaround for a Compose Multiplatform 1.12.0 + AGP 9.x gap:
+// with the `com.android.kotlin.multiplatform.library` plugin,
+// `variant.sources.assets` is null, so the Compose plugin cannot wire
+// its `copy...ComposeResourcesToAndroidAssets` task into packaging.
+// The AAR/APK would end up WITHOUT any compose resources, crashing on
+// device with MissingResourceException. Instead we assemble the same
+// asset tree ourselves; :androidApp merges it (see androidApp/build.gradle.kts).
+val assembleAndroidComposeAssets = tasks.register("assembleAndroidComposeAssets", Copy::class) {
+    dependsOn(
+        "prepareComposeResourcesTaskForCommonMain",
+        "convertXmlValueResourcesForCommonMain",
+        "copyNonXmlValueResourcesForCommonMain"
+    )
+    into(layout.buildDirectory.dir("composeAndroidAssets"))
+    // NB: the two tasks below output the bare `values*/drawable` tree;
+    // the `composeResources/<package>` prefix (which
+    // DefaultAndroidResourceReader looks up at runtime) is added here.
+    into("composeResources/geoweather.shared.generated.resources") {
+        from(tasks.named("convertXmlValueResourcesForCommonMain"))
+        from(tasks.named("copyNonXmlValueResourcesForCommonMain"))
+    }
+}
+
 dependencies {
     add("kspAndroid", libs.room.compiler)
     add("kspJvm", libs.room.compiler)
