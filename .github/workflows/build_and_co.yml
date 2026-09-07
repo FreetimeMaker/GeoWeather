@@ -19,7 +19,7 @@ jobs:
       create_tag: ${{ steps.versioncheck.outputs.create_tag }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
@@ -47,30 +47,30 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
 
       - name: Checkout Keystore Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           repository: ${{ secrets.KEYSTORE_REPOSITORY }}
           token: ${{ secrets.KEYSTORE_ACCESS_TOKEN }}
           path: keystore
 
       - name: Install Java
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
           cache: 'gradle'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Build SDK
-        run: ./gradlew :SDK:assemble
+        run: ./gradlew :SDK:SDK:assemble
 
       - name: Build Android App (Release)
         run: ./gradlew :androidApp:assembleRelease
@@ -106,17 +106,15 @@ jobs:
 
       - name: Prepare Desktop Artifact
         run: |
-          # Move the desktop output to a predictable location
-          # Usually in desktopApp/build/compose/binaries/main/deb (or similar on linux)
-          # Since we run on ubuntu-latest, we look for deb or tar.gz
           DIST_DIR="desktopApp/build/compose/binaries/main"
+          # On Ubuntu, look for deb
           DEB_FILE=$(find $DIST_DIR -name "*.deb" | head -n 1)
           if [ -f "$DEB_FILE" ]; then
             cp "$DEB_FILE" "GeoWeather-v${{ needs.prepare_release.outputs.version }}-linux.deb"
           fi
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: GeoWeather-Builds
           path: |
@@ -127,7 +125,7 @@ jobs:
 
       - name: Create Release and Upload Assets
         if: needs.prepare_release.outputs.create_tag == 'true'
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.prepare_release.outputs.version }}
           files: |

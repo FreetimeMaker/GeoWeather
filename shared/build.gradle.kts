@@ -29,19 +29,19 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.components.resources)
+            api(compose.runtime)
+            api(compose.foundation)
+            api(compose.material3)
+            api(compose.ui)
+            api(compose.materialIconsExtended)
+            api(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             
             implementation("io.ktor:ktor-client-core:3.5.2")
             implementation("io.ktor:ktor-client-content-negotiation:3.5.2")
             implementation("io.ktor:ktor-serialization-kotlinx-json:3.5.2")
-            implementation(libs.room.runtime)
-            implementation(libs.sqlite.bundled)
+            api(libs.room.runtime)
+            api(libs.sqlite.bundled)
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
             
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat")
@@ -49,7 +49,7 @@ kotlin {
             api("com.russhwolf:multiplatform-settings:1.3.0")
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime)
-            implementation(project(":SDK:SDK"))
+            api(project(":SDK:SDK"))
         }
         
         androidMain.dependencies {

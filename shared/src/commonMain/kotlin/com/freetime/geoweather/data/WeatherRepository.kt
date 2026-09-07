@@ -3,11 +3,13 @@ package com.freetime.geoweather.data
 import com.freetime.geoweather.ApiConstants
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.domain.City
+import geoweather.shared.generated.resources.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
-
-import geoweather.shared.generated.resources.*
+import kotlinx.serialization.json.*
 import org.jetbrains.compose.resources.getString
+
+data class HourlyForecast(val time: String, val temp: Int, val code: Int)
 
 class WeatherRepository(
     private val locationDao: LocationDao,
@@ -75,5 +77,25 @@ class WeatherRepository(
         val code = location.currentWeatherCode ?: 0
         val description = WeatherCodes.getDescription(code)
         return getString(Res.string.WeatherNotificationTXT, location.name, tempStr, description)
+    }
+
+    fun getHourlyForecasts(location: LocationEntity): List<HourlyForecast> {
+        val data = location.weatherData ?: return emptyList()
+        return try {
+            val json = Json.parseToJsonElement(data).jsonObject
+            val hourly = json["hourly"]?.jsonObject ?: return emptyList()
+            val times = hourly["time"]?.jsonArray ?: return emptyList()
+            val temps = hourly["temperature_2m"]?.jsonArray ?: return emptyList()
+            val codes = hourly["weathercode"]?.jsonArray ?: hourly["weather_code"]?.jsonArray ?: return emptyList()
+
+            List(minOf(times.size, temps.size, codes.size, 24)) { i ->
+                val timeStr = times[i].jsonPrimitive.content.split("T").last()
+                val temp = temps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0
+                val code = codes[i].jsonPrimitive.intOrNull ?: 0
+                HourlyForecast(timeStr, temp, code)
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 }
