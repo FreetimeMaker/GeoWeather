@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - KMP-migration
   workflow_dispatch:
 
 permissions:
