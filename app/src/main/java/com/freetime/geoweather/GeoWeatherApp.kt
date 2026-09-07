@@ -9,7 +9,6 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.freetime.sdk.DeveloperConfig
 import com.freetime.sdk.FreetimePay
-import com.freetime.sdk.providers.RevenueCatWebProvider
 import java.util.concurrent.TimeUnit
 
 class GeoWeatherApp : Application() {
@@ -48,16 +47,10 @@ class GeoWeatherApp : Application() {
             "XMR" to "49szz88CqMWGgyDxp7VqvBS62pGLQcV4YPSBHcLwtxAXLz1Wngf8vW6is4w13Au7C2RovrTiJQaGDV5VBhFnyMBsM44Pn2P",
             "DASH" to "Xhr4Nirm7AZVtSF8ovsy5nEeXhS8Tv24pV",
             "ZEC" to "u14l4cu9m4z8r92ut4j6fqz99wuttrq2u7gtlvgm84j3g7p32a74257c5882nd6emzdwkx97had5tfhaz0k7mr9urpp4nf9fq7wcj2txggl5ttxu8xnz8khxpnhuj24r29av00egp59jzxsule409apmul3uskny566hfkhz3lgfkxwavpjf37sf64jpdnht6sf759e09043je7z7kdje",
-            "XRP" to "rwPRMisBbDWd8841TNk1JjrWLmHL7ffjuV",
             "ADA" to "0xC112f59eeC15de98906a8BAaC3a08a41D80cf946"
         )
         
         freetimePay.registerDefaultCryptoProviders(walletAddresses)
-
-        // Register RevenueCat for fiat payments
-        freetimePay.registerProvider(
-            RevenueCatWebProvider("https://pay.rev.cat/gttbrbhajlebigbj/", "One-Time 2 USD Donation")
-        )
     }
 
     private fun scheduleWeatherWork() {
