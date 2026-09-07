@@ -69,14 +69,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Build SDK
-        run: ./gradlew :SDK:SDK:assemble
+        run: ./gradlew :SDK:assemble
 
       - name: Build Android App (Release)
         run: ./gradlew :androidApp:assembleRelease
-
-      - name: Build Desktop App (Release)
-        # assembleDistributable creates the platform-specific package
-        run: ./gradlew :desktopApp:packageReleaseDistributionForCurrentOS
 
       - name: Find APKSIGNER
         id: find_apksigner

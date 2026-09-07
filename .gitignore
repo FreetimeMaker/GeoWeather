@@ -35,3 +35,4 @@ local.properties
 .AddCompLib
 .fake
 desktopApp/kcef-bundle/*
+GeoWeather-2.3.0/*
