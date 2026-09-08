@@ -16,6 +16,7 @@
     <string name="search_hint">City name or Coordinates</string>
     <string name="search_placeholder">e.g. New York or 40.71, -74.00</string>
     <string name="SearchBTNTXT">Search</string>
+    <string name="search_no_results">No results found. Check your connection and try another name or coordinates.</string>
 
     <string name="back_nav_desc">Back</string>
     <string name="settings_title">Settings</string>

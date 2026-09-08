@@ -45,7 +45,6 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 is Screen.Main -> {
                     MainWeatherScreen(
                         viewModel = viewModel,
-                        appSettings = appSettings,
                         onAddLocationClick = { currentScreen = Screen.Search },
                         onLocationClick = { currentScreen = Screen.Detail(it) },
                         onSettingsClick = { currentScreen = Screen.Settings },
@@ -56,7 +55,8 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 is Screen.Search -> {
                     SearchScreen(
                         viewModel = viewModel,
-                        onCitySelected = { currentScreen = Screen.Main }
+                        onCitySelected = { currentScreen = Screen.Main },
+                        onBack = { currentScreen = Screen.Main }
                     )
                 }
                 is Screen.Detail -> {

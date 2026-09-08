@@ -31,6 +31,28 @@ class WeatherRepository(
         locationDao.insertLocation(entity)
     }
 
+    suspend fun selectLocation(location: LocationEntity) {
+        locationDao.deselectAllLocations()
+        locationDao.updateLocation(location.copy(selected = true))
+    }
+
+    suspend fun deleteLocation(location: LocationEntity) {
+        locationDao.deleteLocation(location)
+    }
+
+    suspend fun toggleLocationNotifications(location: LocationEntity) {
+        locationDao.updateLocation(location.copy(notificationsEnabled = !location.notificationsEnabled))
+    }
+
+    suspend fun toggleDefaultLocation(location: LocationEntity) {
+        if (location.isDefault) {
+            locationDao.updateLocation(location.copy(isDefault = false))
+        } else {
+            locationDao.clearDefaultLocation()
+            locationDao.updateLocation(location.copy(isDefault = true))
+        }
+    }
+
     suspend fun updateWeather(location: LocationEntity, providerUrl: String) {
         try {
             val data = apiClient.get(providerUrl)
