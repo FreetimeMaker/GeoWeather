@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - KMP-migration
   workflow_dispatch:
 
 permissions:
@@ -18,7 +19,7 @@ jobs:
       create_tag: ${{ steps.versioncheck.outputs.create_tag }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
@@ -27,7 +28,7 @@ jobs:
         id: versioncheck
         run: |
           # Use androidApp for version detection
-          VERSION=$(grep 'versionName' app/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
+          VERSION=$(grep 'versionName' androidApp/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
           git fetch --tags
@@ -46,33 +47,36 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
 
       - name: Checkout Keystore Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           repository: ${{ secrets.KEYSTORE_REPOSITORY }}
           token: ${{ secrets.KEYSTORE_ACCESS_TOKEN }}
           path: keystore
 
       - name: Install Java
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
           cache: 'gradle'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Build SDK
-        run: ./gradlew :SDK:assemble
+        run: ./gradlew :freetime-sdk:assemble
 
       - name: Build Android App (Release)
         run: ./gradlew :androidApp:assembleRelease
+
+      - name: Build Desktop App (Linux Deb)
+        run: ./gradlew :desktopApp:packageDeb
 
       - name: Find APKSIGNER
         id: find_apksigner
@@ -84,7 +88,7 @@ jobs:
         id: sign_apk
         run: |
           UNSIGNED_APK="androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk"
-          SIGNED_APK="GeoWeather-v${{ needs.prepare_release.outputs.version }}-android.apk"
+          SIGNED_APK="GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk"
           KEYSTORE_PATH="./keystore/GeoWeather-KeyStore.jks"
 
           echo "==> Signiere APK: $SIGNED_APK"
@@ -105,17 +109,18 @@ jobs:
 
       - name: Prepare Desktop Artifact
         run: |
-          # Move the desktop output to a predictable location
-          # Usually in desktopApp/build/compose/binaries/main/deb (or similar on linux)
-          # Since we run on ubuntu-latest, we look for deb or tar.gz
-          DIST_DIR="desktopApp/build/compose/binaries/main"
-          DEB_FILE=$(find $DIST_DIR -name "*.deb" | head -n 1)
-          if [ -f "$DEB_FILE" ]; then
-            cp "$DEB_FILE" "GeoWeather-v${{ needs.prepare_release.outputs.version }}-linux.deb"
+          # The packageDeb task typically outputs to build/compose/binaries/main/deb/
+          DEB_FILE=$(find desktopApp/build/compose/binaries/main -name "*.deb" | head -n 1)
+          if [ -n "$DEB_FILE" ]; then
+            echo "Moving $DEB_FILE to GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb"
+            cp "$DEB_FILE" "GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb"
+          else
+            echo "Error: No .deb file found in desktopApp/build/compose/binaries/main"
+            exit 1
           fi
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: GeoWeather-Builds
           path: |
@@ -126,7 +131,7 @@ jobs:
 
       - name: Create Release and Upload Assets
         if: needs.prepare_release.outputs.create_tag == 'true'
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.prepare_release.outputs.version }}
           files: |
