@@ -1,5 +1,6 @@
 package com.freetime.geoweather.ui
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -11,15 +12,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
 import geoweather.shared.generated.resources.*
+import kotlin.math.cos
+import kotlin.math.roundToInt
+import kotlin.math.sin
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -123,14 +129,14 @@ fun WeatherDetailScreen(
                 val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
                 var forecastExpanded by remember { mutableStateOf(false) }
                 val visibleDaily = if (forecastExpanded) daily else daily.take(7)
+                val code = loc.currentWeatherCode
+                val rawTemp = loc.currentTemp
                 LazyColumn(
                     modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item {
-                        val code = loc.currentWeatherCode
-                        val rawTemp = loc.currentTemp
                         if (code != null) {
                             Icon(
                                 painter = painterResource(WeatherIconMapper.getWeatherIcon(code)),
@@ -411,6 +417,23 @@ fun WeatherDetailScreen(
                                 }
                             }
                         }
+                        if (daily.size > 7) {
+                            item {
+                                TextButton(
+                                    onClick = { forecastExpanded = !forecastExpanded },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = if (forecastExpanded) {
+                                            stringResource(Res.string.show_less_forecast)
+                                        } else {
+                                            stringResource(Res.string.show_more_forecast)
+                                        },
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -419,10 +442,15 @@ fun WeatherDetailScreen(
 }
 
 @Composable
-fun WeatherDetailItem(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+fun WeatherDetailItem(
+    label: String,
+    value: String,
+    valueColor: Color = MaterialTheme.colorScheme.onSurface,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(label, style = MaterialTheme.typography.labelSmall)
-        Text(value, style = MaterialTheme.typography.bodyMedium)
+        Text(value, style = MaterialTheme.typography.bodyMedium, color = valueColor)
     }
 }
 
@@ -451,16 +479,88 @@ fun formatWind(kmh: Double?, degrees: Int?, windUnit: String): String {
         "ms" -> stringResource(Res.string.unit_ms)
         else -> stringResource(Res.string.unit_kmh)
     }
-    val speed = when (windUnit) {
-        "mph" -> kmh * 0.621371
-        "ms" -> kmh / 3.6
-        else -> kmh
+    val speedText = when (windUnit) {
+        "mph" -> "${(kmh * 0.621371).toInt()}"
+        "ms" -> "${(kmh / 3.6 * 10).roundToInt() / 10.0}"
+        else -> "${kmh.toInt()}"
     }
     val cardinal = degrees?.let {
         val dirs = listOf("N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW")
         dirs[(((it + 11.25) / 22.5).toInt()) % 16]
     }
-    return if (cardinal != null) "${speed.toInt()} $suffix $cardinal" else "${speed.toInt()} $suffix"
+    return if (cardinal != null) "$speedText $suffix $cardinal" else "$speedText $suffix"
+}
+
+@Composable
+fun WeatherAlertsSection(code: Int) {
+    val alertRes = when (code) {
+        in 95..99 -> Res.string.alert_thunderstorm
+        in 71..86 -> Res.string.alert_snow
+        else -> null
+    }
+
+    if (alertRes != null) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+        ) {
+            Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text("⚠️", fontSize = 24.sp)
+                Spacer(Modifier.width(12.dp))
+                Column {
+                    Text(
+                        stringResource(Res.string.weather_alerts_title),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                    Text(
+                        stringResource(alertRes),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun WindCompass(direction: Float) {
+    Canvas(modifier = Modifier.size(24.dp)) {
+        val center = Offset(size.width / 2, size.height / 2)
+        val radius = size.width / 2
+        drawCircle(color = Color.Gray.copy(alpha = 0.3f), radius = radius)
+        val angleRad = (direction - 90) * kotlin.math.PI / 180.0
+        val arrowLength = radius * 0.8f
+        val end = Offset(
+            (center.x + arrowLength * cos(angleRad)).toFloat(),
+            (center.y + arrowLength * sin(angleRad)).toFloat()
+        )
+        drawLine(color = Color.Red, start = center, end = end, strokeWidth = 3.dp.toPx())
+    }
+}
+
+@Composable
+fun cardinal8(degrees: Float): String {
+    val dirs = listOf(
+        Res.string.dir_n, Res.string.dir_ne, Res.string.dir_e, Res.string.dir_se,
+        Res.string.dir_s, Res.string.dir_sw, Res.string.dir_w, Res.string.dir_nw, Res.string.dir_n
+    )
+    val index = (((degrees + 22.5) / 45).toInt()).coerceIn(0, 8)
+    return stringResource(dirs[index])
+}
+
+/** Shifts an "HH:mm" time by [minutes], wrapping around midnight. */
+fun shiftTime(hhmm: String, minutes: Int): String {
+    return try {
+        val parts = hhmm.split(":")
+        var total = parts[0].toInt() * 60 + parts[1].toInt() + minutes
+        total = ((total % 1440) + 1440) % 1440
+        "${(total / 60).toString().padStart(2, '0')}:${(total % 60).toString().padStart(2, '0')}"
+    } catch (e: Exception) {
+        "--:--"
+    }
 }
 
 @Composable

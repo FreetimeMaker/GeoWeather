@@ -139,7 +139,9 @@ class WeatherViewModel(
 
     fun getHourlyForecasts(location: LocationEntity) = repository.getHourlyForecasts(location)
 
-    fun getDailyForecasts(location: LocationEntity) = repository.getDailyForecasts(location)    fun refreshLocation(id: Long, onDone: () -> Unit = {}) {        viewModelScope.launch {
+    fun getDailyForecasts(location: LocationEntity) = repository.getDailyForecasts(location)
+
+    fun getCurrentHourExtras(location: LocationEntity) = repository.getCurrentHourExtras(location)    fun refreshLocation(id: Long, onDone: () -> Unit = {}) {        viewModelScope.launch {
             try {
                 repository.refreshLocationWeather(id)
             } catch (e: Exception) {

@@ -40,7 +40,7 @@ jobs:
             echo "create_tag=true" >> "$GITHUB_OUTPUT"
           fi
 
-  build_all:
+  build_linux:
     needs: prepare_release
     runs-on: ubuntu-latest
 
