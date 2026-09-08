@@ -210,7 +210,7 @@ jobs:
           retention-days: 90
 
   release:
-    needs: [prepare_release, build_all, build_windows]
+    needs: [prepare_release, build_linux, build_windows]
     if: needs.prepare_release.outputs.create_tag == 'true'
     runs-on: ubuntu-latest
 
