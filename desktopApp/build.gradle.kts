@@ -27,8 +27,24 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Exe, TargetFormat.Deb, TargetFormat.Rpm)
-            packageName = "com.freetime.geoweather"
+            packageName = "GeoWeather"
             packageVersion = "3.0.0"
+            vendor = "Freetime Maker"
+            description = "GeoWeather - Privacy-focused weather app"
+            copyright = "Copyright © 2026 Freetime Maker"
+
+            windows {
+                // Make the installed app findable: Start menu entry + desktop shortcut
+                menu = true
+                menuGroup = "GeoWeather"
+                shortcut = true
+                // Let the user see/pick the install folder in the setup wizard
+                dirChooser = true
+                // Per-user install: no admin rights needed, lands in %LOCALAPPDATA%
+                perUserInstall = true
+                // Fixed upgrade code so future versions upgrade instead of installing side-by-side
+                upgradeUuid = "446ac3ee-60c3-457c-b11d-7a335f8bf8eb"
+            }
         }
     }
 }

@@ -204,7 +204,7 @@ jobs:
       - name: Upload EXE Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.-exe
+          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.exe
           path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.exe
           if-no-files-found: error
           retention-days: 90

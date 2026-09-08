@@ -37,7 +37,7 @@ fun AboutScreen(onBack: () -> Unit) {
                 style = MaterialTheme.typography.headlineLarge
             )
             Text(
-                text = "v3.0.0 (KMP)",
+                text = "v3.0.0",
                 style = MaterialTheme.typography.bodySmall
             )
             
