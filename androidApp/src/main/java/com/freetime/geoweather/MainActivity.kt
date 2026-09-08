@@ -11,6 +11,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.freetime.geoweather.data.DependencyManager
+import com.freetime.geoweather.data.onCreateDocumentResult
+import com.freetime.geoweather.data.onOpenDocumentResult
+import com.freetime.geoweather.data.registerFilePickers
 
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
@@ -26,6 +29,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         checkNotificationPermission()
         checkLocationPermission()
+
+        val createDocument = registerForActivityResult(
+            ActivityResultContracts.CreateDocument("application/json"),
+            ::onCreateDocumentResult
+        )
+        val openDocument = registerForActivityResult(
+            ActivityResultContracts.OpenDocument(),
+            ::onOpenDocumentResult
+        )
+        registerFilePickers(createDocument, openDocument)
 
         onBackPressedDispatcher.addCallback(this) {
             if (systemBackHandler?.invoke() != true) {

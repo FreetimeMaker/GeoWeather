@@ -16,6 +16,8 @@ fun setAndroidContext(context: Context) {
     androidContext = context
 }
 
+internal fun getAndroidAppContext(): Context? = androidContext
+
 actual fun openUrl(url: String) {
     androidContext?.let { context ->
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {

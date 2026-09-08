@@ -132,14 +132,15 @@ private fun ScreenContent(
                 onRadarClick = { lat, lon -> onNavigate(Screen.Radar(lat, lon)) }
             )
         }
-        is Screen.Settings -> {
-            SettingsScreen(
-                appSettings = appSettings,
-                onBack = { onGoBack() },
-                onChangeLogClick = { onNavigate(Screen.ChangeLog) },
-                onAboutClick = { onNavigate(Screen.About) }
-            )
-        }
+                is Screen.Settings -> {
+                    SettingsScreen(
+                        viewModel = viewModel,
+                        appSettings = appSettings,
+                        onBack = { onGoBack() },
+                        onChangeLogClick = { onNavigate(Screen.ChangeLog) },
+                        onAboutClick = { onNavigate(Screen.About) }
+                    )
+                }
         is Screen.Donate -> {
             DonateScreen(
                 onBack = { onGoBack() },

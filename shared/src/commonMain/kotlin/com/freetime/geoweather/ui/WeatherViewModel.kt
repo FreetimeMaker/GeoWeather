@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.data.WeatherRepository
+import com.freetime.geoweather.data.exportLocationsJson
+import com.freetime.geoweather.data.parseLocationsBackup
 import com.freetime.geoweather.ApiConstants
 import com.freetime.geoweather.domain.City
 import kotlinx.coroutines.Job
@@ -141,7 +143,28 @@ class WeatherViewModel(
 
     fun getDailyForecasts(location: LocationEntity) = repository.getDailyForecasts(location)
 
-    fun getCurrentHourExtras(location: LocationEntity) = repository.getCurrentHourExtras(location)    fun refreshLocation(id: Long, onDone: () -> Unit = {}) {        viewModelScope.launch {
+    fun getCurrentHourExtras(location: LocationEntity) = repository.getCurrentHourExtras(location)
+
+    /** Builds the backup JSON, or null on error. */
+    suspend fun buildBackupJson(): String? {
+        return try {
+            exportLocationsJson(repository.getAllLocationsSync())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    /** Imports a backup JSON payload. Returns false on error. */
+    suspend fun importBackupJson(content: String): Boolean {
+        return try {
+            repository.importBackupLocations(parseLocationsBackup(content))
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }    fun refreshLocation(id: Long, onDone: () -> Unit = {}) {        viewModelScope.launch {
             try {
                 repository.refreshLocationWeather(id)
             } catch (e: Exception) {

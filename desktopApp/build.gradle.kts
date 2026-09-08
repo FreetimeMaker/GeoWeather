@@ -10,12 +10,13 @@ kotlin {
     jvm()
     
     sourceSets {
-        val jvmMain by getting {
+        val         jvmMain by getting {
             dependencies {
                 implementation(project(":shared"))
                 implementation(compose.desktop.currentOs)
                 implementation(libs.room.runtime)
                 implementation(libs.sqlite.bundled)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.11.0")
             }
         }
     }
@@ -44,6 +45,11 @@ compose.desktop {
                 perUserInstall = true
                 // Fixed upgrade code so future versions upgrade instead of installing side-by-side
                 upgradeUuid = "446ac3ee-60c3-457c-b11d-7a335f8bf8eb"
+                iconFile.set(file("icons/icon.ico"))
+            }
+
+            linux {
+                iconFile.set(file("icons/icon.png"))
             }
         }
     }

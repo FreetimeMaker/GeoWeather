@@ -19,10 +19,11 @@ fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
         "v3.0.0" to listOf(
             "Migrated to Kotlin Multiplatform (KMP)",
-            "Support for Android and Linux Desktop",
+            "Support for Android and Desktop (Windows and Linux)",
             "Refactored Database to Room Multiplatform",
             "Refactored Networking to Ktor",
             "Updated UI to Compose Multiplatform",
+            "New App Icon"
         ),
         "v2.3.0" to listOf(
             "Enhanced the Weather Widget with responsive hourly Forecast and made it better",

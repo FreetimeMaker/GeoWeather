@@ -55,6 +55,7 @@ kotlin {
         androidMain.dependencies {
             implementation("io.ktor:ktor-client-okhttp:3.5.2")
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
+            implementation("androidx.activity:activity:1.13.0")
         }
         
         jvmMain.dependencies {

@@ -15,13 +15,19 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.data.AppSettings
+import com.freetime.geoweather.data.BACKUP_FILE_NAME
+import com.freetime.geoweather.data.BACKUP_MIME_TYPE
+import com.freetime.geoweather.data.loadTextFile
+import com.freetime.geoweather.data.saveTextFile
 import com.freetime.geoweather.openUrl
 import geoweather.shared.generated.resources.*
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    viewModel: WeatherViewModel,
     appSettings: AppSettings,
     onBack: () -> Unit,
     onChangeLogClick: () -> Unit,
@@ -40,7 +46,15 @@ fun SettingsScreen(
     val disablePrivateView by appSettings.disablePrivateView.collectAsState()
     val openExternalBrowser by appSettings.openExternalBrowser.collectAsState()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val exportSuccess = stringResource(Res.string.export_success)
+    val exportFailed = stringResource(Res.string.export_failed)
+    val importSuccess = stringResource(Res.string.import_success)
+    val importFailed = stringResource(Res.string.import_failed)
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(Res.string.settings_title)) },
@@ -143,6 +157,40 @@ fun SettingsScreen(
             ) { appSettings.setOpenExternalBrowser(it) }
 
             // ---- Buttons ----
+            // ---- Backup & Restore ----
+            SettingsSection(stringResource(Res.string.backup_restore_title))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(
+                    onClick = {
+                        scope.launch {
+                            val json = viewModel.buildBackupJson()
+                            val ok = json != null && saveTextFile(BACKUP_FILE_NAME, BACKUP_MIME_TYPE, json)
+                            snackbarHostState.showSnackbar(
+                                if (ok) exportSuccess else exportFailed
+                            )
+                        }
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(stringResource(Res.string.export_locations))
+                }
+                OutlinedButton(
+                    onClick = {
+                        scope.launch {
+                            val content = loadTextFile(arrayOf(BACKUP_MIME_TYPE))
+                            if (content == null) return@launch
+                            val ok = viewModel.importBackupJson(content)
+                            snackbarHostState.showSnackbar(
+                                if (ok) importSuccess else importFailed
+                            )
+                        }
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(stringResource(Res.string.import_locations))
+                }
+            }
+
             Spacer(Modifier.height(16.dp))
             Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(Res.string.open_change_log))
