@@ -135,7 +135,7 @@ jobs:
       - name: Upload DEB Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}-linux
+          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb
           path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb
           if-no-files-found: error
           retention-days: 90
@@ -154,7 +154,7 @@ jobs:
       - name: Upload RPM Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}-linux-rpm
+          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm
           path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm
           if-no-files-found: error
           retention-days: 90
@@ -196,7 +196,7 @@ jobs:
       - name: Upload MSI Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}-windows-msi
+          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.msi
           path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.msi
           if-no-files-found: error
           retention-days: 90
@@ -204,7 +204,7 @@ jobs:
       - name: Upload EXE Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}-windows-exe
+          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.-exe
           path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.exe
           if-no-files-found: error
           retention-days: 90
