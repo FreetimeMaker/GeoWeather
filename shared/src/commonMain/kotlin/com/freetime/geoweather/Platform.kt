@@ -25,3 +25,9 @@ expect fun applyAppLanguage(language: String)
 
 /** Copies plain text to the system clipboard. */
 expect fun copyToClipboard(text: String)
+
+/**
+ * Invoked by the host (Activity) on system back press.
+ * Returns true when the press was consumed (a screen was popped).
+ */
+var systemBackHandler: (() -> Boolean)? = null

@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.data.AppSettings
@@ -34,6 +35,8 @@ fun WeatherDetailScreen(
     onBack: () -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
+    val windUnit by appSettings.windUnit.collectAsState()
+    val pressureUnit by appSettings.pressureUnit.collectAsState()
     val isTransient = transientName != null
     val dbLocation by viewModel.observeLocation(locationId).collectAsState(initial = null)
     var transientLocation by remember { mutableStateOf<LocationEntity?>(null) }
@@ -137,13 +140,15 @@ fun WeatherDetailScreen(
                             val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
                             Text(
                                 text = "$displayTemp$tempSuffix",
-                                style = MaterialTheme.typography.displayLarge
+                                style = MaterialTheme.typography.displayLarge,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                         if (code != null) {
                             Text(
                                 text = stringResource(WeatherCodes.getStringResource(code)),
-                                style = MaterialTheme.typography.headlineSmall
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
@@ -161,8 +166,6 @@ fun WeatherDetailScreen(
                     }
 
                     item {
-                        val windUnit by appSettings.windUnit.collectAsState()
-                        val pressureUnit by appSettings.pressureUnit.collectAsState()
                         Card(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
                                 DetailInfoRow(
@@ -188,6 +191,7 @@ fun WeatherDetailScreen(
                             Text(
                                 text = stringResource(Res.string.hourly_label),
                                 style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
@@ -225,31 +229,63 @@ fun WeatherDetailScreen(
                             Text(
                                 text = stringResource(Res.string.forecast_3day_label),
                                 style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
                         items(daily) { day ->
-                            Card(modifier = Modifier.fillMaxWidth()) {
-                                Row(
-                                    modifier = Modifier.padding(12.dp).fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = day.date.takeLast(5),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Icon(
-                                        painter = painterResource(WeatherIconMapper.getWeatherIcon(day.code)),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(32.dp),
-                                        tint = Color.Unspecified
-                                    )
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        text = "${formatTemp(day.minTemp.toDouble(), tempUnit)} / ${formatTemp(day.maxTemp.toDouble(), tempUnit)}",
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
+                            var expanded by remember { mutableStateOf(false) }
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = { expanded = !expanded }
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = day.date.takeLast(5),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Icon(
+                                            painter = painterResource(WeatherIconMapper.getWeatherIcon(day.code)),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(32.dp),
+                                            tint = Color.Unspecified
+                                        )
+                                        Spacer(Modifier.width(8.dp))
+                                        Text(
+                                            text = "${formatTemp(day.minTemp.toDouble(), tempUnit)} / ${formatTemp(day.maxTemp.toDouble(), tempUnit)}",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                    if (expanded) {
+                                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                        DetailInfoRow(
+                                            label = stringResource(Res.string.sunrise_label),
+                                            value = day.sunrise.takeLast(5)
+                                        )
+                                        DetailInfoRow(
+                                            label = stringResource(Res.string.sunset_label),
+                                            value = day.sunset.takeLast(5)
+                                        )
+                                        DetailInfoRow(
+                                            label = stringResource(Res.string.precipitation_label),
+                                            value = "${day.precipSum} mm"
+                                        )
+                                        DetailInfoRow(
+                                            label = stringResource(Res.string.precipitation_probability_label),
+                                            value = "${day.precipProbMax} %"
+                                        )
+                                        DetailInfoRow(
+                                            label = stringResource(Res.string.wind_max_label),
+                                            value = formatWind(day.windMax, null, windUnit)
+                                        )
+                                    }
                                 }
                             }
                         }

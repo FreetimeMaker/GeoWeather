@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,6 +26,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         checkNotificationPermission()
         checkLocationPermission()
+
+        onBackPressedDispatcher.addCallback(this) {
+            if (systemBackHandler?.invoke() != true) {
+                finish()
+            }
+        }
 
         setContent {
             WeatherApp(

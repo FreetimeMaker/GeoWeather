@@ -11,7 +11,17 @@ import org.jetbrains.compose.resources.getString
 
 data class HourlyForecast(val time: String, val temp: Int, val code: Int)
 
-data class DailyForecast(val date: String, val code: Int, val maxTemp: Int, val minTemp: Int)
+data class DailyForecast(
+    val date: String,
+    val code: Int,
+    val maxTemp: Int,
+    val minTemp: Int,
+    val sunrise: String = "--",
+    val sunset: String = "--",
+    val precipSum: Double = 0.0,
+    val precipProbMax: Int = 0,
+    val windMax: Double = 0.0
+)
 
 class WeatherRepository(
     private val locationDao: LocationDao,
@@ -146,13 +156,23 @@ class WeatherRepository(
             val codes = daily["weather_code"]?.jsonArray ?: daily["weathercode"]?.jsonArray ?: return emptyList()
             val maxTemps = daily["temperature_2m_max"]?.jsonArray ?: return emptyList()
             val minTemps = daily["temperature_2m_min"]?.jsonArray ?: return emptyList()
+            val sunrises = daily["sunrise"]?.jsonArray
+            val sunsets = daily["sunset"]?.jsonArray
+            val precipSums = daily["precipitation_sum"]?.jsonArray
+            val precipProbs = daily["precipitation_probability_max"]?.jsonArray
+            val windMaxs = daily["wind_speed_10m_max"]?.jsonArray
 
             List(minOf(dates.size, codes.size, maxTemps.size, minTemps.size, 16)) { i ->
                 DailyForecast(
                     date = dates[i].jsonPrimitive.content,
                     code = codes[i].jsonPrimitive.intOrNull ?: 0,
                     maxTemp = maxTemps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0,
-                    minTemp = minTemps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0
+                    minTemp = minTemps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0,
+                    sunrise = sunrises?.getOrNull(i)?.jsonPrimitive?.content ?: "--",
+                    sunset = sunsets?.getOrNull(i)?.jsonPrimitive?.content ?: "--",
+                    precipSum = precipSums?.getOrNull(i)?.jsonPrimitive?.doubleOrNull ?: 0.0,
+                    precipProbMax = precipProbs?.getOrNull(i)?.jsonPrimitive?.intOrNull ?: 0,
+                    windMax = windMaxs?.getOrNull(i)?.jsonPrimitive?.doubleOrNull ?: 0.0
                 )
             }
         } catch (e: Exception) {

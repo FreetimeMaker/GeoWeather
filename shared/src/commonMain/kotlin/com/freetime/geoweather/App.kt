@@ -43,6 +43,18 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     fun goBack() { if (backStack.size > 1) backStack.removeLast() }
     val currentScreen = backStack.last()
 
+    DisposableEffect(Unit) {
+        systemBackHandler = {
+            if (backStack.size > 1) {
+                backStack.removeLast()
+                true
+            } else {
+                false
+            }
+        }
+        onDispose { systemBackHandler = null }
+    }
+
     val useSystemTheme by appSettings.useSystemTheme.collectAsState()
     val darkModeEnabled by appSettings.darkModeEnabled.collectAsState()
     val dynamicColor by appSettings.dynamicColor.collectAsState()
@@ -56,6 +68,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 is Screen.Main -> {
                     MainWeatherScreen(
                         viewModel = viewModel,
+                        appSettings = appSettings,
                         onAddLocationClick = { navigate(Screen.Search) },
                         onLocationClick = { navigate(Screen.Detail(it.id)) },
                         onSettingsClick = { navigate(Screen.Settings) },

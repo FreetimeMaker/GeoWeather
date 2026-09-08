@@ -41,6 +41,9 @@
     <string name="feels_like_label">Feels like</string>
     <string name="sunrise_label">Sunrise</string>
     <string name="sunset_label">Sunset</string>
+    <string name="precipitation_label">Precipitation</string>
+    <string name="precipitation_probability_label">Precipitation probability</string>
+    <string name="wind_max_label">Max wind</string>
     <string name="visibility_label">Visibility</string>
 
     <string name="DelLoc">Delete location</string>

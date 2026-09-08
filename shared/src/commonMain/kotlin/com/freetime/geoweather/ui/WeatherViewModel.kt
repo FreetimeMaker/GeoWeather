@@ -116,8 +116,30 @@ class WeatherViewModel(
 
     fun getHourlyForecasts(location: LocationEntity) = repository.getHourlyForecasts(location)
 
-    fun getDailyForecasts(location: LocationEntity) = repository.getDailyForecasts(location)    fun refreshLocation(id: Long, onDone: () -> Unit = {}) {
+    fun getDailyForecasts(location: LocationEntity) = repository.getDailyForecasts(location)
+
+    /** Refreshes all locations whose cached data is missing or older than [maxAgeMillis]. */
+    fun refreshStaleLocations(maxAgeMillis: Long = 30 * 60 * 1000L) {
         viewModelScope.launch {
+            try {
+                val now = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+                for (loc in locations.value) {
+                    try {
+                        if (loc.weatherData == null || now - loc.lastUpdated > maxAgeMillis) {
+                            repository.updateWeather(
+                                loc,
+                                ApiConstants.getForecastUrl(loc.latitude, loc.longitude)
+                            )
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }    fun refreshLocation(id: Long, onDone: () -> Unit = {}) {        viewModelScope.launch {
             try {
                 repository.refreshLocationWeather(id)
             } catch (e: Exception) {
