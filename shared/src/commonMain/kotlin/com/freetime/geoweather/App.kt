@@ -13,9 +13,16 @@ import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 sealed class Screen {
     data object Main : Screen()
     data object Search : Screen()
-    data class Detail(val location: LocationEntity) : Screen()
+    data class Detail(
+        val locationId: Long = -1,
+        val transientName: String? = null,
+        val transientLat: Double = 0.0,
+        val transientLon: Double = 0.0
+    ) : Screen()
     data object Settings : Screen()
     data object Donate : Screen()
+    data object Supporters : Screen()
+    data object WalletAddresses : Screen()
     data object ChangeLog : Screen()
     data object Radar : Screen()
     data object About : Screen()
@@ -31,67 +38,86 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         )
     }
     val viewModel = remember { WeatherViewModel(repository) }
-    var currentScreen by remember { mutableStateOf<Screen>(Screen.Main) }
+    val backStack = remember { mutableStateListOf<Screen>(Screen.Main) }
+    fun navigate(screen: Screen) { backStack.add(screen) }
+    fun goBack() { if (backStack.size > 1) backStack.removeLast() }
+    val currentScreen = backStack.last()
 
     val useSystemTheme by appSettings.useSystemTheme.collectAsState()
     val darkModeEnabled by appSettings.darkModeEnabled.collectAsState()
     val dynamicColor by appSettings.dynamicColor.collectAsState()
+    val oledBlack by appSettings.oledBlack.collectAsState()
 
     val darkTheme = if (useSystemTheme) isSystemInDarkTheme() else darkModeEnabled
 
-    GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor) {
+    GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor, oledBlack = oledBlack) {
         Surface(modifier = Modifier.fillMaxSize()) {
             when (val screen = currentScreen) {
                 is Screen.Main -> {
                     MainWeatherScreen(
                         viewModel = viewModel,
-                        onAddLocationClick = { currentScreen = Screen.Search },
-                        onLocationClick = { currentScreen = Screen.Detail(it) },
-                        onSettingsClick = { currentScreen = Screen.Settings },
-                        onDonateClick = { currentScreen = Screen.Donate },
-                        onRadarClick = { currentScreen = Screen.Radar }
+                        onAddLocationClick = { navigate(Screen.Search) },
+                        onLocationClick = { navigate(Screen.Detail(it.id)) },
+                        onSettingsClick = { navigate(Screen.Settings) },
+                        onDonateClick = { navigate(Screen.Donate) },
+                        onRadarClick = { navigate(Screen.Radar) },
+                        onCurrentLocationClick = { name, lat, lon ->
+                            navigate(Screen.Detail(transientName = name, transientLat = lat, transientLon = lon))
+                        }
                     )
                 }
                 is Screen.Search -> {
                     SearchScreen(
                         viewModel = viewModel,
-                        onCitySelected = { currentScreen = Screen.Main },
-                        onBack = { currentScreen = Screen.Main }
+                        onCitySelected = { goBack() },
+                        onBack = { goBack() }
                     )
                 }
                 is Screen.Detail -> {
                     WeatherDetailScreen(
-                        location = screen.location,
+                        locationId = screen.locationId,
+                        transientName = screen.transientName,
+                        transientLat = screen.transientLat,
+                        transientLon = screen.transientLon,
+                        viewModel = viewModel,
                         appSettings = appSettings,
-                        onBack = { currentScreen = Screen.Main }
+                        onBack = { goBack() }
                     )
                 }
                 is Screen.Settings -> {
                     SettingsScreen(
                         appSettings = appSettings,
-                        onBack = { currentScreen = Screen.Main },
-                        onChangeLogClick = { currentScreen = Screen.ChangeLog },
-                        onAboutClick = { currentScreen = Screen.About }
+                        onBack = { goBack() },
+                        onChangeLogClick = { navigate(Screen.ChangeLog) },
+                        onAboutClick = { navigate(Screen.About) }
                     )
                 }
                 is Screen.Donate -> {
                     DonateScreen(
-                        onBack = { currentScreen = Screen.Main }
+                        onBack = { goBack() },
+                        onSupportersClick = { navigate(Screen.Supporters) },
+                        onWalletAddressesClick = { navigate(Screen.WalletAddresses) }
                     )
+                }
+                is Screen.Supporters -> {
+                    SupportersScreen(onBack = { goBack() })
+                }
+                is Screen.WalletAddresses -> {
+                    WalletAddressesScreen(onBack = { goBack() })
                 }
                 is Screen.ChangeLog -> {
                     ChangeLogScreen(
-                        onBack = { currentScreen = Screen.Main }
+                        onBack = { goBack() }
                     )
                 }
                 is Screen.Radar -> {
                     RadarScreen(
-                        onBack = { currentScreen = Screen.Main }
+                        onBack = { goBack() }
                     )
                 }
                 is Screen.About -> {
                     AboutScreen(
-                        onBack = { currentScreen = Screen.Main }
+                        onBack = { goBack() }
                     )
                 }
             }

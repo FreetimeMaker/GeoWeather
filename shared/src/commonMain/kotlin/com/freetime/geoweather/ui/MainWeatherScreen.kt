@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Public
@@ -21,7 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.data.LocationEntity
+import com.freetime.geoweather.getCurrentCoordinates
 import geoweather.shared.generated.resources.*
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,16 +35,47 @@ fun MainWeatherScreen(
     onLocationClick: (LocationEntity) -> Unit,
     onSettingsClick: () -> Unit,
     onDonateClick: () -> Unit,
-    onRadarClick: () -> Unit
+    onRadarClick: () -> Unit,
+    onCurrentLocationClick: (String, Double, Double) -> Unit
 ) {
     val locations by viewModel.locations.collectAsState()
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
+    var isLocating by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val currentLocationName = stringResource(Res.string.current_location)
+    val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(Res.string.app_name)) },
                 actions = {
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                isLocating = true
+                                try {
+                                    val coords = getCurrentCoordinates()
+                                    if (coords != null) {
+                                        onCurrentLocationClick(currentLocationName, coords.first, coords.second)
+                                    } else {
+                                        snackbarHostState.showSnackbar(locationUnavailableMsg)
+                                    }
+                                } finally {
+                                    isLocating = false
+                                }
+                            }
+                        },
+                        enabled = !isLocating
+                    ) {
+                        if (isLocating) {
+                            CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                        } else {
+                            Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
+                        }
+                    }
                     IconButton(onClick = onRadarClick) {
                         Icon(Icons.Default.Public, contentDescription = "Radar")
                     }
@@ -87,7 +121,7 @@ fun MainWeatherScreen(
                     ListItem(
                         headlineContent = { Text(loc.name) },
                         supportingContent = {
-                            Text(stringResource(Res.string.coordinates_label, loc.latitude, loc.longitude))
+                            Text("${loc.latitude}, ${loc.longitude}")
                         },
                         trailingContent = {
                             Row {

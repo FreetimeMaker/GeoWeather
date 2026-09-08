@@ -29,4 +29,16 @@ object ApiConstants {
     fun getAirQualityUrl(lat: Double, lon: Double): String {
         return "$OPEN_METEO_AIR_QUALITY?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
     }
+
+    /**
+     * Modern Open-Meteo forecast URL (`current=` instead of the deprecated
+     * `current_weather=true`). Keys match what [LocationEntity] parses.
+     */
+    fun getForecastUrl(lat: Double, lon: Double): String {
+        return "$OPEN_METEO_FORECAST?latitude=$lat&longitude=$lon" +
+            "&current=temperature_2m,weather_code,relative_humidity_2m,pressure_msl,wind_speed_10m,wind_direction_10m" +
+            "&hourly=temperature_2m,weather_code" +
+            "&daily=weather_code,temperature_2m_max,temperature_2m_min" +
+            "&forecast_days=16&timezone=auto"
+    }
 }

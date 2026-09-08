@@ -92,16 +92,67 @@ class WeatherViewModel(
 
     fun refreshWeather() {
         viewModelScope.launch {
-            val selected = repository.getSelectedLocation() ?: locations.value.firstOrNull()
-            if (selected != null) {
-                _uiState.value = WeatherUiState.Success(selected)
-                val url = ApiConstants.OPEN_METEO_FORECAST + 
-                    "?latitude=${selected.latitude}&longitude=${selected.longitude}" +
-                    "&current_weather=true&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min"
-                
-                repository.updateWeather(selected, url)
-            } else {
-                _uiState.value = WeatherUiState.Empty
+            try {
+                val selected = repository.getSelectedLocation() ?: locations.value.firstOrNull()
+                if (selected != null) {
+                    _uiState.value = WeatherUiState.Success(selected)
+                    repository.updateWeather(
+                        selected,
+                        ApiConstants.getForecastUrl(selected.latitude, selected.longitude)
+                    )
+                } else {
+                    _uiState.value = WeatherUiState.Empty
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                if (_uiState.value is WeatherUiState.Loading) {
+                    _uiState.value = WeatherUiState.Error(e.message ?: "Unknown error")
+                }
+            }
+        }
+    }
+
+    fun observeLocation(id: Long): Flow<LocationEntity?> = repository.observeLocationById(id)
+
+    fun getHourlyForecasts(location: LocationEntity) = repository.getHourlyForecasts(location)
+
+    fun getDailyForecasts(location: LocationEntity) = repository.getDailyForecasts(location)    fun refreshLocation(id: Long, onDone: () -> Unit = {}) {
+        viewModelScope.launch {
+            try {
+                repository.refreshLocationWeather(id)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                onDone()
+            }
+        }
+    }
+
+    fun fetchTransientWeather(
+        name: String,
+        latitude: Double,
+        longitude: Double,
+        onDone: (LocationEntity?) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val data = repository.fetchWeatherData(latitude, longitude)
+                if (data != null) {
+                    onDone(
+                        LocationEntity(
+                            name = name,
+                            latitude = latitude,
+                            longitude = longitude,
+                            weatherData = data,
+                            lastUpdated = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+                        )
+                    )
+                } else {
+                    onDone(null)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onDone(null)
             }
         }
     }

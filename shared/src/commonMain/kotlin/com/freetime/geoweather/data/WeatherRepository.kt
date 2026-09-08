@@ -11,6 +11,8 @@ import org.jetbrains.compose.resources.getString
 
 data class HourlyForecast(val time: String, val temp: Int, val code: Int)
 
+data class DailyForecast(val date: String, val code: Int, val maxTemp: Int, val minTemp: Int)
+
 class WeatherRepository(
     private val locationDao: LocationDao,
     private val historyDao: WeatherHistoryDao,
@@ -19,6 +21,8 @@ class WeatherRepository(
     fun getAllLocations(): Flow<List<LocationEntity>> = locationDao.getAllLocationsFlow()
     
     suspend fun getSelectedLocation(): LocationEntity? = locationDao.getSelectedLocation()
+
+    fun observeLocationById(id: Long): Flow<LocationEntity?> = locationDao.observeLocationById(id)
 
     suspend fun searchCity(query: String) = apiClient.searchCity(query)
 
@@ -77,14 +81,27 @@ class WeatherRepository(
         }
     }
 
+    // NB: includeHourly is kept for compatibility; hourly data is always fetched.
     suspend fun refreshSelectedLocationWeather(includeHourly: Boolean = false): LocationEntity? {
         val location = getSelectedLocation() ?: return null
-        val hourlyParam = if (includeHourly) "&hourly=temperature_2m,weather_code" else ""
-        val url = ApiConstants.OPEN_METEO_FORECAST + 
-            "?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true$hourlyParam&timezone=auto"
-        
-        updateWeather(location, url)
+        updateWeather(location, ApiConstants.getForecastUrl(location.latitude, location.longitude))
         return getSelectedLocation()
+    }
+
+    suspend fun refreshLocationWeather(id: Long): LocationEntity? {
+        val location = locationDao.findById(id) ?: return null
+        updateWeather(location, ApiConstants.getForecastUrl(location.latitude, location.longitude))
+        return locationDao.findById(id)
+    }
+
+    /** Fetches weather JSON without persisting (e.g. for the transient current location). */
+    suspend fun fetchWeatherData(latitude: Double, longitude: Double): String? {
+        return try {
+            apiClient.get(ApiConstants.getForecastUrl(latitude, longitude))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     fun getDisplayTemp(location: LocationEntity, tempUnit: String): String {
@@ -101,8 +118,7 @@ class WeatherRepository(
         return getString(Res.string.WeatherNotificationTXT, location.name, tempStr, description)
     }
 
-    fun getHourlyForecasts(location: LocationEntity): List<HourlyForecast> {
-        val data = location.weatherData ?: return emptyList()
+    fun getHourlyForecasts(location: LocationEntity): List<HourlyForecast> {        val data = location.weatherData ?: return emptyList()
         return try {
             val json = Json.parseToJsonElement(data).jsonObject
             val hourly = json["hourly"]?.jsonObject ?: return emptyList()
@@ -115,6 +131,29 @@ class WeatherRepository(
                 val temp = temps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0
                 val code = codes[i].jsonPrimitive.intOrNull ?: 0
                 HourlyForecast(timeStr, temp, code)
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    fun getDailyForecasts(location: LocationEntity): List<DailyForecast> {
+        val data = location.weatherData ?: return emptyList()
+        return try {
+            val json = Json.parseToJsonElement(data).jsonObject
+            val daily = json["daily"]?.jsonObject ?: return emptyList()
+            val dates = daily["time"]?.jsonArray ?: return emptyList()
+            val codes = daily["weather_code"]?.jsonArray ?: daily["weathercode"]?.jsonArray ?: return emptyList()
+            val maxTemps = daily["temperature_2m_max"]?.jsonArray ?: return emptyList()
+            val minTemps = daily["temperature_2m_min"]?.jsonArray ?: return emptyList()
+
+            List(minOf(dates.size, codes.size, maxTemps.size, minTemps.size, 16)) { i ->
+                DailyForecast(
+                    date = dates[i].jsonPrimitive.content,
+                    code = codes[i].jsonPrimitive.intOrNull ?: 0,
+                    maxTemp = maxTemps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0,
+                    minTemp = minTemps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0
+                )
             }
         } catch (e: Exception) {
             emptyList()

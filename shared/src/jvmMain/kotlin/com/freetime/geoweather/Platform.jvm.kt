@@ -12,3 +12,18 @@ actual fun openUrl(url: String) {
 
 @Composable
 actual fun rememberPaymentContext(): Any? = null
+
+actual suspend fun getCurrentCoordinates(): Pair<Double, Double>? = null
+
+actual fun applyAppLanguage(language: String) {
+    // Desktop follows the system locale; choice is persisted only.
+}
+
+actual fun copyToClipboard(text: String) {
+    try {
+        java.awt.Toolkit.getDefaultToolkit().systemClipboard.setContents(
+            java.awt.datatransfer.StringSelection(text), null
+        )
+    } catch (_: Exception) {
+    }
+}

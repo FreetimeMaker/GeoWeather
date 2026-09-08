@@ -49,6 +49,7 @@
     <string name="CancelTXT">Cancel</string>
 
     <string name="current_location">Current Location</string>
+    <string name="current_location_unavailable">Current location unavailable. Check permission and GPS.</string>
     <string name="coordinates_label">Lat: %1$.2f, Lon: %2$.2f</string>
     <string name="latitude_label">Latitude</string>
     <string name="longitude_label">Longitude</string>

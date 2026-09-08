@@ -37,7 +37,12 @@ data class LocationEntity(
                 val json = Json.parseToJsonElement(data).jsonObject
                 when {
                     "current_weather" in json -> json["current_weather"]?.jsonObject?.get("temperature")?.jsonPrimitive?.doubleOrNull
-                    "current" in json -> json["current"]?.jsonObject?.get("temp_c")?.jsonPrimitive?.doubleOrNull
+                    "current" in json -> {
+                        val cur = json["current"]?.jsonObject
+                        // Open-Meteo uses temperature_2m, WeatherAPI temp_c
+                        cur?.get("temperature_2m")?.jsonPrimitive?.doubleOrNull
+                            ?: cur?.get("temp_c")?.jsonPrimitive?.doubleOrNull
+                    }
                     "timelines" in json -> {
                         val timelines = json["timelines"]?.jsonObject
                         if (timelines != null && "minutely" in timelines) {
@@ -100,5 +105,40 @@ data class LocationEntity(
             "\"currentConditions\":" in data -> "visualcrossing"
             else -> "open_meteo"
         }
+    }
+
+    private fun currentObject(): kotlinx.serialization.json.JsonObject? {
+        return try {
+            weatherData?.let { data ->
+                val json = Json.parseToJsonElement(data).jsonObject
+                json["current"]?.jsonObject ?: json["current_weather"]?.jsonObject
+            }
+        } catch (e: Exception) { null }
+    }
+
+    val currentHumidity: Int? get() {
+        val cur = currentObject() ?: return null
+        return cur["relative_humidity_2m"]?.jsonPrimitive?.intOrNull
+            ?: cur["humidity"]?.jsonPrimitive?.intOrNull
+    }
+
+    /** Pressure in hPa. */
+    val currentPressure: Double? get() {
+        val cur = currentObject() ?: return null
+        return cur["pressure_msl"]?.jsonPrimitive?.doubleOrNull
+            ?: cur["pressure_mb"]?.jsonPrimitive?.doubleOrNull
+    }
+
+    /** Wind speed in km/h. */
+    val currentWindSpeed: Double? get() {
+        val cur = currentObject() ?: return null
+        return cur["wind_speed_10m"]?.jsonPrimitive?.doubleOrNull
+            ?: cur["wind_kph"]?.jsonPrimitive?.doubleOrNull
+    }
+
+    val currentWindDirection: Int? get() {
+        val cur = currentObject() ?: return null
+        return cur["wind_direction_10m"]?.jsonPrimitive?.intOrNull
+            ?: cur["wind_degree"]?.jsonPrimitive?.intOrNull
     }
 }

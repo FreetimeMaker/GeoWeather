@@ -82,7 +82,7 @@ fun SearchScreen(
                         items(results) { city ->
                             ListItem(
                                 headlineContent = { Text(city.name) },
-                                supportingContent = { Text(stringResource(Res.string.coordinates_label, city.latitude, city.longitude)) },
+                                supportingContent = { Text("${city.latitude}, ${city.longitude}") },
                                 modifier = Modifier.clickable {
                                     viewModel.addLocation(city)
                                     onCitySelected()

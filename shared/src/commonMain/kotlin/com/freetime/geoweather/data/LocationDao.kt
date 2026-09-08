@@ -21,6 +21,9 @@ interface LocationDao {
     @Query("SELECT * FROM locations WHERE id = :id LIMIT 1")
     suspend fun findById(id: Long): LocationEntity?
 
+    @Query("SELECT * FROM locations WHERE id = :id LIMIT 1")
+    fun observeLocationById(id: Long): Flow<LocationEntity?>
+
     @Query("SELECT * FROM locations WHERE latitude = :lat AND longitude = :lon LIMIT 1")
     suspend fun findByCoordinates(lat: Double, lon: Double): LocationEntity?
 
