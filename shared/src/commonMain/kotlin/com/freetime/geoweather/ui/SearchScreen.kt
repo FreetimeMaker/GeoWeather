@@ -79,7 +79,7 @@ fun SearchScreen(
                 }
                 else -> {
                     LazyColumn {
-                        items(results) { city ->
+                        items(results, key = { "${it.latitude},${it.longitude}" }) { city ->
                             ListItem(
                                 headlineContent = { Text(city.name) },
                                 supportingContent = { Text("${city.latitude}, ${city.longitude}") },

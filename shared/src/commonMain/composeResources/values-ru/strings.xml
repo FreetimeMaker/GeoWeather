@@ -2,10 +2,6 @@
 <resources>
     <string name="app_name">GeoWeather</string>
     <string name="backToSupPag">Вернуться на страницу поддержки</string>
-    <string name="ConViaEMail">Связаться по электронной почте</string>
-    <string name="DonPers">Пока никто не сделал пожертвование.</string>
-    <string name="DonTXT2">Если вы хотите помочь в поддержке этого и многих других приложений, просто сделайте пожертвование и создайте тикет в моем Discord сервере с вашим именем и провайдером пожертвования, и я добавлю вас в этот список.</string>
-    <string name="DonTXT1">Здесь перечислены люди, которые помогают поддерживать это и многие другие приложения.</string>
     <string name="DonViaOxaPay">Пожертвовать через OxaPay</string>
     <string name="DonViaCoin">Пожертвовать через Coinbase</string>
     <string name="DonViaBTC">Пожертвовать через Bitcoin</string>
@@ -22,7 +18,6 @@
     <string name="WalletDescription">Поддерживаемые кошельки: Trust Wallet, MetaMask, Coinbase, Binance, Exodus, Atomic Wallet и другие.</string>
     <string name="USDTitle">Пожертвование USD в Крипто</string>
     <string name="USDDescription">Оплатите в USD, и мы автоматически конвертируем их в выбранную криптовалюту.</string>
-    <string name="ViewSup">Посмотреть спонсоров</string>
     <string name="BackToWeaDash">Вернуться к панели погоды</string>
     <string name="DelLoc">Удалить местоположение</string>
     <string name="DelLocConAsk">Вы уверены, что хотите удалить %1$s?</string>
@@ -163,12 +158,6 @@
     <string name="feedback_btn">Отправить отзыв по электронной почте</string>
     <string name="feedback_subject">Отзыв о GeoWeather</string>
     <string name="theme_settings_title">Настройки темы</string>
-    <string name="language_settings_title">Языковые настройки</string>
-    <string name="select_language">Выберите язык</string>
-    <string name="lang_system">Системный</string>
-    <string name="lang_en">Английский</string>
-    <string name="lang_ru">Русский</string>
-    <string name="lang_de">Немецкий</string>
     <string name="persistent_notif_title">Постоянное уведомление о погоде</string>
     <string name="persistent_notif_subtitle">Показывать текущую температуру в строке состояния</string>
     <string name="wc_clear">Ясно</string>

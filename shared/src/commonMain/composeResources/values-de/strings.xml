@@ -2,10 +2,6 @@
 <resources>
     <string name="app_name">GeoWeather</string>
     <string name="backToSupPag">Zurück zur Supportseite</string>
-    <string name="ConViaEMail">Per E-Mail kontaktieren</string>
-    <string name="DonPers">Noch niemand hat gespendet.</string>
-    <string name="DonTXT2">Wenn du diese und andere Apps unterstützen möchtest, spende und erstelle ein Ticket in meinem Discord‑Server mit deinem Namen und dem Zahlungsdienst, den du verwendet hast; ich werde dich dann hier aufführen.</string>
-    <string name="DonTXT1">Hier sind Unterstützer aufgeführt, die diese und viele andere Apps pflegen.</string>
     <string name="DonViaOxaPay">Spende über OxaPay</string>
     <string name="DonViaCoin">Spende via Coinbase</string>
     <string name="DonViaBTC">Spende über Bitcoin</string>
@@ -24,7 +20,6 @@
     <string name="DonViaPOL">Über POL spenden</string>
     <string name="DonViaOptimism">Über Optimism spenden</string>
     <string name="DonViaARB">Über ARB spenden</string>
-    <string name="ViewSup">Unterstützer anzeigen</string>
     <string name="BackToWeaDash">Zurück zum Wetter‑Dashboard</string>
     <string name="DelLoc">Standort löschen</string>
     <string name="DelLocConAsk">Möchtest du %1$s wirklich löschen?</string>
@@ -48,12 +43,6 @@
     <string name="SunsetOnly">Sonnenuntergang</string>
     <string name="AQILabel">AQI: %1$s</string>
     <string name="theme_settings_title">Thema-Einstellungen</string>
-    <string name="language_settings_title">Spracheinstellungen</string>
-    <string name="select_language">Sprache auswählen</string>
-    <string name="lang_system">System</string>
-    <string name="lang_en">Englisch</string>
-    <string name="lang_ru">Russisch</string>
-    <string name="lang_de">Deutsch</string>
     <string name="follow_system_theme">Systemthema verwenden</string>
     <string name="force_dark_mode">Dunkelmodus erzwingen</string>
     <string name="override_system_setting">Systemeinstellung überschreiben</string>

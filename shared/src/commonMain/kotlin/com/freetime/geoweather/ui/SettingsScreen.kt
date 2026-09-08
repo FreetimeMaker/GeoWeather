@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.freetime.geoweather.applyAppLanguage
 import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.openUrl
 import geoweather.shared.generated.resources.*
@@ -40,7 +39,6 @@ fun SettingsScreen(
     val windThreshold by appSettings.windThreshold.collectAsState()
     val disablePrivateView by appSettings.disablePrivateView.collectAsState()
     val openExternalBrowser by appSettings.openExternalBrowser.collectAsState()
-    val appLanguage by appSettings.appLanguage.collectAsState()
 
     Scaffold(
         topBar = {
@@ -144,16 +142,7 @@ fun SettingsScreen(
                 openExternalBrowser
             ) { appSettings.setOpenExternalBrowser(it) }
 
-            // ---- Language ----
-            SettingsSection(stringResource(Res.string.language_settings_title))
-            LanguageDropdown(
-                selected = appLanguage,
-                onSelect = {
-                    appSettings.setAppLanguage(it)
-                    applyAppLanguage(it)
-                }
-            )
-
+            // ---- Buttons ----
             Spacer(Modifier.height(16.dp))
             Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(Res.string.open_change_log))
@@ -245,37 +234,4 @@ fun ThresholdField(label: String, value: Int, onValueChange: (Int) -> Unit) {
         singleLine = true,
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LanguageDropdown(selected: String, onSelect: (String) -> Unit) {
-    val options = listOf(
-        "system" to stringResource(Res.string.lang_system),
-        "de" to stringResource(Res.string.lang_de),
-        "en" to stringResource(Res.string.lang_en),
-        "ru" to stringResource(Res.string.lang_ru)
-    )
-    var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
-        OutlinedTextField(
-            value = options.firstOrNull { it.first == selected }?.second ?: selected,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(stringResource(Res.string.select_language)) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
-        )
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach { (value, label) ->
-                DropdownMenuItem(
-                    text = { Text(label) },
-                    onClick = {
-                        onSelect(value)
-                        expanded = false
-                    }
-                )
-            }
-        }
-    }
 }

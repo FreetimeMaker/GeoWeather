@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GeoWeather</string>
-    <string name="ConViaEMail">ເຂົ້າຮ່ວມເຊີບເວີ Discord ທາງການ</string>
-    <string name="DonPers">ຍັງບໍ່ມີໃຜບໍລິຈາກເທື່ອ.</string>
-    <string name="DonTXT2">ຖ້າທ່ານຕ້ອງການຊ່ວຍຮັກສາແອັບນີ້ ແລະ ແອັບອື່ນໆອີກຫຼາຍແອັບ ພຽງແຕ່ບໍລິຈາກ ແລະ ສ້າງປີ້ (Ticket) ໃນເຊີບເວີ Discord ຂອງຂ້ອຍ ໂດຍລະບຸຊື່ຂອງທ່ານ ແລະ ຊ່ອງທາງການບໍລິຈາກທີ່ທ່ານໃຊ້ ແລ້ວຂ້ອຍຈະເພີ່ມລາຍຊື່ທ່ານໄວ້ບ່ອນນີ້.</string>
-    <string name="DonTXT1">ນີ້ຄືລາຍຊື່ຜູ້ສະໜັບສະໜູນທີ່ຊ່ວຍຮັກສາແອັບນີ້ ແລະ ແອັບອື່ນໆອີກຫຼາຍແອັບ.</string>
     <string name="DonViaOxaPay">ບໍລິຈາກຜ່ານ OxaPay</string>
     <string name="DonViaBTC">ບໍລິຈາກຜ່ານ Bitcoin</string>
     <string name="DonViaETH">ບໍລິຈາກຜ່ານ Ethereum</string>
@@ -22,7 +18,6 @@
     <string name="DonViaTON">ບໍລິຈາກຜ່ານ TON</string>
     <string name="DonViaPOL">ບໍລິຈາກຜ່ານ POL</string>
     <string name="DonViaShib">ບໍລິຈາກຜ່ານ Shiba Inu</string>
-    <string name="ViewSup">ເບິ່ງລາຍຊື່ຜູ້ສະໜັບສະໜູນ</string>
     <string name="BackToWeaDash">ກັບຄືນຫາໜ້າຫຼັກສະພາບອາກາດ</string>
     <string name="DelLoc">ລຶບສະຖານທີ່</string>
     <string name="DelLocConAsk">ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບ %1$s?</string>
@@ -124,8 +119,6 @@
     <string name="select_option_msg">ເລືອກທາງເລືອກຕໍ່ໄປນີ້ເພື່ອສະໜັບສະໜູນໂຄງການ.</string>
     <string name="crypto_label">ສະກຸນເງິນດິຈິຕອນ (Crypto)</string>
     <string name="cash_label">ເງິນສົດ ແລະ ອື່ນໆ</string>
-    <string name="supporters_title">ຜູ້ສະໜັບສະໜູນ</string>
-    <string name="back_to_support">ກັບຄືນຫາໜ້າສະໜັບສະໜູນ</string>
     <string name="search_placeholder">ຕົວຢ່າງ: New York ຫຼື 40.71, -74.00</string>
     <string name="wc_clear">ທ້ອງຟ້າແຈ່ມໃສ</string>
     <string name="wc_mainly_clear">ທ້ອງຟ້າສ່ວນຫຼາຍແຈ່ມໃສ</string>

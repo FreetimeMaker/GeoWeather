@@ -29,19 +29,17 @@ private data class ExternalDonation(val labelKey: org.jetbrains.compose.resource
 @Composable
 fun DonateScreen(
     onBack: () -> Unit,
-    onSupportersClick: () -> Unit,
     onWalletAddressesClick: () -> Unit
 ) {
     val paymentContext = rememberPaymentContext()
     val freetimePay = DependencyManager.getFreetimePay()
     val providers = remember { freetimePay.getAvailableProviders() }
-    var selectedProvider by remember { mutableStateOf<PaymentProvider?>(null) }
+    var showAmountDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     val successMessage = stringResource(Res.string.payment_successful)
     val paymentFailed = stringResource(Res.string.payment_failed)
-    val copiedMessage = stringResource(Res.string.address_copied)
 
     val externalDonations = listOf(
         ExternalDonation(Res.string.don_nowpayments_via, "https://nowpayments.io/donation/GeoWeather"),
@@ -163,39 +161,7 @@ fun DonateScreen(
 
             item {
                 DonateButton(text = stringResource(Res.string.DonViaFMSDK)) {
-                    providers.firstOrNull()?.let { selectedProvider = it }
-                }
-            }
-
-            items(providers) { provider ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { selectedProvider = provider }
-                ) {
-                    ListItem(
-                        headlineContent = { Text(provider.name) },
-                        supportingContent = {
-                            val address = (provider as? UriPaymentProvider)?.recipientAddress
-                            if (address != null && address.length > 24) {
-                                Text("${address.take(12)}...${address.takeLast(8)}")
-                            } else if (address != null) {
-                                Text(address)
-                            }
-                        },
-                        trailingContent = {
-                            val address = (provider as? UriPaymentProvider)?.recipientAddress
-                            if (address != null) {
-                                TextButton(onClick = {
-                                    copyToClipboard(address)
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar(copiedMessage)
-                                    }
-                                }) {
-                                    Text(stringResource(Res.string.copy_address))
-                                }
-                            }
-                        }
-                    )
+                    showAmountDialog = true
                 }
             }
 
@@ -205,30 +171,20 @@ fun DonateScreen(
                 }
             }
 
-            items(externalDonations) { donation ->
+            items(externalDonations, key = { it.url }) { donation ->
                 DonateButton(text = stringResource(donation.labelKey)) {
                     openUrl(donation.url)
-                }
-            }
-
-            item {
-                Spacer(Modifier.height(8.dp))
-                FilledTonalButton(
-                    onClick = onSupportersClick,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(Res.string.ViewSup))
                 }
             }
         }
     }
 
-    selectedProvider?.let { provider ->
+    if (showAmountDialog) {
         DonationAmountDialog(
             providers = providers,
-            onDismiss = { selectedProvider = null },
-            onDonate = { amount, currency ->
-                selectedProvider = null
+            onDismiss = { showAmountDialog = false },
+            onDonate = { provider, amount, currency ->
+                showAmountDialog = false
                 val request = PaymentRequest(
                     amount = amount,
                     currency = currency,
@@ -261,65 +217,6 @@ fun DonateButton(text: String, onClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SupportersScreen(onBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(Res.string.supporters_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back_nav_desc))
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            Text(
-                textAlign = TextAlign.Center,
-                text = stringResource(Res.string.DonTXT1),
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Text(
-                textAlign = TextAlign.Center,
-                text = stringResource(Res.string.DonTXT2),
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Text(
-                textAlign = TextAlign.Center,
-                text = stringResource(Res.string.DonPers),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Button(
-                onClick = { openUrl("mailto:FreetimeMaker@prtoton.me") },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(Res.string.ConViaEMail))
-            }
-
-            OutlinedButton(
-                onClick = onBack,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(Res.string.back_to_support))
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun WalletAddressesScreen(onBack: () -> Unit) {
     val freetimePay = DependencyManager.getFreetimePay()
     val providers = remember { freetimePay.getAvailableProviders() }
@@ -344,7 +241,7 @@ fun WalletAddressesScreen(onBack: () -> Unit) {
             modifier = Modifier.fillMaxSize().padding(innerPadding).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(providers) { provider ->
+            items(providers, key = { it.name }) { provider ->
                 val address = (provider as? UriPaymentProvider)?.recipientAddress ?: return@items
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -377,7 +274,7 @@ fun WalletAddressesScreen(onBack: () -> Unit) {
 fun DonationAmountDialog(
     providers: List<PaymentProvider>,
     onDismiss: () -> Unit,
-    onDonate: (Double, String) -> Unit
+    onDonate: (PaymentProvider, Double, String) -> Unit
 ) {
     val predefinedAmounts = listOf(2.0, 5.0, 10.0, 25.0, 50.0)
     val fiatCurrencies = listOf("USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "HKD", "NZD")
@@ -393,10 +290,14 @@ fun DonationAmountDialog(
     val currencies = fiatCurrencies + cryptoCurrencies
 
     var selectedCurrency by remember { mutableStateOf("USD") }
+    var selectedProviderName by remember(providers) {
+        mutableStateOf(providers.firstOrNull()?.name ?: "")
+    }
     var customAmount by remember { mutableStateOf("") }
     var selectedPredefined by remember { mutableStateOf<Double?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
     var expanded by remember { mutableStateOf(false) }
+    var providerExpanded by remember { mutableStateOf(false) }
 
     val invalidAmountMsg = stringResource(Res.string.invalid_amount_msg)
 
@@ -406,6 +307,34 @@ fun DonationAmountDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(stringResource(Res.string.billing_options_title), style = MaterialTheme.typography.labelMedium)
+
+                ExposedDropdownMenuBox(
+                    expanded = providerExpanded,
+                    onExpandedChange = { providerExpanded = !providerExpanded }
+                ) {
+                    OutlinedTextField(
+                        value = selectedProviderName,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(Res.string.select_payment_method)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = providerExpanded) },
+                        modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = providerExpanded,
+                        onDismissRequest = { providerExpanded = false }
+                    ) {
+                        providers.forEach { provider ->
+                            DropdownMenuItem(
+                                text = { Text(provider.name) },
+                                onClick = {
+                                    selectedProviderName = provider.name
+                                    providerExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
 
                 ExposedDropdownMenuBox(
                     expanded = expanded,
@@ -501,9 +430,10 @@ fun DonationAmountDialog(
                     } else {
                         selectedPredefined
                     }
+                    val provider = providers.find { it.name == selectedProviderName }
 
-                    if (finalAmount != null && finalAmount > 0) {
-                        onDonate(finalAmount, selectedCurrency)
+                    if (provider != null && finalAmount != null && finalAmount > 0) {
+                        onDonate(provider, finalAmount, selectedCurrency)
                     } else {
                         error = invalidAmountMsg
                     }

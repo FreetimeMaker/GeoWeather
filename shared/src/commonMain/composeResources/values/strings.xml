@@ -75,10 +75,6 @@
     <string name="wc_unknown">Unknown</string>
 
     <!-- Merged from Android -->
-    <string name="ConViaEMail">Contact via Email</string>
-    <string name="DonPers">No one made a Donation yet.</string>
-    <string name="DonTXT2">If you want to help maintain this and many other Apps simply make a Donation and make a Ticket in my Discord Server with Your Name and the Donation Provider you used and I will then list you here.</string>
-    <string name="DonTXT1">Here are supporters that help maintain this and many other Apps.</string>
     <string name="DonViaOxaPay">Donate via OxaPay</string>
     <string name="DonViaBTC">Donate via Bitcoin</string>
     <string name="DonViaETH">Donate via Ethereum</string>
@@ -100,7 +96,6 @@
     <string name="DonViaOptimism">Donate via Optimism</string>
     <string name="DonViaARB">Donate via ARB</string>
     <string name="DonViaShib">Donate via Shiba Inu</string>
-    <string name="ViewSup">View Supporters</string>
     <string name="BackToWeaDash">Go Back to the Weather Dashboard</string>
     <string name="SearchForCity">Search for a City with name or coordinates</string>
     <string name="CityName">City name or Coordinates</string>
@@ -238,8 +233,6 @@
     <string name="billing_options_title">Donation options</string>
     <string name="crypto_label">Cryptocurrencies</string>
     <string name="cash_label">Cash</string>
-    <string name="supporters_title">Supporters</string>
-    <string name="back_to_support">Go Back to the Support Page</string>
     <string name="historical_trends_label">Historical Trends (Last 3 Days)</string>
     <string name="trend_max">Max</string>
     <string name="trend_min">Min</string>
@@ -359,12 +352,6 @@
     <string name="feedback_title">Feedback</string>
     <string name="feedback_btn">Send Feedback and suggestions via Email</string>
     <string name="feedback_subject">GeoWeather Feedback</string>
-    <string name="language_settings_title">Language Settings</string>
-    <string name="select_language">Select Language</string>
-    <string name="lang_system">System</string>
-    <string name="lang_en">English</string>
-    <string name="lang_ru">Russian</string>
-    <string name="lang_de">German</string>
     <string name="persistent_notif_title">Persistent Weather Notification</string>
     <string name="persistent_notif_subtitle">Show current temperature in the status bar</string>
     <string name="pollen_alnus">Alder Pollen</string>

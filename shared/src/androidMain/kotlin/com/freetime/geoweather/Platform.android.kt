@@ -7,10 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.os.LocaleListCompat
 
 private var androidContext: Context? = null
 
@@ -30,11 +28,6 @@ actual fun openUrl(url: String) {
 @Composable
 actual fun rememberPaymentContext(): Any? {
     return LocalContext.current as? Activity ?: androidContext
-}
-
-actual fun applyAppLanguage(language: String) {
-    val tags = if (language == "system") "" else language
-    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tags))
 }
 
 actual fun copyToClipboard(text: String) {

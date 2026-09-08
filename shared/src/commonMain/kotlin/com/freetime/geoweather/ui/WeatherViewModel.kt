@@ -40,7 +40,13 @@ class WeatherViewModel(
             delay(400)
             _isSearching.value = true
             try {
-                _searchResults.value = repository.searchCity(query)
+                val alreadySaved = locations.value
+                _searchResults.value = repository.searchCity(query).filter { city ->
+                    alreadySaved.none { existing ->
+                        kotlin.math.abs(existing.latitude - city.latitude) < 1e-6 &&
+                            kotlin.math.abs(existing.longitude - city.longitude) < 1e-6
+                    }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 _searchResults.value = emptyList()
@@ -58,31 +64,52 @@ class WeatherViewModel(
 
     fun addLocation(city: City) {
         viewModelScope.launch {
-            repository.addLocation(city)
-            _searchResults.value = emptyList()
+            try {
+                repository.addLocation(city)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _searchResults.value = emptyList()
+            }
         }
     }
     fun selectLocation(location: LocationEntity) {
         viewModelScope.launch {
-            repository.selectLocation(location)
+            try {
+                repository.selectLocation(location)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     fun deleteLocation(location: LocationEntity) {
         viewModelScope.launch {
-            repository.deleteLocation(location)
+            try {
+                repository.deleteLocation(location)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     fun toggleLocationNotifications(location: LocationEntity) {
         viewModelScope.launch {
-            repository.toggleLocationNotifications(location)
+            try {
+                repository.toggleLocationNotifications(location)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     fun toggleDefaultLocation(location: LocationEntity) {
         viewModelScope.launch {
-            repository.toggleDefaultLocation(location)
+            try {
+                repository.toggleDefaultLocation(location)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

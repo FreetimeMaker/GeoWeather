@@ -5,6 +5,7 @@ import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.domain.City
 import geoweather.shared.generated.resources.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.*
 import org.jetbrains.compose.resources.getString
@@ -28,21 +29,34 @@ class WeatherRepository(
     private val historyDao: WeatherHistoryDao,
     private val apiClient: WeatherApiClient
 ) {
-    fun getAllLocations(): Flow<List<LocationEntity>> = locationDao.getAllLocationsFlow()
-    
-    suspend fun getSelectedLocation(): LocationEntity? = locationDao.getSelectedLocation()
+    fun getAllLocations(): Flow<List<LocationEntity>> =
+        locationDao.getAllLocationsFlow().distinctUntilChanged()
 
-    fun observeLocationById(id: Long): Flow<LocationEntity?> = locationDao.observeLocationById(id)
+    fun observeLocationById(id: Long): Flow<LocationEntity?> =
+        locationDao.observeLocationById(id).distinctUntilChanged()
+
+    suspend fun getSelectedLocation(): LocationEntity? = locationDao.getSelectedLocation()
 
     suspend fun searchCity(query: String) = apiClient.searchCity(query)
 
-    suspend fun addLocation(city: City) {
+    suspend fun addLocation(city: City): LocationEntity {
+        // Already saved -> just select it instead of crashing on the UNIQUE index
+        locationDao.findByCoordinates(city.latitude, city.longitude)?.let {
+            selectLocation(it)
+            return it
+        }
+        locationDao.deselectAllLocations()
         val entity = LocationEntity(
             name = city.name,
             latitude = city.latitude,
-            longitude = city.longitude
+            longitude = city.longitude,
+            selected = true
         )
-        locationDao.insertLocation(entity)
+        val id = locationDao.insertLocation(entity)
+        if (id == -1L) {
+            return locationDao.findByCoordinates(city.latitude, city.longitude) ?: entity
+        }
+        return entity.copy(id = id)
     }
 
     suspend fun selectLocation(location: LocationEntity) {

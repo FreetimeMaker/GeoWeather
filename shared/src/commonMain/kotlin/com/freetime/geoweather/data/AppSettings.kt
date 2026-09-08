@@ -21,7 +21,6 @@ class AppSettings(private val settings: Settings) {
         const val KEY_WIND_THRESHOLD = "notif_wind_threshold"
         const val KEY_DISABLE_PRIVATE_VIEW = "disable_private_view"
         const val KEY_OPEN_EXTERNAL_BROWSER = "open_external_browser"
-        const val KEY_APP_LANGUAGE = "app_language"
     }
 
     private val _persistentNotif = MutableStateFlow(settings.getBoolean(KEY_PERSISTENT_NOTIF, false))
@@ -118,13 +117,5 @@ class AppSettings(private val settings: Settings) {
     fun setOpenExternalBrowser(open: Boolean) {
         settings[KEY_OPEN_EXTERNAL_BROWSER] = open
         _openExternalBrowser.value = open
-    }
-
-    private val _appLanguage = MutableStateFlow(settings.getString(KEY_APP_LANGUAGE, "system"))
-    val appLanguage: StateFlow<String> = _appLanguage.asStateFlow()
-
-    fun setAppLanguage(language: String) {
-        settings[KEY_APP_LANGUAGE] = language
-        _appLanguage.value = language
     }
 }

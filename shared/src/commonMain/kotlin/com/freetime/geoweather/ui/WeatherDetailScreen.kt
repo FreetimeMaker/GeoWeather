@@ -217,7 +217,7 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                items(hourly) { hour ->
+                                items(hourly, key = { it.time }) { hour ->
                                     Card {
                                         Column(
                                             modifier = Modifier.padding(12.dp),
@@ -250,7 +250,7 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
-                        items(daily) { day ->
+                        items(daily, key = { it.date }) { day ->
                             var expanded by remember { mutableStateOf(false) }
                             Card(
                                 modifier = Modifier.fillMaxWidth(),

@@ -3,6 +3,7 @@ package com.freetime.geoweather.data
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
@@ -39,8 +40,8 @@ interface LocationDao {
     @Query("UPDATE locations SET isDefault = 0")
     suspend fun clearDefaultLocation()
 
-    @Insert
-    suspend fun insertLocation(location: LocationEntity)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertLocation(location: LocationEntity): Long
 
     @Update
     suspend fun updateLocation(location: LocationEntity)

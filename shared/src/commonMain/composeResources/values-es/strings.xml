@@ -2,10 +2,6 @@
 <resources>
     <string name="app_name">GeoWeather</string>
     <string name="backToSupPag">Volver a la página de asistencia</string>
-    <string name="ConViaEMail">Contacta por correo electrónico</string>
-    <string name="DonPers">Todavía nadie ha hecho una donación.</string>
-    <string name="DonTXT2">Si quieres ayudar a mantener esta y muchas otras aplicaciones, simplemente haz una donación y crea un ticket en mi servidor de Discord con tu nombre y el proveedor de donaciones que utilizaste, y te incluiré en esta lista.</string>
-    <string name="DonTXT1">Estos son los colaboradores que ayudan a mantener esta y muchas otras aplicaciones.</string>
     <string name="DonViaOxaPay">Donar a través de OxaPay</string>
     <string name="DonViaCoin">Donar con Coinbase</string>
     <string name="DonViaBTC">Donar con Bitcoin</string>
@@ -22,7 +18,6 @@
     <string name="WalletDescription">Carteras compatibles: Trust Wallet, MetaMask, Coinbase, Binance, Exodus, Atomic Wallet y otras.</string>
     <string name="USDTitle">Donación de dólares estadounidenses a criptomonedas</string>
     <string name="USDDescription">Paga en dólares estadounidenses y lo convertiremos automáticamente a la criptomoneda que elijas.</string>
-    <string name="ViewSup">Ver patrocinadores</string>
     <string name="BackToWeaDash">Volver al panel de información meteorológico</string>
     <string name="DelLoc">Eliminar ubicación</string>
     <string name="DelLocConAsk">¿Estás seguro de que quieres eliminar %1$s?</string>
@@ -207,8 +202,6 @@
     <string name="select_option_msg">Elige una de las siguientes opciones para apoyar el proyecto.</string>
     <string name="crypto_label">Criptomonedas</string>
     <string name="cash_label">Efectivo</string>
-    <string name="supporters_title">Seguidores</string>
-    <string name="back_to_support">Volver a la página de asistencia</string>
     <string name="search_placeholder">p. ej., Nueva York o 40,71, -74,00</string>
     <string name="wc_clear">Cielo despejado</string>
     <string name="wc_mainly_clear">Mayormente despejado</string>
@@ -365,12 +358,6 @@
     <string name="feedback_title">Comentario</string>
     <string name="feedback_btn">Envíe sus comentarios y sugerencias por correo electrónico</string>
     <string name="feedback_subject">Comentarios de GeoWeather</string>
-    <string name="language_settings_title">Configuración del idioma</string>
-    <string name="select_language">Selecciona el idioma</string>
-    <string name="lang_system">Del sistema</string>
-    <string name="lang_en">Inglés</string>
-    <string name="lang_ru">Ruso</string>
-    <string name="lang_de">Alemán</string>
     <string name="persistent_notif_title">Notificación meteorológica persistente</string>
     <string name="persistent_notif_subtitle">Muestra la temperatura actual en la barra de estado</string>
     <string name="provider_owm">OpenWeatherMap</string>

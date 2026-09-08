@@ -2,10 +2,6 @@
 <resources>
     <string name="app_name">GeoWeather</string>
     <string name="backToSupPag">Go Back to the Support Page</string>
-    <string name="ConViaEMail">Připoj se na Oficiální Discord Server</string>
-    <string name="DonPers">Nikdo ještě nic nedaroval.</string>
-    <string name="DonTXT2">Pokud chceš pomoci udržet tuto či jinou aplikaci, tak můžeš udělat Dar a nechat si vytvořit Ticket v mém Discord Serveru s tvým Jménem a s zřizovatelem Daru který jsi využil. A já tě pak přidám sem na tento list.</string>
-    <string name="DonTXT1">Zde jsou podporovatelé kteří pomáhají udržet tuto i jiné aplikace v chodu.</string>
     <string name="DonViaOxaPay">Daruj skrze OxaPay</string>
     <string name="DonViaCoin">Donate via Coinbase</string>
     <string name="DonViaBTC">Daruj skrze Bitcoin</string>
@@ -22,7 +18,6 @@
     <string name="WalletDescription">Supported Wallets: Trust Wallet, MetaMask, Coinbase, Binance, Exodus, Atomic Wallet and more.</string>
     <string name="USDTitle">USD to Crypto Donation</string>
     <string name="USDDescription">Pay with USD and we will automatically convert it to your chosen cryptocurrency.</string>
-    <string name="ViewSup">Prohlédnout si Podporovatele</string>
     <string name="BackToWeaDash">Jít zpět na přehled Počasí</string>
     <string name="DelLoc">Vymazat polohu</string>
     <string name="DelLocConAsk">Jsi si jistý že chceš vymazat %1$s?</string>
@@ -208,8 +203,6 @@
     <string name="billing_options_title">Nastavení Daru</string>
     <string name="crypto_label">Kryptoměny</string>
     <string name="cash_label">Hotovost</string>
-    <string name="supporters_title">Podporovatelé</string>
-    <string name="back_to_support">Jít zpět na Stránku Podpory</string>
     <string name="search_placeholder">Například: New York nebo 40.71, -74.00</string>
     <string name="wc_clear">Jasno</string>
     <string name="wc_mainly_clear">Převážně jasno</string>

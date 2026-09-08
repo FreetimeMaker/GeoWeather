@@ -2,10 +2,6 @@
 <resources>
     <string name="app_name">GeoWeather</string>
     <string name="backToSupPag">Go Back to the Support Page</string>
-    <string name="ConViaEMail">通过电子邮件联系</string>
-    <string name="DonPers">尚未有人进行捐赠。</string>
-    <string name="DonTXT2">如果您想帮助维护此应用及许多其他应用，只需进行捐赠，并在我的 Discord 服务器中提交一个工单，附上您的姓名和所使用的捐赠提供商，我就会将您列在这里。</string>
-    <string name="DonTXT1">以下是帮助维护此应用及许多其他应用的支持者。</string>
     <string name="DonViaOxaPay">通过 OxaPay 捐赠</string>
     <string name="DonViaCoin">Donate via Coinbase</string>
     <string name="DonViaBTC">通过比特币捐赠</string>
@@ -22,7 +18,6 @@
     <string name="WalletDescription">支持的钱包：Trust Wallet、MetaMask、Coinbase、Binance、Exodus、Atomic Wallet 等。</string>
     <string name="USDTitle">美元兑换加密货币捐赠</string>
     <string name="USDDescription">以美元支付，我们将自动将其转换为您选择的加密货币。</string>
-    <string name="ViewSup">查看支持者</string>
     <string name="BackToWeaDash">返回天气仪表盘</string>
     <string name="DelLoc">删除位置</string>
     <string name="DelLocConAsk">您确定要删除 %1$s 吗？</string>
@@ -206,8 +201,6 @@
     <string name="select_option_msg">请选择以下选项之一来支持该项目。</string>
     <string name="crypto_label">加密货币</string>
     <string name="cash_label">现金</string>
-    <string name="supporters_title">支持者</string>
-    <string name="back_to_support">返回支持页面</string>
     <string name="search_placeholder">例如：纽约 或 40.71, -74.00</string>
     <string name="wc_clear">晴空</string>
     <string name="wc_mainly_clear">大部晴朗</string>
@@ -290,12 +283,6 @@
     <string name="feedback_title">反馈</string>
     <string name="feedback_btn">通过电子邮件发送反馈和建议</string>
     <string name="feedback_subject">GeoWeather 反馈</string>
-    <string name="language_settings_title">语言设置</string>
-    <string name="select_language">选择语言</string>
-    <string name="lang_system">系统语言</string>
-    <string name="lang_en">英语</string>
-    <string name="lang_ru">俄语</string>
-    <string name="lang_de">德语</string>
     <string name="persistent_notif_title">持久天气通知</string>
     <string name="persistent_notif_subtitle">在状态栏显示当前气温</string>
     <string name="pollen_alnus">赤杨花粉</string>

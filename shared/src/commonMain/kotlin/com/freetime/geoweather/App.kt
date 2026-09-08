@@ -1,11 +1,14 @@
 package com.freetime.geoweather
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
@@ -22,11 +25,12 @@ sealed class Screen {
     data class Radar(val lat: Double, val lon: Double) : Screen()
     data object Settings : Screen()
     data object Donate : Screen()
-    data object Supporters : Screen()
     data object WalletAddresses : Screen()
     data object ChangeLog : Screen()
     data object About : Screen()
 }
+
+/** Zero-sized (invisible, untouchable) but still composed, so hidden screens keep their state. */
 
 @Composable
 fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
@@ -41,7 +45,6 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     val backStack = remember { mutableStateListOf<Screen>(Screen.Main) }
     fun navigate(screen: Screen) { backStack.add(screen) }
     fun goBack() { if (backStack.size > 1) backStack.removeLast() }
-    val currentScreen = backStack.last()
 
     DisposableEffect(Unit) {
         systemBackHandler = {
@@ -64,77 +67,104 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
 
     GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor, oledBlack = oledBlack) {
         Surface(modifier = Modifier.fillMaxSize()) {
-            when (val screen = currentScreen) {
-                is Screen.Main -> {
-                    MainWeatherScreen(
-                        viewModel = viewModel,
-                        onAddLocationClick = { navigate(Screen.Search) },
-                        onLocationClick = { navigate(Screen.Detail(it.id)) },
-                        onSettingsClick = { navigate(Screen.Settings) },
-                        onDonateClick = { navigate(Screen.Donate) },
-                        onCurrentLocationClick = { name, lat, lon ->
-                            navigate(Screen.Detail(transientName = name, transientLat = lat, transientLon = lon))
+            // All visited screens stay composed (only the top one is laid out);
+            // hidden screens are zero-sized (invisible, untouchable) but keep
+            // scroll positions and input state for back navigation.
+            Box(Modifier.fillMaxSize()) {
+                backStack.forEachIndexed { index, screen ->
+                    key(index) {
+                        val isTop = index == backStack.lastIndex
+                        Box(
+                            if (isTop) Modifier.fillMaxSize() else Modifier.size(0.dp)
+                        ) {
+                            ScreenContent(
+                                screen = screen,
+                                viewModel = viewModel,
+                                appSettings = appSettings,
+                                onNavigate = ::navigate,
+                                onGoBack = ::goBack
+                            )
                         }
-                    )
-                }
-                is Screen.Search -> {
-                    SearchScreen(
-                        viewModel = viewModel,
-                        onCitySelected = { goBack() },
-                        onBack = { goBack() }
-                    )
-                }
-                is Screen.Detail -> {
-                    WeatherDetailScreen(
-                        locationId = screen.locationId,
-                        transientName = screen.transientName,
-                        transientLat = screen.transientLat,
-                        transientLon = screen.transientLon,
-                        viewModel = viewModel,
-                        appSettings = appSettings,
-                        onBack = { goBack() },
-                        onRadarClick = { lat, lon -> navigate(Screen.Radar(lat, lon)) }
-                    )
-                }
-                is Screen.Settings -> {
-                    SettingsScreen(
-                        appSettings = appSettings,
-                        onBack = { goBack() },
-                        onChangeLogClick = { navigate(Screen.ChangeLog) },
-                        onAboutClick = { navigate(Screen.About) }
-                    )
-                }
-                is Screen.Donate -> {
-                    DonateScreen(
-                        onBack = { goBack() },
-                        onSupportersClick = { navigate(Screen.Supporters) },
-                        onWalletAddressesClick = { navigate(Screen.WalletAddresses) }
-                    )
-                }
-                is Screen.Supporters -> {
-                    SupportersScreen(onBack = { goBack() })
-                }
-                is Screen.WalletAddresses -> {
-                    WalletAddressesScreen(onBack = { goBack() })
-                }
-                is Screen.ChangeLog -> {
-                    ChangeLogScreen(
-                        onBack = { goBack() }
-                    )
-                }
-                is Screen.Radar -> {
-                    RadarScreen(
-                        lat = screen.lat,
-                        lon = screen.lon,
-                        onBack = { goBack() }
-                    )
-                }
-                is Screen.About -> {
-                    AboutScreen(
-                        onBack = { goBack() }
-                    )
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ScreenContent(
+    screen: Screen,
+    viewModel: WeatherViewModel,
+    appSettings: AppSettings,
+    onNavigate: (Screen) -> Unit,
+    onGoBack: () -> Unit
+) {
+    when (screen) {
+        is Screen.Main -> {
+            MainWeatherScreen(
+                viewModel = viewModel,
+                onAddLocationClick = { onNavigate(Screen.Search) },
+                onLocationClick = { onNavigate(Screen.Detail(locationId = it.id)) },
+                onSettingsClick = { onNavigate(Screen.Settings) },
+                onDonateClick = { onNavigate(Screen.Donate) },
+                onCurrentLocationClick = { name, lat, lon ->
+                    onNavigate(Screen.Detail(transientName = name, transientLat = lat, transientLon = lon))
+                }
+            )
+        }
+        is Screen.Search -> {
+            SearchScreen(
+                viewModel = viewModel,
+                onCitySelected = { onGoBack() },
+                onBack = { onGoBack() }
+            )
+        }
+        is Screen.Detail -> {
+            WeatherDetailScreen(
+                locationId = screen.locationId,
+                transientName = screen.transientName,
+                transientLat = screen.transientLat,
+                transientLon = screen.transientLon,
+                viewModel = viewModel,
+                appSettings = appSettings,
+                onBack = { onGoBack() },
+                onRadarClick = { lat, lon -> onNavigate(Screen.Radar(lat, lon)) }
+            )
+        }
+        is Screen.Settings -> {
+            SettingsScreen(
+                appSettings = appSettings,
+                onBack = { onGoBack() },
+                onChangeLogClick = { onNavigate(Screen.ChangeLog) },
+                onAboutClick = { onNavigate(Screen.About) }
+            )
+        }
+        is Screen.Donate -> {
+            DonateScreen(
+                onBack = { onGoBack() },
+                onWalletAddressesClick = { onNavigate(Screen.WalletAddresses) }
+            )
+        }
+        is Screen.WalletAddresses -> {
+            WalletAddressesScreen(onBack = { onGoBack() })
+        }
+        is Screen.ChangeLog -> {
+            ChangeLogScreen(
+                onBack = { onGoBack() }
+            )
+        }
+        is Screen.Radar -> {
+            RadarScreen(
+                lat = screen.lat,
+                lon = screen.lon,
+                onBack = { onGoBack() }
+            )
+        }
+        is Screen.About -> {
+            AboutScreen(
+                onBack = { onGoBack() }
+            )
         }
     }
 }

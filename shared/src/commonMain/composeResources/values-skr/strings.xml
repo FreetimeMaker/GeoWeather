@@ -32,7 +32,6 @@
     <string name="BackToWeaDash">موسم ڈیشبورڈ تے واپس ڄُلو</string>
     <string name="AQIGoodTXT">چنڳا</string>
     <string name="MoonPhaseTXT">چندر دا مرحلہ</string>
-    <string name="DonPers">اڄݨ تائیں کہیں وی عطیہ کائنی ݙتا</string>
     <string name="NotificationTimeTXT">نوٹیفیکیشن ویلا</string>
     <string name="PrecipitationChangeTXT">"مین٘ہ دا امکان %1$s%%  تائیں ودھ ڳیا ہے"</string>
     <string name="PressureTXT">دباؤ: %1$s hPa</string>
@@ -87,9 +86,7 @@
     <string name="AddedMoreDons">دان کرݨ دے ٻئے اختیارات شامل تھئے</string>
     <string name="changelog_fix_moon">چندر مرحلہ ݙکھاوݨ ٹھیک کر ݙتے</string>
     <string name="changelog_add_translate">ٻئے ترجمے شامل کر ݙتن</string>
-    <string name="ConViaEMail">آفیشل ڈسکارڈ سرور وچ شامل تھیوو۔</string>
     <string name="DelLocConAsk">بھلا تہاکوں پک ہے جو تساں %1$s کوں مٹاوݨ چاہندے ہو؟</string>
-    <string name="ViewSup">حامی ݙیکھو</string>
     <string name="AirQualityTXT">ہوا دے معیار دا اشاریہ</string>
     <string name="TempTXT">درجہ حرارت: %1$s°C</string>
     <string name="AQIUnhealthySensitiveTXT">حساس گروپاں کیتے غیر صحت بخش</string>
