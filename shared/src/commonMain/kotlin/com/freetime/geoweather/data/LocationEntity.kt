@@ -141,4 +141,46 @@ data class LocationEntity(
         return cur["wind_direction_10m"]?.jsonPrimitive?.intOrNull
             ?: cur["wind_degree"]?.jsonPrimitive?.intOrNull
     }
+
+    /** Feels-like temperature in °C. */
+    val currentFeelsLike: Double? get() {
+        return try {
+            weatherData?.let { data ->
+                val json = Json.parseToJsonElement(data).jsonObject
+                json["current"]?.jsonObject?.get("apparent_temperature")?.jsonPrimitive?.doubleOrNull
+                    ?: json["current"]?.jsonObject?.get("feelslike_c")?.jsonPrimitive?.doubleOrNull
+            }
+        } catch (e: Exception) { null }
+    }
+
+    /** Wind gusts in km/h. */
+    val currentWindGusts: Double? get() {
+        val cur = currentObject() ?: return null
+        return cur["wind_gusts_10m"]?.jsonPrimitive?.doubleOrNull
+            ?: cur["gust_kph"]?.jsonPrimitive?.doubleOrNull
+    }
+
+    val elevation: Double get() {
+        return try {
+            weatherData?.let { data ->
+                Json.parseToJsonElement(data).jsonObject["elevation"]?.jsonPrimitive?.doubleOrNull
+            } ?: 0.0
+        } catch (e: Exception) { 0.0 }
+    }
+
+    val timezoneName: String get() {
+        return try {
+            weatherData?.let { data ->
+                Json.parseToJsonElement(data).jsonObject["timezone"]?.jsonPrimitive?.content
+            } ?: "UTC"
+        } catch (e: Exception) { "UTC" }
+    }
+
+    val timezoneAbbr: String get() {
+        return try {
+            weatherData?.let { data ->
+                Json.parseToJsonElement(data).jsonObject["timezone_abbreviation"]?.jsonPrimitive?.content
+            } ?: ""
+        } catch (e: Exception) { "" }
+    }
 }

@@ -7,6 +7,8 @@ import geoweather.shared.generated.resources.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.*
 import org.jetbrains.compose.resources.getString
 
@@ -22,6 +24,14 @@ data class DailyForecast(
     val precipSum: Double = 0.0,
     val precipProbMax: Int = 0,
     val windMax: Double = 0.0
+)
+
+/** Values taken from the hourly arrays at the current hour. */
+data class CurrentHourExtras(
+    val visibilityKm: Double?,
+    val cloudBaseM: Double?,
+    /** -1 = falling, 0 = stable, +1 = rising */
+    val pressureTrend: Int
 )
 
 class WeatherRepository(
@@ -161,8 +171,7 @@ class WeatherRepository(
         }
     }
 
-    fun getDailyForecasts(location: LocationEntity): List<DailyForecast> {
-        val data = location.weatherData ?: return emptyList()
+    fun getDailyForecasts(location: LocationEntity): List<DailyForecast> {        val data = location.weatherData ?: return emptyList()
         return try {
             val json = Json.parseToJsonElement(data).jsonObject
             val daily = json["daily"]?.jsonObject ?: return emptyList()
@@ -191,6 +200,44 @@ class WeatherRepository(
             }
         } catch (e: Exception) {
             emptyList()
+        }
+    }
+
+    fun getCurrentHourExtras(location: LocationEntity): CurrentHourExtras? {
+        val data = location.weatherData ?: return null
+        return try {
+            val json = Json.parseToJsonElement(data).jsonObject
+            val hourly = json["hourly"]?.jsonObject ?: return null
+            val times = hourly["time"]?.jsonArray ?: return null
+            val hourPrefix = Clock.System.now()
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .toString().take(13)
+            val index = times.indexOfFirst { it.jsonPrimitive.content.startsWith(hourPrefix) }
+            if (index < 0) return null
+            val visibilityM = hourly["visibility"]?.jsonArray
+                ?.getOrNull(index)?.jsonPrimitive?.doubleOrNull
+            val cloudBase = hourly["cloud_base"]?.jsonArray
+                ?.getOrNull(index)?.jsonPrimitive?.doubleOrNull
+            val pressures = hourly["pressure_msl"]?.jsonArray
+            val trend = if (pressures != null && index >= 3) {
+                val current = pressures[index].jsonPrimitive.doubleOrNull ?: 0.0
+                val past = pressures[index - 3].jsonPrimitive.doubleOrNull ?: 0.0
+                val diff = current - past
+                when {
+                    diff > 1.0 -> 1
+                    diff < -1.0 -> -1
+                    else -> 0
+                }
+            } else {
+                0
+            }
+            CurrentHourExtras(
+                visibilityKm = visibilityM?.div(1000.0),
+                cloudBaseM = cloudBase,
+                pressureTrend = trend
+            )
+        } catch (e: Exception) {
+            null
         }
     }
 }

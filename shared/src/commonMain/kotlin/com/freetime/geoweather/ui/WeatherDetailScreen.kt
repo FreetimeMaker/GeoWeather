@@ -120,6 +120,9 @@ fun WeatherDetailScreen(
             else -> {
                 val hourly = remember(loc.weatherData) { viewModel.getHourlyForecasts(loc) }
                 val daily = remember(loc.weatherData) { viewModel.getDailyForecasts(loc) }
+                val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
+                var forecastExpanded by remember { mutableStateOf(false) }
+                val visibleDaily = if (forecastExpanded) daily else daily.take(7)
                 LazyColumn(
                     modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -154,51 +157,153 @@ fun WeatherDetailScreen(
                         }
                     }
 
-                    item {
-                        Card(modifier = Modifier.fillMaxWidth()) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                WeatherDetailItem(stringResource(Res.string.latitude_label), "${loc.latitude}")
-                                WeatherDetailItem(stringResource(Res.string.longitude_label), "${loc.longitude}")
-                            }
+                    if (code != null) {
+                        item {
+                            WeatherAlertsSection(code)
                         }
                     }
 
                     item {
-                        Button(
-                            onClick = { onRadarClick(loc.latitude, loc.longitude) },
-                            modifier = Modifier.fillMaxWidth().height(40.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.secondary
-                            ),
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Text(
-                                stringResource(Res.string.open_weather_radar),
-                                style = MaterialTheme.typography.labelLarge
+                        val feelsLike = loc.currentFeelsLike ?: loc.currentTemp
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                             )
-                        }
-                    }
-
-                    item {
-                        Card(modifier = Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-                                DetailInfoRow(
-                                    label = stringResource(Res.string.wind_label),
-                                    value = formatWind(loc.currentWindSpeed, loc.currentWindDirection, windUnit)
-                                )
-                                DetailInfoRow(
-                                    label = stringResource(Res.string.humidity_label),
-                                    value = loc.currentHumidity?.let {
-                                        "$it${stringResource(Res.string.humidity_suffix)}"
-                                    } ?: "--"
-                                )
-                                DetailInfoRow(
-                                    label = stringResource(Res.string.pressure_label),
-                                    value = formatPressure(loc.currentPressure, pressureUnit)
-                                )
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.wind_label),
+                                        value = formatWind(loc.currentWindSpeed, loc.currentWindDirection, windUnit),
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.feels_like_label),
+                                        value = feelsLike?.let { formatTemp(it, tempUnit) } ?: "--",
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.humidity_label),
+                                        value = loc.currentHumidity?.let {
+                                            "$it${stringResource(Res.string.humidity_suffix)}"
+                                        } ?: "--",
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+                                        Text(stringResource(Res.string.wind_direction_label), style = MaterialTheme.typography.labelSmall)
+                                        Spacer(Modifier.height(2.dp))
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            loc.currentWindDirection?.let { WindCompass(direction = it.toFloat()) }
+                                            Spacer(Modifier.width(4.dp))
+                                            Text(
+                                                text = loc.currentWindDirection?.let { cardinal8(it.toFloat()) } ?: "--",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.gusts_label),
+                                        value = formatWind(loc.currentWindGusts, null, windUnit),
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Spacer(Modifier.weight(1f))
+                                }
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.pressure_label),
+                                        value = formatPressure(loc.currentPressure, pressureUnit),
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.visibility_label),
+                                        value = extras?.visibilityKm?.let { v ->
+                                            "${(v * 10).roundToInt() / 10.0} km"
+                                        } ?: "--",
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.cloud_base_label),
+                                        value = extras?.cloudBaseM?.let { "${it.toInt()} m" } ?: "--",
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                    val firstDay = daily.firstOrNull()
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.sunrise_label),
+                                        value = firstDay?.sunrise?.takeLast(5) ?: "--",
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.sunset_label),
+                                        value = firstDay?.sunset?.takeLast(5) ?: "--",
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Spacer(Modifier.weight(1f))
+                                }
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                    val firstDay = daily.firstOrNull()
+                                    val golden = if (firstDay != null && firstDay.sunrise != "--" && firstDay.sunset != "--") {
+                                        "${shiftTime(firstDay.sunrise.takeLast(5), 30)} - ${shiftTime(firstDay.sunset.takeLast(5), -60)}"
+                                    } else "--:--"
+                                    val blue = if (firstDay != null && firstDay.sunrise != "--" && firstDay.sunset != "--") {
+                                        "${shiftTime(firstDay.sunrise.takeLast(5), -30)} / ${shiftTime(firstDay.sunset.takeLast(5), 30)}"
+                                    } else "--:--"
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.golden_hour_label),
+                                        value = golden,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.blue_hour_label),
+                                        value = blue,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.altitude_label),
+                                        value = "${loc.elevation.toInt()} m",
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                    val trendText = when (extras?.pressureTrend) {
+                                        1 -> "↗ ${stringResource(Res.string.pressure_rising)}"
+                                        -1 -> "↘ ${stringResource(Res.string.pressure_falling)}"
+                                        else -> "→ ${stringResource(Res.string.pressure_stable)}"
+                                    }
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.pressure_trend_label),
+                                        value = trendText,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    WeatherDetailItem(
+                                        label = stringResource(Res.string.timezone_label),
+                                        value = "${loc.timezoneName} (${loc.timezoneAbbr})",
+                                        modifier = Modifier.weight(2f)
+                                    )
+                                }
+                                Button(
+                                    onClick = { onRadarClick(loc.latitude, loc.longitude) },
+                                    modifier = Modifier.fillMaxWidth().height(40.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.secondary
+                                    ),
+                                    contentPadding = PaddingValues(0.dp)
+                                ) {
+                                    Text(
+                                        stringResource(Res.string.open_weather_radar),
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
                             }
                         }
                     }
@@ -250,7 +355,7 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
-                        items(daily, key = { it.date }) { day ->
+                        items(visibleDaily, key = { it.date }) { day ->
                             var expanded by remember { mutableStateOf(false) }
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
