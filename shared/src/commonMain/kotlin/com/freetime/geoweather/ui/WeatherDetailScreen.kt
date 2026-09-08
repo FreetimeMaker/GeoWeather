@@ -32,7 +32,8 @@ fun WeatherDetailScreen(
     transientLon: Double = 0.0,
     viewModel: WeatherViewModel,
     appSettings: AppSettings,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onRadarClick: (Double, Double) -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
@@ -162,6 +163,22 @@ fun WeatherDetailScreen(
                                 WeatherDetailItem(stringResource(Res.string.latitude_label), "${loc.latitude}")
                                 WeatherDetailItem(stringResource(Res.string.longitude_label), "${loc.longitude}")
                             }
+                        }
+                    }
+
+                    item {
+                        Button(
+                            onClick = { onRadarClick(loc.latitude, loc.longitude) },
+                            modifier = Modifier.fillMaxWidth().height(40.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary
+                            ),
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Text(
+                                stringResource(Res.string.open_weather_radar),
+                                style = MaterialTheme.typography.labelLarge
+                            )
                         }
                     }
 

@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
-import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
@@ -19,47 +18,31 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.freetime.geoweather.WeatherIconMapper
-import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
 import geoweather.shared.generated.resources.*
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainWeatherScreen(
     viewModel: WeatherViewModel,
-    appSettings: AppSettings,
     onAddLocationClick: () -> Unit,
     onLocationClick: (LocationEntity) -> Unit,
     onSettingsClick: () -> Unit,
     onDonateClick: () -> Unit,
-    onRadarClick: () -> Unit,
     onCurrentLocationClick: (String, Double, Double) -> Unit
 ) {
     val locations by viewModel.locations.collectAsState()
-    val tempUnit by appSettings.tempUnit.collectAsState()
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
     var isLocating by remember { mutableStateOf(false) }
-    var refreshedOnce by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val currentLocationName = stringResource(Res.string.current_location)
     val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
-
-    LaunchedEffect(locations) {
-        if (!refreshedOnce && locations.isNotEmpty()) {
-            refreshedOnce = true
-            viewModel.refreshStaleLocations()
-        }
-    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -90,9 +73,6 @@ fun MainWeatherScreen(
                         } else {
                             Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
                         }
-                    }
-                    IconButton(onClick = onRadarClick) {
-                        Icon(Icons.Default.Public, contentDescription = "Radar")
                     }
                     IconButton(onClick = onDonateClick) {
                         Icon(
@@ -134,30 +114,9 @@ fun MainWeatherScreen(
             ) {
                 items(locations, key = { it.id }) { loc ->
                     ListItem(
-                        headlineContent = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(loc.name, modifier = Modifier.weight(1f))
-                                loc.currentTemp?.let { temp ->
-                                    Text(
-                                        formatTemp(temp, tempUnit),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                            }
-                        },
+                        headlineContent = { Text(loc.name) },
                         supportingContent = {
                             Text("${loc.latitude}, ${loc.longitude}")
-                        },
-                        leadingContent = {
-                            loc.currentWeatherCode?.let { code ->
-                                Icon(
-                                    painter = painterResource(WeatherIconMapper.getWeatherIcon(code)),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(40.dp),
-                                    tint = Color.Unspecified
-                                )
-                            }
                         },
                         trailingContent = {
                             Row {

@@ -19,12 +19,12 @@ sealed class Screen {
         val transientLat: Double = 0.0,
         val transientLon: Double = 0.0
     ) : Screen()
+    data class Radar(val lat: Double, val lon: Double) : Screen()
     data object Settings : Screen()
     data object Donate : Screen()
     data object Supporters : Screen()
     data object WalletAddresses : Screen()
     data object ChangeLog : Screen()
-    data object Radar : Screen()
     data object About : Screen()
 }
 
@@ -68,12 +68,10 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 is Screen.Main -> {
                     MainWeatherScreen(
                         viewModel = viewModel,
-                        appSettings = appSettings,
                         onAddLocationClick = { navigate(Screen.Search) },
                         onLocationClick = { navigate(Screen.Detail(it.id)) },
                         onSettingsClick = { navigate(Screen.Settings) },
                         onDonateClick = { navigate(Screen.Donate) },
-                        onRadarClick = { navigate(Screen.Radar) },
                         onCurrentLocationClick = { name, lat, lon ->
                             navigate(Screen.Detail(transientName = name, transientLat = lat, transientLon = lon))
                         }
@@ -94,7 +92,8 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                         transientLon = screen.transientLon,
                         viewModel = viewModel,
                         appSettings = appSettings,
-                        onBack = { goBack() }
+                        onBack = { goBack() },
+                        onRadarClick = { lat, lon -> navigate(Screen.Radar(lat, lon)) }
                     )
                 }
                 is Screen.Settings -> {
@@ -125,6 +124,8 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 }
                 is Screen.Radar -> {
                     RadarScreen(
+                        lat = screen.lat,
+                        lon = screen.lon,
                         onBack = { goBack() }
                     )
                 }

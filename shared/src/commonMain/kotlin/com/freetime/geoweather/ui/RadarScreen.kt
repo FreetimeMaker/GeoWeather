@@ -12,9 +12,11 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RadarScreen(
-    url: String = "https://www.windy.com",
+    lat: Double,
+    lon: Double,
     onBack: () -> Unit
 ) {
+    val url = "https://www.windy.com/?$lat,$lon,8"
     Scaffold(
         topBar = {
             TopAppBar(
