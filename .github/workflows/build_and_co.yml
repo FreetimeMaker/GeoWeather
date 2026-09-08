@@ -74,8 +74,14 @@ jobs:
       - name: Build Android App (Release)
         run: ./gradlew :androidApp:assembleRelease
 
-      - name: Build Desktop App (Linux Deb)
-        run: ./gradlew :desktopApp:packageDeb
+      - name: Install rpmbuild (for RPM packaging)
+        run: |
+          if ! command -v rpmbuild >/dev/null 2>&1; then
+            sudo apt-get update && sudo apt-get install -y rpm
+          fi
+
+      - name: Build Desktop App (Linux Deb + Rpm)
+        run: ./gradlew :desktopApp:packageDeb :desktopApp:packageRpm
 
       - name: Find APKSIGNER
         id: find_apksigner
@@ -118,23 +124,113 @@ jobs:
             exit 1
           fi
 
-      - name: Upload Artifacts
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GeoWeather-Builds
-          path: |
-            *.apk
-            *.deb
-          if-no-files-found: warn
+          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk
+          path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk
+          if-no-files-found: error
           retention-days: 90
 
+      - name: Upload DEB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}-linux
+          path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Prepare RPM Artifact
+        run: |
+          RPM_FILE=$(find desktopApp/build/compose/binaries/main -name "*.rpm" | head -n 1)
+          if [ -n "$RPM_FILE" ]; then
+            echo "Moving $RPM_FILE to GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm"
+            cp "$RPM_FILE" "GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm"
+          else
+            echo "Error: No .rpm file found in desktopApp/build/compose/binaries/main"
+            exit 1
+          fi
+
+      - name: Upload RPM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}-linux-rpm
+          path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm
+          if-no-files-found: error
+          retention-days: 90
+
+  build_windows:
+    needs: prepare_release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Desktop App (Windows Msi + Exe)
+        run: ./gradlew :desktopApp:packageMsi :desktopApp:packageExe
+
+      - name: Prepare Windows Artifacts
+        run: |
+          $ver = "${{ needs.prepare_release.outputs.version }}"
+          $msi = Get-ChildItem -Path desktopApp/build/compose/binaries/main -Recurse -Filter *.msi | Select-Object -First 1
+          if ($null -eq $msi) { Write-Error "No .msi file found in desktopApp/build/compose/binaries/main"; exit 1 }
+          Copy-Item $msi.FullName "GeoWeather-v$ver.msi"
+          $exe = Get-ChildItem -Path desktopApp/build/compose/binaries/main -Recurse -Filter *.exe | Select-Object -First 1
+          if ($null -eq $exe) { Write-Error "No .exe file found in desktopApp/build/compose/binaries/main"; exit 1 }
+          Copy-Item $exe.FullName "GeoWeather-v$ver.exe"
+
+      - name: Upload MSI Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}-windows-msi
+          path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.msi
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload EXE Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}-windows-exe
+          path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.exe
+          if-no-files-found: error
+          retention-days: 90
+
+  release:
+    needs: [prepare_release, build_all, build_windows]
+    if: needs.prepare_release.outputs.create_tag == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: GeoWeather-v${{ needs.prepare_release.outputs.version }}-*
+          path: ./dist
+          merge-multiple: true
+
       - name: Create Release and Upload Assets
-        if: needs.prepare_release.outputs.create_tag == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.prepare_release.outputs.version }}
           files: |
-            *.apk
-            *.deb
+            dist/*.apk
+            dist/*.deb
+            dist/*.rpm
+            dist/*.msi
+            dist/*.exe
           draft: false
           generate_release_notes: true
