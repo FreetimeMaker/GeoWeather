@@ -186,11 +186,11 @@ jobs:
       - name: Prepare Windows Artifacts
         run: |
           $ver = "${{ needs.prepare_release.outputs.version }}"
-          $msi = Get-ChildItem -Path desktopApp/build/compose/binaries/main -Recurse -Filter *.msi | Select-Object -First 1
-          if ($null -eq $msi) { Write-Error "No .msi file found in desktopApp/build/compose/binaries/main"; exit 1 }
+          $msi = Get-ChildItem -Path desktopApp/build/compose/binaries/main/msi -Filter *.msi | Select-Object -First 1
+          if ($null -eq $msi) { Write-Error "No .msi file found in desktopApp/build/compose/binaries/main/msi"; exit 1 }
           Copy-Item $msi.FullName "GeoWeather-v$ver.msi"
-          $exe = Get-ChildItem -Path desktopApp/build/compose/binaries/main -Recurse -Filter *.exe | Select-Object -First 1
-          if ($null -eq $exe) { Write-Error "No .exe file found in desktopApp/build/compose/binaries/main"; exit 1 }
+          $exe = Get-ChildItem -Path desktopApp/build/compose/binaries/main/exe -Filter *.exe | Select-Object -First 1
+          if ($null -eq $exe) { Write-Error "No .exe file found in desktopApp/build/compose/binaries/main/exe"; exit 1 }
           Copy-Item $exe.FullName "GeoWeather-v$ver.exe"
 
       - name: Upload MSI Artifact
