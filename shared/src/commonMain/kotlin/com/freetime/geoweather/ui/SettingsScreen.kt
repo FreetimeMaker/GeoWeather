@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.BACKUP_FILE_NAME
@@ -202,6 +203,7 @@ fun SettingsScreen(
                 text = stringResource(Res.string.feedback_alternative_hint),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             OutlinedButton(
@@ -222,10 +224,6 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(Res.string.feedback_github_btn))
-            }
-            Spacer(Modifier.height(8.dp))
-            OutlinedButton(onClick = onAboutClick, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(Res.string.about_title))
             }
         }
     }

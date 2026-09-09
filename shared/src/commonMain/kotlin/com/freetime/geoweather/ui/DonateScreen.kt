@@ -67,10 +67,6 @@ fun DonateScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                PromotionView(onWebViewClick = onWebViewClick)
-            }
-
-            item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
