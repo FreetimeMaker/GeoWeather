@@ -51,7 +51,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
-            api(project(":freetime-sdk"))
         }
         
         androidMain.dependencies {

@@ -68,9 +68,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Build SDK
-        run: ./gradlew :freetime-sdk:assemble
-
       - name: Build Android App (Release)
         run: ./gradlew :androidApp:assembleRelease
 

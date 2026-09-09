@@ -26,12 +26,9 @@ sealed class Screen {
     data class Web(val url: String, val title: String = "") : Screen()
     data object Settings : Screen()
     data object Donate : Screen()
-    data object WalletAddresses : Screen()
     data object ChangeLog : Screen()
     data object About : Screen()
 }
-
-/** Zero-sized (invisible, untouchable) but still composed, so hidden screens keep their state. */
 
 @Composable
 fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
@@ -68,9 +65,6 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
 
     GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor, oledBlack = oledBlack) {
         Surface(modifier = Modifier.fillMaxSize()) {
-            // All visited screens stay composed (only the top one is laid out);
-            // hidden screens are zero-sized (invisible, untouchable) but keep
-            // scroll positions and input state for back navigation.
             Box(Modifier.fillMaxSize()) {
                 backStack.forEachIndexed { index, screen ->
                     key(index) {
@@ -133,25 +127,21 @@ private fun ScreenContent(
                 onRadarClick = { lat, lon -> onNavigate(Screen.Radar(lat, lon)) }
             )
         }
-                is Screen.Settings -> {
-                    SettingsScreen(
-                        viewModel = viewModel,
-                        appSettings = appSettings,
-                        onBack = { onGoBack() },
-                        onChangeLogClick = { onNavigate(Screen.ChangeLog) },
-                        onAboutClick = { onNavigate(Screen.About) },
-                        onWebViewClick = { url, title -> onNavigate(Screen.Web(url, title)) }
-                    )
-                }
-        is Screen.Donate -> {
-            DonateScreen(
+        is Screen.Settings -> {
+            SettingsScreen(
+                viewModel = viewModel,
+                appSettings = appSettings,
                 onBack = { onGoBack() },
-                onWalletAddressesClick = { onNavigate(Screen.WalletAddresses) },
+                onChangeLogClick = { onNavigate(Screen.ChangeLog) },
+                onAboutClick = { onNavigate(Screen.About) },
                 onWebViewClick = { url, title -> onNavigate(Screen.Web(url, title)) }
             )
         }
-        is Screen.WalletAddresses -> {
-            WalletAddressesScreen(onBack = { onGoBack() })
+        is Screen.Donate -> {
+            DonateScreen(
+                onBack = { onGoBack() },
+                onWebViewClick = { url, title -> onNavigate(Screen.Web(url, title)) }
+            )
         }
         is Screen.ChangeLog -> {
             ChangeLogScreen(
