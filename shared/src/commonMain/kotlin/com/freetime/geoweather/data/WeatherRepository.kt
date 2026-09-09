@@ -163,7 +163,21 @@ class WeatherRepository(
         return getString(Res.string.WeatherNotificationTXT, location.name, tempStr, description)
     }
 
-    fun getHourlyForecasts(location: LocationEntity): List<HourlyForecast> {        val data = location.weatherData ?: return emptyList()
+    private fun getLocationTimeZone(json: JsonObject): TimeZone {
+        val zoneId = json["timezone"]?.jsonPrimitive?.contentOrNull
+        return if (zoneId != null) {
+            try {
+                TimeZone.of(zoneId)
+            } catch (_: Exception) {
+                TimeZone.currentSystemDefault()
+            }
+        } else {
+            TimeZone.currentSystemDefault()
+        }
+    }
+
+    fun getHourlyForecasts(location: LocationEntity): List<HourlyForecast> {
+        val data = location.weatherData ?: return emptyList()
         return try {
             val json = Json.parseToJsonElement(data).jsonObject
             val hourly = json["hourly"]?.jsonObject ?: return emptyList()
@@ -171,7 +185,18 @@ class WeatherRepository(
             val temps = hourly["temperature_2m"]?.jsonArray ?: return emptyList()
             val codes = hourly["weathercode"]?.jsonArray ?: hourly["weather_code"]?.jsonArray ?: return emptyList()
 
-            List(minOf(times.size, temps.size, codes.size, 24)) { i ->
+            val locationTimeZone = getLocationTimeZone(json)
+            val now = Clock.System.now().toLocalDateTime(locationTimeZone)
+            val currentHourPrefix = now.toString().take(13)
+            val startIndex = times.indexOfFirst {
+                it.jsonPrimitive.content.startsWith(currentHourPrefix)
+            }.takeIf { it >= 0 } ?: 0
+
+            val availableCount = minOf(times.size, temps.size, codes.size) - startIndex
+            val count = minOf(availableCount, 24).coerceAtLeast(0)
+
+            List(count) { offset ->
+                val i = startIndex + offset
                 val timeStr = times[i].jsonPrimitive.content.split("T").last()
                 val temp = temps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0
                 val code = codes[i].jsonPrimitive.intOrNull ?: 0
@@ -182,7 +207,8 @@ class WeatherRepository(
         }
     }
 
-    fun getDailyForecasts(location: LocationEntity): List<DailyForecast> {        val data = location.weatherData ?: return emptyList()
+    fun getDailyForecasts(location: LocationEntity): List<DailyForecast> {
+        val data = location.weatherData ?: return emptyList()
         return try {
             val json = Json.parseToJsonElement(data).jsonObject
             val daily = json["daily"]?.jsonObject ?: return emptyList()
@@ -220,8 +246,9 @@ class WeatherRepository(
             val json = Json.parseToJsonElement(data).jsonObject
             val hourly = json["hourly"]?.jsonObject ?: return null
             val times = hourly["time"]?.jsonArray ?: return null
+            val locationTimeZone = getLocationTimeZone(json)
             val hourPrefix = Clock.System.now()
-                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .toLocalDateTime(locationTimeZone)
                 .toString().take(13)
             val index = times.indexOfFirst { it.jsonPrimitive.content.startsWith(hourPrefix) }
             if (index < 0) return null
