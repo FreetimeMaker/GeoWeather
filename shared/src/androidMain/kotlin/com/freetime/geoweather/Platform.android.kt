@@ -40,7 +40,7 @@ actual fun rememberPaymentContext(): Any? {
 actual fun copyToClipboard(text: String) {
     val context = androidContext ?: return
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return
-    clipboard.setPrimaryClip(ClipData.newPlainText("GeoWeather", text))
+    clipboard.setPrimaryClip(ClipData.newPlainText(null, text))
 }
 
 @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
