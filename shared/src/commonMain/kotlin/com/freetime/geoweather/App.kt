@@ -23,6 +23,7 @@ sealed class Screen {
         val transientLon: Double = 0.0
     ) : Screen()
     data class Radar(val lat: Double, val lon: Double) : Screen()
+    data class Web(val url: String, val title: String = "") : Screen()
     data object Settings : Screen()
     data object Donate : Screen()
     data object WalletAddresses : Screen()
@@ -138,13 +139,15 @@ private fun ScreenContent(
                         appSettings = appSettings,
                         onBack = { onGoBack() },
                         onChangeLogClick = { onNavigate(Screen.ChangeLog) },
-                        onAboutClick = { onNavigate(Screen.About) }
+                        onAboutClick = { onNavigate(Screen.About) },
+                        onWebViewClick = { url, title -> onNavigate(Screen.Web(url, title)) }
                     )
                 }
         is Screen.Donate -> {
             DonateScreen(
                 onBack = { onGoBack() },
-                onWalletAddressesClick = { onNavigate(Screen.WalletAddresses) }
+                onWalletAddressesClick = { onNavigate(Screen.WalletAddresses) },
+                onWebViewClick = { url, title -> onNavigate(Screen.Web(url, title)) }
             )
         }
         is Screen.WalletAddresses -> {
@@ -159,6 +162,13 @@ private fun ScreenContent(
             RadarScreen(
                 lat = screen.lat,
                 lon = screen.lon,
+                onBack = { onGoBack() }
+            )
+        }
+        is Screen.Web -> {
+            WebScreen(
+                url = screen.url,
+                title = screen.title,
                 onBack = { onGoBack() }
             )
         }

@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.data.DependencyManager
+import com.freetime.geoweather.isDesktop
 import com.freetime.geoweather.openUrl
 import com.freetime.sdk.Promotion
 import com.freetime.sdk.PromotionManager
@@ -15,7 +16,10 @@ import coil3.compose.AsyncImage
 import kotlinx.coroutines.launch
 
 @Composable
-fun PromotionView(modifier: Modifier = Modifier) {
+fun PromotionView(
+    modifier: Modifier = Modifier,
+    onWebViewClick: (String, String) -> Unit = { _, _ -> }
+) {
     val freetimePay = DependencyManager.getFreetimePay()
     val manager = remember { PromotionManager(freetimePay.config) }
     var promotion by remember { mutableStateOf<Promotion?>(null) }
@@ -35,7 +39,13 @@ fun PromotionView(modifier: Modifier = Modifier) {
         Card(
             modifier = modifier
                 .fillMaxWidth()
-                .clickable { openUrl(promo.targetUrl) },
+                .clickable {
+                    if (isDesktop) {
+                        openUrl(promo.targetUrl)
+                    } else {
+                        onWebViewClick(promo.targetUrl, promo.title)
+                    }
+                },
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f)
             )

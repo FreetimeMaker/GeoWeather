@@ -52,6 +52,11 @@ fun AboutScreen(onBack: () -> Unit) {
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium
             )
+            Text(
+                text = stringResource(Res.string.donation_mission_text),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium
+            )
             
             Spacer(Modifier.weight(1f))
             

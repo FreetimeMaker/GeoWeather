@@ -19,6 +19,7 @@ import com.freetime.geoweather.data.BACKUP_FILE_NAME
 import com.freetime.geoweather.data.BACKUP_MIME_TYPE
 import com.freetime.geoweather.data.loadTextFile
 import com.freetime.geoweather.data.saveTextFile
+import com.freetime.geoweather.isDesktop
 import com.freetime.geoweather.openUrl
 import geoweather.shared.generated.resources.*
 import kotlinx.coroutines.launch
@@ -31,7 +32,8 @@ fun SettingsScreen(
     appSettings: AppSettings,
     onBack: () -> Unit,
     onChangeLogClick: () -> Unit,
-    onAboutClick: () -> Unit
+    onAboutClick: () -> Unit,
+    onWebViewClick: (String, String) -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
@@ -210,7 +212,13 @@ fun SettingsScreen(
             }
             Spacer(Modifier.height(8.dp))
             OutlinedButton(
-                onClick = { openUrl("https://github.com/FreetimeMaker/GeoWeather/issues") },
+                onClick = {
+                    if (isDesktop) {
+                        openUrl("https://github.com/FreetimeMaker/GeoWeather/issues")
+                    } else {
+                        onWebViewClick("https://github.com/FreetimeMaker/GeoWeather/issues", "GitHub Issues")
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(Res.string.feedback_github_btn))

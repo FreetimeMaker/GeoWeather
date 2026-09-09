@@ -13,6 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.copyToClipboard
 import com.freetime.geoweather.data.DependencyManager
+import com.freetime.geoweather.isDesktop
 import com.freetime.geoweather.openUrl
 import com.freetime.geoweather.rememberPaymentContext
 import com.freetime.sdk.PaymentProvider
@@ -29,7 +30,8 @@ private data class ExternalDonation(val labelKey: org.jetbrains.compose.resource
 @Composable
 fun DonateScreen(
     onBack: () -> Unit,
-    onWalletAddressesClick: () -> Unit
+    onWalletAddressesClick: () -> Unit,
+    onWebViewClick: (String, String) -> Unit
 ) {
     val paymentContext = rememberPaymentContext()
     val freetimePay = DependencyManager.getFreetimePay()
@@ -81,7 +83,7 @@ fun DonateScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                PromotionView()
+                PromotionView(onWebViewClick = onWebViewClick)
             }
 
             item {
@@ -151,7 +153,11 @@ fun DonateScreen(
 
             item {
                 DonateButton(text = stringResource(Res.string.DonViaGHSponsors)) {
-                    openUrl("https://github.com/sponsors/FreetimeMaker")
+                    if (isDesktop) {
+                        openUrl("https://github.com/sponsors/FreetimeMaker")
+                    } else {
+                        onWebViewClick("https://github.com/sponsors/FreetimeMaker", "GitHub Sponsors")
+                    }
                 }
             }
 
@@ -176,8 +182,13 @@ fun DonateScreen(
             }
 
             items(externalDonations, key = { it.url }) { donation ->
-                DonateButton(text = stringResource(donation.labelKey)) {
-                    openUrl(donation.url)
+                val label = stringResource(donation.labelKey)
+                DonateButton(text = label) {
+                    if (isDesktop) {
+                        openUrl(donation.url)
+                    } else {
+                        onWebViewClick(donation.url, label)
+                    }
                 }
             }
         }
