@@ -12,10 +12,12 @@ permissions:
 
 jobs:
   prepare_release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+
     outputs:
       version: ${{ steps.versioncheck.outputs.version }}
       create_tag: ${{ steps.versioncheck.outputs.create_tag }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -26,8 +28,9 @@ jobs:
       - name: Detect version & create tag
         id: versioncheck
         run: |
-          # Use androidApp for version detection
-          VERSION=$(grep 'versionName' androidApp/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
+          VERSION=$(grep 'versionName' androidApp/build.gradle.kts \
+            | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
+
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
           git fetch --tags
@@ -40,9 +43,10 @@ jobs:
             echo "create_tag=true" >> "$GITHUB_OUTPUT"
           fi
 
+
   build_linux:
     needs: prepare_release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -63,28 +67,72 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-          cache: 'gradle'
+          cache: gradle
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Build Android App (Release)
-        run: ./gradlew :androidApp:assembleRelease
+      - name: Install Android SDK components
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager \
+            "build-tools;36.0.0" \
+            "ndk;28.0.13004108"
 
-      - name: Install rpmbuild (for RPM packaging)
+      - name: Show build environment
+        run: |
+          echo "Java:"
+          java -version
+
+          echo ""
+          echo "Gradle:"
+          ./gradlew --version
+
+          echo ""
+          echo "Android SDK:"
+          echo "$ANDROID_HOME"
+
+          echo ""
+          echo "Build Tools:"
+          ls "$ANDROID_HOME/build-tools"
+
+          echo ""
+          echo "NDK:"
+          ls "$ANDROID_HOME/ndk"
+
+      - name: Build Android App (Release)
+        run: |
+          ./gradlew \
+            --no-daemon \
+            :androidApp:assembleRelease
+
+      - name: Install rpmbuild
         run: |
           if ! command -v rpmbuild >/dev/null 2>&1; then
-            sudo apt-get update && sudo apt-get install -y rpm
+            sudo apt-get update
+            sudo apt-get install -y rpm
           fi
 
-      - name: Build Desktop App (Linux Deb + Rpm)
-        run: ./gradlew :desktopApp:packageDeb :desktopApp:packageRpm
+      - name: Build Desktop App (Linux Deb + RPM)
+        run: |
+          ./gradlew \
+            --no-daemon \
+            :desktopApp:packageDeb \
+            :desktopApp:packageRpm
 
-      - name: Find APKSIGNER
+      - name: Configure APKSIGNER
         id: find_apksigner
         run: |
-          APKSIGNER=$(find /usr/local/lib/android/sdk/build-tools -name apksigner | head -n 1)
-          echo "apksigner=$APKSIGNER" >> $GITHUB_OUTPUT
+          APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
+
+          if [ ! -f "$APKSIGNER" ]; then
+            echo "Error: apksigner not found at $APKSIGNER"
+            exit 1
+          fi
+
+          echo "apksigner=$APKSIGNER" >> "$GITHUB_OUTPUT"
+
+          "$APKSIGNER" version
 
       - name: Sign Android APK
         id: sign_apk
@@ -93,31 +141,73 @@ jobs:
           SIGNED_APK="GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk"
           KEYSTORE_PATH="./keystore/GeoWeather-KeyStore.jks"
 
-          echo "==> Signiere APK: $SIGNED_APK"
+          if [ ! -f "$UNSIGNED_APK" ]; then
+            echo "Error: APK not found:"
+            echo "$UNSIGNED_APK"
+            exit 1
+          fi
+
+          if [ ! -f "$KEYSTORE_PATH" ]; then
+            echo "Error: Keystore not found:"
+            echo "$KEYSTORE_PATH"
+            exit 1
+          fi
+
+          echo "Signing APK: $SIGNED_APK"
+
           "${{ steps.find_apksigner.outputs.apksigner }}" sign \
             --ks "$KEYSTORE_PATH" \
             --ks-key-alias alle \
-            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
-            --key-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+            --key-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
             --out "$SIGNED_APK" \
             "$UNSIGNED_APK"
 
-          echo "signed_apk=$SIGNED_APK" >> $GITHUB_OUTPUT
+          echo "signed_apk=$SIGNED_APK" >> "$GITHUB_OUTPUT"
 
       - name: Verify APK Signature
         run: |
-          "${{ steps.find_apksigner.outputs.apksigner }}" verify --verbose \
+          "${{ steps.find_apksigner.outputs.apksigner }}" \
+            verify \
+            --verbose \
+            --print-certs \
             "${{ steps.sign_apk.outputs.signed_apk }}"
+
+      - name: Show APK checksum
+        run: |
+          sha256sum "${{ steps.sign_apk.outputs.signed_apk }}"
 
       - name: Prepare Desktop Artifact
         run: |
-          # The packageDeb task typically outputs to build/compose/binaries/main/deb/
-          DEB_FILE=$(find desktopApp/build/compose/binaries/main -name "*.deb" | head -n 1)
+          DEB_FILE=$(find \
+            desktopApp/build/compose/binaries/main \
+            -name "*.deb" \
+            | head -n 1)
+
           if [ -n "$DEB_FILE" ]; then
-            echo "Moving $DEB_FILE to GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb"
-            cp "$DEB_FILE" "GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb"
+            echo "Moving $DEB_FILE"
+            cp \
+              "$DEB_FILE" \
+              "GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb"
           else
-            echo "Error: No .deb file found in desktopApp/build/compose/binaries/main"
+            echo "Error: No .deb file found"
+            exit 1
+          fi
+
+      - name: Prepare RPM Artifact
+        run: |
+          RPM_FILE=$(find \
+            desktopApp/build/compose/binaries/main \
+            -name "*.rpm" \
+            | head -n 1)
+
+          if [ -n "$RPM_FILE" ]; then
+            echo "Moving $RPM_FILE"
+            cp \
+              "$RPM_FILE" \
+              "GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm"
+          else
+            echo "Error: No .rpm file found"
             exit 1
           fi
 
@@ -137,17 +227,6 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      - name: Prepare RPM Artifact
-        run: |
-          RPM_FILE=$(find desktopApp/build/compose/binaries/main -name "*.rpm" | head -n 1)
-          if [ -n "$RPM_FILE" ]; then
-            echo "Moving $RPM_FILE to GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm"
-            cp "$RPM_FILE" "GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm"
-          else
-            echo "Error: No .rpm file found in desktopApp/build/compose/binaries/main"
-            exit 1
-          fi
-
       - name: Upload RPM Artifact
         uses: actions/upload-artifact@v7
         with:
@@ -155,6 +234,7 @@ jobs:
           path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm
           if-no-files-found: error
           retention-days: 90
+
 
   build_windows:
     needs: prepare_release
@@ -172,23 +252,50 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-          cache: 'gradle'
+          cache: gradle
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Build Desktop App (Windows Msi + Exe)
-        run: ./gradlew :desktopApp:packageMsi :desktopApp:packageExe
+      - name: Build Desktop App (Windows MSI + EXE)
+        run: |
+          ./gradlew `
+            --no-daemon `
+            :desktopApp:packageMsi `
+            :desktopApp:packageExe
 
       - name: Prepare Windows Artifacts
+        shell: pwsh
         run: |
           $ver = "${{ needs.prepare_release.outputs.version }}"
-          $msi = Get-ChildItem -Path desktopApp/build/compose/binaries/main/msi -Filter *.msi | Select-Object -First 1
-          if ($null -eq $msi) { Write-Error "No .msi file found in desktopApp/build/compose/binaries/main/msi"; exit 1 }
-          Copy-Item $msi.FullName "GeoWeather-v$ver.msi"
-          $exe = Get-ChildItem -Path desktopApp/build/compose/binaries/main/exe -Filter *.exe | Select-Object -First 1
-          if ($null -eq $exe) { Write-Error "No .exe file found in desktopApp/build/compose/binaries/main/exe"; exit 1 }
-          Copy-Item $exe.FullName "GeoWeather-v$ver.exe"
+
+          $msi = Get-ChildItem `
+            -Path desktopApp/build/compose/binaries/main/msi `
+            -Filter *.msi |
+            Select-Object -First 1
+
+          if ($null -eq $msi) {
+            Write-Error "No .msi file found"
+            exit 1
+          }
+
+          Copy-Item `
+            $msi.FullName `
+            "GeoWeather-v$ver.msi"
+
+          $exe = Get-ChildItem `
+            -Path desktopApp/build/compose/binaries/main/exe `
+            -Filter *.exe |
+            Select-Object -First 1
+
+          if ($null -eq $exe) {
+            Write-Error "No .exe file found"
+            exit 1
+          }
+
+          Copy-Item `
+            $exe.FullName `
+            "GeoWeather-v$ver.exe"
 
       - name: Upload MSI Artifact
         uses: actions/upload-artifact@v7
@@ -206,10 +313,16 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+
   release:
-    needs: [prepare_release, build_linux, build_windows]
+    needs:
+      - prepare_release
+      - build_linux
+      - build_windows
+
     if: needs.prepare_release.outputs.create_tag == 'true'
-    runs-on: ubuntu-latest
+
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Download All Artifacts
@@ -218,6 +331,10 @@ jobs:
           pattern: GeoWeather-v${{ needs.prepare_release.outputs.version }}*
           path: ./dist
           merge-multiple: true
+
+      - name: Show release files
+        run: |
+          find ./dist -type f -maxdepth 2 -print
 
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v3

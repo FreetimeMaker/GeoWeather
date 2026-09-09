@@ -29,7 +29,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Exe, TargetFormat.Deb, TargetFormat.Rpm)
             packageName = "GeoWeather"
-            packageVersion = "3.1.1"
+            packageVersion = "3.1.2"
             vendor = "Freetime Maker"
             description = "GeoWeather - Privacy-focused weather app"
             copyright = "Copyright © 2026 Freetime Maker"
