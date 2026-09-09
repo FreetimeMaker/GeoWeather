@@ -125,7 +125,7 @@ jobs:
           fi
 
       - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk
           path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk
@@ -133,7 +133,7 @@ jobs:
           retention-days: 90
 
       - name: Upload DEB Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb
           path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb
@@ -152,7 +152,7 @@ jobs:
           fi
 
       - name: Upload RPM Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm
           path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm
@@ -194,7 +194,7 @@ jobs:
           Copy-Item $exe.FullName "GeoWeather-v$ver.exe"
 
       - name: Upload MSI Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.msi
           path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.msi
@@ -202,7 +202,7 @@ jobs:
           retention-days: 90
 
       - name: Upload EXE Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.exe
           path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.exe
@@ -216,7 +216,7 @@ jobs:
 
     steps:
       - name: Download All Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: GeoWeather-v${{ needs.prepare_release.outputs.version }}-*
           path: ./dist
