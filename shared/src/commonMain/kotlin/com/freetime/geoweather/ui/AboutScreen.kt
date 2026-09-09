@@ -37,7 +37,7 @@ fun AboutScreen(onBack: () -> Unit) {
                 style = MaterialTheme.typography.headlineLarge
             )
             Text(
-                text = "v3.0.0",
+                text = stringResource(Res.string.about_version),
                 style = MaterialTheme.typography.bodySmall
             )
             
@@ -61,7 +61,7 @@ fun AboutScreen(onBack: () -> Unit) {
             Spacer(Modifier.weight(1f))
             
             Text(
-                text = "© 2026 Freetime Maker",
+                text = stringResource(Res.string.about_copyright),
                 style = MaterialTheme.typography.labelSmall
             )
         }
