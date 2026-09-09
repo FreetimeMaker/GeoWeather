@@ -104,7 +104,7 @@ GeoWeather is 100% free. No ads. No tracking.
 
 - ⭐ **[Star](https://github.com/FreetimeMaker/GeoWeather/star)** this repository
 - 🐛 **[Report](https://github.com/FreetimeMaker/GeoWeather/issues)** bugs and issues
-- 💡 **[Suggest](https://github.com/FreetimeMaker/GeoWeather/discussions)** new features
+- 💡 **[Suggest](https://github.com/FreetimeMaker/GeoWeather/issues)** new features
 - 📧 **[Contact](mailto:FreetimeMaker@proton.me)** via Email
 - 💳 **[Sponsor](#-donations)** the developer
 
