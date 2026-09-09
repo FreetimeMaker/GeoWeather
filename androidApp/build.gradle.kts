@@ -14,8 +14,8 @@ android {
         applicationId = "com.freetime.geoweather"
         minSdk = 26
         targetSdk = 37
-        versionCode = 66
-        versionName = "2.3.0"
+        versionCode = 67
+        versionName = "3.0.0"
     }
 
     buildFeatures {
