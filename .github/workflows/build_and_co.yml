@@ -3,7 +3,7 @@ name: Build and Release GeoWeather
 on:
   push:
     branches:
-      - master
+      - '**'
   workflow_dispatch:
 
 permissions:
