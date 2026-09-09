@@ -1,5 +1,6 @@
 package com.freetime.geoweather
 
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.freetime.geoweather.data.DependencyManager
@@ -17,6 +18,7 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = "GeoWeather",
+        icon = painterResource("icon.png")
     ) {
         WeatherApp(
             database = DependencyManager.getDatabase(),
