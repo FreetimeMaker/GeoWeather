@@ -18,32 +18,32 @@ import org.jetbrains.compose.resources.stringResource
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
         "v3.1.0" to listOf(
-            "Fixed Android App Icon is an other then the new One",
-            "Fixed the Time in WeatherDetails",
-            "Removed FreetimeSDK"
+            stringResource(Res.string.cl_310_android_icon),
+            stringResource(Res.string.cl_310_weather_time),
+            stringResource(Res.string.cl_310_removed_sdk)
         ),
         "v3.0.0" to listOf(
-            "Migrated to Kotlin Multiplatform (KMP)",
-            "Added support for Windows and Linux",
-            "Refactored Database to Room Multiplatform",
-            "Refactored Networking to Ktor",
-            "Updated UI to Compose Multiplatform",
-            "New App Icon",
-            "P.S.: Tell me with a Feedback what you think about the new UI and the new App Icon. I would love to hear your opinion!"
+            stringResource(Res.string.cl_300_kmp),
+            stringResource(Res.string.cl_300_windows_linux),
+            stringResource(Res.string.cl_300_room),
+            stringResource(Res.string.cl_300_ktor),
+            stringResource(Res.string.cl_300_compose),
+            stringResource(Res.string.cl_300_app_icon),
+            stringResource(Res.string.cl_300_feedback)
         ),
         "v2.3.0" to listOf(
-            "Enhanced the Weather Widget with responsive hourly Forecast and made it better",
-            "Added Safety Wrappers around FreetimeSDK's FreetimePay and fixed the Promotion Rendering in DonateScreen for Freetime SDK",
-            "Improved FreetimeSDK Reliability by adding error handler and more for Promotions",
-            "Updated E-Mail address for Feedback (The Provider (addy.io) I used for Sending it to the Mail Address didn't work anymore)",
-            "Updated Dependencies"
+            stringResource(Res.string.cl_230_widget),
+            stringResource(Res.string.cl_230_sdk_safety),
+            stringResource(Res.string.cl_230_sdk_reliability),
+            stringResource(Res.string.cl_230_feedback_email),
+            stringResource(Res.string.cl_230_dependencies)
         ),
         "v2.2.2" to listOf(
-            "Expandable 16-day forecast for a cleaner UI",
-            "Integrated In-App Weather Radar",
-            "Optimized compact weather details grid",
-            "Added m/s wind speed unit",
-            "Cardinal wind direction text added"
+            stringResource(Res.string.cl_222_expandable_forecast),
+            stringResource(Res.string.cl_222_radar),
+            stringResource(Res.string.cl_222_details_grid),
+            stringResource(Res.string.cl_222_ms_wind),
+            stringResource(Res.string.cl_222_cardinal_direction)
         ),
         "v2.2.1" to listOf(
             stringResource(Res.string.cl_220_sdk),
@@ -53,7 +53,7 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             stringResource(Res.string.cl_220_fixes)
         ),
         "v2.1.2" to listOf(
-            "Added Feedback System and removed Affiliate Links",
+            stringResource(Res.string.cl_212_feedback),
             stringResource(Res.string.cl_212_russian),
             stringResource(Res.string.cl_212_lang_select),
             stringResource(Res.string.cl_212_persistent)
