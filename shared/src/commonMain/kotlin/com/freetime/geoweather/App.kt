@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.freetime.geoweather.Screen.*
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
@@ -27,7 +28,6 @@ sealed class Screen {
     data object Settings : Screen()
     data object Donate : Screen()
     data object ChangeLog : Screen()
-    data object About : Screen()
 }
 
 @Composable
@@ -40,7 +40,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         )
     }
     val viewModel = remember { WeatherViewModel(repository) }
-    val backStack = remember { mutableStateListOf<Screen>(Screen.Main) }
+    val backStack = remember { mutableStateListOf<Screen>(Main) }
     fun navigate(screen: Screen) { backStack.add(screen) }
     fun goBack() { if (backStack.size > 1) backStack.removeLast() }
 
@@ -96,26 +96,26 @@ private fun ScreenContent(
     onGoBack: () -> Unit
 ) {
     when (screen) {
-        is Screen.Main -> {
+        is Main -> {
             MainWeatherScreen(
                 viewModel = viewModel,
-                onAddLocationClick = { onNavigate(Screen.Search) },
-                onLocationClick = { onNavigate(Screen.Detail(locationId = it.id)) },
-                onSettingsClick = { onNavigate(Screen.Settings) },
-                onDonateClick = { onNavigate(Screen.Donate) },
+                onAddLocationClick = { onNavigate(Search) },
+                onLocationClick = { onNavigate(Detail(locationId = it.id)) },
+                onSettingsClick = { onNavigate(Settings) },
+                onDonateClick = { onNavigate(Donate) },
                 onCurrentLocationClick = { name, lat, lon ->
-                    onNavigate(Screen.Detail(transientName = name, transientLat = lat, transientLon = lon))
+                    onNavigate(Detail(transientName = name, transientLat = lat, transientLon = lon))
                 }
             )
         }
-        is Screen.Search -> {
+        is Search -> {
             SearchScreen(
                 viewModel = viewModel,
                 onCitySelected = { onGoBack() },
                 onBack = { onGoBack() }
             )
         }
-        is Screen.Detail -> {
+        is Detail -> {
             WeatherDetailScreen(
                 locationId = screen.locationId,
                 transientName = screen.transientName,
@@ -124,46 +124,40 @@ private fun ScreenContent(
                 viewModel = viewModel,
                 appSettings = appSettings,
                 onBack = { onGoBack() },
-                onRadarClick = { lat, lon -> onNavigate(Screen.Radar(lat, lon)) }
+                onRadarClick = { lat, lon -> onNavigate(Radar(lat, lon)) }
             )
         }
-        is Screen.Settings -> {
+        is Settings -> {
             SettingsScreen(
                 viewModel = viewModel,
                 appSettings = appSettings,
                 onBack = { onGoBack() },
-                onChangeLogClick = { onNavigate(Screen.ChangeLog) },
-                onAboutClick = { onNavigate(Screen.About) },
-                onWebViewClick = { url, title -> onNavigate(Screen.Web(url, title)) }
+                onChangeLogClick = { onNavigate(ChangeLog) },
+                onWebViewClick = { url, title -> onNavigate(Web(url, title)) },
             )
         }
-        is Screen.Donate -> {
+        is Donate -> {
             DonateScreen(
                 onBack = { onGoBack() },
-                onWebViewClick = { url, title -> onNavigate(Screen.Web(url, title)) }
+                onWebViewClick = { url, title -> onNavigate(Web(url, title)) }
             )
         }
-        is Screen.ChangeLog -> {
+        is ChangeLog -> {
             ChangeLogScreen(
                 onBack = { onGoBack() }
             )
         }
-        is Screen.Radar -> {
+        is Radar -> {
             RadarScreen(
                 lat = screen.lat,
                 lon = screen.lon,
                 onBack = { onGoBack() }
             )
         }
-        is Screen.Web -> {
+        is Web -> {
             WebScreen(
                 url = screen.url,
                 title = screen.title,
-                onBack = { onGoBack() }
-            )
-        }
-        is Screen.About -> {
-            AboutScreen(
                 onBack = { onGoBack() }
             )
         }

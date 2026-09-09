@@ -33,7 +33,6 @@ fun SettingsScreen(
     appSettings: AppSettings,
     onBack: () -> Unit,
     onChangeLogClick: () -> Unit,
-    onAboutClick: () -> Unit,
     onWebViewClick: (String, String) -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
