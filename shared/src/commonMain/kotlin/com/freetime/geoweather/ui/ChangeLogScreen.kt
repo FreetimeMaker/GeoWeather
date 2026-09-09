@@ -17,6 +17,11 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v3.1.0" to listOf(
+            "Fixed Android App Icon is an other then the new One",
+            "Fixed the Time in WeatherDetails",
+            "Removed FreetimeSDK"
+        ),
         "v3.0.0" to listOf(
             "Migrated to Kotlin Multiplatform (KMP)",
             "Added support for Windows and Linux",
