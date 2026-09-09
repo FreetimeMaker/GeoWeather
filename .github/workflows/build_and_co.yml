@@ -52,7 +52,7 @@ jobs:
           submodules: recursive
 
       - name: Checkout Keystore Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ secrets.KEYSTORE_REPOSITORY }}
           token: ${{ secrets.KEYSTORE_ACCESS_TOKEN }}
