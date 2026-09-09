@@ -10,8 +10,6 @@
     <string name="DonViaDOGE">التبرع من خلال DOGE</string>
     <string name="DonateViaTRON">التبرع من خلال TRON</string>
     <string name="DonViaLTC">التبرع من خلال Litecoin</string>
-    <string name="DonViaWallet">التبرع من خلال تطبيق محفظة جوجل</string>
-    <string name="DonViaUSD">التبرع ب USD to Crypto</string>
     <string name="DonViaBNB">التبرع من خلال BNB</string>
     <string name="DonViaPEPE">التبرع من خلال PEPE</string>
     <string name="DonViaSOL">التبرع من خلال SOL</string>
