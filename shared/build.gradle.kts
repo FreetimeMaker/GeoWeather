@@ -37,30 +37,32 @@ kotlin {
             api(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             
-            implementation("io.ktor:ktor-client-core:3.5.2")
-            implementation("io.ktor:ktor-client-content-negotiation:3.5.2")
-            implementation("io.ktor:ktor-serialization-kotlinx-json:3.5.2")
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
             api(libs.room.runtime)
             api(libs.sqlite.bundled)
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+            implementation(libs.kotlinx.serialization.json)
             
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
-            api("com.russhwolf:multiplatform-settings:1.3.0")
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.coroutines.core)
+            api(libs.multiplatform.settings)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
             api(project(":freetime-sdk"))
         }
         
         androidMain.dependencies {
-            implementation("io.ktor:ktor-client-okhttp:3.5.2")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
-            implementation("androidx.activity:activity:1.13.0")
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.androidx.activity)
         }
         
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation("io.ktor:ktor-client-okhttp:3.5.2")
+            implementation(libs.ktor.client.okhttp)
         }
     }
 }

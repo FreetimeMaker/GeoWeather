@@ -47,6 +47,7 @@ object DependencyManager {
         pay.registerDefaultCryptoProviders(addresses)
         // Extra providers not covered by registerDefaultCryptoProviders
         registerAdditionalCryptoProviders(pay, addresses)
+
         this.freetimePay = pay
     }
 
@@ -75,21 +76,21 @@ object DependencyManager {
  */
 private fun registerAdditionalCryptoProviders(pay: FreetimePay, addresses: Map<String, String>) {
     val extraProviders = listOf(
-        Triple("Tron", "TRX", "tron"),
-        Triple("BNB", "BNB", "ethereum"),
-        Triple("Arbitrum", "ARB", "ethereum"),
-        Triple("Optimism", "OP", "ethereum"),
-        Triple("Base", "BASE", "ethereum"),
-        Triple("TON", "TON", "ton"),
-        Triple("Sui", "SUI", "sui"),
-        Triple("Monero", "XMR", "monero"),
-        Triple("Zcash", "ZEC", "zcash"),
-        Triple("Cardano", "ADA", "cardano")
+        Triple("Tron", "TRX", "tron" to "amount"),
+        Triple("BNB", "BNB", "ethereum" to "value"),
+        Triple("Arbitrum", "ARB", "ethereum" to "value"),
+        Triple("Optimism", "OP", "ethereum" to "value"),
+        Triple("Base", "BASE", "ethereum" to "value"),
+        Triple("TON", "TON", "ton" to "amount"),
+        Triple("Sui", "SUI", "sui" to "amount"),
+        Triple("Monero", "XMR", "monero" to "amount"),
+        Triple("Zcash", "ZEC", "zcash" to "amount"),
+        Triple("Cardano", "ADA", "cardano" to "amount")
     )
-    for ((name, symbol, scheme) in extraProviders) {
+    for ((name, symbol, config) in extraProviders) {
         val address = addresses[symbol]
         if (address != null) {
-            pay.registerProvider(CryptoProvider("$name ($symbol)", scheme, address))
+            pay.registerProvider(CryptoProvider("$name ($symbol)", config.first, address, config.second))
         }
     }
 }

@@ -7,22 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import java.awt.Desktop
-import java.net.URI
+import com.freetime.geoweather.openUrl
 
 @Composable
 actual fun PlatformWebView(url: String, modifier: Modifier) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Opening radar in browser...")
+        Text("Opening in default browser...")
     }
     
     LaunchedEffect(url) {
-        try {
-            if (Desktop.isDesktopSupported()) {
-                Desktop.getDesktop().browse(URI(url))
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        openUrl(url)
     }
 }

@@ -196,11 +196,24 @@ fun SettingsScreen(
                 Text(stringResource(Res.string.open_change_log))
             }
             Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(Res.string.feedback_alternative_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
             OutlinedButton(
-                onClick = { openUrl("mailto:FreetimeMaker@prtoton.me?subject=" + "GeoWeather Feedback") },
+                onClick = { openUrl("mailto:FreetimeMaker@proton.me?subject=" + "GeoWeather Feedback") },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(Res.string.feedback_btn))
+            }
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = { openUrl("https://github.com/FreetimeMaker/GeoWeather/issues") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(Res.string.feedback_github_btn))
             }
             Spacer(Modifier.height(8.dp))
             OutlinedButton(onClick = onAboutClick, modifier = Modifier.fillMaxWidth()) {

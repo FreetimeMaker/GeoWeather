@@ -351,6 +351,8 @@
     <string name="import_failed">Import failed</string>
     <string name="feedback_title">Feedback</string>
     <string name="feedback_btn">Send Feedback and suggestions via Email</string>
+    <string name="feedback_github_btn">Report Issue or Suggest Feature on GitHub</string>
+    <string name="feedback_alternative_hint">You can also provide feedback directly on our GitHub repository.</string>
     <string name="feedback_subject">GeoWeather Feedback</string>
     <string name="persistent_notif_title">Persistent Weather Notification</string>
     <string name="persistent_notif_subtitle">Show current temperature in the status bar</string>

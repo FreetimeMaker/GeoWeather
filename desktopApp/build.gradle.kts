@@ -16,7 +16,7 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.room.runtime)
                 implementation(libs.sqlite.bundled)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.11.0")
+                implementation(libs.kotlinx.coroutines.swing)
             }
         }
     }

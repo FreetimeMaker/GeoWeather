@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 
 expect fun openUrl(url: String)
 
+expect val isDesktop: Boolean
+
 /**
  * Returns the platform-specific payment context (an [Any] used by the Freetime SDK).
  * On Android this is the current Activity, on other platforms it may be null.

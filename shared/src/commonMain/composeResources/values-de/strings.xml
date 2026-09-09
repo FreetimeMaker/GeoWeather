@@ -165,6 +165,9 @@
     <string name="DonViaPEPE">Spende über PEPE</string>
     <string name="DonViaSOL">Spende über SOL</string>
     <string name="DonViaShib">Spende über Shiba Inu</string>
+    <string name="feedback_btn">Feedback und Vorschläge per E-Mail senden</string>
+    <string name="feedback_github_btn">Fehler melden oder Feature auf GitHub vorschlagen</string>
+    <string name="feedback_alternative_hint">Du kannst uns auch direkt auf unserem GitHub-Repository Feedback geben.</string>
     <string name="backup_restore_title">Sicherung &amp; Wiederherstellung</string>
     <string name="export_locations">Standorte exportieren</string>
     <string name="import_locations">Standorte importieren</string>

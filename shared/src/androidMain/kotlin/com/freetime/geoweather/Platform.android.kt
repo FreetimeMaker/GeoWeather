@@ -1,12 +1,15 @@
 package com.freetime.geoweather
 
+import android.Manifest
 import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
+import androidx.annotation.RequiresPermission
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
@@ -27,6 +30,8 @@ actual fun openUrl(url: String) {
     }
 }
 
+actual val isDesktop: Boolean = false
+
 @Composable
 actual fun rememberPaymentContext(): Any? {
     return LocalContext.current as? Activity ?: androidContext
@@ -38,13 +43,14 @@ actual fun copyToClipboard(text: String) {
     clipboard.setPrimaryClip(ClipData.newPlainText("GeoWeather", text))
 }
 
+@RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
 actual suspend fun getCurrentCoordinates(): Pair<Double, Double>? {
     return try {
         val context = androidContext ?: return null
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
             ?: return null
         val providers = locationManager.getProviders(true)
-        var best: android.location.Location? = null
+        var best: Location? = null
         for (provider in providers) {
             val location = try {
                 locationManager.getLastKnownLocation(provider)

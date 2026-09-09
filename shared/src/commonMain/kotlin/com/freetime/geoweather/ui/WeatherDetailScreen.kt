@@ -22,6 +22,8 @@ import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
+import com.freetime.geoweather.isDesktop
+import com.freetime.geoweather.openUrl
 import geoweather.shared.generated.resources.*
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -298,7 +300,13 @@ fun WeatherDetailScreen(
                                     )
                                 }
                                 Button(
-                                    onClick = { onRadarClick(loc.latitude, loc.longitude) },
+                                    onClick = {
+                                        if (isDesktop) {
+                                            openUrl("https://www.windy.com/?${loc.latitude},${loc.longitude},8")
+                                        } else {
+                                            onRadarClick(loc.latitude, loc.longitude)
+                                        }
+                                    },
                                     modifier = Modifier.fillMaxWidth().height(40.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = MaterialTheme.colorScheme.secondary

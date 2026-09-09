@@ -2,7 +2,11 @@ package com.freetime.geoweather.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
+import com.freetime.geoweather.openUrl
 
 @Composable
 actual fun GeoWeatherTheme(
@@ -26,10 +30,18 @@ actual fun GeoWeatherTheme(
         )
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = GeoTypography,
-        shapes = GeoShapes,
-        content = content
-    )
+    val desktopUriHandler = object : UriHandler {
+        override fun openUri(uri: String) {
+            openUrl(uri)
+        }
+    }
+
+    CompositionLocalProvider(LocalUriHandler provides desktopUriHandler) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = GeoTypography,
+            shapes = GeoShapes,
+            content = content
+        )
+    }
 }

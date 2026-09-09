@@ -23,7 +23,8 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             "Refactored Database to Room Multiplatform",
             "Refactored Networking to Ktor",
             "Updated UI to Compose Multiplatform",
-            "New App Icon"
+            "New App Icon",
+            "P.S.: Tell me with a Feedback what you think about the new UI and the new App Icon. I would love to hear your opinion!"
         ),
         "v2.3.0" to listOf(
             "Enhanced the Weather Widget with responsive hourly Forecast and made it better",

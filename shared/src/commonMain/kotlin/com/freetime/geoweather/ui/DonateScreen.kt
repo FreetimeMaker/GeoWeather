@@ -81,6 +81,10 @@ fun DonateScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
+                PromotionView()
+            }
+
+            item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
@@ -293,6 +297,19 @@ fun DonationAmountDialog(
     var selectedProviderName by remember(providers) {
         mutableStateOf(providers.firstOrNull()?.name ?: "")
     }
+
+    // Auto-update currency when provider changes for Crypto
+    LaunchedEffect(selectedProviderName) {
+        val provider = providers.find { it.name == selectedProviderName }
+        if (provider != null) {
+            if (provider.name.contains("(") && provider.name.contains(")")) {
+                selectedCurrency = provider.name.substringAfterLast("(").substringBefore(")")
+            } else if (provider.name == "RevenueCat (Card/Subscription)" || provider.name == "One-Time 2 USD Donation") {
+                // Keep USD for RevenueCat by default or let user choose
+                if (selectedCurrency !in fiatCurrencies) selectedCurrency = "USD"
+            }
+        }
+    }
     var customAmount by remember { mutableStateOf("") }
     var selectedPredefined by remember { mutableStateOf<Double?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -336,16 +353,19 @@ fun DonationAmountDialog(
                     }
                 }
 
+                val isCrypto = providers.find { it.name == selectedProviderName }?.name?.contains("(") ?: false
+
                 ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded }
+                    expanded = expanded && !isCrypto,
+                    onExpandedChange = { if (!isCrypto) expanded = !expanded }
                 ) {
                     OutlinedTextField(
                         value = selectedCurrency,
                         onValueChange = {},
                         readOnly = true,
+                        enabled = !isCrypto,
                         label = { Text(stringResource(Res.string.currency_label)) },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        trailingIcon = { if (!isCrypto) ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
                     )
                     ExposedDropdownMenu(

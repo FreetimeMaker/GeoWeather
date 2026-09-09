@@ -61,9 +61,9 @@ dependencies {
     implementation(project(":shared"))
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
-    implementation("androidx.work:work-runtime-ktx:2.11.2")
-    implementation("androidx.activity:activity-compose:1.13.0")
-    implementation("androidx.core:core-ktx:1.19.0")
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.ktx)
 }
 
 kotlin {

@@ -10,6 +10,8 @@ actual fun openUrl(url: String) {
     }
 }
 
+actual val isDesktop: Boolean = true
+
 @Composable
 actual fun rememberPaymentContext(): Any? = null
 
