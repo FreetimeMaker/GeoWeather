@@ -163,6 +163,19 @@ class WeatherRepository(
         return getString(Res.string.WeatherNotificationTXT, location.name, tempStr, description)
     }
 
+    private fun getLocationTimeZone(json: JsonObject): TimeZone {
+        val zoneId = json["timezone"]?.jsonPrimitive?.contentOrNull
+        return if (zoneId != null) {
+            try {
+                TimeZone.of(zoneId)
+            } catch (_: Exception) {
+                TimeZone.currentSystemDefault()
+            }
+        } else {
+            TimeZone.currentSystemDefault()
+        }
+    }
+
     fun getHourlyForecasts(location: LocationEntity): List<HourlyForecast> {
         val data = location.weatherData ?: return emptyList()
         return try {
@@ -172,13 +185,9 @@ class WeatherRepository(
             val temps = hourly["temperature_2m"]?.jsonArray ?: return emptyList()
             val codes = hourly["weathercode"]?.jsonArray ?: hourly["weather_code"]?.jsonArray ?: return emptyList()
 
-            val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-            val currentHourPrefix = "%04d-%02d-%02dT%02d".format(
-                now.year,
-                now.monthNumber,
-                now.dayOfMonth,
-                now.hour
-            )
+            val locationTimeZone = getLocationTimeZone(json)
+            val now = Clock.System.now().toLocalDateTime(locationTimeZone)
+            val currentHourPrefix = now.toString().take(13)
             val startIndex = times.indexOfFirst {
                 it.jsonPrimitive.content.startsWith(currentHourPrefix)
             }.takeIf { it >= 0 } ?: 0
@@ -237,8 +246,9 @@ class WeatherRepository(
             val json = Json.parseToJsonElement(data).jsonObject
             val hourly = json["hourly"]?.jsonObject ?: return null
             val times = hourly["time"]?.jsonArray ?: return null
+            val locationTimeZone = getLocationTimeZone(json)
             val hourPrefix = Clock.System.now()
-                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .toLocalDateTime(locationTimeZone)
                 .toString().take(13)
             val index = times.indexOfFirst { it.jsonPrimitive.content.startsWith(hourPrefix) }
             if (index < 0) return null
