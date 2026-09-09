@@ -14,8 +14,8 @@ android {
         applicationId = "com.freetime.geoweather"
         minSdk = 26
         targetSdk = 37
-        versionCode = 68
-        versionName = "3.1.0"
+        versionCode = 69
+        versionName = "3.1.1"
     }
 
     buildFeatures {
@@ -29,16 +29,6 @@ android {
     }
 }
 
-// See the workaround in shared/build.gradle.kts: the Compose plugin cannot
-// wire :shared compose resources into the AAR assets with AGP 9.x, so we merge
-// the assembled tree here via the Variant API. Its content lands at
-// assets/composeResources/geoweather.shared.generated.resources/...
-// which is exactly what DefaultAndroidResourceReader looks up at runtime.
-// See the workaround in shared/build.gradle.kts: the Compose plugin cannot
-// wire :shared compose resources into the AAR assets with AGP 9.x, so we merge
-// the assembled tree here via the Variant API. Its content lands at
-// assets/composeResources/geoweather.shared.generated.resources/...
-// which is exactly what DefaultAndroidResourceReader looks up at runtime.
 extensions.configure<ApplicationAndroidComponentsExtension> {
     onVariants(selector().all()) { variant ->
         variant.sources.assets?.addStaticSourceDirectory(
@@ -48,9 +38,6 @@ extensions.configure<ApplicationAndroidComponentsExtension> {
     }
 }
 
-// The static asset directory above carries no task dependency info, so every
-// task reading variant assets (mergers, lint, ...) must be ordered explicitly
-// after its producer.
 tasks.configureEach {
     if ((name.startsWith("merge") && name.contains("Assets")) || name.contains("lint", ignoreCase = true)) {
         dependsOn(":shared:assembleAndroidComposeAssets")

@@ -17,6 +17,9 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v3.1.1" to listOf(
+            stringResource(Res.string.cl_311_fix_fdroid)
+        ),
         "v3.1.0" to listOf(
             stringResource(Res.string.cl_310_android_icon),
             stringResource(Res.string.cl_310_weather_time),

@@ -321,4 +321,5 @@
     <string name="cl_152_workers">Optimized background workers and widget for security</string>
     <string name="cl_135_donations">Added More Donation Links</string>
     <string name="cl_135_system_theme">Made Every Screen (Hopefully) like System when activated</string>
+    <string name="cl_311_fix_fdroid">Fixed F-Droid Build</string>
 </resources>
