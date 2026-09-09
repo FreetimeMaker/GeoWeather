@@ -19,7 +19,7 @@ fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
         "v3.0.0" to listOf(
             "Migrated to Kotlin Multiplatform (KMP)",
-            "Support for Android and Desktop (Windows and Linux)",
+            "Added support for Windows and Linux",
             "Refactored Database to Room Multiplatform",
             "Refactored Networking to Ktor",
             "Updated UI to Compose Multiplatform",
