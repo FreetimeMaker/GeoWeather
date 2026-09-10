@@ -347,6 +347,14 @@ jobs:
         run: |
           find ./dist -type f -maxdepth 2 -print
 
+      - name: Create release notes
+        run: |
+          {
+            echo "## What's new"
+            echo ""
+            cat fastlane/metadata/android/en-US/changelogs/default.txt
+          } > release-notes.md
+
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v3
         with:
