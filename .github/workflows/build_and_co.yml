@@ -336,6 +336,11 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
       - name: Download All Artifacts
         uses: actions/download-artifact@v8
         with:
@@ -359,6 +364,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ needs.prepare_release.outputs.version }}
+          body_path: release-notes.md
           files: |
             dist/*.apk
             dist/*.deb
