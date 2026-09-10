@@ -25,7 +25,7 @@
 <div align="center">
 
 [![Latest release](https://img.shields.io/github/v/release/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
-[![F-Droid latest release](https://img.shields.io/f-droid/v/com.freetime.geoweather?color=%23ea9010&style=for-the-badge)](https://f-droid.org/packages/com.freetime.geoweather)
+[![F-Droid latest release](https://img.shields.io/f-droid/v/com.freetime.geoweather?color=%23ea9010&style=for-the-badge)]
 [![GitHub license](https://img.shields.io/github/license/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/blob/main/LICENSE)
 [![GitHub Downloads (all time)](https://img.shields.io/github/downloads/FreetimeMaker/GeoWeather/total?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
 ![F-Droid Downloads (all time)](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Fcom.freetime.geoweather.json&query=%24.total_downloads&logo=fdroid&label=Downloads%20(all%20time))(https://f-droid.org/packages/com.fretime.geoweather)
