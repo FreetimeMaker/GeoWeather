@@ -9,4 +9,14 @@
     <string name="wc_rain">Lehwa</string>
     <string name="wc_snowfall">Adfel</string>
     <string name="wc_unknown">D arussin</string>
+    <string name="app_name">GeoWeather</string>
+    <string name="wind_direction_label">Tanila</string>
+    <string name="pressure_stable">Yers</string>
+    <string name="humidity_suffix">%</string>
+    <string name="widget_loading">Yettali-d...</string>
+    <string name="sunrise_label">Alluy n yiṭij</string>
+    <string name="notification_settings_title">Iɣewwaren n yilɣa</string>
+    <string name="webview_settings_title">Iɣewwaren n taskant n Web</string>
+    <string name="wc_clear">Yeṣfa igenni</string>
+    <string name="import_failed">Yecceḍ uktar</string>
 </resources>
