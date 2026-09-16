@@ -6,8 +6,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import geoweather.shared.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
+import androidx.compose.ui.res.stringResource
+import com.freetime.geoweather.shared.R as Res
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
