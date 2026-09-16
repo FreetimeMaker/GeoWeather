@@ -1,0 +1,3 @@
+• Fixed Android App Icon is an other then the new One
+• Fixed the Time in WeatherDetails
+• Removed FreetimeSDK

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GeoWeather</string>
+    <string name="DonViaOxaPay">OxaPay نال عطیہ کرو</string>
+    <string name="DelLoc">لوکیشن مٹاؤ</string>
+    <string name="DelTXT">مٹاؤ</string>
+    <string name="CancelTXT">منسوخ</string>
+    <string name="SearchBTNTXT">ڳولو</string>
+    <string name="whats_new_title">نواں کیا ہے؟</string>
+    <string name="DonViaPEPE">PEPE نال عطیہ کرو</string>
+    <string name="DonViaSHIB">SHIB نال عطیہ کرو</string>
+    <string name="DonViaSOL">SOL نال عطیہ کرو</string>
+    <string name="DonateViaTRON">TRON نال عطیہ کرو</string>
+    <string name="DonViaUSDC">USDC نال عطیہ کرو</string>
+    <string name="DonViaUSDT">USDT نال عطیہ کرو</string>
+    <string name="open_change_log">تبدیلی لاگ کھولو</string>
+    <string name="DonViaBTC">Bitcoin نال دان کرو</string>
+    <string name="DonViaBNB">BNB نال دان کرو</string>
+    <string name="DonViaDOGE">DOGE نال دان کرو</string>
+    <string name="DonViaETH">Ethereum نال دان کرو</string>
+    <string name="DonViaGHSponsors">"GitHub  سپانسراں نال دان کرو"</string>
+    <string name="WeatherNotificationTXT">موسم %1$s وچ :%2$s°C, %3$s</string>
+    <string name="theme_settings_title">تھیم ترتیباں</string>
+    <string name="follow_system_theme">سسٹم تھیم اپݨاؤ</string>
+    <string name="AddedMoreDons">دان کرݨ دے ٻئے اختیارات شامل تھئے</string>
+    <string name="DelLocConAsk">بھلا تہاکوں پک ہے جو تساں %1$s کوں مٹاوݨ چاہندے ہو؟</string>
+    <string name="FixFMSDK">FreetimeSDK نال مقرر تھئے عطیے</string>
+</resources>

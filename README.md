@@ -25,9 +25,10 @@
 <div align="center">
 
 [![Latest release](https://img.shields.io/github/v/release/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
-[![F-Droid latest release](https://img.shields.io/f-droid/v/com.freetime.geoweather?color=%23ea9010&style=for-the-badge)](https://f-droid.org/packages/com.freetime.geoweather)
+![F-Droid latest release](https://img.shields.io/f-droid/v/com.freetime.geoweather?color=%23ea9010&style=for-the-badge)
 [![GitHub license](https://img.shields.io/github/license/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/blob/main/LICENSE)
-[![Downloads](https://img.shields.io/github/downloads/FreetimeMaker/GeoWeather/total?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
+[![GitHub Downloads (all time)](https://img.shields.io/github/downloads/FreetimeMaker/GeoWeather/total?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
+![F-Droid Downloads (all time)](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Fcom.freetime.geoweather.json&query=%24.total_downloads&logo=fdroid&label=Downloads%20(all%20time))
 [![GitHub stars](https://img.shields.io/github/stars/FreetimeMaker/GeoWeather?color=%2359a14f&style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/stargazers)
 [![Android Build, Sign and Release](https://github.com/FreetimeMaker/GeoWeather/actions/workflows/build_and_co.yml/badge.svg)](https://github.com/FreetimeMaker/GeoWeather/actions/workflows/build_and_co.yml)
 [![API](https://img.shields.io/badge/API-26%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=26)
@@ -71,7 +72,7 @@ You can download the latest version of GeoWeather from the following platforms:
 - **GitHub Releases**: [Direct Download](https://github.com/FreetimeMaker/GeoWeather/releases/latest)
 - **F-Droid**: [com.freetime.geoweather](https://f-droid.org/packages/com.freetime.geoweather)
 - **Obtainium**: [Automatic Updates](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22com.freetime.geoweather%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2FFreetimeMaker%2FGeoWeather%22%2C%22author%22%3A%22Freetime%20Maker%22%2C%22name%22%3A%22GeoWeather%22%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%7D%22%7D)
-- **OpenApk.net**: [OpenAPK.net](https://www.openapk.net/de/geoweather/com.freetime.geoweather/)
+- **OpenApk**: [OpenAPK](https://www.openapk.net/de/geoweather/com.freetime.geoweather/)
 - **GitHub Store**: [Open in GitHub Store](https://github-store.org/app?repo=FreetimeMaker/GeoWeather)
 
 <div align="center">
@@ -104,7 +105,7 @@ GeoWeather is 100% free. No ads. No tracking.
 
 - ⭐ **[Star](https://github.com/FreetimeMaker/GeoWeather/star)** this repository
 - 🐛 **[Report](https://github.com/FreetimeMaker/GeoWeather/issues)** bugs and issues
-- 💡 **[Suggest](https://github.com/FreetimeMaker/GeoWeather/discussions)** new features
+- 💡 **[Suggest](https://github.com/FreetimeMaker/GeoWeather/issues)** new features
 - 📧 **[Contact](mailto:FreetimeMaker@proton.me)** via Email
 - 💳 **[Sponsor](#-donations)** the developer
 
