@@ -22,4 +22,3 @@ dependencyResolutionManagement {
 rootProject.name = "GeoWeather"
 include(":androidApp")
 include(":shared")
-include(":desktopApp")
