@@ -11,6 +11,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositories {
         google()
@@ -21,4 +22,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "GeoWeather"
 include(":androidApp")
-include(":shared")
