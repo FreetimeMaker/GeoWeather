@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -22,14 +24,10 @@ import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
-import com.freetime.geoweather.isDesktop
-import com.freetime.geoweather.openUrl
-import geoweather.shared.generated.resources.*
+import com.freetime.geoweather.shared.R as Res
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +61,6 @@ fun WeatherDetailScreen(
         }
     }
 
-    // Fetch on first open when there is no cached data yet
     LaunchedEffect(dbLocation?.weatherData, transientLocation?.weatherData) {
         val hasData = if (isTransient) transientLocation?.weatherData else dbLocation?.weatherData
         if (hasData == null && !isRefreshing) {
@@ -77,7 +74,8 @@ fun WeatherDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(title) },                navigationIcon = {
+                title = { Text(title) },
+                navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back_nav_desc))
                     }
@@ -166,9 +164,7 @@ fun WeatherDetailScreen(
                     }
 
                     if (code != null) {
-                        item {
-                            WeatherAlertsSection(code)
-                        }
+                        item { WeatherAlertsSection(code) }
                     }
 
                     item {
@@ -300,13 +296,7 @@ fun WeatherDetailScreen(
                                     )
                                 }
                                 Button(
-                                    onClick = {
-                                        if (isDesktop) {
-                                            openUrl("https://www.windy.com/?${loc.latitude},${loc.longitude},8")
-                                        } else {
-                                            onRadarClick(loc.latitude, loc.longitude)
-                                        }
-                                    },
+                                    onClick = { onRadarClick(loc.latitude, loc.longitude) },
                                     modifier = Modifier.fillMaxWidth().height(40.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = MaterialTheme.colorScheme.secondary
@@ -559,7 +549,6 @@ fun cardinal8(degrees: Float): String {
     return stringResource(dirs[index])
 }
 
-/** Shifts an "HH:mm" time by [minutes], wrapping around midnight. */
 fun shiftTime(hhmm: String, minutes: Int): String {
     return try {
         val parts = hhmm.split(":")
