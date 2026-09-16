@@ -36,9 +36,10 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.data.HourlyForecast
-import com.freetime.geoweather.shared.R as SharedRes
+import geoweather.shared.generated.resources.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.getString
 
 class WeatherWidget : GlanceAppWidget() {
 
@@ -55,30 +56,32 @@ class WeatherWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val repository = DependencyManager.getRepository()
         val appSettings = DependencyManager.getAppSettings()
-
+        
         val location = withContext(Dispatchers.IO) {
             repository.getSelectedLocation()
         }
-
+        
         val tempUnit = appSettings.tempUnit.value
 
-        var weatherInfo = context.getString(SharedRes.string.widget_loading)
+        var weatherInfo = getString(Res.string.widget_loading)
         var tempString = ""
-        val locationName = location?.name ?: context.getString(SharedRes.string.no_location_selected)
+        var locationName = location?.name ?: getString(Res.string.no_location_selected)
         var hourlyList = emptyList<HourlyForecast>()
 
         if (location != null) {
             try {
                 val updatedLocation = repository.refreshSelectedLocationWeather(includeHourly = true) ?: location
+                
                 tempString = repository.getDisplayTemp(updatedLocation, tempUnit)
                 weatherInfo = WeatherCodes.getDescription(updatedLocation.currentWeatherCode ?: 0)
+                
                 hourlyList = repository.getHourlyForecasts(updatedLocation).take(5)
-            } catch (_: Exception) {
-                weatherInfo = context.getString(SharedRes.string.error_connection)
+            } catch (e: Exception) {
+                weatherInfo = getString(Res.string.error_connection)
             }
         }
 
-        val refreshDesc = context.getString(SharedRes.string.refresh_nav_desc)
+        val refreshDesc = getString(Res.string.refresh_nav_desc)
 
         provideContent {
             val size = LocalSize.current
@@ -87,14 +90,7 @@ class WeatherWidget : GlanceAppWidget() {
     }
 
     @Composable
-    private fun WeatherWidgetContent(
-        name: String,
-        temp: String,
-        info: String,
-        hourly: List<HourlyForecast>,
-        size: DpSize,
-        refreshDesc: String
-    ) {
+    private fun WeatherWidgetContent(name: String, temp: String, info: String, hourly: List<HourlyForecast>, size: DpSize, refreshDesc: String) {
         val isExpanded = size.width >= 200.dp
 
         Column(
@@ -141,7 +137,7 @@ class WeatherWidget : GlanceAppWidget() {
                         )
                     }
                 }
-
+                
                 Image(
                     provider = ImageProvider(R.drawable.ic_menu_rotate),
                     contentDescription = refreshDesc,
@@ -177,6 +173,8 @@ class WeatherWidget : GlanceAppWidget() {
                 text = item.time,
                 style = TextStyle(color = ColorProvider(Color.White.copy(alpha = 0.7f)), fontSize = 10.sp)
             )
+            // Icon mapping for Glance is tricky because it needs resource IDs.
+            // For now we skip the icon or use a generic one if we can't easily map it.
             Text(
                 text = "${item.temp}°",
                 style = TextStyle(color = ColorProvider(Color.White), fontSize = 12.sp, fontWeight = FontWeight.Bold)
