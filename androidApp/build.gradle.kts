@@ -6,7 +6,6 @@ plugins {
 }
 
 android {
-    ndkVersion = "28.0.13004108"
     namespace = "com.freetime.geoweather"
     compileSdk = 37
 
@@ -25,9 +24,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-        jniLibs {
-            keepDebugSymbols += "**/libsqliteJni.so"
         }
     }
 }
