@@ -6,6 +6,10 @@ on:
       - '**'
   workflow_dispatch:
 
+concurrency:
+  group: geoweather-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -30,6 +34,11 @@ jobs:
             | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
 
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          if [ "$GITHUB_REF_NAME" != "master" ]; then
+            echo "create_tag=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
           git fetch --tags
 
@@ -158,7 +167,7 @@ jobs:
       - prepare_release
       - build_android
 
-    if: needs.prepare_release.outputs.create_tag == 'true'
+    if: github.ref == 'refs/heads/master' && needs.prepare_release.outputs.create_tag == 'true'
 
     runs-on: ubuntu-24.04
 
