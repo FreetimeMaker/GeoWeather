@@ -1,8 +1,8 @@
 package com.freetime.geoweather
 
-import geoweather.shared.generated.resources.*
+import androidx.annotation.DrawableRes
+import com.freetime.geoweather.shared.R as Res
 import kotlinx.datetime.*
-import org.jetbrains.compose.resources.DrawableResource
 
 object WeatherIconMapper {
     private var sunriseTime: LocalDateTime? = null
@@ -21,12 +21,11 @@ object WeatherIconMapper {
         val sunrise = sunriseTime ?: return true
         val sunset = sunsetTime ?: return true
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        
-        // Simplified comparison for demo
         return now > sunrise && now < sunset
     }
 
-    fun getWeatherIcon(code: Int, theme: String = "google"): DrawableResource {
+    @DrawableRes
+    fun getWeatherIcon(code: Int, theme: String = "google"): Int {
         val isDay = isDaytime()
         return when (code) {
             0 -> if (isDay) Res.drawable.google_clear_day else Res.drawable.google_clear_night
