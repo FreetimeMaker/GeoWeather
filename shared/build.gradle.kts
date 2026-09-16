@@ -9,10 +9,6 @@ plugins {
     alias(libs.plugins.room)
 }
 
-compose.resources {
-    publicResClass = true
-}
-
 android {
     namespace = "com.freetime.geoweather.shared"
     compileSdk = 37
@@ -32,7 +28,6 @@ dependencies {
     api(compose.material3)
     api(compose.ui)
     api(compose.materialIconsExtended)
-    api(compose.components.resources)
     implementation(compose.components.uiToolingPreview)
 
     implementation(libs.ktor.client.core)
