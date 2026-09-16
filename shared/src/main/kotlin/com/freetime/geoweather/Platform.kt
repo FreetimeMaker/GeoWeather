@@ -30,8 +30,6 @@ fun openUrl(url: String) {
     }
 }
 
-val isDesktop: Boolean = false
-
 @Composable
 fun rememberPaymentContext(): Any? = LocalContext.current as? Activity ?: androidContext
 
