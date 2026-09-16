@@ -1,5 +1,6 @@
 package com.freetime.geoweather.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,15 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.freetime.geoweather.isDesktop
-import com.freetime.geoweather.openUrl
-import geoweather.shared.generated.resources.*
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.stringResource
+import com.freetime.geoweather.shared.R as Res
 
-private data class ExternalDonation(val labelKey: StringResource, val url: String)
+private data class ExternalDonation(@StringRes val labelKey: Int, val url: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,11 +130,7 @@ fun DonateScreen(
 
             item {
                 DonateButton(text = stringResource(Res.string.DonViaGHSponsors)) {
-                    if (isDesktop) {
-                        openUrl("https://github.com/sponsors/FreetimeMaker")
-                    } else {
-                        onWebViewClick("https://github.com/sponsors/FreetimeMaker", "GitHub Sponsors")
-                    }
+                    onWebViewClick("https://github.com/sponsors/FreetimeMaker", "GitHub Sponsors")
                 }
             }
 
@@ -152,11 +145,7 @@ fun DonateScreen(
             items(externalDonations, key = { it.url }) { donation ->
                 val label = stringResource(donation.labelKey)
                 DonateButton(text = label) {
-                    if (isDesktop) {
-                        openUrl(donation.url)
-                    } else {
-                        onWebViewClick(donation.url, label)
-                    }
+                    onWebViewClick(donation.url, label)
                 }
             }
         }
