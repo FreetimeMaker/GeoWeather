@@ -20,7 +20,6 @@ import com.freetime.geoweather.data.BACKUP_FILE_NAME
 import com.freetime.geoweather.data.BACKUP_MIME_TYPE
 import com.freetime.geoweather.data.loadTextFile
 import com.freetime.geoweather.data.saveTextFile
-import com.freetime.geoweather.isDesktop
 import com.freetime.geoweather.openUrl
 import geoweather.shared.generated.resources.*
 import kotlinx.coroutines.launch
@@ -75,7 +74,6 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            // ---- Theme ----
             SettingsSection(stringResource(Res.string.theme_settings_title))
             SettingsToggle(stringResource(Res.string.follow_system_theme), useSystemTheme) {
                 appSettings.setUseSystemTheme(it)
@@ -96,7 +94,6 @@ fun SettingsScreen(
                 oledBlack
             ) { appSettings.setOledBlack(it) }
 
-            // ---- Units ----
             SettingsSection(stringResource(Res.string.unit_settings_title))
             Text(stringResource(Res.string.temperature_unit), style = MaterialTheme.typography.bodyLarge)
             UnitRadioRow(
@@ -127,7 +124,6 @@ fun SettingsScreen(
                 onSelect = { appSettings.setPressureUnit(it) }
             )
 
-            // ---- Notifications ----
             SettingsSection(stringResource(Res.string.notification_settings_title))
             SettingsToggle(
                 stringResource(Res.string.persistent_notif_title),
@@ -145,7 +141,6 @@ fun SettingsScreen(
                 onValueChange = { appSettings.setWindThreshold(it) }
             )
 
-            // ---- WebView ----
             SettingsSection(stringResource(Res.string.webview_settings_title))
             SettingsToggle(
                 stringResource(Res.string.disable_private_view),
@@ -158,8 +153,6 @@ fun SettingsScreen(
                 openExternalBrowser
             ) { appSettings.setOpenExternalBrowser(it) }
 
-            // ---- Buttons ----
-            // ---- Backup & Restore ----
             SettingsSection(stringResource(Res.string.backup_restore_title))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(
@@ -167,9 +160,7 @@ fun SettingsScreen(
                         scope.launch {
                             val json = viewModel.buildBackupJson()
                             val ok = json != null && saveTextFile(BACKUP_FILE_NAME, BACKUP_MIME_TYPE, json)
-                            snackbarHostState.showSnackbar(
-                                if (ok) exportSuccess else exportFailed
-                            )
+                            snackbarHostState.showSnackbar(if (ok) exportSuccess else exportFailed)
                         }
                     },
                     modifier = Modifier.weight(1f)
@@ -182,9 +173,7 @@ fun SettingsScreen(
                             val content = loadTextFile(arrayOf(BACKUP_MIME_TYPE))
                             if (content == null) return@launch
                             val ok = viewModel.importBackupJson(content)
-                            snackbarHostState.showSnackbar(
-                                if (ok) importSuccess else importFailed
-                            )
+                            snackbarHostState.showSnackbar(if (ok) importSuccess else importFailed)
                         }
                     },
                     modifier = Modifier.weight(1f)
@@ -206,20 +195,14 @@ fun SettingsScreen(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             OutlinedButton(
-                onClick = { openUrl("mailto:FreetimeMaker@proton.me?subject=" + "GeoWeather Feedback") },
+                onClick = { openUrl("mailto:FreetimeMaker@proton.me?subject=GeoWeather Feedback") },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(Res.string.feedback_btn))
             }
             Spacer(Modifier.height(8.dp))
             OutlinedButton(
-                onClick = {
-                    if (isDesktop) {
-                        openUrl("https://github.com/FreetimeMaker/GeoWeather/issues")
-                    } else {
-                        onWebViewClick("https://github.com/FreetimeMaker/GeoWeather/issues", "GitHub Issues")
-                    }
-                },
+                onClick = { onWebViewClick("https://github.com/FreetimeMaker/GeoWeather/issues", "GitHub Issues") },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(Res.string.feedback_github_btn))
