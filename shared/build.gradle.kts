@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
@@ -23,12 +22,14 @@ android {
 }
 
 dependencies {
-    api(compose.runtime)
-    api(compose.foundation)
-    api(compose.material3)
-    api(compose.ui)
-    api(compose.materialIconsExtended)
-    implementation(compose.components.uiToolingPreview)
+    val composeBom = platform("androidx.compose:compose-bom:2026.08.00")
+    api(composeBom)
+    api("androidx.compose.runtime:runtime")
+    api("androidx.compose.foundation:foundation")
+    api("androidx.compose.material3:material3")
+    api("androidx.compose.ui:ui")
+    api("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.ui:ui-tooling-preview")
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.content.negotiation)
