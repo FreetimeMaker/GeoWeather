@@ -1,7 +1,0 @@
-• Migrated to Kotlin Multiplatform (KMP)
-• Added support for Windows and Linux
-• Refactored Database to Room Multiplatform
-• Refactored Networking to Ktor
-• Updated UI to Compose Multiplatform
-• New App Icon
-• P.S.: Tell me with a Feedback what you think about the new UI and the new App Icon. I would love to hear your opinion!

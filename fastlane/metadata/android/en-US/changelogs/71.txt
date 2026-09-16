@@ -1,1 +1,0 @@
-• Fixed Linux Crash when trying to open a Page via Web
