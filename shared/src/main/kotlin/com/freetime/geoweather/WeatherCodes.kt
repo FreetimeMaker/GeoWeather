@@ -1,11 +1,11 @@
 package com.freetime.geoweather
 
-import geoweather.shared.generated.resources.*
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.getString
+import androidx.annotation.StringRes
+import com.freetime.geoweather.shared.R as Res
 
 object WeatherCodes {
-    fun getStringResource(code: Int): StringResource {
+    @StringRes
+    fun getStringResource(code: Int): Int {
         return when (code) {
             0 -> Res.string.wc_clear
             1, 2 -> Res.string.wc_mainly_clear
@@ -25,8 +25,7 @@ object WeatherCodes {
         }
     }
 
-    // For non-composable usage or as a fallback
     suspend fun getDescription(code: Int): String {
-        return getString(getStringResource(code))
+        return getAndroidAppContext()?.getString(getStringResource(code)).orEmpty()
     }
 }
