@@ -3,14 +3,14 @@ package com.freetime.geoweather.data
 import com.freetime.geoweather.ApiConstants
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.domain.City
-import geoweather.shared.generated.resources.*
+import com.freetime.geoweather.getAndroidAppContext
+import com.freetime.geoweather.shared.R as Res
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.*
-import org.jetbrains.compose.resources.getString
 
 data class HourlyForecast(val time: String, val temp: Int, val code: Int)
 
@@ -26,11 +26,9 @@ data class DailyForecast(
     val windMax: Double = 0.0
 )
 
-/** Values taken from the hourly arrays at the current hour. */
 data class CurrentHourExtras(
     val visibilityKm: Double?,
     val cloudBaseM: Double?,
-    /** -1 = falling, 0 = stable, +1 = rising */
     val pressureTrend: Int
 )
 
@@ -49,7 +47,6 @@ class WeatherRepository(
 
     suspend fun getAllLocationsSync(): List<LocationEntity> = locationDao.getAllLocationsSync()
 
-    /** Imports backup entries, skipping places that are already saved. */
     suspend fun importBackupLocations(locations: List<LocationEntity>) {
         for (loc in locations) {
             if (locationDao.findByCoordinates(loc.latitude, loc.longitude) == null) {
@@ -61,7 +58,6 @@ class WeatherRepository(
     suspend fun searchCity(query: String) = apiClient.searchCity(query)
 
     suspend fun addLocation(city: City): LocationEntity {
-        // Already saved -> just select it instead of crashing on the UNIQUE index
         locationDao.findByCoordinates(city.latitude, city.longitude)?.let {
             selectLocation(it)
             return it
@@ -110,8 +106,7 @@ class WeatherRepository(
                 lastUpdated = Clock.System.now().toEpochMilliseconds()
             )
             locationDao.updateLocation(updated)
-            
-            // Add to history
+
             updated.currentTemp?.let { temp ->
                 historyDao.insertHistory(
                     WeatherHistoryEntity(
@@ -126,7 +121,6 @@ class WeatherRepository(
         }
     }
 
-    // NB: includeHourly is kept for compatibility; hourly data is always fetched.
     suspend fun refreshSelectedLocationWeather(includeHourly: Boolean = false): LocationEntity? {
         val location = getSelectedLocation() ?: return null
         updateWeather(location, ApiConstants.getForecastUrl(location.latitude, location.longitude))
@@ -139,7 +133,6 @@ class WeatherRepository(
         return locationDao.findById(id)
     }
 
-    /** Fetches weather JSON without persisting (e.g. for the transient current location). */
     suspend fun fetchWeatherData(latitude: Double, longitude: Double): String? {
         return try {
             apiClient.get(ApiConstants.getForecastUrl(latitude, longitude))
@@ -151,7 +144,7 @@ class WeatherRepository(
 
     fun getDisplayTemp(location: LocationEntity, tempUnit: String): String {
         val temp = location.currentTemp ?: return "--"
-        val displayTemp = if (tempUnit == "fahrenheit") (temp * 9/5 + 32).toInt() else temp.toInt()
+        val displayTemp = if (tempUnit == "fahrenheit") (temp * 9 / 5 + 32).toInt() else temp.toInt()
         val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
         return "$displayTemp$tempSuffix"
     }
@@ -160,7 +153,12 @@ class WeatherRepository(
         val tempStr = getDisplayTemp(location, tempUnit)
         val code = location.currentWeatherCode ?: 0
         val description = WeatherCodes.getDescription(code)
-        return getString(Res.string.WeatherNotificationTXT, location.name, tempStr, description)
+        return getAndroidAppContext()?.getString(
+            Res.string.WeatherNotificationTXT,
+            location.name,
+            tempStr,
+            description
+        ).orEmpty()
     }
 
     private fun getLocationTimeZone(json: JsonObject): TimeZone {
