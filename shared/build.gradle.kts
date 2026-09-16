@@ -19,14 +19,12 @@ kotlin {
         namespace = "com.freetime.geoweather.shared"
         compileSdk = 37
         minSdk = 26
-        
+
         compilerOptions {
             jvmTarget = JvmTarget.JVM_11
         }
     }
-    
-    jvm()
-    
+
     sourceSets {
         commonMain.dependencies {
             api(compose.runtime)
@@ -36,14 +34,14 @@ kotlin {
             api(compose.materialIconsExtended)
             api(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            
+
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             api(libs.room.runtime)
             api(libs.sqlite.bundled)
             implementation(libs.kotlinx.serialization.json)
-            
+
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutines.core)
             api(libs.multiplatform.settings)
@@ -52,16 +50,11 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
         }
-        
+
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.activity)
-        }
-        
-        jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.ktor.client.okhttp)
         }
     }
 }
@@ -95,5 +88,4 @@ val assembleAndroidComposeAssets = tasks.register("assembleAndroidComposeAssets"
 
 dependencies {
     add("kspAndroid", libs.room.compiler)
-    add("kspJvm", libs.room.compiler)
 }
