@@ -6,9 +6,12 @@ on:
       - '**'
   workflow_dispatch:
 
+concurrency:
+  group: geoweather-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
-  id-token: write
 
 jobs:
   prepare_release:
@@ -23,7 +26,6 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          submodules: recursive
 
       - name: Detect version & create tag
         id: versioncheck
@@ -32,6 +34,11 @@ jobs:
             | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
 
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          if [ "$GITHUB_REF_NAME" != "master" ]; then
+            echo "create_tag=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
           git fetch --tags
 
@@ -43,8 +50,7 @@ jobs:
             echo "create_tag=true" >> "$GITHUB_OUTPUT"
           fi
 
-
-  build_linux:
+  build_android:
     needs: prepare_release
     runs-on: ubuntu-24.04
 
@@ -53,7 +59,6 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          submodules: recursive
 
       - name: Checkout Keystore Repository
         uses: actions/checkout@v7
@@ -72,64 +77,30 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Find and install Android SDK components
+      - name: Ensure Android build tools
         run: |
           SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)
 
           if [ -z "$SDKMANAGER" ]; then
             echo "sdkmanager not found"
-            find "$ANDROID_HOME" -maxdepth 4 -type f | head -n 100
             exit 1
           fi
 
-          echo "Using sdkmanager: $SDKMANAGER"
-
           yes | "$SDKMANAGER" --licenses > /dev/null || true
-
-          "$SDKMANAGER" \
-            "build-tools;36.0.0" \
-            "ndk;28.0.13004108"
+          "$SDKMANAGER" "build-tools;36.0.0"
 
       - name: Show build environment
         run: |
-          echo "Java:"
           java -version
-
-          echo ""
-          echo "Gradle:"
           ./gradlew --version
-
-          echo ""
-          echo "Android SDK:"
-          echo "$ANDROID_HOME"
-
-          echo ""
-          echo "Build Tools:"
+          echo "Android SDK: $ANDROID_HOME"
           ls "$ANDROID_HOME/build-tools"
-
-          echo ""
-          echo "NDK:"
-          ls "$ANDROID_HOME/ndk"
 
       - name: Build Android App (Release)
         run: |
           ./gradlew \
             --no-daemon \
             :androidApp:assembleRelease
-
-      - name: Install rpmbuild
-        run: |
-          if ! command -v rpmbuild >/dev/null 2>&1; then
-            sudo apt-get update
-            sudo apt-get install -y rpm
-          fi
-
-      - name: Build Desktop App (Linux Deb + RPM)
-        run: |
-          ./gradlew \
-            --no-daemon \
-            :desktopApp:packageDeb \
-            :desktopApp:packageRpm
 
       - name: Configure APKSIGNER
         id: find_apksigner
@@ -142,7 +113,6 @@ jobs:
           fi
 
           echo "apksigner=$APKSIGNER" >> "$GITHUB_OUTPUT"
-
           "$APKSIGNER" version
 
       - name: Sign Android APK
@@ -153,18 +123,14 @@ jobs:
           KEYSTORE_PATH="./keystore/GeoWeather-KeyStore.jks"
 
           if [ ! -f "$UNSIGNED_APK" ]; then
-            echo "Error: APK not found:"
-            echo "$UNSIGNED_APK"
+            echo "Error: APK not found: $UNSIGNED_APK"
             exit 1
           fi
 
           if [ ! -f "$KEYSTORE_PATH" ]; then
-            echo "Error: Keystore not found:"
-            echo "$KEYSTORE_PATH"
+            echo "Error: Keystore not found: $KEYSTORE_PATH"
             exit 1
           fi
-
-          echo "Signing APK: $SIGNED_APK"
 
           "${{ steps.find_apksigner.outputs.apksigner }}" sign \
             --ks "$KEYSTORE_PATH" \
@@ -188,40 +154,6 @@ jobs:
         run: |
           sha256sum "${{ steps.sign_apk.outputs.signed_apk }}"
 
-      - name: Prepare Desktop Artifact
-        run: |
-          DEB_FILE=$(find \
-            desktopApp/build/compose/binaries/main \
-            -name "*.deb" \
-            | head -n 1)
-
-          if [ -n "$DEB_FILE" ]; then
-            echo "Moving $DEB_FILE"
-            cp \
-              "$DEB_FILE" \
-              "GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb"
-          else
-            echo "Error: No .deb file found"
-            exit 1
-          fi
-
-      - name: Prepare RPM Artifact
-        run: |
-          RPM_FILE=$(find \
-            desktopApp/build/compose/binaries/main \
-            -name "*.rpm" \
-            | head -n 1)
-
-          if [ -n "$RPM_FILE" ]; then
-            echo "Moving $RPM_FILE"
-            cp \
-              "$RPM_FILE" \
-              "GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm"
-          else
-            echo "Error: No .rpm file found"
-            exit 1
-          fi
-
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v7
         with:
@@ -230,108 +162,12 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload DEB Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb
-          path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.deb
-          if-no-files-found: error
-          retention-days: 90
-
-      - name: Upload RPM Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm
-          path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.rpm
-          if-no-files-found: error
-          retention-days: 90
-
-
-  build_windows:
-    needs: prepare_release
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          submodules: recursive
-
-      - name: Install Java
-        uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: 21
-          cache: gradle
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
-
-      - name: Build Desktop App (Windows MSI + EXE)
-        run: |
-          ./gradlew `
-            --no-daemon `
-            :desktopApp:packageMsi `
-            :desktopApp:packageExe
-
-      - name: Prepare Windows Artifacts
-        shell: pwsh
-        run: |
-          $ver = "${{ needs.prepare_release.outputs.version }}"
-
-          $msi = Get-ChildItem `
-            -Path desktopApp/build/compose/binaries/main/msi `
-            -Filter *.msi |
-            Select-Object -First 1
-
-          if ($null -eq $msi) {
-            Write-Error "No .msi file found"
-            exit 1
-          }
-
-          Copy-Item `
-            $msi.FullName `
-            "GeoWeather-v$ver.msi"
-
-          $exe = Get-ChildItem `
-            -Path desktopApp/build/compose/binaries/main/exe `
-            -Filter *.exe |
-            Select-Object -First 1
-
-          if ($null -eq $exe) {
-            Write-Error "No .exe file found"
-            exit 1
-          }
-
-          Copy-Item `
-            $exe.FullName `
-            "GeoWeather-v$ver.exe"
-
-      - name: Upload MSI Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.msi
-          path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.msi
-          if-no-files-found: error
-          retention-days: 90
-
-      - name: Upload EXE Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.exe
-          path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.exe
-          if-no-files-found: error
-          retention-days: 90
-
-
   release:
     needs:
       - prepare_release
-      - build_linux
-      - build_windows
+      - build_android
 
-    if: needs.prepare_release.outputs.create_tag == 'true'
+    if: github.ref == 'refs/heads/master' && needs.prepare_release.outputs.create_tag == 'true'
 
     runs-on: ubuntu-24.04
 
@@ -341,10 +177,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download All Artifacts
+      - name: Download Android Artifact
         uses: actions/download-artifact@v8
         with:
-          pattern: GeoWeather-v${{ needs.prepare_release.outputs.version }}*
+          pattern: GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk
           path: ./dist
           merge-multiple: true
 
@@ -367,9 +203,5 @@ jobs:
           body_path: release-notes.md
           files: |
             dist/*.apk
-            dist/*.deb
-            dist/*.rpm
-            dist/*.msi
-            dist/*.exe
           draft: false
           generate_release_notes: true

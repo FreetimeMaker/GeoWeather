@@ -1,15 +1,13 @@
 package com.freetime.geoweather
 
 import android.app.*
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.freetime.geoweather.data.DependencyManager
-import geoweather.shared.generated.resources.*
+import com.freetime.geoweather.shared.R as SharedRes
 import kotlinx.coroutines.*
-import org.jetbrains.compose.resources.getString
 
 class WeatherForegroundService : Service() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -20,11 +18,11 @@ class WeatherForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
         serviceScope.launch {
-            val loadingMsg = getString(Res.string.widget_loading)
+            val loadingMsg = getString(SharedRes.string.widget_loading)
             startForeground(NOTIFICATION_ID, createNotification(loadingMsg))
             startUpdateLoop()
         }
-        
+
         return START_STICKY
     }
 
@@ -33,7 +31,7 @@ class WeatherForegroundService : Service() {
         updateJob = serviceScope.launch {
             while (isActive) {
                 updateWeatherNotification()
-                delay(30 * 60 * 1000) // Update every 30 minutes
+                delay(30 * 60 * 1000)
             }
         }
     }
@@ -41,31 +39,28 @@ class WeatherForegroundService : Service() {
     private suspend fun updateWeatherNotification() {
         val repository = DependencyManager.getRepository()
         val appSettings = DependencyManager.getAppSettings()
-        
         val updatedLocation = repository.refreshSelectedLocationWeather()
-        
+
         if (updatedLocation != null) {
             try {
                 val content = repository.getNotificationContent(updatedLocation, appSettings.tempUnit.value)
-                
                 val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.notify(NOTIFICATION_ID, createNotification(content))
-            } catch (e: Exception) {
-                // Ignore errors
+            } catch (_: Exception) {
             }
         }
     }
 
-    private suspend fun createNotification(content: String): Notification {
+    private fun createNotification(content: String): Notification {
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, Intent(this, MainActivity::class.java),
+            this,
+            0,
+            Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        val appName = getString(Res.string.app_name)
-
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(appName)
+            .setContentTitle(getString(SharedRes.string.app_name))
             .setContentText(content)
             .setSmallIcon(R.mipmap.icon)
             .setOngoing(true)
@@ -81,8 +76,7 @@ class WeatherForegroundService : Service() {
                 getString(R.string.persistent_weather_channel_name),
                 NotificationManager.IMPORTANCE_LOW
             )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
+            getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
     }
 
