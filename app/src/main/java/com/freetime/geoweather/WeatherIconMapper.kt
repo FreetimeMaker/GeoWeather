@@ -1,7 +1,7 @@
 package com.freetime.geoweather
 
 import androidx.annotation.DrawableRes
-import com.freetime.geoweather.shared.R as Res
+import com.freetime.geoweather.R as Res
 import kotlinx.datetime.*
 
 object WeatherIconMapper {
