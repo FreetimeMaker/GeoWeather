@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.freetime.geoweather.shared.R as Res
+import com.freetime.geoweather.R as Res
 
 private data class ExternalDonation(@StringRes val labelKey: Int, val url: String)
 
