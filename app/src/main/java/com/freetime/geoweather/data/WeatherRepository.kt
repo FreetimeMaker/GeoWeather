@@ -4,7 +4,7 @@ import com.freetime.geoweather.ApiConstants
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.domain.City
 import com.freetime.geoweather.getAndroidAppContext
-import com.freetime.geoweather.shared.R as Res
+import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.datetime.Clock
