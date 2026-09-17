@@ -22,7 +22,7 @@ import com.freetime.geoweather.data.BACKUP_MIME_TYPE
 import com.freetime.geoweather.data.loadTextFile
 import com.freetime.geoweather.data.saveTextFile
 import com.freetime.geoweather.openUrl
-import com.freetime.geoweather.shared.R as Res
+import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
