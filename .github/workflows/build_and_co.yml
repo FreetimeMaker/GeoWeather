@@ -30,7 +30,7 @@ jobs:
       - name: Detect version & create tag
         id: versioncheck
         run: |
-          VERSION=$(grep 'versionName' androidApp/build.gradle.kts \
+          VERSION=$(grep 'versionName' app/build.gradle.kts \
             | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
 
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
@@ -100,7 +100,7 @@ jobs:
         run: |
           ./gradlew \
             --no-daemon \
-            :androidApp:assembleRelease
+            :app:assembleRelease
 
       - name: Configure APKSIGNER
         id: find_apksigner
@@ -118,7 +118,7 @@ jobs:
       - name: Sign Android APK
         id: sign_apk
         run: |
-          UNSIGNED_APK="androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk"
+          UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
           SIGNED_APK="GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk"
           KEYSTORE_PATH="./keystore/GeoWeather-KeyStore.jks"
 

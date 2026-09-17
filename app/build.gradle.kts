@@ -24,12 +24,6 @@ android {
         compose = true
     }
 
-    sourceSets {
-        getByName("main") {
-            res.srcDir("src/main/weather-res")
-        }
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -72,10 +66,6 @@ dependencies {
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
-}
-
-room {
-    schemaDirectory("$projectDir/schemas")
 }
 
 kotlin {

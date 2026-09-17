@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="persistent_weather_channel_name">Persistent Weather</string>
     <string name="opening_default_browser">Opening in default browser...</string>
 </resources>
