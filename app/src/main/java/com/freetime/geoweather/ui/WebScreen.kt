@@ -7,7 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.freetime.geoweather.shared.R as Res
+import com.freetime.geoweather.R as Res
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
