@@ -36,7 +36,7 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.data.HourlyForecast
-import com.freetime.geoweather.shared.R as SharedRes
+import com.freetime.geoweather.R as SharedRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
