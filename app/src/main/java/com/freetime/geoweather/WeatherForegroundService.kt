@@ -6,7 +6,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.freetime.geoweather.data.DependencyManager
-import com.freetime.geoweather.shared.R as SharedRes
+import com.freetime.geoweather.R as SharedRes
 import kotlinx.coroutines.*
 
 class WeatherForegroundService : Service() {
