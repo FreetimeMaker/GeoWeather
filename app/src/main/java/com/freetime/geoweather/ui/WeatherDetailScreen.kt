@@ -24,7 +24,7 @@ import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
-import com.freetime.geoweather.shared.R as Res
+import com.freetime.geoweather.R as Res
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
