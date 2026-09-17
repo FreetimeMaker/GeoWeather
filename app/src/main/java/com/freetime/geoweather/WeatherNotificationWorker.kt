@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.freetime.geoweather.data.DependencyManager
-import com.freetime.geoweather.shared.R as SharedRes
+import com.freetime.geoweather.R as SharedRes
 
 class WeatherNotificationWorker(
     context: Context,
