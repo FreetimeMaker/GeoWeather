@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.freetime.geoweather.data.DependencyManager
-import com.freetime.geoweather.R as SharedRes
 import kotlinx.coroutines.*
 
 class WeatherForegroundService : Service() {
@@ -18,7 +17,7 @@ class WeatherForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
         serviceScope.launch {
-            val loadingMsg = getString(SharedRes.string.widget_loading)
+            val loadingMsg = getString(R.string.widget_loading)
             startForeground(NOTIFICATION_ID, createNotification(loadingMsg))
             startUpdateLoop()
         }
@@ -60,7 +59,7 @@ class WeatherForegroundService : Service() {
         )
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(getString(SharedRes.string.app_name))
+            .setContentTitle(getString(R.string.app_name))
             .setContentText(content)
             .setSmallIcon(R.mipmap.icon)
             .setOngoing(true)
