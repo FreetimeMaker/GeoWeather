@@ -165,7 +165,7 @@ fun WeatherDetailScreen(
                 val visibleDaily = if (forecastExpanded) daily else daily.take(7)
                 val code = loc.currentWeatherCode
                 val rawTemp = loc.currentTemp
-                val animationsEnabled = animationMode != "off"
+                // Temporarily disable weather scene animations for GPU crash isolation.\n                // Liquid Glass/Backdrop remains enabled.\n                val animationsEnabled = false
                 val reducedMotion = animationMode == "reduced"
                 val rainIntensity = when (code) {
                     in 51..55 -> .65f
@@ -206,7 +206,7 @@ fun WeatherDetailScreen(
                             Icon(
                                 painter = painterResource(WeatherIconMapper.getWeatherIcon(code)),
                                 contentDescription = null,
-                                modifier = Modifier.size(120.dp).weatherFloatAnimation(),
+                                modifier = Modifier.size(120.dp),
                                 tint = Color.Unspecified
                             )
                         }
@@ -693,7 +693,7 @@ fun WeatherAlertsSection(code: Int) {
 
     if (alertRes != null) {
         Card(
-            modifier = SevereWeatherPulse(Modifier.fillMaxWidth()).geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+            modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
             colors = CardDefaults.cardColors(containerColor = Color.Transparent)
         ) {
             Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
