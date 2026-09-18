@@ -32,7 +32,7 @@ class WeatherNotificationWorker(
             WeatherNotifications.show(
                 applicationContext,
                 2001,
-                applicationContext.getString(R.string.app_name),
+                applicationContext.getString(SharedRes.string.app_name),
                 message
             )
         } catch (e: Exception) {
