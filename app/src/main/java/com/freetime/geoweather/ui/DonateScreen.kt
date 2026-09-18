@@ -2,6 +2,7 @@ package com.freetime.geoweather.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -10,9 +11,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
+import com.freetime.geoweather.ui.glass.geoWeatherGlass
 
 private data class ExternalDonation(@StringRes val labelKey: Int, val url: String)
 
@@ -46,9 +49,13 @@ fun DonateScreen(
     )
 
     Scaffold(
+        containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 title = { Text(stringResource(Res.string.donate_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -65,7 +72,8 @@ fun DonateScreen(
         ) {
             item {
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -85,7 +93,7 @@ fun DonateScreen(
             }
 
             item {
-                Card(modifier = Modifier.fillMaxWidth()) {
+                Card(modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false), colors = CardDefaults.cardColors(containerColor = Color.Transparent)) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = stringResource(Res.string.about_developer_title),
@@ -103,7 +111,7 @@ fun DonateScreen(
             }
 
             item {
-                Card(modifier = Modifier.fillMaxWidth()) {
+                Card(modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false), colors = CardDefaults.cardColors(containerColor = Color.Transparent)) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = stringResource(Res.string.donation_mission_title),
@@ -156,7 +164,8 @@ fun DonateScreen(
 fun DonateButton(text: String, onClick: () -> Unit) {
     OutlinedButton(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent)
     ) {
         Text(text)
     }
