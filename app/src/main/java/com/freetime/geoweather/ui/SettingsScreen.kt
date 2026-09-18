@@ -49,6 +49,7 @@ fun SettingsScreen(
     val windThreshold by appSettings.windThreshold.collectAsState()
     val disablePrivateView by appSettings.disablePrivateView.collectAsState()
     val openExternalBrowser by appSettings.openExternalBrowser.collectAsState()
+    val weatherAnimations by appSettings.weatherAnimations.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -131,7 +132,19 @@ fun SettingsScreen(
                 onSelect = { appSettings.setPressureUnit(it) }
             )
 
-            SettingsSection(stringResource(Res.string.notification_settings_title))
+            SettingsSection("Weather animations")
+            Text("Animation intensity", style = MaterialTheme.typography.bodyLarge)
+            UnitRadioRow(
+                options = listOf(
+                    "full" to "Full",
+                    "reduced" to "Reduced",
+                    "off" to "Off"
+                ),
+                selected = weatherAnimations,
+                onSelect = { appSettings.setWeatherAnimations(it) }
+            )
+
+                        SettingsSection(stringResource(Res.string.notification_settings_title))
             SettingsToggle(
                 stringResource(Res.string.persistent_notif_title),
                 stringResource(Res.string.persistent_notif_subtitle),
