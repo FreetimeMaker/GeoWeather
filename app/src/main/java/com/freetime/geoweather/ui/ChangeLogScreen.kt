@@ -20,6 +20,30 @@ import com.freetime.geoweather.ui.glass.geoWeatherGlass
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v4.0.0" to listOf(
+            stringResource(Res.string.cl_400_liquid_glass),
+            stringResource(Res.string.cl_400_weather_animations),
+            stringResource(Res.string.cl_400_animation_settings),
+            stringResource(Res.string.cl_400_auto_theme),
+            stringResource(Res.string.cl_400_next_rain),
+            stringResource(Res.string.cl_400_timeline),
+            stringResource(Res.string.cl_400_sun_moon),
+            stringResource(Res.string.cl_400_trip_forecast),
+            stringResource(Res.string.cl_400_air_quality),
+            stringResource(Res.string.cl_400_pollen),
+            stringResource(Res.string.cl_400_uv),
+            stringResource(Res.string.cl_400_compare),
+            stringResource(Res.string.cl_400_share),
+            stringResource(Res.string.cl_400_notifications),
+            stringResource(Res.string.cl_400_notification_icon),
+            stringResource(Res.string.cl_400_tile),
+            stringResource(Res.string.cl_400_widget),
+            stringResource(Res.string.cl_400_nav),
+            stringResource(Res.string.cl_400_stars),
+            stringResource(Res.string.cl_400_localization),
+            stringResource(Res.string.cl_400_android),
+            stringResource(Res.string.cl_400_stability)
+        ),
         "v3.1.3" to listOf(
             stringResource(Res.string.cl_313_fix_linux)
         ),
