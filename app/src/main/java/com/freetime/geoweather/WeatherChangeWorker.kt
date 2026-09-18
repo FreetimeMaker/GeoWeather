@@ -18,9 +18,14 @@ class WeatherChangeWorker(
         val location = repository.getSelectedLocation() ?: return Result.success()
 
         try {
-            if (!location.changeAlertsEnabled) return Result.success()\n            val oldTemp = location.currentTemp\n            val oldWind = location.currentWindSpeed
+            if (!location.changeAlertsEnabled) return Result.success()
+            val oldTemp = location.currentTemp
+            val oldWind = location.currentWindSpeed
             val updatedLocation = repository.refreshSelectedLocationWeather() ?: location
-            val newTemp = updatedLocation.currentTemp\n            val newWind = updatedLocation.currentWindSpeed\n            val tempChanged = oldTemp != null && newTemp != null && kotlin.math.abs(newTemp - oldTemp) >= appSettings.tempThreshold.value\n            val windChanged = oldWind != null && newWind != null && newWind - oldWind >= appSettings.windThreshold.value
+            val newTemp = updatedLocation.currentTemp
+            val newWind = updatedLocation.currentWindSpeed
+            val tempChanged = oldTemp != null && newTemp != null && kotlin.math.abs(newTemp - oldTemp) >= appSettings.tempThreshold.value
+            val windChanged = oldWind != null && newWind != null && newWind - oldWind >= appSettings.windThreshold.value
 
             if (tempChanged || windChanged) {
                 val oldTempStr = repository.getDisplayTemp(location, appSettings.tempUnit.value)
