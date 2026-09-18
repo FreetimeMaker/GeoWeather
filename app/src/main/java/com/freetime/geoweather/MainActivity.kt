@@ -14,15 +14,11 @@ import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.data.onCreateDocumentResult
 import com.freetime.geoweather.data.onOpenDocumentResult
 import com.freetime.geoweather.data.registerFilePickers
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassRoot
 
 class MainActivity : ComponentActivity() {
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { _ -> }
-
-    private val requestLocationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { _ -> }
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
+    private val requestLocationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { _ -> }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,46 +26,34 @@ class MainActivity : ComponentActivity() {
         checkNotificationPermission()
         checkLocationPermission()
 
-        val createDocument = registerForActivityResult(
-            ActivityResultContracts.CreateDocument("application/json"),
-            ::onCreateDocumentResult
-        )
-        val openDocument = registerForActivityResult(
-            ActivityResultContracts.OpenDocument(),
-            ::onOpenDocumentResult
-        )
+        val createDocument = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json"), ::onCreateDocumentResult)
+        val openDocument = registerForActivityResult(ActivityResultContracts.OpenDocument(), ::onOpenDocumentResult)
         registerFilePickers(createDocument, openDocument)
 
         onBackPressedDispatcher.addCallback(this) {
-            if (systemBackHandler?.invoke() != true) {
-                finish()
-            }
+            if (systemBackHandler?.invoke() != true) finish()
         }
 
         setContent {
-            WeatherApp(
-                database = DependencyManager.getDatabase(),
-                appSettings = DependencyManager.getAppSettings()
-            )
+            GeoWeatherGlassRoot {
+                WeatherApp(
+                    database = DependencyManager.getDatabase(),
+                    appSettings = DependencyManager.getAppSettings()
+                )
+            }
         }
     }
 
     private fun checkNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
     private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestLocationPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
+            requestLocationPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
         }
     }
 }
