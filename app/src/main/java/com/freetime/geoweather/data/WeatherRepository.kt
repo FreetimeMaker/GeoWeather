@@ -181,7 +181,8 @@ class WeatherRepository(
             val hourly = json["hourly"]?.jsonObject ?: return emptyList()
             val times = hourly["time"]?.jsonArray ?: return emptyList()
             val temps = hourly["temperature_2m"]?.jsonArray ?: return emptyList()
-            val codes = hourly["weathercode"]?.jsonArray ?: hourly["weather_code"]?.jsonArray ?: return emptyList()\n            val precipProbabilities = hourly["precipitation_probability"]?.jsonArray
+            val codes = hourly["weathercode"]?.jsonArray ?: hourly["weather_code"]?.jsonArray ?: return emptyList()
+            val precipProbabilities = hourly["precipitation_probability"]?.jsonArray
 
             val locationTimeZone = getLocationTimeZone(json)
             val now = Clock.System.now().toLocalDateTime(locationTimeZone)
@@ -238,7 +239,17 @@ class WeatherRepository(
         }
     }
 
-    suspend fun getAirQualityExtras(location: LocationEntity): CurrentHourExtras? {\n        return try {\n            val data = apiClient.get(ApiConstants.getAirQualityUrl(location.latitude, location.longitude))\n            val json = Json.parseToJsonElement(data).jsonObject\n            val hourly = json[\"hourly\"]?.jsonObject ?: return null\n            fun first(name: String) = hourly[name]?.jsonArray?.firstOrNull()?.jsonPrimitive?.doubleOrNull\n            CurrentHourExtras(null, null, 0, null, first(\"pm2_5\"), first(\"pm10\"), first(\"european_aqi\")?.toInt(), first(\"alder_pollen\"), first(\"birch_pollen\"), first(\"grass_pollen\"))\n        } catch (_: Exception) { null }\n    }\n\n    fun getCurrentHourExtras(location: LocationEntity): CurrentHourExtras? {
+    suspend fun getAirQualityExtras(location: LocationEntity): CurrentHourExtras? {
+        return try {
+            val data = apiClient.get(ApiConstants.getAirQualityUrl(location.latitude, location.longitude))
+            val json = Json.parseToJsonElement(data).jsonObject
+            val hourly = json["hourly"]?.jsonObject ?: return null
+            fun first(name: String) = hourly[name]?.jsonArray?.firstOrNull()?.jsonPrimitive?.doubleOrNull
+            CurrentHourExtras(null, null, 0, null, first("pm2_5"), first("pm10"), first("european_aqi")?.toInt(), first("alder_pollen"), first("birch_pollen"), first("grass_pollen"))
+        } catch (_: Exception) { null }
+    }
+
+    fun getCurrentHourExtras(location: LocationEntity): CurrentHourExtras? {
         val data = location.weatherData ?: return null
         return try {
             val json = Json.parseToJsonElement(data).jsonObject
@@ -254,7 +265,8 @@ class WeatherRepository(
                 ?.getOrNull(index)?.jsonPrimitive?.doubleOrNull
             val cloudBase = hourly["cloud_base"]?.jsonArray
                 ?.getOrNull(index)?.jsonPrimitive?.doubleOrNull
-            val pressures = hourly["pressure_msl"]?.jsonArray\n            val uvIndex = hourly["uv_index"]?.jsonArray?.getOrNull(index)?.jsonPrimitive?.doubleOrNull
+            val pressures = hourly["pressure_msl"]?.jsonArray
+            val uvIndex = hourly["uv_index"]?.jsonArray?.getOrNull(index)?.jsonPrimitive?.doubleOrNull
             val trend = if (pressures != null && index >= 3) {
                 val current = pressures[index].jsonPrimitive.doubleOrNull ?: 0.0
                 val past = pressures[index - 3].jsonPrimitive.doubleOrNull ?: 0.0
