@@ -29,7 +29,14 @@ data class DailyForecast(
 data class CurrentHourExtras(
     val visibilityKm: Double?,
     val cloudBaseM: Double?,
-    val pressureTrend: Int
+    val pressureTrend: Int,
+    val uvIndex: Double? = null,
+    val pm25: Double? = null,
+    val pm10: Double? = null,
+    val europeanAqi: Int? = null,
+    val alderPollen: Double? = null,
+    val birchPollen: Double? = null,
+    val grassPollen: Double? = null
 )
 
 class WeatherRepository(
