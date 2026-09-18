@@ -238,7 +238,7 @@ class WeatherRepository(
         }
     }
 
-    fun getCurrentHourExtras(location: LocationEntity): CurrentHourExtras? {
+    suspend fun getAirQualityExtras(location: LocationEntity): CurrentHourExtras? {\n        return try {\n            val data = apiClient.get(ApiConstants.getAirQualityUrl(location.latitude, location.longitude))\n            val json = Json.parseToJsonElement(data).jsonObject\n            val hourly = json[\"hourly\"]?.jsonObject ?: return null\n            fun first(name: String) = hourly[name]?.jsonArray?.firstOrNull()?.jsonPrimitive?.doubleOrNull\n            CurrentHourExtras(null, null, 0, null, first(\"pm2_5\"), first(\"pm10\"), first(\"european_aqi\")?.toInt(), first(\"alder_pollen\"), first(\"birch_pollen\"), first(\"grass_pollen\"))\n        } catch (_: Exception) { null }\n    }\n\n    fun getCurrentHourExtras(location: LocationEntity): CurrentHourExtras? {
         val data = location.weatherData ?: return null
         return try {
             val json = Json.parseToJsonElement(data).jsonObject
