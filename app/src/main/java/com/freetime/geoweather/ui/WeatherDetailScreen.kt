@@ -17,7 +17,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Refresh\nimport androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +27,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource\nimport androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -56,7 +58,8 @@ fun WeatherDetailScreen(
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
     val pressureUnit by appSettings.pressureUnit.collectAsState()
-    val animationMode by appSettings.weatherAnimations.collectAsState()\n    val context = LocalContext.current
+    val animationMode by appSettings.weatherAnimations.collectAsState()
+    val context = LocalContext.current
     val isTransient = transientName != null
     val dbLocation by viewModel.observeLocation(locationId).collectAsState(initial = null)
     var transientLocation by remember { mutableStateOf<LocationEntity?>(null) }
@@ -155,7 +158,9 @@ fun WeatherDetailScreen(
             else -> {
                 val hourly = remember(loc.weatherData) { viewModel.getHourlyForecasts(loc) }
                 val daily = remember(loc.weatherData) { viewModel.getDailyForecasts(loc) }
-                val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }\n                var airExtras by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.CurrentHourExtras?>(null) }\n                LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }
+                val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
+                var airExtras by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.CurrentHourExtras?>(null) }
+                LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }
                 var forecastExpanded by remember { mutableStateOf(false) }
                 val visibleDaily = if (forecastExpanded) daily else daily.take(7)
                 val code = loc.currentWeatherCode
