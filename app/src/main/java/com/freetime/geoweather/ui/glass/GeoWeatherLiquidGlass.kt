@@ -7,8 +7,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -34,14 +38,26 @@ import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.effects.vibrancy
 import kotlinx.coroutines.launch
 
+val LocalGeoWeatherBackdrop = staticCompositionLocalOf<LayerBackdrop?> { null }
+
 @Composable
 fun rememberGeoWeatherBackdrop(): LayerBackdrop? =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        rememberLayerBackdrop { drawContent() }
-    } else null
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) rememberLayerBackdrop { drawContent() } else null
 
 fun Modifier.geoWeatherBackdropSource(backdrop: LayerBackdrop?): Modifier =
     if (backdrop == null) this else this.nativeLayerBackdrop(backdrop)
+
+@Composable
+fun GeoWeatherGlassRoot(content: @Composable () -> Unit) {
+    val backdrop = rememberGeoWeatherBackdrop()
+    CompositionLocalProvider(LocalGeoWeatherBackdrop provides backdrop) {
+        Box(Modifier.fillMaxSize().geoWeatherBackdropSource(backdrop)) { content() }
+    }
+}
+
+@Composable
+fun Modifier.geoWeatherGlass(shape: Shape, interactive: Boolean = true): Modifier =
+    geoWeatherLiquidGlass(LocalGeoWeatherBackdrop.current, shape, interactive)
 
 @Composable
 fun Modifier.geoWeatherLiquidGlass(
@@ -52,15 +68,11 @@ fun Modifier.geoWeatherLiquidGlass(
     val fallback = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.72f)
     val outline = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.72f)
     val glassScrim = if (MaterialTheme.colorScheme.background.luminance() < 0.5f) Color.Black else Color.White
-
-    if (backdrop == null) {
-        return this.clip(shape).background(fallback).border(1.dp, outline, shape)
-    }
+    if (backdrop == null) return this.clip(shape).background(fallback).border(1.dp, outline, shape)
 
     val scope = rememberCoroutineScope()
     val press = remember { Animatable(0f) }
     val touch = remember { androidx.compose.runtime.mutableStateOf(Offset.Zero) }
-
     val glass = this.drawBackdrop(
         backdrop = backdrop,
         shape = { shape },
@@ -77,7 +89,7 @@ fun Modifier.geoWeatherLiquidGlass(
             if (pressed > 0f) {
                 drawRect(
                     brush = Brush.radialGradient(
-                        colors = listOf(Color.White.copy(alpha = 0.18f * pressed), Color.Transparent),
+                        listOf(Color.White.copy(alpha = 0.18f * pressed), Color.Transparent),
                         center = touch.value.takeUnless { it == Offset.Zero } ?: Offset(size.width / 2f, size.height / 2f),
                         radius = size.minDimension * 1.5f
                     ),
@@ -90,9 +102,7 @@ fun Modifier.geoWeatherLiquidGlass(
         scaleX = scale
         scaleY = scale
     }
-
     if (!interactive) return glass
-
     return glass.pointerInput(Unit) {
         awaitEachGesture {
             val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
@@ -100,8 +110,7 @@ fun Modifier.geoWeatherLiquidGlass(
             scope.launch { press.animateTo(1f, spring(dampingRatio = 0.55f, stiffness = 340f)) }
             var pressed = true
             while (pressed) {
-                val event = awaitPointerEvent(PointerEventPass.Initial)
-                val change = event.changes.firstOrNull { it.id == down.id }
+                val change = awaitPointerEvent(PointerEventPass.Initial).changes.firstOrNull { it.id == down.id }
                 if (change == null) pressed = false else {
                     touch.value = change.position
                     pressed = change.pressed
