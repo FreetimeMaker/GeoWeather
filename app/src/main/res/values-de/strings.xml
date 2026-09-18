@@ -174,4 +174,27 @@
     <!-- Changelog v1.3.5 -->
     <string name="cl_135_donations">Weitere Spendenlinks hinzugefügt</string>
     <string name="cl_135_system_theme">Alle Bildschirme (hoffentlich) an Systemthema angepasst</string>
+    <string name="sunset_label">Sonnenuntergang</string>
+    <string name="sunrise_label">Sonnenaufgang</string>
+    <string name="search_title">Stadt suchen</string>
+    <string name="search_hint">Stadtname oder Koordinaten</string>
+    <string name="search_placeholder">z. B. New York oder 40.71, -74.00</string>
+    <string name="back_nav_desc">Zurück</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="donate_title">Spenden &amp; Unterstützung</string>
+    <string name="about_title">Über</string>
+    <string name="support_development">Entwicklung unterstützen</string>
+    <string name="wind_label">Wind</string>
+    <string name="humidity_label">Luftfeuchtigkeit</string>
+    <string name="pressure_label">Druck</string>
+    <string name="feels_like_label">Fühlt sich an wie</string>
+    <string name="precipitation_label">Niederschlag</string>
+    <string name="precipitation_probability_label">Niederschlagswahrscheinlichkeit</string>
+    <string name="wind_max_label">Max. Wind</string>
+    <string name="wc_clear">Klarer Himmel</string>
+    <string name="wc_mainly_clear">Überwiegend klar</string>
+    <string name="wc_overcast">Bewölkt</string>
+    <string name="wc_fog">Nebel</string>
+    <string name="wc_drizzle">Nieselregen</string>
+    <string name="wc_rain">Regen</string>
 </resources>
