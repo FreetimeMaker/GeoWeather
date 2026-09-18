@@ -100,7 +100,7 @@ class WeatherWidget : GlanceAppWidget() {
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(ColorProvider(Color(0xFF2196F3)))
+                .background(ColorProvider(day = Color(0xFFE3F2FD), night = Color(0xFF17202A)))
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.Start
@@ -114,7 +114,7 @@ class WeatherWidget : GlanceAppWidget() {
                         text = name,
                         maxLines = 1,
                         style = TextStyle(
-                            color = ColorProvider(Color.White),
+                            color = ColorProvider(day = Color(0xFF102A43), night = Color.White),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -124,7 +124,7 @@ class WeatherWidget : GlanceAppWidget() {
                             Text(
                                 text = temp,
                                 style = TextStyle(
-                                    color = ColorProvider(Color.White),
+                                    color = ColorProvider(day = Color(0xFF102A43), night = Color.White),
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -135,7 +135,7 @@ class WeatherWidget : GlanceAppWidget() {
                             text = info,
                             maxLines = 1,
                             style = TextStyle(
-                                color = ColorProvider(Color.White.copy(alpha = 0.8f)),
+                                color = ColorProvider(day = Color(0xFF334E68), night = Color(0xFFD9E2EC)),
                                 fontSize = 12.sp
                             )
                         )
@@ -175,11 +175,11 @@ class WeatherWidget : GlanceAppWidget() {
         ) {
             Text(
                 text = item.time,
-                style = TextStyle(color = ColorProvider(Color.White.copy(alpha = 0.7f)), fontSize = 10.sp)
+                style = TextStyle(color = ColorProvider(day = Color(0xFF486581), night = Color(0xFFBCCCDC)), fontSize = 10.sp)
             )
             Text(
                 text = "${item.temp}°",
-                style = TextStyle(color = ColorProvider(Color.White), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                style = TextStyle(color = ColorProvider(day = Color(0xFF102A43), night = Color.White), fontSize = 12.sp, fontWeight = FontWeight.Bold)
             )
         }
     }
