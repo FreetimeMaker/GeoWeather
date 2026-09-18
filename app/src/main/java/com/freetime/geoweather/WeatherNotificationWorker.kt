@@ -15,7 +15,8 @@ class WeatherNotificationWorker(
         val repository = DependencyManager.getRepository()
         val appSettings = DependencyManager.getAppSettings()
 
-        val location = repository.getSelectedLocation() ?: return Result.success()\n        if (!location.notificationsEnabled) return Result.success()
+        val location = repository.getSelectedLocation() ?: return Result.success()
+        if (!location.notificationsEnabled) return Result.success()
 
         try {
             val updatedLocation = repository.refreshSelectedLocationWeather() ?: location
