@@ -3,6 +3,7 @@ package com.freetime.geoweather.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -149,10 +150,56 @@ fun MainWeatherScreen(
                 )
             }
         } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = padding
+            Column(
+                modifier = Modifier.fillMaxSize().padding(padding)
             ) {
+                if (locations.size > 1) {
+                    Text(
+                        text = "Compare locations",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(locations, key = { "compare-${it.id}" }) { loc ->
+                            Card(
+                                modifier = Modifier
+                                    .width(156.dp)
+                                    .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false)
+                                    .clickable {
+                                        viewModel.selectLocation(loc)
+                                        onLocationClick(loc)
+                                    },
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(14.dp),
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Text(loc.name, style = MaterialTheme.typography.titleSmall, maxLines = 1)
+                                    Text(
+                                        loc.currentTemp?.let { "${it.toInt()}°C" } ?: "--",
+                                        style = MaterialTheme.typography.headlineMedium
+                                    )
+                                    Text(
+                                        loc.currentWindSpeed?.let { "${it.toInt()} km/h wind" } ?: "--",
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                    Text(
+                                        loc.currentHumidity?.let { "$it% humidity" } ?: "--",
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
+                }
+                LazyColumn(
+                    modifier = Modifier.weight(1f)
+                ) {
                 items(locations, key = { it.id }) { loc ->
                     ListItem(
                         headlineContent = { Text(loc.name) },
@@ -202,6 +249,7 @@ fun MainWeatherScreen(
                         )
                     }
                 }
+            }
             }
         }
     }
