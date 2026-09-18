@@ -81,17 +81,19 @@ fun Modifier.geoWeatherLiquidGlass(
         .clip(shape)
         .background(
             MaterialTheme.colorScheme.surfaceContainerHighest.copy(
-                alpha = if (isDarkTheme) 0.25f else 0.15f
+                alpha = if (isDarkTheme) 0.14f else 0.15f
             )
         )
         .liquid(backdrop) {
             this.shape = shape
-            this.frost = if (isDarkTheme) 12.dp else 10.dp
-            this.curve = if (isDarkTheme) 0.35f else 0.45f
-            this.refraction = if (isDarkTheme) 0.08f else 0.12f
-            this.dispersion = if (isDarkTheme) 0.18f else 0.25f
-            this.saturation = if (isDarkTheme) 0.40f else 0.55f
-            this.contrast = if (isDarkTheme) 1.8f else 1.6f
+            // Keep dark mode visibly translucent and refractive instead of
+            // turning the surface into an opaque dark card.
+            this.frost = if (isDarkTheme) 9.dp else 10.dp
+            this.curve = if (isDarkTheme) 0.48f else 0.45f
+            this.refraction = if (isDarkTheme) 0.14f else 0.12f
+            this.dispersion = if (isDarkTheme) 0.28f else 0.25f
+            this.saturation = if (isDarkTheme) 0.58f else 0.55f
+            this.contrast = if (isDarkTheme) 1.45f else 1.6f
         }
         .graphicsLayer {
             val scale = lerp(1f, 1.025f, press.value)
