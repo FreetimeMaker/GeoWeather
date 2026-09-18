@@ -100,7 +100,7 @@ class WeatherWidget : GlanceAppWidget() {
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(ColorProvider(day = Color(0xFFE3F2FD), night = Color(0xFF17202A)))
+                .background(ColorProvider(Color(0xFFE3F2FD)))
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.Start
@@ -135,7 +135,7 @@ class WeatherWidget : GlanceAppWidget() {
                             text = info,
                             maxLines = 1,
                             style = TextStyle(
-                                color = ColorProvider(day = Color(0xFF334E68), night = Color(0xFFD9E2EC)),
+                                color = ColorProvider(Color(0xFF334E68)),
                                 fontSize = 12.sp
                             )
                         )
@@ -175,7 +175,7 @@ class WeatherWidget : GlanceAppWidget() {
         ) {
             Text(
                 text = item.time,
-                style = TextStyle(color = ColorProvider(day = Color(0xFF486581), night = Color(0xFFBCCCDC)), fontSize = 10.sp)
+                style = TextStyle(color = ColorProvider(Color(0xFF486581)), fontSize = 10.sp)
             )
             Text(
                 text = "${item.temp}°",
