@@ -144,10 +144,14 @@ fun WeatherDetailScreen(
                 ) {
                     item {
                         if (code != null) {
+                            AnimatedWeatherGlass(
+                                code = code,
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                            )
                             Icon(
                                 painter = painterResource(WeatherIconMapper.getWeatherIcon(code)),
                                 contentDescription = null,
-                                modifier = Modifier.size(120.dp),
+                                modifier = Modifier.size(120.dp).weatherFloatAnimation(),
                                 tint = Color.Unspecified
                             )
                         }
@@ -177,10 +181,7 @@ fun WeatherDetailScreen(
                         val feelsLike = loc.currentFeelsLike ?: loc.currentTemp
                         Card(
                             modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                            )
+                            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                         ) {
                             Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -304,9 +305,9 @@ fun WeatherDetailScreen(
                                 }
                                 Button(
                                     onClick = { onRadarClick(loc.latitude, loc.longitude) },
-                                    modifier = Modifier.fillMaxWidth().height(40.dp),
+                                    modifier = Modifier.fillMaxWidth().height(40.dp).geoWeatherGlass(RoundedCornerShape(20.dp)),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary
+                                        containerColor = Color.Transparent
                                     ),
                                     contentPadding = PaddingValues(0.dp)
                                 ) {
@@ -508,8 +509,7 @@ fun WeatherAlertsSection(code: Int) {
     if (alertRes != null) {
         Card(
             modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
         ) {
             Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text("⚠️", fontSize = 24.sp)
