@@ -165,7 +165,9 @@ fun WeatherDetailScreen(
                 val visibleDaily = if (forecastExpanded) daily else daily.take(7)
                 val code = loc.currentWeatherCode
                 val rawTemp = loc.currentTemp
-                // Temporarily disable weather scene animations for GPU crash isolation.\n                // Liquid Glass/Backdrop remains enabled.\n                val animationsEnabled = false
+                // Temporarily disable weather scene animations for GPU crash isolation.
+                // Liquid Glass/Backdrop remains enabled.
+                val animationsEnabled = false
                 val reducedMotion = animationMode == "reduced"
                 val rainIntensity = when (code) {
                     in 51..55 -> .65f
