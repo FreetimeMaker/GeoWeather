@@ -64,10 +64,9 @@ fun Modifier.geoWeatherLiquidGlass(
     val touch = remember { androidx.compose.runtime.mutableStateOf(Offset.Zero) }
 
     val glass = this
-        .liquid(
-            state = backdrop,
+        .liquid(backdrop) {
             shape = shape
-        )
+        }
         .graphicsLayer {
             val scale = lerp(1f, 1.025f, press.value)
             scaleX = scale
