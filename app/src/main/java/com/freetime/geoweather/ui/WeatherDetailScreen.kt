@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,6 +56,7 @@ fun WeatherDetailScreen(
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
     val pressureUnit by appSettings.pressureUnit.collectAsState()
+    val animationMode by appSettings.weatherAnimations.collectAsState()
     val isTransient = transientName != null
     val dbLocation by viewModel.observeLocation(locationId).collectAsState(initial = null)
     var transientLocation by remember { mutableStateOf<LocationEntity?>(null) }
@@ -146,6 +148,29 @@ fun WeatherDetailScreen(
                 val visibleDaily = if (forecastExpanded) daily else daily.take(7)
                 val code = loc.currentWeatherCode
                 val rawTemp = loc.currentTemp
+                val animationsEnabled = animationMode != "off"
+                val reducedMotion = animationMode == "reduced"
+                val rainIntensity = when (code) {
+                    in 51..55 -> .65f
+                    in 61..65, in 80..82 -> 1.35f
+                    in 95..99 -> 1.65f
+                    else -> 1f
+                }
+                val firstDayForLight = daily.firstOrNull()
+                val nowHour = java.time.LocalTime.now().hour
+                val sunriseHour = firstDayForLight?.sunrise?.takeLast(5)?.take(2)?.toIntOrNull() ?: 7
+                val sunsetHour = firstDayForLight?.sunset?.takeLast(5)?.take(2)?.toIntOrNull() ?: 19
+                val isNight = nowHour < sunriseHour || nowHour >= sunsetHour
+                Box(Modifier.fillMaxSize()) {
+                    if (animationsEnabled && code != null) {
+                        FullScreenWeatherBackground(
+                            code = code,
+                            windSpeed = loc.currentWindSpeed ?: 0.0,
+                            windDirection = loc.currentWindDirection ?: 0,
+                            intensity = if (reducedMotion) .45f else rainIntensity,
+                            night = isNight
+                        )
+                    }
                 LazyColumn(
                     modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -155,6 +180,10 @@ fun WeatherDetailScreen(
                         if (code != null) {
                             AnimatedWeatherGlass(
                                 code = code,
+                                windSpeed = loc.currentWindSpeed ?: 0.0,
+                                windDirection = loc.currentWindDirection ?: 0,
+                                intensity = if (reducedMotion) .45f else rainIntensity,
+                                night = isNight,
                                 modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
                             )
                             Icon(
@@ -167,8 +196,13 @@ fun WeatherDetailScreen(
                         if (rawTemp != null) {
                             val displayTemp = if (tempUnit == "fahrenheit") (rawTemp * 9 / 5 + 32).toInt() else rawTemp.toInt()
                             val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+                            val animatedTemp by animateIntAsState(
+                                targetValue = displayTemp,
+                                animationSpec = spring(dampingRatio = .75f, stiffness = 120f),
+                                label = "temperature"
+                            )
                             Text(
-                                text = "$displayTemp$tempSuffix",
+                                text = "$animatedTemp$tempSuffix",
                                 style = MaterialTheme.typography.displayLarge,
                                 fontWeight = FontWeight.Bold
                             )
@@ -460,6 +494,7 @@ fun WeatherDetailScreen(
                         }
                     }
                 }
+                }
             }
         }
     }
@@ -525,7 +560,7 @@ fun WeatherAlertsSection(code: Int) {
 
     if (alertRes != null) {
         Card(
-            modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+            modifier = SevereWeatherPulse(Modifier.fillMaxWidth()).geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
             colors = CardDefaults.cardColors(containerColor = Color.Transparent)
         ) {
             Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
