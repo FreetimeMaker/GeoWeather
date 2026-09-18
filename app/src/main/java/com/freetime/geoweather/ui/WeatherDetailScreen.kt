@@ -2,6 +2,7 @@ package com.freetime.geoweather.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -25,6 +26,7 @@ import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
 import com.freetime.geoweather.R as Res
+import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -72,8 +74,12 @@ fun WeatherDetailScreen(
     val title = if (isTransient) transientName!! else loc?.name ?: ""
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -170,7 +176,8 @@ fun WeatherDetailScreen(
                     item {
                         val feelsLike = loc.currentFeelsLike ?: loc.currentTemp
                         Card(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                             )
@@ -362,7 +369,8 @@ fun WeatherDetailScreen(
                         items(visibleDaily, key = { it.date }) { day ->
                             var expanded by remember { mutableStateOf(false) }
                             Card(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                 onClick = { expanded = !expanded }
                             ) {
                                 Column(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
@@ -499,7 +507,8 @@ fun WeatherAlertsSection(code: Int) {
 
     if (alertRes != null) {
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
         ) {
             Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
