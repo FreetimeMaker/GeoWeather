@@ -1,6 +1,14 @@
 package com.freetime.geoweather.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -370,7 +379,9 @@ fun WeatherDetailScreen(
                         items(visibleDaily, key = { it.date }) { day ->
                             var expanded by remember { mutableStateOf(false) }
                             Card(
-                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+                                modifier = Modifier.fillMaxWidth()
+                                    .animateContentSize(animationSpec = spring())
+                                    .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                 onClick = { expanded = !expanded }
                             ) {
@@ -398,7 +409,12 @@ fun WeatherDetailScreen(
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
-                                    if (expanded) {
+                                    AnimatedVisibility(
+                                        visible = expanded,
+                                        enter = fadeIn() + expandVertically(),
+                                        exit = fadeOut() + shrinkVertically()
+                                    ) {
+                                        Column {
                                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                                         DetailInfoRow(
                                             label = stringResource(Res.string.sunrise_label),
@@ -420,6 +436,7 @@ fun WeatherDetailScreen(
                                             label = stringResource(Res.string.wind_max_label),
                                             value = formatWind(day.windMax, null, windUnit)
                                         )
+                                        }
                                     }
                                 }
                             }
@@ -534,7 +551,12 @@ fun WeatherAlertsSection(code: Int) {
 
 @Composable
 fun WindCompass(direction: Float) {
-    Canvas(modifier = Modifier.size(24.dp)) {
+    val animatedDirection by animateFloatAsState(
+        targetValue = direction,
+        animationSpec = spring(dampingRatio = 0.7f, stiffness = 180f),
+        label = "windDirection"
+    )
+    Canvas(modifier = Modifier.size(24.dp).graphicsLayer { rotationZ = animatedDirection - direction }) {
         val center = Offset(size.width / 2, size.height / 2)
         val radius = size.width / 2
         drawCircle(color = Color.Gray.copy(alpha = 0.3f), radius = radius)
