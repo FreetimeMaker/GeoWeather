@@ -14,7 +14,13 @@ import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.data.onCreateDocumentResult
 import com.freetime.geoweather.data.onOpenDocumentResult
 import com.freetime.geoweather.data.registerFilePickers
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassRoot
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
+import com.freetime.geoweather.ui.glass.LocalGeoWeatherBackdrop
+import com.freetime.geoweather.ui.glass.geoWeatherBackdropSource
+import com.freetime.geoweather.ui.glass.rememberGeoWeatherBackdrop
 
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
@@ -35,11 +41,18 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            GeoWeatherGlassRoot {
-                WeatherApp(
-                    database = DependencyManager.getDatabase(),
-                    appSettings = DependencyManager.getAppSettings()
-                )
+            val backdrop = rememberGeoWeatherBackdrop()
+            CompositionLocalProvider(LocalGeoWeatherBackdrop provides backdrop) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .geoWeatherBackdropSource(backdrop)
+                ) {
+                    WeatherApp(
+                        database = DependencyManager.getDatabase(),
+                        appSettings = DependencyManager.getAppSettings()
+                    )
+                }
             }
         }
     }
