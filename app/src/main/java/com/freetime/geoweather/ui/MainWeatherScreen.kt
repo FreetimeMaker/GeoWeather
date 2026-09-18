@@ -13,8 +13,7 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
+Border
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -166,15 +165,6 @@ fun MainWeatherScreen(
                                         if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
                                         contentDescription = null,
                                         tint = if (loc.notificationsEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                                IconButton(onClick = { viewModel.toggleDefaultLocation(loc) }) {
-                                    Icon(
-                                        if (loc.isDefault) Icons.Default.Star else Icons.Default.StarBorder,
-                                        contentDescription = stringResource(
-                                            if (loc.isDefault) Res.string.remove_default else Res.string.set_as_default
-                                        ),
-                                        tint = if (loc.isDefault) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                                 IconButton(onClick = { locationToDelete = loc }) {
