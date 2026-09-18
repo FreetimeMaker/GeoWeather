@@ -58,7 +58,7 @@ fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier, windSpeed: Do
                 }
                 2, 3 -> { // clouds physically drift over the glass
                     repeat(5) { i ->
-                        val baseX = size.width * (.12f + i * .2f) + drift * if (i % 2 == 0) 1 else -.7f
+                        val baseX = size.width * (.12f + i * .2f) + drift * if (i % 2 == 0) 1f else -0.7f
                         val baseY = size.height * (.42f + (i % 2) * .15f)
                         drawCircle(Color.LightGray.copy(alpha = .72f), 25.dp.toPx(), Offset(baseX, baseY))
                         drawCircle(Color.White.copy(alpha = .62f), 19.dp.toPx(), Offset(baseX + 24f, baseY + 8f))
