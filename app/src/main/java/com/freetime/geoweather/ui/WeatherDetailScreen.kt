@@ -143,7 +143,7 @@ fun WeatherDetailScreen(
             else -> {
                 val hourly = remember(loc.weatherData) { viewModel.getHourlyForecasts(loc) }
                 val daily = remember(loc.weatherData) { viewModel.getDailyForecasts(loc) }
-                val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
+                val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }\n                var airExtras by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.CurrentHourExtras?>(null) }\n                LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }
                 var forecastExpanded by remember { mutableStateOf(false) }
                 val visibleDaily = if (forecastExpanded) daily else daily.take(7)
                 val code = loc.currentWeatherCode
@@ -218,6 +218,30 @@ fun WeatherDetailScreen(
 
                     if (code != null) {
                         item { WeatherAlertsSection(code) }
+                    }
+
+                    airExtras?.let { air ->
+                        item {
+                            Card(
+                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                            ) {
+                                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    Text("Air quality & pollen", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                        WeatherDetailItem("AQI", air.europeanAqi?.toString() ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem("PM2.5", air.pm25?.let { "${it.roundToInt()} µg/m³" } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem("PM10", air.pm10?.let { "${it.roundToInt()} µg/m³" } ?: "--", modifier = Modifier.weight(1f))
+                                    }
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .3f))
+                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                        WeatherDetailItem("Alder", air.alderPollen?.let { "${it.roundToInt()}" } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem("Birch", air.birchPollen?.let { "${it.roundToInt()}" } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem("Grass", air.grassPollen?.let { "${it.roundToInt()}" } ?: "--", modifier = Modifier.weight(1f))
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     if (hourly.isNotEmpty()) {
