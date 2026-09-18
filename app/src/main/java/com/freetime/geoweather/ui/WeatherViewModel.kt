@@ -143,7 +143,9 @@ class WeatherViewModel(
 
     fun getDailyForecasts(location: LocationEntity) = repository.getDailyForecasts(location)
 
-    fun getCurrentHourExtras(location: LocationEntity) = repository.getCurrentHourExtras(location)\n\n    suspend fun getAirQualityExtras(location: LocationEntity) = repository.getAirQualityExtras(location)
+    fun getCurrentHourExtras(location: LocationEntity) = repository.getCurrentHourExtras(location)
+
+    suspend fun getAirQualityExtras(location: LocationEntity) = repository.getAirQualityExtras(location)
 
     /** Builds the backup JSON, or null on error. */
     suspend fun buildBackupJson(): String? {
