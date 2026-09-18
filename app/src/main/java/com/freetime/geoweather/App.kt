@@ -1,6 +1,5 @@
 package com.freetime.geoweather
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -56,14 +55,26 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         onDispose { systemBackHandler = null }
     }
 
-    val useSystemTheme by appSettings.useSystemTheme.collectAsState()
-    val darkModeEnabled by appSettings.darkModeEnabled.collectAsState()
-    val dynamicColor by appSettings.dynamicColor.collectAsState()
-    val oledBlack by appSettings.oledBlack.collectAsState()
+    // Theme follows daylight automatically: light from sunrise, dark from sunset.
+    // Until weather data is available, use a conservative 07:00/19:00 fallback.
+    val locations by viewModel.locations.collectAsState(initial = emptyList())
+    val themeLocation = locations.firstOrNull()
+    val daily = remember(themeLocation?.weatherData) {
+        themeLocation?.let { viewModel.getDailyForecasts(it) }.orEmpty()
+    }
+    val today = daily.firstOrNull()
+    val sunrise = today?.sunrise?.takeLast(5)?.take(2)?.toIntOrNull() ?: 7
+    val sunset = today?.sunset?.takeLast(5)?.take(2)?.toIntOrNull() ?: 19
+    var currentHour by remember { mutableIntStateOf(java.time.LocalTime.now().hour) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            currentHour = java.time.LocalTime.now().hour
+            kotlinx.coroutines.delay(60_000)
+        }
+    }
+    val darkTheme = currentHour < sunrise || currentHour >= sunset
 
-    val darkTheme = if (useSystemTheme) isSystemInDarkTheme() else darkModeEnabled
-
-    GeoWeatherTheme(darkTheme = darkTheme, dynamicColor = dynamicColor, oledBlack = oledBlack) {
+    GeoWeatherTheme(darkTheme = darkTheme) {
         Surface(modifier = Modifier.fillMaxSize()) {
             Box(Modifier.fillMaxSize()) {
                 backStack.forEachIndexed { index, screen ->
