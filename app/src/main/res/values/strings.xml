@@ -385,4 +385,5 @@
     <string name="moon_waning_gibbous">Waning Gibbous</string>
     <string name="moon_last_quarter">Last Quarter</string>
     <string name="moon_waning_crescent">Waning Crescent</string>
+    <string name="cl_401_fix_error">Fixed a Startup Error</string>
 </resources>

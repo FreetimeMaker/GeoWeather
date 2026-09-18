@@ -20,6 +20,9 @@ import com.freetime.geoweather.ui.glass.geoWeatherGlass
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v4.0.1" to listOf(
+            stringResource(Res.string.cl_401_fix_error)
+        ),
         "v4.0.0" to listOf(
             stringResource(Res.string.cl_400_liquid_glass),
             stringResource(Res.string.cl_400_weather_animations),
