@@ -33,7 +33,7 @@ class WeatherChangeWorker(
                 WeatherNotifications.show(
                     applicationContext,
                     2002,
-                    applicationContext.getString(R.string.app_name),
+                    applicationContext.getString(SharedRes.string.app_name),
                     message,
                     alert = true
                 )
