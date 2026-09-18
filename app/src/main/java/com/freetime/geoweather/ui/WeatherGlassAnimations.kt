@@ -17,9 +17,11 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier) {
+fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier, windSpeed: Double = 0.0, windDirection: Int = 0, intensity: Float = 1f, night: Boolean = false) {
     val transition = rememberInfiniteTransition(label = "weatherScene")
-    val drift by transition.animateFloat(-28f, 28f, infiniteRepeatable(tween(4500, easing = LinearEasing), RepeatMode.Reverse), label = "drift")
+    val windFactor = (1f + (windSpeed / 35.0).toFloat()).coerceIn(1f, 3f)
+    val directionFactor = if (windDirection in 90..270) -1f else 1f
+    val drift by transition.animateFloat(-28f * windFactor * directionFactor, 28f * windFactor * directionFactor, infiniteRepeatable(tween(4500, easing = LinearEasing), RepeatMode.Reverse), label = "drift")
     val pulse by transition.animateFloat(.9f, 1.1f, infiniteRepeatable(tween(1800, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "pulse")
     val fall by transition.animateFloat(0f, 500f, infiniteRepeatable(tween(2200, easing = LinearEasing)), label = "fall")
     val rotate by transition.animateFloat(0f, 360f, infiniteRepeatable(tween(12000, easing = LinearEasing)), label = "rotate")
@@ -30,6 +32,13 @@ fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier) {
     }), label = "flash")
 
     Box(modifier.height(170.dp).geoWeatherGlass(CircleShape, interactive = false)) {
+        Canvas(Modifier.fillMaxSize()) {
+            if (night) {
+                drawRect(Color(0xFF07162E).copy(alpha = .30f))
+                repeat(18) { i -> drawCircle(Color.White.copy(alpha = .35f + (i % 3) * .12f), (1 + i % 2).dp.toPx(), Offset(size.width * ((i * 37 % 100) / 100f), size.height * ((i * 53 % 70) / 100f))) }
+                drawCircle(Color(0xFFE9F2FF).copy(alpha = .75f), 18.dp.toPx(), Offset(size.width * .82f, size.height * .20f))
+            }
+        }
         Canvas(Modifier.fillMaxSize()) {
             when (code) {
                 0, 1 -> { // sun: real rays rotate, glass glow underneath
@@ -61,7 +70,7 @@ fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier) {
                     }
                 }
                 in 51..67, in 80..82 -> { // rain + splashes
-                    repeat(14) { i ->
+                    repeat((14 * intensity.coerceIn(.5f, 2f)).toInt()) { i ->
                         val x = size.width * (i + 1) / 15f + sin(i.toFloat()) * 12f
                         val y = (fall + i * 43f) % (size.height + 40f) - 20f
                         drawLine(Color(0xFF7CC7FF).copy(alpha = .75f), Offset(x, y), Offset(x - 8f, y + 25f), 2.5.dp.toPx())
@@ -69,7 +78,7 @@ fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier) {
                     }
                 }
                 in 71..77, in 85..86 -> { // snow flakes fall and sway
-                    repeat(16) { i ->
+                    repeat((16 * intensity.coerceIn(.5f, 2f)).toInt()) { i ->
                         val y = (fall * .55f + i * 37f) % (size.height + 30f) - 15f
                         val x = size.width * (i + 1) / 17f + sin(wave + i) * 18f
                         drawCircle(Color.White.copy(alpha = .82f), (2 + i % 3).dp.toPx(), Offset(x, y))
@@ -101,4 +110,33 @@ fun Modifier.weatherFloatAnimation(): Modifier {
     val offset by transition.animateFloat(-5f, 5f, infiniteRepeatable(tween(2200, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "offset")
     val scale by transition.animateFloat(.97f, 1.03f, infiniteRepeatable(tween(2200, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "scale")
     return graphicsLayer { translationY = offset; scaleX = scale; scaleY = scale }
+}
+
+
+@Composable
+fun FullScreenWeatherBackground(
+    code: Int,
+    windSpeed: Double = 0.0,
+    windDirection: Int = 0,
+    intensity: Float = 1f,
+    night: Boolean = false,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier.fillMaxSize()) {
+        AnimatedWeatherGlass(
+            code = code,
+            windSpeed = windSpeed,
+            windDirection = windDirection,
+            intensity = intensity,
+            night = night,
+            modifier = Modifier.fillMaxSize().graphicsLayer { alpha = .48f; scaleX = 1.8f; scaleY = 4.8f }
+        )
+    }
+}
+
+@Composable
+fun SevereWeatherPulse(modifier: Modifier = Modifier): Modifier {
+    val t = rememberInfiniteTransition(label = "severe")
+    val scale by t.animateFloat(.985f, 1.015f, infiniteRepeatable(tween(900), RepeatMode.Reverse), label = "severeScale")
+    return modifier.graphicsLayer { scaleX = scale; scaleY = scale }
 }
