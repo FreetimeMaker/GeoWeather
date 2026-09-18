@@ -56,7 +56,11 @@ fun MainWeatherScreen(
             try {
                 val coords = getCurrentCoordinates()
                 if (coords != null) {
-                    onCurrentLocationClick(currentLocationName, coords.first, coords.second)
+                    val detectedLocationName = viewModel
+                        .getDetectedLocationName(coords.first, coords.second)
+                        ?.takeIf { it.isNotBlank() }
+                        ?: currentLocationName
+                    onCurrentLocationClick(detectedLocationName, coords.first, coords.second)
                 } else {
                     snackbarHostState.showSnackbar(locationUnavailableMsg)
                 }
