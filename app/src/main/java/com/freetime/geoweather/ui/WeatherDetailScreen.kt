@@ -220,6 +220,44 @@ fun WeatherDetailScreen(
                         item { WeatherAlertsSection(code) }
                     }
 
+                    if (hourly.isNotEmpty()) {
+                        item {
+                            val nextRainIndex = hourly.indexOfFirst { it.precipProbability >= 40 || it.code in 51..67 || it.code in 80..82 || it.code in 95..99 }
+                            val nextRainText = if (nextRainIndex >= 0) {
+                                val next = hourly[nextRainIndex]
+                                if (nextRainIndex == 0) "Rain possible now · ${next.precipProbability}%"
+                                else "Next rain around ${next.time} · ${next.precipProbability}%"
+                            } else "No rain expected in the next 24 hours"
+                            Card(
+                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                            ) {
+                                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                    Text("Next rain", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text(nextRainText, style = MaterialTheme.typography.bodyLarge)
+                                    Text("24-hour timeline", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                                        items(hourly) { hour ->
+                                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                Text(hour.time, style = MaterialTheme.typography.labelSmall)
+                                                Icon(
+                                                    painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(32.dp),
+                                                    tint = Color.Unspecified
+                                                )
+                                                Text("${hour.temp}°", fontWeight = FontWeight.Bold)
+                                                if (hour.precipProbability > 0) {
+                                                    Text("${hour.precipProbability}%", style = MaterialTheme.typography.labelSmall)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     item {
                         val feelsLike = loc.currentFeelsLike ?: loc.currentTemp
                         Card(
