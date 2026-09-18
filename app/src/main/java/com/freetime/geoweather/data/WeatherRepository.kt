@@ -254,7 +254,7 @@ class WeatherRepository(
                 ?.getOrNull(index)?.jsonPrimitive?.doubleOrNull
             val cloudBase = hourly["cloud_base"]?.jsonArray
                 ?.getOrNull(index)?.jsonPrimitive?.doubleOrNull
-            val pressures = hourly["pressure_msl"]?.jsonArray
+            val pressures = hourly["pressure_msl"]?.jsonArray\n            val uvIndex = hourly["uv_index"]?.jsonArray?.getOrNull(index)?.jsonPrimitive?.doubleOrNull
             val trend = if (pressures != null && index >= 3) {
                 val current = pressures[index].jsonPrimitive.doubleOrNull ?: 0.0
                 val past = pressures[index - 3].jsonPrimitive.doubleOrNull ?: 0.0
