@@ -35,7 +35,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("io.github.kyant0:backdrop:2.0.0")
+    implementation("io.github.fletchmckee.liquid:liquid:1.1.1")
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.content.negotiation)
