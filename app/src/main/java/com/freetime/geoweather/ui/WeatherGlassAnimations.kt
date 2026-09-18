@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -73,14 +74,14 @@ fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier, windSpeed: Do
                     repeat((14 * intensity.coerceIn(.5f, 2f)).toInt()) { i ->
                         val x = size.width * (i + 1) / 15f + sin(i.toFloat()) * 12f
                         val y = (fall + i * 43f) % (size.height + 40f) - 20f
-                        drawLine(Color(0xFF7CC7FF).copy(alpha = .75f), Offset(x, y), Offset(x - 8f, y + 25f), 2.5.dp.toPx())
-                        if (y > size.height - 30f) drawCircle(Color(0xFF7CC7FF).copy(alpha = .35f), 7.dp.toPx(), Offset(x, size.height - 8f), style = androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()))
+                        drawLine(Color(0xFF7CC7FF).copy(alpha = .75f), Offset(x.toFloat(), y.toFloat()), Offset(x - 8f, y + 25f), 2.5.dp.toPx())
+                        if (y.toFloat() > size.height - 30f) drawCircle(Color(0xFF7CC7FF).copy(alpha = .35f), 7.dp.toPx(), Offset(x, size.height - 8f), style = androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()))
                     }
                 }
                 in 71..77, in 85..86 -> { // snow flakes fall and sway
                     repeat((16 * intensity.coerceIn(.5f, 2f)).toInt()) { i ->
                         val y = (fall * .55f + i * 37f) % (size.height + 30f) - 15f
-                        val x = size.width * (i + 1) / 17f + sin(wave + i) * 18f
+                        val x = size.width * (i + 1) / 17f + sin(wave + i.toFloat()) * 18f
                         drawCircle(Color.White.copy(alpha = .82f), (2 + i % 3).dp.toPx(), Offset(x, y))
                     }
                 }
