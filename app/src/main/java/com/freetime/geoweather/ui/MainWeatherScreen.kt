@@ -63,7 +63,7 @@ fun MainWeatherScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.app_name)) }
             )
         },
@@ -137,9 +137,7 @@ fun MainWeatherScreen(
                 items(locations, key = { it.id }) { loc ->
                     ListItem(
                         headlineContent = { Text(loc.name) },
-                        supportingContent = {
-                            Text("${loc.latitude}, ${loc.longitude}")
-                        },
+                        supportingContent = { Text("${loc.latitude}, ${loc.longitude}") },
                         trailingContent = {
                             Row {
                                 IconButton(onClick = { viewModel.toggleLocationNotifications(loc) }) {
