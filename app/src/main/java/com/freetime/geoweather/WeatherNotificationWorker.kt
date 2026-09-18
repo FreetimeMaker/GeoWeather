@@ -23,11 +23,17 @@ class WeatherNotificationWorker(
             val code = updatedLocation.currentWeatherCode ?: 0
             val description = WeatherCodes.getDescription(code)
 
-            applicationContext.getString(
+            val message = applicationContext.getString(
                 SharedRes.string.WeatherNotificationTXT,
                 updatedLocation.name,
                 tempStr,
                 description
+            )
+            WeatherNotifications.show(
+                applicationContext,
+                2001,
+                applicationContext.getString(R.string.app_name),
+                message
             )
         } catch (e: Exception) {
             return Result.retry()
