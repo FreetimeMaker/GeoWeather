@@ -105,9 +105,9 @@ fun WeatherDetailScreen(
                                 type = "text/plain"
                                 putExtra(android.content.Intent.EXTRA_TEXT, shareText)
                             }
-                            context.startActivity(android.content.Intent.createChooser(intent, "Share weather"))
+                            context.startActivity(android.content.Intent.createChooser(intent, context.getString(Res.string.share_weather)))
                         }) {
-                            Icon(Icons.Default.Share, contentDescription = "Share weather")
+                            Icon(Icons.Default.Share, contentDescription = stringResource(Res.string.share_weather))
                         }
                     }
                     IconButton(onClick = { doRefresh() }, enabled = !isRefreshing) {
@@ -241,11 +241,11 @@ fun WeatherDetailScreen(
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                             ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Text("Sun & Moon", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(Res.string.sun_moon_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                        WeatherDetailItem("Sunrise", today.sunrise.takeLast(5), modifier = Modifier.weight(1f))
-                                        WeatherDetailItem("Sunset", today.sunset.takeLast(5), modifier = Modifier.weight(1f))
-                                        WeatherDetailItem("Moon", "${moon.first} ${moon.second}", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.sunrise_label), today.sunrise.takeLast(5), modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.sunset_label), today.sunset.takeLast(5), modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.moon_label), "${moon.first} ${moon.second}", modifier = Modifier.weight(1f))
                                     }
                                 }
                             }
@@ -256,15 +256,15 @@ fun WeatherDetailScreen(
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                             ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Text("Trip forecast", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    Text("Next days at ${loc.name}", style = MaterialTheme.typography.bodyMedium)
+                                    Text(stringResource(Res.string.trip_forecast_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(Res.string.next_days_at, loc.name), style = MaterialTheme.typography.bodyMedium)
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                         items(daily.take(7)) { day ->
                                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(88.dp)) {
                                                 Text(day.date.takeLast(5), style = MaterialTheme.typography.labelSmall)
                                                 Icon(painterResource(WeatherIconMapper.getWeatherIcon(day.code)), null, Modifier.size(34.dp), tint = Color.Unspecified)
                                                 Text("${day.maxTemp}° / ${day.minTemp}°", fontWeight = FontWeight.Bold)
-                                                Text("${day.precipProbMax}% rain", style = MaterialTheme.typography.labelSmall)
+                                                Text(stringResource(Res.string.rain_probability_short, day.precipProbMax), style = MaterialTheme.typography.labelSmall)
                                             }
                                         }
                                     }
@@ -280,17 +280,17 @@ fun WeatherDetailScreen(
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                             ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Text("Air quality & pollen", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(Res.string.air_quality_pollen_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                        WeatherDetailItem("AQI", air.europeanAqi?.toString() ?: "--", modifier = Modifier.weight(1f))
-                                        WeatherDetailItem("PM2.5", air.pm25?.let { "${it.roundToInt()} µg/m³" } ?: "--", modifier = Modifier.weight(1f))
-                                        WeatherDetailItem("PM10", air.pm10?.let { "${it.roundToInt()} µg/m³" } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.aqi_label), air.europeanAqi?.toString() ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.pm25_label), air.pm25?.let { "${it.roundToInt()} µg/m³" } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.pm10_label), air.pm10?.let { "${it.roundToInt()} µg/m³" } ?: "--", modifier = Modifier.weight(1f))
                                     }
                                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .3f))
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                        WeatherDetailItem("Alder", air.alderPollen?.let { "${it.roundToInt()}" } ?: "--", modifier = Modifier.weight(1f))
-                                        WeatherDetailItem("Birch", air.birchPollen?.let { "${it.roundToInt()}" } ?: "--", modifier = Modifier.weight(1f))
-                                        WeatherDetailItem("Grass", air.grassPollen?.let { "${it.roundToInt()}" } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.alder_pollen_label), air.alderPollen?.let { "${it.roundToInt()}" } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.birch_pollen_label), air.birchPollen?.let { "${it.roundToInt()}" } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.grass_pollen_label), air.grassPollen?.let { "${it.roundToInt()}" } ?: "--", modifier = Modifier.weight(1f))
                                     }
                                 }
                             }
@@ -302,17 +302,17 @@ fun WeatherDetailScreen(
                             val nextRainIndex = hourly.indexOfFirst { it.precipProbability >= 40 || it.code in 51..67 || it.code in 80..82 || it.code in 95..99 }
                             val nextRainText = if (nextRainIndex >= 0) {
                                 val next = hourly[nextRainIndex]
-                                if (nextRainIndex == 0) "Rain possible now · ${next.precipProbability}%"
-                                else "Next rain around ${next.time} · ${next.precipProbability}%"
-                            } else "No rain expected in the next 24 hours"
+                                if (nextRainIndex == 0) stringResource(Res.string.rain_possible_now, next.precipProbability)
+                                else stringResource(Res.string.next_rain_around, next.time, next.precipProbability)
+                            } else stringResource(Res.string.no_rain_24h)
                             Card(
                                 modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                             ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                    Text("Next rain", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(Res.string.next_rain_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Text(nextRainText, style = MaterialTheme.typography.bodyLarge)
-                                    Text("24-hour timeline", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(Res.string.timeline_24h), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                                         items(hourly) { hour ->
                                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
