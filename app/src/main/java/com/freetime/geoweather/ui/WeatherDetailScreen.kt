@@ -232,6 +232,47 @@ fun WeatherDetailScreen(
                         item { WeatherAlertsSection(code) }
                     }
 
+                    if (daily.isNotEmpty()) {
+                        item {
+                            val today = daily.first()
+                            val moon = moonPhaseFor(java.time.LocalDate.now())
+                            Card(
+                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                            ) {
+                                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    Text("Sun & Moon", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                        WeatherDetailItem("Sunrise", today.sunrise.takeLast(5), modifier = Modifier.weight(1f))
+                                        WeatherDetailItem("Sunset", today.sunset.takeLast(5), modifier = Modifier.weight(1f))
+                                        WeatherDetailItem("Moon", "${moon.first} ${moon.second}", modifier = Modifier.weight(1f))
+                                    }
+                                }
+                            }
+                        }
+                        item {
+                            Card(
+                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                            ) {
+                                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    Text("Trip forecast", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text("Next days at ${loc.name}", style = MaterialTheme.typography.bodyMedium)
+                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                        items(daily.take(7)) { day ->
+                                            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(88.dp)) {
+                                                Text(day.date.takeLast(5), style = MaterialTheme.typography.labelSmall)
+                                                Icon(painterResource(WeatherIconMapper.getWeatherIcon(day.code)), null, Modifier.size(34.dp), tint = Color.Unspecified)
+                                                Text("${day.maxTemp}° / ${day.minTemp}°", fontWeight = FontWeight.Bold)
+                                                Text("${day.precipProbMax}% rain", style = MaterialTheme.typography.labelSmall)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     airExtras?.let { air ->
                         item {
                             Card(
@@ -720,5 +761,23 @@ fun formatPressure(hpa: Double?, pressureUnit: String): String {
         "${(hpa * 0.750062).toInt()} ${stringResource(Res.string.unit_mmhg)}"
     } else {
         "${hpa.toInt()} ${stringResource(Res.string.unit_hpa)}"
+    }
+}
+
+
+fun moonPhaseFor(date: java.time.LocalDate): Pair<String, String> {
+    val knownNewMoon = java.time.LocalDate.of(2000, 1, 6)
+    val days = java.time.temporal.ChronoUnit.DAYS.between(knownNewMoon, date).toDouble()
+    val age = ((days % 29.53058867) + 29.53058867) % 29.53058867
+    return when {
+        age < 1.85 -> "🌑" to "New Moon"
+        age < 5.54 -> "🌒" to "Waxing Crescent"
+        age < 9.23 -> "🌓" to "First Quarter"
+        age < 12.92 -> "🌔" to "Waxing Gibbous"
+        age < 16.61 -> "🌕" to "Full Moon"
+        age < 20.30 -> "🌖" to "Waning Gibbous"
+        age < 23.99 -> "🌗" to "Last Quarter"
+        age < 27.68 -> "🌘" to "Waning Crescent"
+        else -> "🌑" to "New Moon"
     }
 }
