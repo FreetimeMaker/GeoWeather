@@ -40,10 +40,6 @@ fun SettingsScreen(
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
     val pressureUnit by appSettings.pressureUnit.collectAsState()
-    val useSystemTheme by appSettings.useSystemTheme.collectAsState()
-    val darkModeEnabled by appSettings.darkModeEnabled.collectAsState()
-    val dynamicColor by appSettings.dynamicColor.collectAsState()
-    val oledBlack by appSettings.oledBlack.collectAsState()
     val persistentNotif by appSettings.persistentNotif.collectAsState()
     val tempThreshold by appSettings.tempThreshold.collectAsState()
     val windThreshold by appSettings.windThreshold.collectAsState()
@@ -83,24 +79,11 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             SettingsSection(stringResource(Res.string.theme_settings_title))
-            SettingsToggle(stringResource(Res.string.follow_system_theme), useSystemTheme) {
-                appSettings.setUseSystemTheme(it)
-            }
-            if (!useSystemTheme) {
-                SettingsToggle(stringResource(Res.string.force_dark_mode), darkModeEnabled) {
-                    appSettings.setDarkModeEnabled(it)
-                }
-            }
-            SettingsToggle(
-                stringResource(Res.string.dynamic_color_title),
-                stringResource(Res.string.dynamic_color_subtitle),
-                dynamicColor
-            ) { appSettings.setDynamicColor(it) }
-            SettingsToggle(
-                stringResource(Res.string.oled_black_title),
-                stringResource(Res.string.oled_black_subtitle),
-                oledBlack
-            ) { appSettings.setOledBlack(it) }
+            Text(
+                "Material You is always enabled. Light mode is used from sunrise until sunset; dark mode is enabled automatically after sunset.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
             SettingsSection(stringResource(Res.string.unit_settings_title))
             Text(stringResource(Res.string.temperature_unit), style = MaterialTheme.typography.bodyLarge)
