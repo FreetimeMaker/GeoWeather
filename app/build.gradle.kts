@@ -19,14 +19,10 @@ android {
         versionName = "3.1.3"
     }
 
-    buildFeatures {
-        compose = true
-    }
+    buildFeatures { compose = true }
 
     packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+        resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
     }
 }
 
@@ -39,6 +35,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("io.github.kyant0:backdrop:2.0.0")
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.content.negotiation)
@@ -68,7 +65,5 @@ dependencies {
 }
 
 kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.JVM_11
-    }
+    compilerOptions { jvmTarget = JvmTarget.JVM_11 }
 }
