@@ -27,7 +27,7 @@ object ApiConstants {
     const val QWEATHER_SUN = "https://devapi.qweather.com/v7/astronomy/sun"
 
     fun getAirQualityUrl(lat: Double, lon: Double): String {
-        return "$OPEN_METEO_AIR_QUALITY?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5&timezone=auto"
+        return "$OPEN_METEO_AIR_QUALITY?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5,european_aqi,alder_pollen,birch_pollen,grass_pollen&forecast_days=1&timezone=auto"
     }
 
     /**
