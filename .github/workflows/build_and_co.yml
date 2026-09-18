@@ -1,4 +1,4 @@
-name: Build and Release GeoWeather
+name: Build, Sign and Release Android App
 
 on:
   push:
@@ -6,39 +6,28 @@ on:
       - '**'
   workflow_dispatch:
 
-concurrency:
-  group: geoweather-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 permissions:
   contents: write
+  id-token: write
 
 jobs:
-  prepare_release:
-    runs-on: ubuntu-24.04
-
+  prepare_android_app:
+    runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.versioncheck.outputs.version }}
       create_tag: ${{ steps.versioncheck.outputs.create_tag }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          submodules: 'recursive'
 
       - name: Detect version & create tag
         id: versioncheck
         run: |
-          VERSION=$(grep 'versionName' app/build.gradle.kts \
-            | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
-
+          VERSION=$(grep 'versionName' app/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-          if [ "$GITHUB_REF_NAME" != "master" ]; then
-            echo "create_tag=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
 
           git fetch --tags
 
@@ -50,15 +39,16 @@ jobs:
             echo "create_tag=true" >> "$GITHUB_OUTPUT"
           fi
 
-  build_android:
-    needs: prepare_release
-    runs-on: ubuntu-24.04
+  build_sign_and_release_android_app:
+    needs: prepare_android_app
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          submodules: 'recursive'
 
       - name: Checkout Keystore Repository
         uses: actions/checkout@v7
@@ -71,72 +61,50 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 21
-          cache: gradle
+          java-version: 17
+          cache: 'gradle'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Ensure Android build tools
-        run: |
-          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)
+      - name: Build Android App
+        run: ./gradlew :app:assembleRelease
 
-          if [ -z "$SDKMANAGER" ]; then
-            echo "sdkmanager not found"
-            exit 1
+      - name: Install Android Build Tools 34.0.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -path '*/bin/sdkmanager' 2>/dev/null | sort -V | tail -n1)"
           fi
+          "$SDKMANAGER" --sdk_root="$SDK_ROOT" "build-tools;34.0.0"
 
-          yes | "$SDKMANAGER" --licenses > /dev/null || true
-          "$SDKMANAGER" "build-tools;36.0.0"
-
-      - name: Show build environment
-        run: |
-          java -version
-          ./gradlew --version
-          echo "Android SDK: $ANDROID_HOME"
-          ls "$ANDROID_HOME/build-tools"
-
-      - name: Build Android App (Release)
-        run: |
-          ./gradlew \
-            --no-daemon \
-            :app:assembleRelease
-
-      - name: Configure APKSIGNER
+      - name: Use APKSIGNER 34.0.0
         id: find_apksigner
+        shell: bash
         run: |
-          APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
-
-          if [ ! -f "$APKSIGNER" ]; then
-            echo "Error: apksigner not found at $APKSIGNER"
-            exit 1
-          fi
-
-          echo "apksigner=$APKSIGNER" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          APKSIGNER="$SDK_ROOT/build-tools/34.0.0/apksigner"
+          test -x "$APKSIGNER"
           "$APKSIGNER" version
+          echo "apksigner=$APKSIGNER" >> "$GITHUB_OUTPUT"
 
-      - name: Sign Android APK
+      - name: Sign Android
         id: sign_apk
         run: |
           UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
-          SIGNED_APK="GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk"
+          SIGNED_APK="GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk"
           KEYSTORE_PATH="./keystore/GeoWeather-KeyStore.jks"
 
-          if [ ! -f "$UNSIGNED_APK" ]; then
-            echo "Error: APK not found: $UNSIGNED_APK"
-            exit 1
-          fi
-
-          if [ ! -f "$KEYSTORE_PATH" ]; then
-            echo "Error: Keystore not found: $KEYSTORE_PATH"
-            exit 1
-          fi
-
+          echo "==> Signiere APK: $SIGNED_APK"
           "${{ steps.find_apksigner.outputs.apksigner }}" sign \
             --ks "$KEYSTORE_PATH" \
             --ks-key-alias alle \
-            --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
-            --key-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --key-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
             --out "$SIGNED_APK" \
             "$UNSIGNED_APK"
 
@@ -144,49 +112,17 @@ jobs:
 
       - name: Verify APK Signature
         run: |
-          "${{ steps.find_apksigner.outputs.apksigner }}" \
-            verify \
-            --verbose \
-            --print-certs \
+          echo "==> Überprüfe Signatur"
+          "${{ steps.find_apksigner.outputs.apksigner }}" verify --verbose \
             "${{ steps.sign_apk.outputs.signed_apk }}"
 
-      - name: Show APK checksum
-        run: |
-          sha256sum "${{ steps.sign_apk.outputs.signed_apk }}"
-
-      - name: Upload APK Artifact
+      - name: Upload APK as build artifact
         uses: actions/upload-artifact@v7
         with:
-          name: GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk
-          path: GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk
+          name: GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk
+          path: GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk
           if-no-files-found: error
           retention-days: 90
-
-  release:
-    needs:
-      - prepare_release
-      - build_android
-
-    if: github.ref == 'refs/heads/master' && needs.prepare_release.outputs.create_tag == 'true'
-
-    runs-on: ubuntu-24.04
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Download Android Artifact
-        uses: actions/download-artifact@v8
-        with:
-          pattern: GeoWeather-v${{ needs.prepare_release.outputs.version }}.apk
-          path: ./dist
-          merge-multiple: true
-
-      - name: Show release files
-        run: |
-          find ./dist -type f -maxdepth 2 -print
 
       - name: Create release notes
         run: |
@@ -196,12 +132,14 @@ jobs:
             cat fastlane/metadata/android/en-US/changelogs/default.txt
           } > release-notes.md
 
-      - name: Create Release and Upload Assets
+      - name: Upload APK to Release
+        if: needs.prepare_android_app.outputs.create_tag == 'true'
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: v${{ needs.prepare_release.outputs.version }}
+          tag_name: v${{ needs.prepare_android_app.outputs.version }}
+          name: GeoWeather v${{ needs.prepare_android_app.outputs.version }}
           body_path: release-notes.md
           files: |
-            dist/*.apk
+            GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk
           draft: false
           generate_release_notes: true
