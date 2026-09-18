@@ -324,6 +324,31 @@
     <string name="cl_311_fix_fdroid">Fixed F-Droid Build</string>
     <string name="cl_313_fix_linux">Fixed Linux Crash when trying to open a Page via Web</string>
 
+
+    <!-- v4.0.0 -->
+    <string name="cl_400_liquid_glass">Redesigned the app with a Liquid Glass interface across the main screens, navigation, cards, and weather details.</string>
+    <string name="cl_400_weather_animations">Added animated weather effects for rain, snow, clouds, fog, thunderstorms, wind, and day/night conditions.</string>
+    <string name="cl_400_animation_settings">Added Full, Reduced, and Off weather animation modes.</string>
+    <string name="cl_400_auto_theme">Material You is now always enabled, with automatic light mode from sunrise to sunset and dark mode after sunset.</string>
+    <string name="cl_400_next_rain">Added Next Rain information and precipitation probability to hourly forecasts.</string>
+    <string name="cl_400_timeline">Added a scrollable 24-hour weather timeline.</string>
+    <string name="cl_400_sun_moon">Added Sun &amp; Moon information including sunrise, sunset, and moon phases.</string>
+    <string name="cl_400_trip_forecast">Added a compact multi-day Trip Forecast overview.</string>
+    <string name="cl_400_air_quality">Added air quality information including European AQI, PM2.5, and PM10.</string>
+    <string name="cl_400_pollen">Added alder, birch, and grass pollen information.</string>
+    <string name="cl_400_uv">Added UV index information with risk levels.</string>
+    <string name="cl_400_compare">Added a Liquid Glass location comparison view for saved locations.</string>
+    <string name="cl_400_share">Added weather sharing directly from the weather detail screen.</string>
+    <string name="cl_400_notifications">Fixed background weather notifications and added temperature and wind change alerts.</string>
+    <string name="cl_400_notification_icon">Added a dedicated monochrome weather notification icon.</string>
+    <string name="cl_400_tile">Added a Quick Settings weather tile.</string>
+    <string name="cl_400_widget">Updated the home screen weather widget styling.</string>
+    <string name="cl_400_nav">Moved primary actions into the new Liquid Glass bottom navigation.</string>
+    <string name="cl_400_stars">Removed the favorite star controls from location cards.</string>
+    <string name="cl_400_localization">Moved newly added hardcoded interface text into English string resources for localization.</string>
+    <string name="cl_400_android">Continued GeoWeather as an Android-focused app and simplified the project structure.</string>
+    <string name="cl_400_stability">Fixed manifest, Kotlin source formatting, notification, widget, and release-build issues.</string>
+
     <!-- New weather features -->
     <string name="share_weather">Share weather</string>
     <string name="sun_moon_title">Sun &amp; Moon</string>
