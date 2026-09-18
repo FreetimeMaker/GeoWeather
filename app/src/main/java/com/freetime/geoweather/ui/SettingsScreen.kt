@@ -1,6 +1,7 @@
 package com.freetime.geoweather.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
@@ -23,6 +25,7 @@ import com.freetime.geoweather.data.loadTextFile
 import com.freetime.geoweather.data.saveTextFile
 import com.freetime.geoweather.openUrl
 import com.freetime.geoweather.R as Res
+import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,9 +58,13 @@ fun SettingsScreen(
     val importFailed = stringResource(Res.string.import_failed)
 
     Scaffold(
+        containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 title = { Text(stringResource(Res.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
