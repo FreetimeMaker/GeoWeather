@@ -25,10 +25,17 @@ class WeatherChangeWorker(
             if (oldTemp != null && newTemp != null && kotlin.math.abs(newTemp - oldTemp) >= 2.0) {
                 val oldTempStr = repository.getDisplayTemp(location, appSettings.tempUnit.value)
                 val newTempStr = repository.getDisplayTemp(updatedLocation, appSettings.tempUnit.value)
-                applicationContext.getString(
+                val message = applicationContext.getString(
                     SharedRes.string.temperature_change_msg,
                     oldTempStr,
                     newTempStr
+                )
+                WeatherNotifications.show(
+                    applicationContext,
+                    2002,
+                    applicationContext.getString(R.string.app_name),
+                    message,
+                    alert = true
                 )
             }
         } catch (e: Exception) {
