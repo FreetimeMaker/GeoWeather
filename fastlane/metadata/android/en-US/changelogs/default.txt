@@ -1,1 +1,22 @@
-• Fixed Linux Crash when trying to open a Page via Web
+• Redesigned the app with a Liquid Glass interface across the main screens, navigation, cards, and weather details.
+• Added animated weather effects for rain, snow, clouds, fog, thunderstorms, wind, and day/night conditions.
+• Added Full, Reduced, and Off weather animation modes.
+• Material You is now always enabled, with automatic light mode from sunrise to sunset and dark mode after sunset.
+• Added Next Rain information and precipitation probability to hourly forecasts.
+• Added a scrollable 24-hour weather timeline.
+• Added Sun & Moon information including sunrise, sunset, and moon phases.
+Added a compact multi-day Trip Forecast overview.
+• Added Air Quality information including European AQI, PM2.5, and PM10.
+Added pollen information for alder, birch, and grass.
+• Added UV Index information with risk levels.
+• Added a Liquid Glass location comparison view for saved locations.
+• Added weather sharing directly from the weather detail screen.
+• Fixed background weather notifications and added temperature and wind change alerts.
+• Added a dedicated monochrome weather notification icon.
+• Added a Quick Settings weather tile.
+Updated the home screen weather widget styling.
+• Moved primary actions into the new Liquid Glass bottom navigation.
+• Removed the favorite star controls from location cards.
+• Moved newly added hardcoded interface text into English string resources for localization.
+• Continued GeoWeather as an Android-focused app and simplified the project structure.
+• Fixed manifest, Kotlin source formatting, notification, widget, and release-build issues.
