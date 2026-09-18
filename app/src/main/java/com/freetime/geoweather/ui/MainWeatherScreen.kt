@@ -155,7 +155,7 @@ fun MainWeatherScreen(
             ) {
                 if (locations.size > 1) {
                     Text(
-                        text = "Compare locations",
+                        text = stringResource(Res.string.compare_locations),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     )
@@ -184,11 +184,11 @@ fun MainWeatherScreen(
                                         style = MaterialTheme.typography.headlineMedium
                                     )
                                     Text(
-                                        loc.currentWindSpeed?.let { "${it.toInt()} km/h wind" } ?: "--",
+                                        loc.currentWindSpeed?.let { stringResource(Res.string.wind_value, it.toInt()) } ?: "--",
                                         style = MaterialTheme.typography.labelSmall
                                     )
                                     Text(
-                                        loc.currentHumidity?.let { "$it% humidity" } ?: "--",
+                                        loc.currentHumidity?.let { stringResource(Res.string.humidity_value, it) } ?: "--",
                                         style = MaterialTheme.typography.labelSmall
                                     )
                                 }
