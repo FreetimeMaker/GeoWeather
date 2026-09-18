@@ -21,6 +21,7 @@ class AppSettings(private val settings: Settings) {
         const val KEY_WIND_THRESHOLD = "notif_wind_threshold"
         const val KEY_DISABLE_PRIVATE_VIEW = "disable_private_view"
         const val KEY_OPEN_EXTERNAL_BROWSER = "open_external_browser"
+        const val KEY_WEATHER_ANIMATIONS = "weather_animations"
     }
 
     private val _persistentNotif = MutableStateFlow(settings.getBoolean(KEY_PERSISTENT_NOTIF, false))
@@ -117,5 +118,12 @@ class AppSettings(private val settings: Settings) {
     fun setOpenExternalBrowser(open: Boolean) {
         settings[KEY_OPEN_EXTERNAL_BROWSER] = open
         _openExternalBrowser.value = open
+    }
+    private val _weatherAnimations = MutableStateFlow(settings.getString(KEY_WEATHER_ANIMATIONS, "full"))
+    val weatherAnimations: StateFlow<String> = _weatherAnimations.asStateFlow()
+
+    fun setWeatherAnimations(mode: String) {
+        settings[KEY_WEATHER_ANIMATIONS] = mode
+        _weatherAnimations.value = mode
     }
 }
