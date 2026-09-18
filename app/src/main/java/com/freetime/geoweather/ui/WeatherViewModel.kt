@@ -58,6 +58,9 @@ class WeatherViewModel(
         }
     }
 
+    suspend fun getDetectedLocationName(latitude: Double, longitude: Double): String? =
+        repository.reverseGeocode(latitude, longitude).firstOrNull()?.name
+
     fun clearSearch() {
         searchJob?.cancel()
         _searchResults.value = emptyList()
