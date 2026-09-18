@@ -7,7 +7,6 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 internal val LightColorScheme = lightColorScheme(
@@ -61,31 +60,14 @@ internal val DarkColorScheme = darkColorScheme(
 @Composable
 fun GeoWeatherTheme(
     darkTheme: Boolean = false,
-    dynamicColor: Boolean = true,
-    oledBlack: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    var colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
-    if (darkTheme && oledBlack) {
-        colorScheme = colorScheme.copy(
-            background = Color.Black,
-            surface = Color.Black,
-            surfaceVariant = Color.Black,
-            surfaceContainer = Color.Black,
-            surfaceContainerHigh = Color.Black,
-            surfaceContainerHighest = Color.Black,
-            surfaceContainerLow = Color.Black,
-            surfaceContainerLowest = Color.Black
-        )
-    }
+    // Material You is always enabled on Android 12+. Older Android versions use
+    // GeoWeather's Material 3 fallback palette.
+    val colorScheme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val context = LocalContext.current
+        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    } else if (darkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
