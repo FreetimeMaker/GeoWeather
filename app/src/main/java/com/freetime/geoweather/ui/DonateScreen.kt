@@ -73,8 +73,7 @@ fun DonateScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
