@@ -44,48 +44,70 @@ fun MainWeatherScreen(
     val currentLocationName = stringResource(Res.string.current_location)
     val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
 
+    fun openCurrentLocation() {
+        scope.launch {
+            isLocating = true
+            try {
+                val coords = getCurrentCoordinates()
+                if (coords != null) {
+                    onCurrentLocationClick(currentLocationName, coords.first, coords.second)
+                } else {
+                    snackbarHostState.showSnackbar(locationUnavailableMsg)
+                }
+            } finally {
+                isLocating = false
+            }
+        }
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(Res.string.app_name)) },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            scope.launch {
-                                isLocating = true
-                                try {
-                                    val coords = getCurrentCoordinates()
-                                    if (coords != null) {
-                                        onCurrentLocationClick(currentLocationName, coords.first, coords.second)
-                                    } else {
-                                        snackbarHostState.showSnackbar(locationUnavailableMsg)
-                                    }
-                                } finally {
-                                    isLocating = false
-                                }
-                            }
-                        },
-                        enabled = !isLocating
-                    ) {
+                title = { Text(stringResource(Res.string.app_name)) }
+            )
+        },
+        bottomBar = {
+            NavigationBar {
+                NavigationBarItem(
+                    selected = false,
+                    onClick = { openCurrentLocation() },
+                    enabled = !isLocating,
+                    icon = {
                         if (isLocating) {
-                            CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                strokeWidth = 2.dp
+                            )
                         } else {
                             Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
                         }
-                    }
-                    IconButton(onClick = onDonateClick) {
+                    },
+                    label = { Text(currentLocationName) }
+                )
+                NavigationBarItem(
+                    selected = false,
+                    onClick = onDonateClick,
+                    icon = {
                         Icon(
                             Icons.Default.Favorite,
-                            contentDescription = stringResource(Res.string.donate_nav_desc),
-                            tint = MaterialTheme.colorScheme.primary
+                            contentDescription = stringResource(Res.string.donate_nav_desc)
                         )
-                    }
-                    IconButton(onClick = onSettingsClick) {
-                        Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
-                    }
-                }
-            )
+                    },
+                    label = { Text(stringResource(Res.string.donate_nav_desc)) }
+                )
+                NavigationBarItem(
+                    selected = false,
+                    onClick = onSettingsClick,
+                    icon = {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = stringResource(Res.string.settings_nav_desc)
+                        )
+                    },
+                    label = { Text(stringResource(Res.string.settings_nav_desc)) }
+                )
+            }
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
