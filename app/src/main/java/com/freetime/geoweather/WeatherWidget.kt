@@ -114,7 +114,7 @@ class WeatherWidget : GlanceAppWidget() {
                         text = name,
                         maxLines = 1,
                         style = TextStyle(
-                            color = ColorProvider(day = Color(0xFF102A43), night = Color.White),
+                            color = ColorProvider(Color(0xFF102A43)),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -124,7 +124,7 @@ class WeatherWidget : GlanceAppWidget() {
                             Text(
                                 text = temp,
                                 style = TextStyle(
-                                    color = ColorProvider(day = Color(0xFF102A43), night = Color.White),
+                                    color = ColorProvider(Color(0xFF102A43)),
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -179,7 +179,7 @@ class WeatherWidget : GlanceAppWidget() {
             )
             Text(
                 text = "${item.temp}°",
-                style = TextStyle(color = ColorProvider(day = Color(0xFF102A43), night = Color.White), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                style = TextStyle(color = ColorProvider(Color(0xFF102A43)), fontSize = 12.sp, fontWeight = FontWeight.Bold)
             )
         }
     }
