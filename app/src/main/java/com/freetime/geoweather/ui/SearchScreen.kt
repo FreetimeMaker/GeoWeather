@@ -2,6 +2,7 @@ package com.freetime.geoweather.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -11,10 +12,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
+import com.freetime.geoweather.ui.glass.geoWeatherGlass
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,8 +35,12 @@ fun SearchScreen(
     }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 title = { Text(stringResource(Res.string.search_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -50,7 +57,8 @@ fun SearchScreen(
                     query = it
                     viewModel.searchCity(it)
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp)),
+                colors = OutlinedTextFieldDefaults.colors(unfocusedContainerColor = Color.Transparent, focusedContainerColor = Color.Transparent),
                 label = { Text(stringResource(Res.string.search_hint)) },
                 placeholder = { Text(stringResource(Res.string.search_placeholder)) },
                 trailingIcon = { Icon(Icons.Default.Search, null) },
@@ -83,7 +91,8 @@ fun SearchScreen(
                             ListItem(
                                 headlineContent = { Text(city.name) },
                                 supportingContent = { Text("${city.latitude}, ${city.longitude}") },
-                                modifier = Modifier.clickable {
+                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp), interactive = false).clickable {
                                     viewModel.addLocation(city)
                                     onCitySelected()
                                 }
