@@ -23,9 +23,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import com.freetime.geoweather.ui.glass.geoWeatherBackdropSource
 import com.freetime.geoweather.ui.glass.geoWeatherLiquidGlass
-import com.freetime.geoweather.ui.glass.rememberGeoWeatherBackdrop
+import com.freetime.geoweather.ui.glass.LocalGeoWeatherBackdrop
+import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.R as Res
@@ -48,7 +48,7 @@ fun MainWeatherScreen(
     val scope = rememberCoroutineScope()
     val currentLocationName = stringResource(Res.string.current_location)
     val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
-    val backdrop = rememberGeoWeatherBackdrop()
+    val backdrop = LocalGeoWeatherBackdrop.current
     val navigationShape = RoundedCornerShape(32.dp)
 
     fun openCurrentLocation() {
@@ -67,13 +67,15 @@ fun MainWeatherScreen(
         }
     }
 
-    Box(Modifier.fillMaxSize().geoWeatherBackdropSource(backdrop)) {
     Scaffold(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(Res.string.app_name)) }
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
+                title = { Text(stringResource(Res.string.app_name)) },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
             )
         },
         bottomBar = {
@@ -128,6 +130,8 @@ fun MainWeatherScreen(
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
+                modifier = Modifier.geoWeatherGlass(RoundedCornerShape(24.dp)),
+                containerColor = Color.Transparent,
                 onClick = onAddLocationClick,
                 icon = { Icon(Icons.Default.Add, contentDescription = null) },
                 text = { Text(stringResource(Res.string.SearchBTNTXT)) }
@@ -182,8 +186,11 @@ fun MainWeatherScreen(
                                 }
                             }
                         },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 4.dp)
+                            .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false)
                             .clickable {
                                 viewModel.selectLocation(loc)
                                 onLocationClick(loc)
@@ -208,7 +215,6 @@ fun MainWeatherScreen(
                 }
             }
         }
-    }
     }
 
     locationToDelete?.let { location ->
