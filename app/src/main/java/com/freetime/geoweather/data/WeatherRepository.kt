@@ -12,7 +12,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.*
 
-data class HourlyForecast(val time: String, val temp: Int, val code: Int)
+data class HourlyForecast(val time: String, val temp: Int, val code: Int, val precipProbability: Int = 0)
 
 data class DailyForecast(
     val date: String,
@@ -181,7 +181,7 @@ class WeatherRepository(
             val hourly = json["hourly"]?.jsonObject ?: return emptyList()
             val times = hourly["time"]?.jsonArray ?: return emptyList()
             val temps = hourly["temperature_2m"]?.jsonArray ?: return emptyList()
-            val codes = hourly["weathercode"]?.jsonArray ?: hourly["weather_code"]?.jsonArray ?: return emptyList()
+            val codes = hourly["weathercode"]?.jsonArray ?: hourly["weather_code"]?.jsonArray ?: return emptyList()\n            val precipProbabilities = hourly["precipitation_probability"]?.jsonArray
 
             val locationTimeZone = getLocationTimeZone(json)
             val now = Clock.System.now().toLocalDateTime(locationTimeZone)
@@ -198,7 +198,7 @@ class WeatherRepository(
                 val timeStr = times[i].jsonPrimitive.content.split("T").last()
                 val temp = temps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0
                 val code = codes[i].jsonPrimitive.intOrNull ?: 0
-                HourlyForecast(timeStr, temp, code)
+                HourlyForecast(timeStr, temp, code, precipProbabilities?.getOrNull(i)?.jsonPrimitive?.intOrNull ?: 0)
             }
         } catch (e: Exception) {
             emptyList()
