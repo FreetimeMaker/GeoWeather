@@ -321,6 +321,19 @@ fun WeatherDetailScreen(
                                         modifier = Modifier.weight(1f)
                                     )
                                     WeatherDetailItem(
+                                        label = "UV",
+                                        value = extras?.uvIndex?.let { uv ->
+                                            "${(uv * 10).roundToInt() / 10.0} · " + when {
+                                                uv < 3 -> "Low"
+                                                uv < 6 -> "Moderate"
+                                                uv < 8 -> "High"
+                                                uv < 11 -> "Very high"
+                                                else -> "Extreme"
+                                            }
+                                        } ?: "--",
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    WeatherDetailItem(
                                         label = stringResource(Res.string.cloud_base_label),
                                         value = extras?.cloudBaseM?.let { "${it.toInt()} m" } ?: "--",
                                         modifier = Modifier.weight(1f)
