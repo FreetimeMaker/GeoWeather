@@ -64,6 +64,8 @@ class WeatherRepository(
 
     suspend fun searchCity(query: String) = apiClient.searchCity(query)
 
+    suspend fun reverseGeocode(latitude: Double, longitude: Double) = apiClient.reverseGeocode(latitude, longitude)
+
     suspend fun addLocation(city: City): LocationEntity {
         locationDao.findByCoordinates(city.latitude, city.longitude)?.let {
             selectLocation(it)
