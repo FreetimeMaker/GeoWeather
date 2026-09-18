@@ -103,7 +103,7 @@ fun WeatherDetailScreen(
                 actions = {
                     if (loc?.currentTemp != null) {
                         IconButton(onClick = {
-                            val shareText = "${loc.name}: ${formatTemp(loc.currentTemp!!, tempUnit)} · ${loc.currentWeatherCode?.let { WeatherCodes.getDescription(it) } ?: ""}"
+                            val shareText = "${loc.name}: ${formatTemp(loc.currentTemp!!, tempUnit)} · ${loc.currentWeatherCode?.let { context.getString(WeatherCodes.getStringResource(it)) } ?: ""}"
                             val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
                                 type = "text/plain"
                                 putExtra(android.content.Intent.EXTRA_TEXT, shareText)
