@@ -323,4 +323,41 @@
     <string name="cl_135_system_theme">Made Every Screen (Hopefully) like System when activated</string>
     <string name="cl_311_fix_fdroid">Fixed F-Droid Build</string>
     <string name="cl_313_fix_linux">Fixed Linux Crash when trying to open a Page via Web</string>
+
+    <!-- New weather features -->
+    <string name="share_weather">Share weather</string>
+    <string name="sun_moon_title">Sun &amp; Moon</string>
+    <string name="moon_label">Moon</string>
+    <string name="trip_forecast_title">Trip forecast</string>
+    <string name="next_days_at">Next days at %1$s</string>
+    <string name="rain_probability_short">%1$d%% rain</string>
+    <string name="air_quality_pollen_title">Air quality &amp; pollen</string>
+    <string name="aqi_label">AQI</string>
+    <string name="pm25_label">PM2.5</string>
+    <string name="pm10_label">PM10</string>
+    <string name="alder_pollen_label">Alder</string>
+    <string name="birch_pollen_label">Birch</string>
+    <string name="grass_pollen_label">Grass</string>
+    <string name="next_rain_title">Next rain</string>
+    <string name="rain_possible_now">Rain possible now · %1$d%%</string>
+    <string name="next_rain_around">Next rain around %1$s · %2$d%%</string>
+    <string name="no_rain_24h">No rain expected in the next 24 hours</string>
+    <string name="timeline_24h">24-hour timeline</string>
+    <string name="compare_locations">Compare locations</string>
+    <string name="wind_value">%1$d km/h wind</string>
+    <string name="humidity_value">%1$d%% humidity</string>
+    <string name="uv_label">UV</string>
+    <string name="uv_low">Low</string>
+    <string name="uv_moderate">Moderate</string>
+    <string name="uv_high">High</string>
+    <string name="uv_very_high">Very high</string>
+    <string name="uv_extreme">Extreme</string>
+    <string name="moon_new">New Moon</string>
+    <string name="moon_waxing_crescent">Waxing Crescent</string>
+    <string name="moon_first_quarter">First Quarter</string>
+    <string name="moon_waxing_gibbous">Waxing Gibbous</string>
+    <string name="moon_full">Full Moon</string>
+    <string name="moon_waning_gibbous">Waning Gibbous</string>
+    <string name="moon_last_quarter">Last Quarter</string>
+    <string name="moon_waning_crescent">Waning Crescent</string>
 </resources>
