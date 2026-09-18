@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -21,6 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
+import com.freetime.geoweather.ui.glass.geoWeatherBackdropSource
+import com.freetime.geoweather.ui.glass.geoWeatherLiquidGlass
+import com.freetime.geoweather.ui.glass.rememberGeoWeatherBackdrop
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.R as Res
@@ -43,6 +48,8 @@ fun MainWeatherScreen(
     val scope = rememberCoroutineScope()
     val currentLocationName = stringResource(Res.string.current_location)
     val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
+    val backdrop = rememberGeoWeatherBackdrop()
+    val navigationShape = RoundedCornerShape(32.dp)
 
     fun openCurrentLocation() {
         scope.launch {
@@ -60,7 +67,9 @@ fun MainWeatherScreen(
         }
     }
 
+    Box(Modifier.fillMaxSize().geoWeatherBackdropSource(backdrop)) {
     Scaffold(
+        containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
@@ -68,7 +77,15 @@ fun MainWeatherScreen(
             )
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 10.dp)
+                    .heightIn(min = 72.dp)
+                    .geoWeatherLiquidGlass(backdrop, navigationShape, interactive = true),
+                containerColor = Color.Transparent,
+                tonalElevation = 0.dp
+            ) {
                 NavigationBarItem(
                     selected = false,
                     onClick = { openCurrentLocation() },
@@ -191,6 +208,7 @@ fun MainWeatherScreen(
                 }
             }
         }
+    }
     }
 
     locationToDelete?.let { location ->
