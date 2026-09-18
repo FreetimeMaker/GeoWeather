@@ -1,5 +1,0 @@
-Implemented GitHub OAuth authentication via API
-Login is now optional and managed via Settings
-Improved deep link handling for authentication callback
-Fixed resource merging and translation issues
-Updated Weather Icon mapping for better day/night accuracy

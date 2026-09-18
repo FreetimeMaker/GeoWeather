@@ -1,1 +1,0 @@
-• Deleted the Repository Files so Weather Data will be coming from the Weather Detail Activity again.

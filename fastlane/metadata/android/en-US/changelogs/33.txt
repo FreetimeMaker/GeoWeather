@@ -1,2 +1,0 @@
-- Hopefully Fixed FreetimeSDK Donation Option
-- Added More Donation Options

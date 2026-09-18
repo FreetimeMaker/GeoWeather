@@ -1,9 +1,0 @@
-- Updated UI to Material YOU with Dynamic Color support
-- Added Unit Switching (Celsius/Fahrenheit, km/h/mph)
-- Added support for multiple weather providers (Open-Meteo & WeatherAPI)
-- Added historical weather trends and graphs
-- Enhanced 7-day forecast with interactive details
-- Added customizable weather notification thresholds
-- New Home Screen Widget with refresh button
-- Improved localization and UI text cleanup
-- Added moon phase data support

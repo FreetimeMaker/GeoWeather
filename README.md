@@ -119,3 +119,37 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 <a href="https://github.com/FreetimeMaker/GeoWeather/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=FreetimeMaker/GeoWeather"  alt="Icons of contributors to GeoWeather"/>
 </a>
+
+## 🌟 Star History
+
+<a href="https://www.star-history.com/?repos=freetimemaker%2Fgeoweather&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=freetimemaker/geoweather&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=freetimemaker/geoweather&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=freetimemaker/geoweather&type=date&legend=top-left" />
+ </picture>
+</a>
+
+</div>
+
+---
+
+## 🤝 Donations
+
+If you like GeoWeather, I'd appreciate a small donation — thank you! Below are some common cryptocurrency options.
+
+<div align="center">
+
+[![Bitcoin](https://img.shields.io/badge/Bitcoin-BTC-FF9900?style=for-the-badge&logo=bitcoin&logoColor=white)](https://blockchair.com/bitcoin/address/1DsCAVrzvGokrzXpe6YR33QuTo5EppiKRE)
+[![Litecoin](https://img.shields.io/badge/Litecoin-LTC-345D9D?style=for-the-badge&logo=litecoin&logoColor=white)](https://blockchair.com/litecoin/address/LU2ERRXKTeKnzpuieQcpsBteViEY7ff5Wg)
+
+</div>
+
+Alternatively, you can also display the addresses directly:
+
+- Bitcoin (BTC): `1DsCAVrzvGokrzXpe6YR33QuTo5EppiKRE` — or open in block explorer by clicking the badge above
+- Litecoin (LTC): `LU2ERRXKTeKnzpuieQcpsBteViEY7ff5Wg` — or open in block explorer by clicking the badge above
+
+<div align="center">
+<p><i>Developed with ❤️ by FreetimeMaker</i></p>
+</div>

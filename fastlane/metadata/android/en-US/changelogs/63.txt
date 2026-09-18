@@ -1,2 +1,0 @@
-• Added ScrollView in FreetimeSDK Donation Screen
-• Changed the E-Mail Address

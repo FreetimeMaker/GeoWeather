@@ -1,9 +1,0 @@
-• Power Update: Extended forecast to 16 days.
-• Visualization: Added 24h Trend charts for temperature and rain.
-• Technical: Wind Compass, Pressure Trend, Visibility, and Cloud Base data.
-• Health: Added UV-Index, Pollutants (PM2.5, NO2, O3), and Pollen count.
-• Geology: Integrated Earthquake monitor for nearby activity.
-• Astronomy: Graphical Moon Phases and Golden/Blue Hour info.
-• Customization: OLED Black Mode and App Icon Themes.
-• User Experience: Activity Scores, App Shortcuts, and fixed notifications.
-• Privacy: Removed all account/login requirements, ads, and in-app purchases. App is now 100% free and account-free.

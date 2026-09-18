@@ -1,1 +1,0 @@
-• Added 2 new Settings for the Webview: You can disable the PrivacyWebView or you can open it in your External Browser.

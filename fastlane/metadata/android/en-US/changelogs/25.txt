@@ -1,2 +1,0 @@
-- Changed Weather View so it wont Crash (Hopefully)
-- Added Scrolling to Weather View and Donation View

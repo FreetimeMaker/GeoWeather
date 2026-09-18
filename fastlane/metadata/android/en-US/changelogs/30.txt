@@ -1,3 +1,0 @@
-- Updated dependencies
-- Fixed moon phase display
-- Added more translations

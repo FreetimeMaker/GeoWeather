@@ -1,3 +1,0 @@
-- Added more Search Options
-- Optimized Notifications
-- Added Material YOU

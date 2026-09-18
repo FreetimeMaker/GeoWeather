@@ -1,2 +1,0 @@
-- Added more Donation Options via FreetimeSDK (My Own PaymentSDK even for Games)
-- Fixed Hopefully the App Start Crash

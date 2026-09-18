@@ -1,3 +1,0 @@
-- Updated so it wont crash anymore
-- Updated Descriptions for F-Droid
-- Updated README.md

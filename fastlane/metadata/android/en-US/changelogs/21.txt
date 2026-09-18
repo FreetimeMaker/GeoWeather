@@ -1,1 +1,0 @@
-- Fixed a Bug where the App Crasht when you wanted to look at the Weather

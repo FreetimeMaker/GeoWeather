@@ -1,4 +1,0 @@
-• Fix: Fixed Home screen weather display issues by switching to ID-based location lookups.
-• Fix: Resolved persistent loading issues with improved provider fallbacks.
-• Auth: Improved GitHub/Modrinth login reliability and automated profile syncing.
-• UI: Added manual refresh button to the Home screen for instant updates.

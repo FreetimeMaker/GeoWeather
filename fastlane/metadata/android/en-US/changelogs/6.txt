@@ -1,1 +1,0 @@
-Added a new Floating Action Button to the main activity where users can donate.

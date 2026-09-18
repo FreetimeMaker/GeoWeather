@@ -1,7 +1,0 @@
-Added Authentication & User Profile support
-Added 'Require Login' security setting
-Added Historical Weather Trends (Last 3 days)
-Added 7-day forecast support for PRO users
-Improved API error handling and stability
-Added date labels to historical charts
-Optimized background workers and widget for security

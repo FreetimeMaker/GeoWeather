@@ -1,5 +1,0 @@
-Added support for user profile pictures from API
-Moved weather history section to Weather Detail view
-Improved Open-Meteo API compatibility and weather loading
-Fixed weather history icon in Main Screen
-Added image loading support with Coil

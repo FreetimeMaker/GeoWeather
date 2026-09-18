@@ -1,4 +1,0 @@
-- Added more Translations
-- Updated so it won't Crash anymore
-- Added much More than that
-- Updated so the Weather Data will be Updated

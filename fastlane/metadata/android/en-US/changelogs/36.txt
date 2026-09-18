@@ -1,2 +1,0 @@
-- Added more Donation Links
-- Made Every Screen (Hopefully) like System when activated

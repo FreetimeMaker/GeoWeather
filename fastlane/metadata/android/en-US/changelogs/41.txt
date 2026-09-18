@@ -1,1 +1,0 @@
-- Changed everything from 7 Days to 3 Days because I am working on an API for the App with Different optional plans and I want to make sure that the API is working properly before I change it to 7 Days again. I will change it back to 7 Days once I am sure that the API is working properly.
