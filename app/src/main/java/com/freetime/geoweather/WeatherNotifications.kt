@@ -33,7 +33,7 @@ object WeatherNotifications {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val notification = NotificationCompat.Builder(context, if (alert) CHANNEL_ALERTS else CHANNEL_UPDATES)
-            .setSmallIcon(R.mipmap.icon)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
