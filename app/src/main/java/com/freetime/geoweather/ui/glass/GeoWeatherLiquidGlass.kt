@@ -32,10 +32,6 @@ import com.kyant.backdrop.backdrops.LayerBackdrop
 import com.kyant.backdrop.backdrops.layerBackdrop as nativeLayerBackdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.colorControls
-import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
 import kotlinx.coroutines.launch
 
 val LocalGeoWeatherBackdrop = staticCompositionLocalOf<LayerBackdrop?> { null }
@@ -76,13 +72,9 @@ fun Modifier.geoWeatherLiquidGlass(
     val glass = this.drawBackdrop(
         backdrop = backdrop,
         shape = { shape },
-        effects = {
-            val pressed = press.value
-            vibrancy()
-            colorControls(brightness = 0.08f, contrast = 1.08f, saturation = 1.7f)
-            blur(18.dp.toPx() + 3.dp.toPx() * pressed)
-            lens(size.minDimension / 4f + 2.dp.toPx() * pressed, size.minDimension / 2f, false)
-        },
+        // GPU crash isolation: keep Backdrop capture/drawBackdrop active, but
+        // temporarily remove shader effects (vibrancy/colorControls/blur/lens).
+        effects = {},
         onDrawSurface = {
             drawRect(glassScrim.copy(alpha = 0.22f))
             val pressed = press.value
