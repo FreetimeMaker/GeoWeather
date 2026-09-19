@@ -42,7 +42,8 @@ fun SettingsScreen(
     appSettings: AppSettings,
     onBack: () -> Unit,
     onChangeLogClick: () -> Unit,
-    onWebViewClick: (String, String) -> Unit
+    onWebViewClick: (String, String) -> Unit,
+    onAccountClick: () -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
@@ -113,6 +114,21 @@ fun SettingsScreen(
                 }
             }
 
+            if (account == null) {
+                Text(
+                    stringResource(Res.string.account_optional_description),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Button(
+                    onClick = onAccountClick,
+                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                ) {
+                    Text(stringResource(Res.string.sign_in_or_create_account))
+                }
+            }
+
             SettingsSection(stringResource(Res.string.subscription_title))
             account?.let { profile ->
                 plans[profile.subscription.lowercase()]?.let { plan ->
@@ -145,6 +161,7 @@ fun SettingsScreen(
                 }
             }
 
+            if (account != null) {
             OutlinedTextField(
                 value = code,
                 onValueChange = { code = it },
@@ -176,12 +193,15 @@ fun SettingsScreen(
                 else Text(stringResource(Res.string.redeem_code))
             }
 
+            }
+
             SettingsSection(stringResource(Res.string.sync_title))
             Text(
                 stringResource(Res.string.sync_description) + " " + stringResource(Res.string.sync_automatic),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+            if (account != null) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Button(
                     onClick = {
@@ -208,6 +228,14 @@ fun SettingsScreen(
                     colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
                     border = null
                 ) { Text(stringResource(Res.string.sync_restore)) }
+            }
+
+            } else {
+                Text(
+                    stringResource(Res.string.sync_requires_account),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
 
             SettingsSection(stringResource(Res.string.unit_settings_title))
