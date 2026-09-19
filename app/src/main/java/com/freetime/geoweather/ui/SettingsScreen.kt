@@ -78,12 +78,6 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            SettingsSection(stringResource(Res.string.theme_settings_title))
-            Text(
-                "Material You is always enabled. Light mode is used from sunrise until sunset; dark mode is enabled automatically after sunset.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
 
             SettingsSection(stringResource(Res.string.unit_settings_title))
             Text(stringResource(Res.string.temperature_unit), style = MaterialTheme.typography.bodyLarge)
