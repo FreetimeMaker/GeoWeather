@@ -166,7 +166,7 @@ fun SettingsScreen(
                             snackbarHostState.showSnackbar(if (ok) exportSuccess else exportFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp))
                 ) {
                     Text(stringResource(Res.string.export_locations))
                 }
@@ -179,14 +179,14 @@ fun SettingsScreen(
                             snackbarHostState.showSnackbar(if (ok) importSuccess else importFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp))
                 ) {
                     Text(stringResource(Res.string.import_locations))
                 }
             }
 
             Spacer(Modifier.height(16.dp))
-            Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)) {
                 Text(stringResource(Res.string.open_change_log))
             }
             Spacer(Modifier.height(8.dp))
@@ -199,14 +199,14 @@ fun SettingsScreen(
             )
             OutlinedButton(
                 onClick = { openUrl("mailto:FreetimeMaker@proton.me?subject=GeoWeather Feedback") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp))
             ) {
                 Text(stringResource(Res.string.feedback_btn))
             }
             Spacer(Modifier.height(8.dp))
             OutlinedButton(
                 onClick = { onWebViewClick("https://github.com/FreetimeMaker/GeoWeather/issues", "GitHub Issues") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp))
             ) {
                 Text(stringResource(Res.string.feedback_github_btn))
             }
@@ -242,7 +242,7 @@ fun SettingsToggle(label: String, subtitle: String, checked: Boolean, onCheckedC
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(modifier = Modifier.weight(1f)) {
+        Column(modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp))) {
             Text(label)
             Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -284,6 +284,7 @@ fun ThresholdField(label: String, value: Int, onValueChange: (Int) -> Unit) {
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).geoWeatherGlass(RoundedCornerShape(22.dp)),
+        colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent)
     )
 }
