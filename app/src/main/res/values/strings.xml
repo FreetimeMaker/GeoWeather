@@ -470,4 +470,6 @@
     <string name="last_synced">Last synced: %1$s</string>
     <string name="compare_plans">Compare plans</string>
     <string name="current_plan">Current plan</string>
+    <string name="sign_out">Sign out</string>
+    <string name="signed_out">Signed out. GeoWeather is using the Free plan.</string>
 </resources>
