@@ -14,39 +14,81 @@ class WeatherChangeWorker(
     override suspend fun doWork(): Result {
         val repository = DependencyManager.getRepository()
         val appSettings = DependencyManager.getAppSettings()
+        val locations = repository.getAllLocationsSync()
+            .filter { it.changeAlertsEnabled || it.notificationsEnabled }
+        if (locations.isEmpty()) return Result.success()
 
-        val location = repository.getSelectedLocation() ?: return Result.success()
+        var retry = false
+        locations.forEach { location ->
+            try {
+                val oldTemp = location.currentTemp
+                val oldWind = location.currentWindSpeed
+                val updated = repository.refreshLocationWeather(location.id) ?: location
+                val newTemp = updated.currentTemp
+                val newWind = updated.currentWindSpeed
 
-        try {
-            if (!location.changeAlertsEnabled) return Result.success()
-            val oldTemp = location.currentTemp
-            val oldWind = location.currentWindSpeed
-            val updatedLocation = repository.refreshSelectedLocationWeather() ?: location
-            val newTemp = updatedLocation.currentTemp
-            val newWind = updatedLocation.currentWindSpeed
-            val tempChanged = oldTemp != null && newTemp != null && kotlin.math.abs(newTemp - oldTemp) >= appSettings.tempThreshold.value
-            val windChanged = oldWind != null && newWind != null && newWind - oldWind >= appSettings.windThreshold.value
+                if (location.changeAlertsEnabled) {
+                    val tempChanged = oldTemp != null && newTemp != null &&
+                        kotlin.math.abs(newTemp - oldTemp) >= appSettings.tempThreshold.value
+                    val windChanged = oldWind != null && newWind != null &&
+                        kotlin.math.abs(newWind - oldWind) >= appSettings.windThreshold.value
+                    if (tempChanged || windChanged) {
+                        val message = applicationContext.getString(
+                            SharedRes.string.temperature_change_msg,
+                            repository.getDisplayTemp(location, appSettings.tempUnit.value),
+                            repository.getDisplayTemp(updated, appSettings.tempUnit.value)
+                        )
+                        WeatherNotifications.show(
+                            applicationContext,
+                            200000 + (location.id % 100000).toInt(),
+                            applicationContext.getString(SharedRes.string.app_name),
+                            message,
+                            alert = true
+                        )
+                    }
+                }
 
-            if (tempChanged || windChanged) {
-                val oldTempStr = repository.getDisplayTemp(location, appSettings.tempUnit.value)
-                val newTempStr = repository.getDisplayTemp(updatedLocation, appSettings.tempUnit.value)
-                val message = applicationContext.getString(
-                    SharedRes.string.temperature_change_msg,
-                    oldTempStr,
-                    newTempStr
-                )
-                WeatherNotifications.show(
-                    applicationContext,
-                    2002,
-                    applicationContext.getString(SharedRes.string.app_name),
-                    message,
-                    alert = true
-                )
+                if (location.notificationsEnabled) {
+                    val hourly = repository.getHourlyForecasts(updated)
+                    val severe = hourly.take(6).firstOrNull { it.code in 95..99 || it.code in 71..86 }
+                    if (severe != null) {
+                        val message = applicationContext.getString(
+                            SharedRes.string.extreme_weather_notification,
+                            updated.name,
+                            WeatherCodes.getDescription(severe.code)
+                        )
+                        WeatherNotifications.show(
+                            applicationContext,
+                            300000 + (location.id % 100000).toInt(),
+                            applicationContext.getString(SharedRes.string.weather_alerts_title),
+                            message,
+                            alert = true
+                        )
+                    }
+
+                    val rain = hourly.drop(1).take(3).firstOrNull {
+                        it.precipProbability >= 60 && (it.rain ?: it.precipitation ?: 0.0) > 0.0
+                    }
+                    if (rain != null) {
+                        val message = applicationContext.getString(
+                            SharedRes.string.rain_alert_notification,
+                            rain.time,
+                            updated.name,
+                            rain.precipProbability
+                        )
+                        WeatherNotifications.show(
+                            applicationContext,
+                            400000 + (location.id % 100000).toInt(),
+                            applicationContext.getString(SharedRes.string.next_rain_title),
+                            message,
+                            alert = true
+                        )
+                    }
+                }
+            } catch (_: Exception) {
+                retry = true
             }
-        } catch (e: Exception) {
-            return Result.retry()
         }
-
-        return Result.success()
+        return if (retry) Result.retry() else Result.success()
     }
 }
