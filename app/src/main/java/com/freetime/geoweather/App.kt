@@ -22,8 +22,8 @@ sealed class Screen {
         val transientLat: Double = 0.0,
         val transientLon: Double = 0.0
     ) : Screen()
-    data class HourlyDetail(val locationName: String, val forecast: HourlyForecast) : Screen()
-    data class DailyDetail(val locationName: String, val forecast: DailyForecast) : Screen()
+    data class HourlyDetail(val locationName: String, val forecasts: List<HourlyForecast>, val index: Int) : Screen()
+    data class DailyDetail(val locationName: String, val forecasts: List<DailyForecast>, val index: Int) : Screen()
     data class Radar(val lat: Double, val lon: Double) : Screen()
     data class Web(val url: String, val title: String = "") : Screen()
     data object Settings : Screen()
@@ -138,15 +138,16 @@ private fun ScreenContent(
                 appSettings = appSettings,
                 onBack = { onGoBack() },
                 onRadarClick = { lat, lon -> onNavigate(Radar(lat, lon)) },
-                onHourlyClick = { locationName, forecast -> onNavigate(HourlyDetail(locationName, forecast)) },
-                onDailyClick = { locationName, forecast -> onNavigate(DailyDetail(locationName, forecast)) }
+                onHourlyClick = { locationName, forecasts, index -> onNavigate(HourlyDetail(locationName, forecasts, index)) },
+                onDailyClick = { locationName, forecasts, index -> onNavigate(DailyDetail(locationName, forecasts, index)) }
             )
         }
         is HourlyDetail -> {
             ForecastDetailScreen(
                 locationName = screen.locationName,
-                hourly = screen.forecast,
-                daily = null,
+                hourlyForecasts = screen.forecasts,
+                dailyForecasts = emptyList(),
+                initialIndex = screen.index,
                 appSettings = appSettings,
                 onBack = { onGoBack() }
             )
@@ -154,8 +155,9 @@ private fun ScreenContent(
         is DailyDetail -> {
             ForecastDetailScreen(
                 locationName = screen.locationName,
-                hourly = null,
-                daily = screen.forecast,
+                hourlyForecasts = emptyList(),
+                dailyForecasts = screen.forecasts,
+                initialIndex = screen.index,
                 appSettings = appSettings,
                 onBack = { onGoBack() }
             )
