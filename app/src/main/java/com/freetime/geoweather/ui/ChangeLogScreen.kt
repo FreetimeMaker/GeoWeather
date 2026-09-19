@@ -38,6 +38,16 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             stringResource(Res.string.cl_430_shortcuts),
             stringResource(Res.string.cl_430_deeplink),
             stringResource(Res.string.cl_430_whats_new),
+            stringResource(Res.string.cl_430_freetime_maven),
+            stringResource(Res.string.cl_430_freetime_modules),
+            stringResource(Res.string.cl_430_shared_glass),
+            stringResource(Res.string.cl_430_shared_browser),
+            stringResource(Res.string.cl_430_shared_donations),
+            stringResource(Res.string.cl_430_update_checker),
+            stringResource(Res.string.cl_430_update_default_off),
+            stringResource(Res.string.cl_430_update_startup),
+            stringResource(Res.string.cl_430_update_dialog),
+            stringResource(Res.string.cl_430_backdrop_fix),
             stringResource(Res.string.cl_430_fixes)
         ),
         "v4.2.0" to listOf(
