@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -65,7 +66,6 @@ fun DonateScreen(
         "DOGE (DOGE only)" to "DFZtQ1SedQFGijrR7LJ55RFBNFVQpbGULn",
         "DOGE (BEP only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc",
         "TON (TON only)" to "UQANB5nn0Oinom7IFkbClwRWRpK2zfal6sO11988Y85AamDS",
-        "DOGE (BEP only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc",
         "POL (Polygon only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc",
         "POL (ETH only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc",
         "HSH (BEP only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc",
@@ -224,7 +224,10 @@ fun DonateScreen(
                 )
             }
 
-            items(walletAddresses, key = { "${it.first}:${it.second}" }) { (name, address) ->
+            itemsIndexed(
+                items = walletAddresses,
+                key = { index, wallet -> "$index:${wallet.first}:${wallet.second}" }
+            ) { _, (name, address) ->
                 Card(
                     modifier = Modifier.fillMaxWidth()
                         .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
