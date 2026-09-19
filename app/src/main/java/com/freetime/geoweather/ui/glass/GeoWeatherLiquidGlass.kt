@@ -59,14 +59,14 @@ fun Modifier.geoWeatherLiquidGlass(
 ): Modifier {
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
     val surface = if (isDarkTheme) {
-        Color.Black.copy(alpha = 0.28f)
+        Color.Black.copy(alpha = 0.48f)
     } else {
-        Color.White.copy(alpha = 0.24f)
+        Color.White.copy(alpha = 0.42f)
     }
     val fallbackSurface = if (isDarkTheme) {
-        MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.72f)
+        MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.92f)
     } else {
-        MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.68f)
+        MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.90f)
     }
     if (backdrop == null) return clip(shape).background(fallbackSurface)
 
@@ -78,7 +78,7 @@ fun Modifier.geoWeatherLiquidGlass(
         shape = { shape },
         effects = {
             vibrancy()
-            blur(8.dp.toPx())
+            blur(12.dp.toPx())
             lens(24.dp.toPx(), 24.dp.toPx())
         },
         layerBlock = {

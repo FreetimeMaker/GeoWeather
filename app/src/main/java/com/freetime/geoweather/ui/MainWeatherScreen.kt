@@ -261,7 +261,7 @@ fun MainWeatherScreen(
                         Text(
                             text = stringResource(Res.string.main_donation_hint),
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
