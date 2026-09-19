@@ -478,4 +478,6 @@
     <string name="animation_full">Full</string>
     <string name="animation_reduced">Reduced</string>
     <string name="animation_off">Off</string>
+    <string name="diagnostics_title">Diagnostics &amp; privacy</string>
+    <string name="export_diagnostics">Share diagnostics</string>
 </resources>
