@@ -472,4 +472,5 @@
     <string name="current_plan">Current plan</string>
     <string name="sign_out">Sign out</string>
     <string name="signed_out">Signed out. GeoWeather is using the Free plan.</string>
+    <string name="recent_searches">Recent searches</string>
 </resources>
