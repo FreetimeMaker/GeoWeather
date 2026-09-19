@@ -56,8 +56,8 @@ fun WeatherDetailScreen(
     appSettings: AppSettings,
     onBack: () -> Unit,
     onRadarClick: (Double, Double) -> Unit,
-    onHourlyClick: (String, HourlyForecast) -> Unit,
-    onDailyClick: (String, DailyForecast) -> Unit
+    onHourlyClick: (String, List<HourlyForecast>, Int) -> Unit,
+    onDailyClick: (String, List<DailyForecast>, Int) -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
@@ -516,12 +516,13 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                items(hourly, key = { it.time }) { hour ->
+                                items(hourly.size, key = { hourly[it].time }) { hourIndex ->
+                                    val hour = hourly[hourIndex]
                                     Card(
                                         modifier = Modifier.geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false),
                                         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                                        onClick = { onHourlyClick(loc.name, hour) }
+                                        onClick = { onHourlyClick(loc.name, hourly, hourIndex) }
                                     ) {
                                         Column(
                                             modifier = Modifier.padding(12.dp),
@@ -554,14 +555,15 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
-                        items(visibleDaily, key = { it.date }) { day ->
+                        items(visibleDaily.size, key = { visibleDaily[it].date }) { dayIndex ->
+                            val day = visibleDaily[dayIndex]
                             var expanded by remember { mutableStateOf(false) }
                             Card(
                                 modifier = Modifier.fillMaxWidth()
                                     .animateContentSize(animationSpec = spring())
                                     .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                                onClick = { onDailyClick(loc.name, day) }
+                                onClick = { onDailyClick(loc.name, daily, daily.indexOf(day)) }
                             ) {
                                 Column(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
                                     Row(
