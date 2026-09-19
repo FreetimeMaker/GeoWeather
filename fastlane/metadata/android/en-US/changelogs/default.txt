@@ -1,17 +1,15 @@
-GeoWeather 4.1.0
-
-• Added optional Appwrite accounts with GitHub and GitLab OAuth
-• Signed-out users now use the Free plan automatically
-• Added account profiles, OAuth avatars and sign out
-• Added GeoWeather subscriptions, plan comparison and subscription code redemption
-• Added dynamic plan features and plan-based location, forecast and notification limits
-• Added cloud synchronization for settings and saved locations
-• Added automatic sync, manual sync and cloud restore
-• Added Sync v2 support for synchronizing deleted locations
-• Added subscription caching and live plan refresh support
-• Added recent location searches
-• Added the current subscription to the main screen and weather details
-• Weather details now respect the forecast length included in the current plan
-• Improved automatic dark mode to use exact sunrise and sunset times
-• Improved Liquid Glass styling for account, subscription and sync UI
-• Updated Appwrite integration and OAuth session handling
+• Added Morning and Evening weather briefings
+• Added smart activity windows for walking, running, cycling and photography
+• Added travel planning foundations for weather-aware trips
+• Added location groups for organizing saved places
+• Added forecast accuracy tracking based on historical weather data
+• Added weather provider comparison foundations
+• Added configurable multi-widget preferences
+• Added Sync v3 foundations with stable location IDs, update timestamps and deletion tracking
+• Added Normal, Outdoor and Travel notification profiles
+• Added Quiet Hours for suppressing regular overnight weather notifications
+• Added a first-run onboarding experience
+• Added a privacy-friendly Diagnostics & Privacy screen with shareable diagnostics
+• Added Android app shortcuts for Current Location, Search and Settings
+• Added geoweather://open deep-link support
+• What’s New is now shown automatically once per app version
