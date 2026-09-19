@@ -17,6 +17,13 @@ import com.freetime.geoweather.data.registerFilePickers
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.freetime.geoweather.ui.glass.LocalGeoWeatherBackdrop
 import com.freetime.geoweather.ui.glass.geoWeatherBackdropSource
@@ -48,10 +55,20 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .geoWeatherBackdropSource(backdrop)
                 ) {
-                    WeatherApp(
-                        database = DependencyManager.getDatabase(),
-                        appSettings = DependencyManager.getAppSettings()
-                    )
+                    var authState by remember { mutableStateOf<Boolean?>(null) }
+                    LaunchedEffect(Unit) {
+                        authState = AppwriteAuth.hasSession(this@MainActivity)
+                    }
+                    when (authState) {
+                        null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                        false -> AuthScreen(onAuthenticated = { authState = true })
+                        true -> WeatherApp(
+                            database = DependencyManager.getDatabase(),
+                            appSettings = DependencyManager.getAppSettings()
+                        )
+                    }
                 }
             }
         }
