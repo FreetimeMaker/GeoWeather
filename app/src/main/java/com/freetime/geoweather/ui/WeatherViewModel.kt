@@ -114,6 +114,22 @@ class WeatherViewModel(
         }
     }
 
+    fun setLocationNotifications(location: LocationEntity, enabled: Boolean, time: String) {
+        viewModelScope.launch {
+            try {
+                repository.setLocationNotifications(location, enabled, time)
+                val context = getAndroidAppContext()
+                val updated = repository.getAllLocationsSync().firstOrNull { it.id == location.id }
+                if (context != null && updated != null) {
+                    if (enabled) WeatherNotificationScheduler.schedule(context, updated)
+                    else WeatherNotificationScheduler.cancel(context, location.id)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun toggleDefaultLocation(location: LocationEntity) {
         viewModelScope.launch {
             try {
