@@ -29,7 +29,8 @@ data class LocationEntity(
     val changeAlertsEnabled: Boolean = false,
     val changeAlertInterval: String = "3",
     val selected: Boolean = false,
-    val isDefault: Boolean = false
+    val isDefault: Boolean = false,
+    val sortOrder: Int = 0
 ) {
     val currentTemp: Double? get() {
         return try {
