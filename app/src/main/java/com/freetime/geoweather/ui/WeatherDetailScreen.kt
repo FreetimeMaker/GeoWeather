@@ -267,46 +267,7 @@ fun WeatherDetailScreen(
                         item { WeatherAlertsSection(code) }
                     }
 
-                    if (daily.isNotEmpty()) {
-                        item {
-                            val today = daily.first()
-                            val moon = moonPhaseFor(java.time.LocalDate.now())
-                            Card(
-                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                            ) {
-                                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Text(stringResource(Res.string.sun_moon_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                        WeatherDetailItem(stringResource(Res.string.sunrise_label), today.sunrise.takeLast(5), modifier = Modifier.weight(1f))
-                                        WeatherDetailItem(stringResource(Res.string.sunset_label), today.sunset.takeLast(5), modifier = Modifier.weight(1f))
-                                        WeatherDetailItem(stringResource(Res.string.moon_label), "${moon.first} ${moon.second}", modifier = Modifier.weight(1f))
-                                    }
-                                }
-                            }
-                        }
-                        item {
-                            Card(
-                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                            ) {
-                                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Text(stringResource(Res.string.trip_forecast_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    Text(stringResource(Res.string.next_days_at, loc.name), style = MaterialTheme.typography.bodyMedium)
-                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                        items(daily.take(7)) { day ->
-                                            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(88.dp)) {
-                                                Text(day.date.takeLast(5), style = MaterialTheme.typography.labelSmall)
-                                                Icon(painterResource(WeatherIconMapper.getWeatherIcon(day.code)), null, Modifier.size(34.dp), tint = Color.Unspecified)
-                                                Text("${day.maxTemp}° / ${day.minTemp}°", fontWeight = FontWeight.Bold)
-                                                Text(stringResource(Res.string.rain_probability_short, day.precipProbMax), style = MaterialTheme.typography.labelSmall)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    // Daily astronomy and trip details live in the dedicated daily forecast screen.
 
                     airExtras?.let { air ->
                         item {
