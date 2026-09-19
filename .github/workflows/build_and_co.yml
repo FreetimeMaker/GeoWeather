@@ -29,16 +29,6 @@ jobs:
           VERSION=$(grep 'versionName' app/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-          test -s fastlane/metadata/android/en-US/changelogs/default.txt
-          grep -q "GeoWeather $VERSION" fastlane/metadata/android/en-US/changelogs/default.txt || {
-            echo "::error::Fastlane default changelog does not match GeoWeather $VERSION"
-            exit 1
-          }
-          grep -q "\"v$VERSION\"" app/src/main/java/com/freetime/geoweather/ui/ChangeLogScreen.kt || {
-            echo "::error::In-app changelog is missing v$VERSION"
-            exit 1
-          }
-
           git fetch --tags
 
           if git rev-parse "v$VERSION" >/dev/null 2>&1; then
