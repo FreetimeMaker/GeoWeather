@@ -5,9 +5,9 @@ import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.WeatherRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
@@ -27,14 +27,19 @@ object AppwriteAutoSync {
                 settings.tempUnit.map { Unit },
                 settings.windUnit.map { Unit },
                 settings.pressureUnit.map { Unit },
+                settings.useSystemTheme.map { Unit },
+                settings.darkModeEnabled.map { Unit },
+                settings.dynamicColor.map { Unit },
+                settings.oledBlack.map { Unit },
                 settings.persistentNotif.map { Unit },
                 settings.tempThreshold.map { Unit },
                 settings.windThreshold.map { Unit },
+                settings.disablePrivateView.map { Unit },
                 settings.openExternalBrowser.map { Unit },
                 settings.weatherAnimations.map { Unit }
-            ).drop(9)
+            ).drop(14)
+                .debounce(1200)
                 .collect {
-                    delay(1200)
                     runCatching { AppwriteSync.push(context, repository, settings) }
                 }
         }
