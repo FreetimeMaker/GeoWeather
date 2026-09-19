@@ -63,8 +63,8 @@ class WeatherChangeWorker(
                             val reason = when {
                                 severe.code in 95..99 -> WeatherCodes.getDescription(severe.code)
                                 severe.code in 71..86 -> WeatherCodes.getDescription(severe.code)
-                                (severe.windGusts ?: 0.0) >= 70.0 -> "Strong wind gusts"
-                                else -> "Heavy precipitation"
+                                (severe.windGusts ?: 0.0) >= 70.0 -> applicationContext.getString(SharedRes.string.strong_wind_gusts)
+                                else -> applicationContext.getString(SharedRes.string.heavy_precipitation)
                             }
                             val message = applicationContext.getString(
                                 SharedRes.string.extreme_weather_notification,
