@@ -3,6 +3,8 @@ package com.freetime.geoweather
 import android.content.Context
 import io.appwrite.Client
 import io.appwrite.ID
+import io.appwrite.enums.OAuthProvider
+import io.appwrite.models.User
 import io.appwrite.services.Account
 
 object AppwriteAuth {
@@ -37,6 +39,16 @@ object AppwriteAuth {
             name = name.trim()
         )
         signIn(context, email, password)
+    }
+
+    suspend fun currentUser(context: Context) = account(context).get()
+
+    suspend fun signInWithGitHub(context: Context) {
+        account(context).createOAuth2Session(provider = OAuthProvider.GITHUB)
+    }
+
+    suspend fun signInWithGitLab(context: Context) {
+        account(context).createOAuth2Session(provider = OAuthProvider.GITLAB)
     }
 
     suspend fun signOut(context: Context) {
