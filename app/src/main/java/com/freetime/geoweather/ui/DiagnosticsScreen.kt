@@ -17,6 +17,7 @@ import com.freetime.geoweather.*
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
+import me.free_time.core.FreetimeCore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +31,8 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
     val packageInfo = remember { runCatching { context.packageManager.getPackageInfo(context.packageName, 0) }.getOrNull() }
     val versionName = packageInfo?.versionName ?: "unknown"
     val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo?.longVersionCode ?: 0L else @Suppress("DEPRECATION") (packageInfo?.versionCode?.toLong() ?: 0L)
-    val report = "GeoWeather $versionName ($versionCode)\n" +
+    val appName = remember { FreetimeCore.appName(context) }
+    val report = "$appName $versionName ($versionCode)\n" +
         "Android ${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}\n" +
         "Device: ${Build.MANUFACTURER} ${Build.MODEL}\n" +
         "Network: $network\nSaved locations: $locations"
