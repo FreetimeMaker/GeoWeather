@@ -60,6 +60,12 @@ class MainActivity : ComponentActivity() {
                         authState = AppwriteAuth.hasSession(this@MainActivity)
                         if (authState == true) {
                             runCatching { AppwriteAuth.syncOAuthProfile(this@MainActivity) }
+                            runCatching {
+                                val repository = DependencyManager.getRepository()
+                                val settings = DependencyManager.getAppSettings()
+                                val restored = AppwriteSync.pull(this@MainActivity, repository, settings)
+                                if (!restored) AppwriteSync.push(this@MainActivity, repository, settings)
+                            }
                         }
                     }
                     when (authState) {
