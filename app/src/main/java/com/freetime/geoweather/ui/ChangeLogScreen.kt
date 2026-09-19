@@ -338,7 +338,7 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             TopAppBar(
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                     .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onSurface, navigationIconContentColor = MaterialTheme.colorScheme.onSurface, actionIconContentColor = MaterialTheme.colorScheme.onSurface),
                 title = { Text(stringResource(Res.string.whats_new_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -371,7 +371,7 @@ fun ReleaseCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)
     ) {
         Column(
             modifier = Modifier
