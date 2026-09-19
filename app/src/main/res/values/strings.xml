@@ -430,4 +430,10 @@
     <string name="redeem_code">Redeem</string>
     <string name="redeem_code_invalid">This code is invalid or has already been used.</string>
     <string name="redeem_code_success">Subscription activated: %1$s</string>
+    <string name="sync_title">Sync</string>
+    <string name="sync_description">Sync settings and saved locations with your Appwrite account.</string>
+    <string name="sync_now">Sync now</string>
+    <string name="sync_restore">Restore from cloud</string>
+    <string name="sync_success">Synchronization completed.</string>
+    <string name="sync_failed">Synchronization failed.</string>
 </resources>
