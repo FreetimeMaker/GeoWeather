@@ -55,8 +55,6 @@ class WeatherRepository(
 
     suspend fun getSelectedLocation(): LocationEntity? = locationDao.getSelectedLocation()
 
-    suspend fun getAllLocationsSync(): List<LocationEntity> = locationDao.getAllLocationsSync()
-
     suspend fun importBackupLocations(locations: List<LocationEntity>) {
         for (loc in locations) {
             if (locationDao.findByCoordinates(loc.latitude, loc.longitude) == null) {
