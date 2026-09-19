@@ -31,6 +31,7 @@ sealed class Screen {
     data object ChangeLog : Screen()
     data object Auth : Screen()
     data object Subscriptions : Screen()
+    data object Diagnostics : Screen()
 }
 
 @Composable
@@ -183,7 +184,8 @@ private fun ScreenContent(
                 onChangeLogClick = { onNavigate(ChangeLog) },
                 onWebViewClick = { url, title -> onNavigate(Web(url, title)) },
                 onAccountClick = { onNavigate(Auth) },
-                onSubscriptionsClick = { onNavigate(Subscriptions) }
+                onSubscriptionsClick = { onNavigate(Subscriptions) },
+                onDiagnosticsClick = { onNavigate(Diagnostics) }
             )
         }
         is Auth -> {
@@ -194,6 +196,9 @@ private fun ScreenContent(
         }
         is Subscriptions -> {
             SubscriptionScreen(onBack = { onGoBack() })
+        }
+        is Diagnostics -> {
+            DiagnosticsScreen(onBack = { onGoBack() })
         }
         is Donate -> {
             DonateScreen(
