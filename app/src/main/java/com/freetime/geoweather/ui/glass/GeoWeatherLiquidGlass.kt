@@ -13,7 +13,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.drawscope.drawRect
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -55,8 +57,18 @@ fun Modifier.geoWeatherLiquidGlass(
     shape: Shape,
     interactive: Boolean = true,
 ): Modifier {
-    val surface = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.40f)
-    if (backdrop == null) return clip(shape).background(surface.copy(alpha = 0.58f))
+    val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val surface = if (isDarkTheme) {
+        Color.Black.copy(alpha = 0.28f)
+    } else {
+        Color.White.copy(alpha = 0.24f)
+    }
+    val fallbackSurface = if (isDarkTheme) {
+        MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.72f)
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.68f)
+    }
+    if (backdrop == null) return clip(shape).background(fallbackSurface)
 
     val scope = rememberCoroutineScope()
     val press = remember { Animatable(0f) }
