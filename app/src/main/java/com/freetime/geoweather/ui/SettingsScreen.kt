@@ -44,7 +44,8 @@ fun SettingsScreen(
     onChangeLogClick: () -> Unit,
     onWebViewClick: (String, String) -> Unit,
     onAccountClick: () -> Unit,
-    onSubscriptionsClick: () -> Unit
+    onSubscriptionsClick: () -> Unit,
+    onDiagnosticsClick: () -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
@@ -376,6 +377,13 @@ fun SettingsScreen(
             }
 
             Spacer(Modifier.height(16.dp))
+            OutlinedButton(
+                onClick = onDiagnosticsClick,
+                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                border = null
+            ) { Text(stringResource(Res.string.diagnostics_title)) }
+            Spacer(Modifier.height(8.dp))
             Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp)) {
                 Text(stringResource(Res.string.open_change_log))
             }
