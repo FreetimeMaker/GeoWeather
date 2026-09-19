@@ -445,4 +445,5 @@
     <string name="plan_badge">%1$s plan</string>
     <string name="location_limit_reached">Your %1$s plan allows up to %2$d saved locations.</string>
     <string name="notifications_plan_required">Weather notifications are not included in your current plan.</string>
+    <string name="upgrade_subscription">Upgrade subscription</string>
 </resources>
