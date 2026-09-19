@@ -143,7 +143,7 @@ fun SettingsScreen(
                     }
             }
 
-            if (effectiveSubscription != "ultrimium") {
+            if (account != null && effectiveSubscription != "ultrimium") {
                 Button(
                     onClick = {
                         val url = "https://dashboard.free-time.me/shop"
