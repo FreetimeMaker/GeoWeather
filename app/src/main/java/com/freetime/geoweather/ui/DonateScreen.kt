@@ -2,24 +2,22 @@ package com.freetime.geoweather.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.copyToClipboard
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.ui.text.font.FontFamily
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
+import me.free_time.donations.DonationTarget
+import me.free_time.donations.FreetimeDonationScreen
 
 private data class ExternalDonation(@StringRes val labelKey: Int, val url: String)
 
@@ -29,9 +27,8 @@ fun DonateScreen(
     onBack: () -> Unit,
     onWebViewClick: (String, String) -> Unit
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-
     val walletAddresses = listOf(
+
         "BTC (BTC only)" to "1DsCAVrzvGokrzXpe6YR33QuTo5EppiKRE",
         "ETH (ETH only)" to "0x3d3eee5b542975839d2dccbf2f97139debc711bc",
         "USDT (Tron only)" to "TKUNwoQMyLuJzUzWPKwA7yw4qujz2Pz6gS",
@@ -86,8 +83,8 @@ fun DonateScreen(
         "Pirate Cash" to "0xA2C0CF8a702475b12865E1C28C7319f9A6806B25"
     )
 
-
     val externalDonations = listOf(
+
         ExternalDonation(Res.string.don_nowpayments_via, "https://nowpayments.io/donation/GeoWeather"),
         ExternalDonation(Res.string.DonViaOxaPay, "https://pay.oxapay.com/13038067"),
         ExternalDonation(Res.string.DonViaBTC, "https://ncwallet.net/pay/60misly"),
@@ -108,163 +105,50 @@ fun DonateScreen(
         ExternalDonation(Res.string.DonViaARB, "https://ncwallet.net/pay/80arui")
     )
 
+    val targets = buildList<DonationTarget> {
+        add(DonationTarget.Link(stringResource(Res.string.DonViaGHSponsors), "https://github.com/sponsors/FreetimeMaker"))
+        externalDonations.forEach { donation ->
+            add(DonationTarget.Link(stringResource(donation.labelKey), donation.url))
+        }
+        walletAddresses.forEach { (label, address) ->
+            add(DonationTarget.Wallet(label = label, currency = label.substringBefore(" ("), address = address))
+        }
+    }
+
     Scaffold(
         containerColor = Color.Transparent,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                modifier = Modifier
+                    .padding(horizontal = 14.dp, vertical = 8.dp)
                     .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onSurface, navigationIconContentColor = MaterialTheme.colorScheme.onSurface, actionIconContentColor = MaterialTheme.colorScheme.onSurface),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
+                ),
                 title = { Text(stringResource(Res.string.donate_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back_nav_desc))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.back_nav_desc)
+                        )
                     }
                 }
             )
         }
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = stringResource(Res.string.support_development),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = stringResource(Res.string.select_option_msg),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
-            }
-
-            item {
-                Card(modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false), colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = stringResource(Res.string.about_developer_title),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = stringResource(Res.string.about_developer_text),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-
-            item {
-                Card(modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false), colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = stringResource(Res.string.donation_mission_title),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = stringResource(Res.string.donation_mission_text),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-
-            item {
-                Text(
-                    text = stringResource(Res.string.cash_label),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-                )
-            }
-
-            item {
-                DonateButton(text = stringResource(Res.string.DonViaGHSponsors)) {
-                    onWebViewClick("https://github.com/sponsors/FreetimeMaker", "GitHub Sponsors")
-                }
-            }
-
-            item {
-                Text(
-                    text = stringResource(Res.string.crypto_label),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-                )
-            }
-
-            items(externalDonations, key = { it.url }) { donation ->
-                val label = stringResource(donation.labelKey)
-                DonateButton(text = label) {
-                    onWebViewClick(donation.url, label)
-                }
-            }
-
-            item {
-                Text(
-                    text = "Wallet Addresses",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-                )
-            }
-
-            itemsIndexed(
-                items = walletAddresses,
-                key = { index, wallet -> "$index:${wallet.first}:${wallet.second}" }
-            ) { _, (name, address) ->
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                        .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)
-                ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text(name, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            address,
-                            style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        TextButton(
-                            onClick = { copyToClipboard(address) },
-                            modifier = Modifier.align(Alignment.End)
-                                .geoWeatherGlass(RoundedCornerShape(18.dp))
-                        ) {
-                            Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.width(8.dp))
-                            Text("Copy")
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun DonateButton(text: String, onClick: () -> Unit) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent)
-    ) {
-        Text(text)
+        FreetimeDonationScreen(
+            targets = targets,
+            title = stringResource(Res.string.support_development),
+            onLinkClick = { onWebViewClick(it.url, it.label) },
+            onWalletClick = { copyToClipboard(it.address) },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+        )
     }
 }
