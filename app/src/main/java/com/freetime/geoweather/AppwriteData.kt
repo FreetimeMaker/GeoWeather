@@ -3,6 +3,8 @@ package com.freetime.geoweather
 import android.content.Context
 import io.appwrite.Query
 import io.appwrite.services.TablesDB
+import io.appwrite.services.Functions
+import org.json.JSONObject
 
 data class GeoWeatherAccount(
     val userId: String,
@@ -49,6 +51,19 @@ object AppwriteData {
             )
             rows.rows.lastOrNull()?.data?.get("type")?.toString() ?: "free"
         }.getOrDefault("free")
+    }
+
+    suspend fun redeemCode(context: Context, code: String): String? {
+        val client = io.appwrite.Client(context.applicationContext)
+            .setEndpoint("https://fra.cloud.appwrite.io/v1")
+            .setProject("6aad93080001aa8fad42")
+        val execution = Functions(client).createExecution(
+            functionId = "redeem-geoweather-code",
+            body = """{"code":${JSONObject.quote(code.trim())}}""",
+            xasync = false
+        )
+        val result = runCatching { JSONObject(execution.responseBody) }.getOrNull() ?: return null
+        return if (result.optBoolean("ok")) result.optString("subscription").takeIf { it.isNotBlank() } else null
     }
 
     suspend fun validateCode(context: Context, code: String): String? {
