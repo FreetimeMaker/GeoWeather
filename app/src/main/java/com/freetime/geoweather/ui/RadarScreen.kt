@@ -27,7 +27,7 @@ fun RadarScreen(
             TopAppBar(
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                     .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onSurface, navigationIconContentColor = MaterialTheme.colorScheme.onSurface, actionIconContentColor = MaterialTheme.colorScheme.onSurface),
                 title = { Text(stringResource(Res.string.radar_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {

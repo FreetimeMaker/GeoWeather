@@ -65,7 +65,7 @@ fun SettingsScreen(
             TopAppBar(
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                     .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onSurface, navigationIconContentColor = MaterialTheme.colorScheme.onSurface, actionIconContentColor = MaterialTheme.colorScheme.onSurface),
                 title = { Text(stringResource(Res.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -210,7 +210,7 @@ fun SettingsScreen(
                 border = null
             ) { Text(stringResource(Res.string.diagnostics_title)) }
             Spacer(Modifier.height(8.dp))
-            Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp)) {
+            Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface), elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp)) {
                 Text(stringResource(Res.string.open_change_log))
             }
             Spacer(Modifier.height(8.dp))
