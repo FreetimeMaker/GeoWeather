@@ -218,6 +218,17 @@ class WeatherRepository(
             val temps = hourly["temperature_2m"]?.jsonArray ?: return emptyList()
             val codes = hourly["weathercode"]?.jsonArray ?: hourly["weather_code"]?.jsonArray ?: return emptyList()
             val precipProbabilities = hourly["precipitation_probability"]?.jsonArray
+            val humidities = hourly["relative_humidity_2m"]?.jsonArray
+            val feelsLikes = hourly["apparent_temperature"]?.jsonArray
+            val visibilities = hourly["visibility"]?.jsonArray
+            val pressures = hourly["pressure_msl"]?.jsonArray
+            val cloudBases = hourly["cloud_base"]?.jsonArray
+            val precipitations = hourly["precipitation"]?.jsonArray
+            val rains = hourly["rain"]?.jsonArray
+            val snowfalls = hourly["snowfall"]?.jsonArray
+            val windSpeeds = hourly["wind_speed_10m"]?.jsonArray
+            val windGusts = hourly["wind_gusts_10m"]?.jsonArray
+            val uvIndexes = hourly["uv_index"]?.jsonArray
 
             val locationTimeZone = getLocationTimeZone(json)
             val now = Clock.System.now().toLocalDateTime(locationTimeZone)
@@ -234,7 +245,23 @@ class WeatherRepository(
                 val timeStr = times[i].jsonPrimitive.content.split("T").last()
                 val temp = temps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0
                 val code = codes[i].jsonPrimitive.intOrNull ?: 0
-                HourlyForecast(timeStr, temp, code, precipProbabilities?.getOrNull(i)?.jsonPrimitive?.intOrNull ?: 0)
+                HourlyForecast(
+                    time = timeStr,
+                    temp = temp,
+                    code = code,
+                    precipProbability = precipProbabilities?.getOrNull(i)?.jsonPrimitive?.intOrNull ?: 0,
+                    humidity = humidities?.getOrNull(i)?.jsonPrimitive?.intOrNull,
+                    feelsLike = feelsLikes?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    visibilityKm = visibilities?.getOrNull(i)?.jsonPrimitive?.doubleOrNull?.div(1000.0),
+                    pressure = pressures?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    cloudBaseM = cloudBases?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    precipitation = precipitations?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    rain = rains?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    snowfall = snowfalls?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    windSpeed = windSpeeds?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    windGusts = windGusts?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    uvIndex = uvIndexes?.getOrNull(i)?.jsonPrimitive?.doubleOrNull
+                )
             }
         } catch (e: Exception) {
             emptyList()
@@ -255,6 +282,15 @@ class WeatherRepository(
             val precipSums = daily["precipitation_sum"]?.jsonArray
             val precipProbs = daily["precipitation_probability_max"]?.jsonArray
             val windMaxs = daily["wind_speed_10m_max"]?.jsonArray
+            val feelsLikeMaxs = daily["apparent_temperature_max"]?.jsonArray
+            val feelsLikeMins = daily["apparent_temperature_min"]?.jsonArray
+            val daylightDurations = daily["daylight_duration"]?.jsonArray
+            val sunshineDurations = daily["sunshine_duration"]?.jsonArray
+            val uvMaxs = daily["uv_index_max"]?.jsonArray
+            val rainSums = daily["rain_sum"]?.jsonArray
+            val snowfallSums = daily["snowfall_sum"]?.jsonArray
+            val precipitationHours = daily["precipitation_hours"]?.jsonArray
+            val windGustMaxs = daily["wind_gusts_10m_max"]?.jsonArray
 
             List(minOf(dates.size, codes.size, maxTemps.size, minTemps.size, 16)) { i ->
                 DailyForecast(
@@ -266,7 +302,16 @@ class WeatherRepository(
                     sunset = sunsets?.getOrNull(i)?.jsonPrimitive?.content ?: "--",
                     precipSum = precipSums?.getOrNull(i)?.jsonPrimitive?.doubleOrNull ?: 0.0,
                     precipProbMax = precipProbs?.getOrNull(i)?.jsonPrimitive?.intOrNull ?: 0,
-                    windMax = windMaxs?.getOrNull(i)?.jsonPrimitive?.doubleOrNull ?: 0.0
+                    windMax = windMaxs?.getOrNull(i)?.jsonPrimitive?.doubleOrNull ?: 0.0,
+                    feelsLikeMax = feelsLikeMaxs?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    feelsLikeMin = feelsLikeMins?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    daylightDuration = daylightDurations?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    sunshineDuration = sunshineDurations?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    uvMax = uvMaxs?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    rainSum = rainSums?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    snowfallSum = snowfallSums?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    precipitationHours = precipitationHours?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
+                    windGustMax = windGustMaxs?.getOrNull(i)?.jsonPrimitive?.doubleOrNull
                 )
             }
         } catch (e: Exception) {
