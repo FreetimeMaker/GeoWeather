@@ -23,6 +23,8 @@ import coil.compose.AsyncImage
 import com.freetime.geoweather.AppwriteData
 import com.freetime.geoweather.GeoWeatherAccount
 import com.freetime.geoweather.AppwriteSync
+import com.freetime.geoweather.SubscriptionPlan
+import com.freetime.geoweather.SubscriptionPlans
 import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.BACKUP_FILE_NAME
 import com.freetime.geoweather.data.BACKUP_MIME_TYPE
@@ -62,8 +64,10 @@ fun SettingsScreen(
     var account by remember { mutableStateOf<GeoWeatherAccount?>(null) }
     var code by remember { mutableStateOf("") }
     var codeBusy by remember { mutableStateOf(false) }
+    var plans by remember { mutableStateOf<Map<String, SubscriptionPlan>>(emptyMap()) }
     LaunchedEffect(Unit) {
         account = runCatching { AppwriteData.account(context) }.getOrNull()
+        plans = SubscriptionPlans.load()
     }
 
     Scaffold(
@@ -110,6 +114,20 @@ fun SettingsScreen(
             }
 
             SettingsSection(stringResource(Res.string.subscription_title))
+            account?.let { profile ->
+                plans[profile.subscription.lowercase()]?.let { plan ->
+                    Column(
+                        Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false).padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(stringResource(Res.string.plan_features), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(Res.string.plan_locations, plan.maxLocations))
+                        Text(stringResource(Res.string.plan_forecast_days, plan.forecastDays))
+                        Text(stringResource(if (plan.notifications) Res.string.plan_notifications_on else Res.string.plan_notifications_off))
+                    }
+                }
+            }
+
             OutlinedTextField(
                 value = code,
                 onValueChange = { code = it },
@@ -143,7 +161,7 @@ fun SettingsScreen(
 
             SettingsSection(stringResource(Res.string.sync_title))
             Text(
-                stringResource(Res.string.sync_description),
+                stringResource(Res.string.sync_description) + " " + stringResource(Res.string.sync_automatic),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
