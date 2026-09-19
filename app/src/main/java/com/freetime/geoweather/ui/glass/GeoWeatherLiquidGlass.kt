@@ -33,9 +33,23 @@ import kotlinx.coroutines.launch
 
 val LocalGeoWeatherBackdrop = staticCompositionLocalOf<LayerBackdrop?> { null }
 
+private fun supportsGpuBackdrop(): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return false
+
+    // Some Xiaomi/Redmi/POCO devices, especially MediaTek-based models, can crash
+    // natively in RenderThread when advanced backdrop shaders are initialized.
+    // A native SIGSEGV cannot be caught from Kotlin, so avoid that GPU path.
+    val manufacturer = Build.MANUFACTURER.lowercase()
+    val brand = Build.BRAND.lowercase()
+    return manufacturer != "xiaomi" &&
+        brand != "xiaomi" &&
+        brand != "redmi" &&
+        brand != "poco"
+}
+
 @Composable
 fun rememberGeoWeatherBackdrop(): LayerBackdrop? =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) rememberLayerBackdrop() else null
+    if (supportsGpuBackdrop()) rememberLayerBackdrop() else null
 
 fun Modifier.geoWeatherBackdropSource(backdrop: LayerBackdrop?): Modifier =
     if (backdrop != null) layerBackdrop(backdrop) else this
