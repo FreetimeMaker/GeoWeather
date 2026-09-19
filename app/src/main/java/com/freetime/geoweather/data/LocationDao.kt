@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LocationDao {
-    @Query("SELECT * FROM locations ORDER BY name ASC")
+    @Query("SELECT * FROM locations ORDER BY isDefault DESC, sortOrder ASC, name ASC")
     fun getAllLocationsFlow(): Flow<List<LocationEntity>>
 
     @Query("SELECT * FROM locations ORDER BY name ASC")
