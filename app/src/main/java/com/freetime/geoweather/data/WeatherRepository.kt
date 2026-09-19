@@ -69,6 +69,16 @@ class WeatherRepository(
     private val historyDao: WeatherHistoryDao,
     private val apiClient: WeatherApiClient
 ) {
+    private val deletedLocations = linkedSetOf<Pair<Double, Double>>()
+
+    fun getDeletedLocationsForSync(): List<Pair<Double, Double>> = deletedLocations.toList()
+
+    suspend fun applyDeletedLocations(locations: List<Pair<Double, Double>>) {
+        locations.forEach { (lat, lon) ->
+            locationDao.findByCoordinates(lat, lon)?.let { locationDao.deleteLocation(it) }
+        }
+    }
+
     fun getAllLocations(): Flow<List<LocationEntity>> =
         locationDao.getAllLocationsFlow().distinctUntilChanged()
 
@@ -132,6 +142,7 @@ class WeatherRepository(
 
     suspend fun deleteLocation(location: LocationEntity) {
         locationDao.deleteLocation(location)
+        deletedLocations += location.latitude to location.longitude
     }
 
     suspend fun toggleLocationNotifications(location: LocationEntity) {
