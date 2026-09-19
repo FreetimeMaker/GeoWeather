@@ -871,7 +871,7 @@ fun ForecastDetailScreen(
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         if (hourly != null) {
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                WeatherDetailItem("Time", hourly.time.takeLast(5), Modifier.weight(1f))
+                                WeatherDetailItem("Time", hourly.time.takeLast(5), modifier = Modifier.weight(1f))
                                 WeatherDetailItem("Temperature", formatTemp(hourly.temp.toDouble(), tempUnit), modifier = Modifier.weight(1f))
                                 WeatherDetailItem("Rain", "${hourly.precipProbability}%", modifier = Modifier.weight(1f))
                             }
