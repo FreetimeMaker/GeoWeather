@@ -13,6 +13,8 @@ import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import android.net.Uri
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.annotation.RequiresPermission
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
@@ -83,6 +85,15 @@ suspend fun getDetectedLocationName(latitude: Double, longitude: Double): String
     } catch (_: Exception) {
         null
     }
+}
+
+fun isNetworkAvailable(): Boolean {
+    val context = androidContext ?: return false
+    val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager ?: return false
+    val network = manager.activeNetwork ?: return false
+    val capabilities = manager.getNetworkCapabilities(network) ?: return false
+    return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+        capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
 }
 
 var systemBackHandler: (() -> Boolean)? = null
