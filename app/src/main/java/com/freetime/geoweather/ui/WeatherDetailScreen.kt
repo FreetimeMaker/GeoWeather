@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -120,13 +119,6 @@ fun WeatherDetailScreen(
                             context.startActivity(android.content.Intent.createChooser(intent, context.getString(Res.string.share_weather)))
                         }) {
                             Icon(Icons.Default.Share, contentDescription = stringResource(Res.string.share_weather))
-                        }
-                    }
-                    IconButton(onClick = { doRefresh() }, enabled = !isRefreshing) {
-                        if (isRefreshing) {
-                            CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-                        } else {
-                            Icon(Icons.Default.Refresh, contentDescription = stringResource(Res.string.refresh_nav_desc))
                         }
                     }
                 }
