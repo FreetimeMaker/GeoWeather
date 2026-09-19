@@ -50,7 +50,7 @@ fun MainWeatherScreen(
     val currentLocationName = stringResource(Res.string.current_location)
     val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
     val backdrop = LocalGeoWeatherBackdrop.current
-    val navigationShape = RoundedCornerShape(32.dp)
+    val navigationShape = RoundedCornerShape(50)
 
     fun openCurrentLocation() {
         scope.launch {
@@ -96,8 +96,9 @@ fun MainWeatherScreen(
             NavigationBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 10.dp)
-                    .heightIn(min = 72.dp)
+                    // Floating pill: leave visible space around all edges, especially the bottom.
+                    .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 20.dp)
+                    .height(68.dp)
                     .geoWeatherLiquidGlass(backdrop, navigationShape, interactive = true),
                 containerColor = Color.Transparent,
                 tonalElevation = 0.dp
