@@ -29,7 +29,11 @@ private data class SyncedLocation(
 )
 
 @Serializable
+private data class DeletedLocation(val latitude: Double, val longitude: Double)
+
+@Serializable
 private data class SyncPayload(
+    val version: Int = 2,
     val tempUnit: String,
     val windUnit: String,
     val pressureUnit: String,
@@ -43,7 +47,8 @@ private data class SyncPayload(
     val disablePrivateView: Boolean = false,
     val openExternalBrowser: Boolean,
     val weatherAnimations: String,
-    val locations: List<SyncedLocation>
+    val locations: List<SyncedLocation>,
+    val deletedLocations: List<DeletedLocation> = emptyList()
 )
 
 object AppwriteSync {
@@ -80,6 +85,9 @@ object AppwriteSync {
                     isDefault = it.isDefault,
                     sortOrder = it.sortOrder
                 )
+            },
+            deletedLocations = repository.getDeletedLocationsForSync().map { (lat, lon) ->
+                DeletedLocation(lat, lon)
             }
         )
         val service = TablesDB(AppwriteAuth.client(context))
@@ -134,6 +142,7 @@ object AppwriteSync {
         settings.setOpenExternalBrowser(payload.openExternalBrowser)
         settings.setWeatherAnimations(payload.weatherAnimations)
 
+        repository.applyDeletedLocations(payload.deletedLocations.map { it.latitude to it.longitude })
         repository.importBackupLocations(payload.locations.map {
             LocationEntity(
                 name = it.name,
