@@ -25,6 +25,9 @@ object WeatherNotifications {
     }
 
     fun show(context: Context, id: Int, title: String, message: String, alert: Boolean = false) {
+        val settings = runCatching { com.freetime.geoweather.data.DependencyManager.getAppSettings() }.getOrNull()
+        val hour = java.time.LocalTime.now().hour
+        if (!alert && settings?.quietHours?.value == true && (hour >= 22 || hour < 7)) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
         ensureChannels(context)
