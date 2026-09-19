@@ -253,6 +253,7 @@ fun SettingsScreen(
                             val ok = runCatching {
                                 AppwriteSync.pull(context, viewModel.repositoryForSync(), appSettings)
                             }.getOrDefault(false)
+                            if (ok) lastSyncAt = java.time.LocalTime.now().withSecond(0).withNano(0).toString()
                             snackbarHostState.showSnackbar(context.getString(if (ok) Res.string.sync_success else Res.string.sync_failed))
                         }
                     },
@@ -300,13 +301,13 @@ fun SettingsScreen(
                 onSelect = { appSettings.setPressureUnit(it) }
             )
 
-            SettingsSection("Weather animations")
-            Text("Animation intensity", style = MaterialTheme.typography.bodyLarge)
+            SettingsSection(stringResource(Res.string.weather_animations_title))
+            Text(stringResource(Res.string.animation_intensity), style = MaterialTheme.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
-                    "full" to "Full",
-                    "reduced" to "Reduced",
-                    "off" to "Off"
+                    "full" to stringResource(Res.string.animation_full),
+                    "reduced" to stringResource(Res.string.animation_reduced),
+                    "off" to stringResource(Res.string.animation_off)
                 ),
                 selected = weatherAnimations,
                 onSelect = { appSettings.setWeatherAnimations(it) }
