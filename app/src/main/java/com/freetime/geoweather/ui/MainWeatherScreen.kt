@@ -27,6 +27,8 @@ import com.freetime.geoweather.ui.glass.LocalGeoWeatherBackdrop
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
+import com.freetime.geoweather.getDetectedLocationName
+import kotlinx.coroutines.delay
 import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.launch
 
@@ -56,8 +58,7 @@ fun MainWeatherScreen(
             try {
                 val coords = getCurrentCoordinates()
                 if (coords != null) {
-                    val detectedLocationName = viewModel
-                        .getDetectedLocationName(coords.first, coords.second)
+                    val detectedLocationName = getDetectedLocationName(coords.first, coords.second)
                         ?.takeIf { it.isNotBlank() }
                         ?: currentLocationName
                     onCurrentLocationClick(detectedLocationName, coords.first, coords.second)
@@ -66,6 +67,16 @@ fun MainWeatherScreen(
                 }
             } finally {
                 isLocating = false
+            }
+        }
+    }
+
+    LaunchedEffect(locations.map { it.id }) {
+        if (locations.isNotEmpty()) {
+            viewModel.refreshAllLocations()
+            while (true) {
+                delay(10 * 60 * 1000L)
+                viewModel.refreshAllLocations()
             }
         }
     }
@@ -171,11 +182,7 @@ fun MainWeatherScreen(
                             Card(
                                 modifier = Modifier
                                     .width(156.dp)
-                                    .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false)
-                                    .clickable {
-                                        viewModel.selectLocation(loc)
-                                        onLocationClick(loc)
-                                    },
+                                    .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false),
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                             ) {
                                 Column(
