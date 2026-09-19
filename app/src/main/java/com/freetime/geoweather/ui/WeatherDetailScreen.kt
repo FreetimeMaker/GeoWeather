@@ -860,18 +860,18 @@ fun ForecastDetailScreen(
                 ) {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         hourly?.let { hour ->
-                            DetailRow("Time" to hour.time.takeLast(5), "Temperature" to formatTemp(hour.temp.toDouble(), tempUnit), "Feels like" to (hour.feelsLike?.let { formatTemp(it, tempUnit) } ?: "--"))
-                            DetailRow("Humidity" to (hour.humidity?.let { "$it%" } ?: "--"), "Rain chance" to "${hour.precipProbability}%", "Precipitation" to (hour.precipitation?.let { "$it mm" } ?: "--"))
-                            DetailRow("Rain" to (hour.rain?.let { "$it mm" } ?: "--"), "Snow" to (hour.snowfall?.let { "$it cm" } ?: "--"), "Visibility" to (hour.visibilityKm?.let { "${(it * 10).roundToInt() / 10.0} km" } ?: "--"))
-                            DetailRow("Pressure" to (hour.pressure?.let { "${it.roundToInt()} hPa" } ?: "--"), "Cloud base" to (hour.cloudBaseM?.let { "${it.roundToInt()} m" } ?: "--"), "UV" to (hour.uvIndex?.let { "${(it * 10).roundToInt() / 10.0}" } ?: "--"))
-                            DetailRow("Wind" to formatWind(hour.windSpeed, null, windUnit), "Gusts" to formatWind(hour.windGusts, null, windUnit))
+                            DetailRow(stringResource(Res.string.time_label) to hour.time.takeLast(5), stringResource(Res.string.temperature_label) to formatTemp(hour.temp.toDouble(), tempUnit), stringResource(Res.string.feels_like_label) to (hour.feelsLike?.let { formatTemp(it, tempUnit) } ?: "--"))
+                            DetailRow(stringResource(Res.string.humidity_label) to (hour.humidity?.let { "$it%" } ?: "--"), stringResource(Res.string.rain_chance_label) to "${hour.precipProbability}%", stringResource(Res.string.precipitation_label) to (hour.precipitation?.let { "$it mm" } ?: "--"))
+                            DetailRow(stringResource(Res.string.rain_label) to (hour.rain?.let { "$it mm" } ?: "--"), stringResource(Res.string.snow_label) to (hour.snowfall?.let { "$it cm" } ?: "--"), stringResource(Res.string.visibility_label) to (hour.visibilityKm?.let { "${(it * 10).roundToInt() / 10.0} km" } ?: "--"))
+                            DetailRow(stringResource(Res.string.pressure_label) to (hour.pressure?.let { "${it.roundToInt()} hPa" } ?: "--"), stringResource(Res.string.cloud_base_label) to (hour.cloudBaseM?.let { "${it.roundToInt()} m" } ?: "--"), stringResource(Res.string.uv_label) to (hour.uvIndex?.let { "${(it * 10).roundToInt() / 10.0}" } ?: "--"))
+                            DetailRow(stringResource(Res.string.wind_label) to formatWind(hour.windSpeed, null, windUnit), stringResource(Res.string.gusts_label) to formatWind(hour.windGusts, null, windUnit))
                         }
                         daily?.let { day ->
-                            DetailRow("High" to formatTemp(day.maxTemp.toDouble(), tempUnit), "Low" to formatTemp(day.minTemp.toDouble(), tempUnit), "Rain chance" to "${day.precipProbMax}%")
-                            DetailRow("Feels high" to (day.feelsLikeMax?.let { formatTemp(it, tempUnit) } ?: "--"), "Feels low" to (day.feelsLikeMin?.let { formatTemp(it, tempUnit) } ?: "--"), "UV max" to (day.uvMax?.let { "${(it * 10).roundToInt() / 10.0}" } ?: "--"))
-                            DetailRow(stringResource(Res.string.sunrise_label) to day.sunrise.takeLast(5), stringResource(Res.string.sunset_label) to day.sunset.takeLast(5), "Sunshine" to (day.sunshineDuration?.let { "${(it / 3600.0 * 10).roundToInt() / 10.0} h" } ?: "--"))
-                            DetailRow(stringResource(Res.string.precipitation_label) to "${day.precipSum} mm", "Rain" to (day.rainSum?.let { "$it mm" } ?: "--"), "Snow" to (day.snowfallSum?.let { "$it cm" } ?: "--"))
-                            DetailRow("Wet hours" to (day.precipitationHours?.let { "${(it * 10).roundToInt() / 10.0} h" } ?: "--"), stringResource(Res.string.wind_max_label) to formatWind(day.windMax, null, windUnit), "Max gusts" to formatWind(day.windGustMax, null, windUnit))
+                            DetailRow("High" to formatTemp(day.maxTemp.toDouble(), tempUnit), "Low" to formatTemp(day.minTemp.toDouble(), tempUnit), stringResource(Res.string.rain_chance_label) to "${day.precipProbMax}%")
+                            DetailRow(stringResource(Res.string.feels_high_label) to (day.feelsLikeMax?.let { formatTemp(it, tempUnit) } ?: "--"), stringResource(Res.string.feels_low_label) to (day.feelsLikeMin?.let { formatTemp(it, tempUnit) } ?: "--"), stringResource(Res.string.uv_max_label) to (day.uvMax?.let { "${(it * 10).roundToInt() / 10.0}" } ?: "--"))
+                            DetailRow(stringResource(Res.string.sunrise_label) to day.sunrise.takeLast(5), stringResource(Res.string.sunset_label) to day.sunset.takeLast(5), stringResource(Res.string.sunshine_label) to (day.sunshineDuration?.let { "${(it / 3600.0 * 10).roundToInt() / 10.0} h" } ?: "--"))
+                            DetailRow(stringResource(Res.string.precipitation_label) to "${day.precipSum} mm", stringResource(Res.string.rain_label) to (day.rainSum?.let { "$it mm" } ?: "--"), stringResource(Res.string.snow_label) to (day.snowfallSum?.let { "$it cm" } ?: "--"))
+                            DetailRow(stringResource(Res.string.wet_hours_label) to (day.precipitationHours?.let { "${(it * 10).roundToInt() / 10.0} h" } ?: "--"), stringResource(Res.string.wind_max_label) to formatWind(day.windMax, null, windUnit), stringResource(Res.string.max_gusts_label) to formatWind(day.windGustMax, null, windUnit))
                         }
                     }
                 }
