@@ -21,6 +21,7 @@ private data class SubscriptionPlansResponse(
 
 object SubscriptionPlans {
     private const val URL = "https://api.free-time.me/v2/geoweather/subscriptions/plans"
+    val FREE = SubscriptionPlan(maxLocations = 5, forecastDays = 1, notifications = false)
     private val client = HttpClient(OkHttp)
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -28,4 +29,9 @@ object SubscriptionPlans {
         val body = client.get(URL).body<String>()
         json.decodeFromString<SubscriptionPlansResponse>(body).plans
     }.getOrElse { emptyMap() }
+        .toMutableMap()
+        .apply { putIfAbsent("free", FREE) }
+
+    fun planFor(plans: Map<String, SubscriptionPlan>, subscription: String?): SubscriptionPlan =
+        plans[subscription?.lowercase() ?: "free"] ?: FREE
 }
