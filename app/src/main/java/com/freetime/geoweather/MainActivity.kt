@@ -65,6 +65,12 @@ class MainActivity : ComponentActivity() {
                                 val settings = DependencyManager.getAppSettings()
                                 val restored = AppwriteSync.pull(this@MainActivity, repository, settings)
                                 if (!restored) AppwriteSync.push(this@MainActivity, repository, settings)
+                                AppwriteAutoSync.start(
+                                    this@MainActivity,
+                                    this,
+                                    repository,
+                                    settings
+                                )
                             }
                         }
                     }
