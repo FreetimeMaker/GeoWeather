@@ -12,12 +12,12 @@ import android.location.Geocoder
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import android.net.Uri
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.annotation.RequiresPermission
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import me.free_time.browser.FreetimeBrowser
 
 private var androidContext: Context? = null
 
@@ -28,12 +28,7 @@ fun setAndroidContext(context: Context) {
 internal fun getAndroidAppContext(): Context? = androidContext
 
 fun openUrl(url: String) {
-    androidContext?.let { context ->
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        context.startActivity(intent)
-    }
+    androidContext?.let { context -> FreetimeBrowser.openExternal(context, url) }
 }
 
 @Composable
