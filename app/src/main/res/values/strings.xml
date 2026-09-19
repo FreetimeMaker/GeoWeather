@@ -172,6 +172,23 @@
     <string name="temperature_change_msg">Temperature changed from %1$s to %2$s</string>
     <string name="WeatherNotificationTXT">Weather in %1$s: %2$s, %3$s</string>
 
+    <!-- Changelog v4.1.0 -->
+    <string name="cl_410_appwrite_auth">Added Appwrite account authentication</string>
+    <string name="cl_410_oauth">Added GitHub and GitLab OAuth login</string>
+    <string name="cl_410_profile">Added account name and OAuth profile picture support</string>
+    <string name="cl_410_subscriptions">Added GeoWeather subscription support</string>
+    <string name="cl_410_codes">Added subscription code redemption</string>
+    <string name="cl_410_plan_features">Subscription features are now loaded dynamically from the GeoWeather API</string>
+    <string name="cl_410_plan_limits">Added plan-based location, forecast and notification limits</string>
+    <string name="cl_410_upgrade">Added an Upgrade Subscription button for users below Ultrimium</string>
+    <string name="cl_410_cloud_sync">Added cloud synchronization for settings and saved locations</string>
+    <string name="cl_410_auto_sync">Added automatic synchronization after local changes and account login</string>
+    <string name="cl_410_sync_controls">Added manual Sync Now and Restore from Cloud controls</string>
+    <string name="cl_410_main_plan">The current subscription is now visible on the main and weather detail screens</string>
+    <string name="cl_410_forecast_limits">Weather details now respect the forecast length included in the current subscription</string>
+    <string name="cl_410_liquid">Improved Liquid Glass integration across account, subscription and sync UI</string>
+    <string name="cl_410_sdk">Updated the Appwrite Android SDK and fixed OAuth, TablesDB and account integration compatibility</string>
+
     <!-- Changelog -->
     <string name="whats_new_title">What\'s new?</string>
 
