@@ -37,8 +37,8 @@ object ApiConstants {
     fun getForecastUrl(lat: Double, lon: Double): String {
         return "$OPEN_METEO_FORECAST?latitude=$lat&longitude=$lon" +
             "&current=temperature_2m,weather_code,relative_humidity_2m,apparent_temperature,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m" +
-            "&hourly=temperature_2m,weather_code,relative_humidity_2m,apparent_temperature,visibility,pressure_msl,cloud_base,precipitation_probability,uv_index" +
-            "&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum,precipitation_probability_max,wind_speed_10m_max" +
+            "&hourly=temperature_2m,weather_code,relative_humidity_2m,apparent_temperature,visibility,pressure_msl,cloud_base,precipitation_probability,precipitation,rain,snowfall,wind_speed_10m,wind_gusts_10m,uv_index" +
+            "&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,daylight_duration,sunshine_duration,uv_index_max,precipitation_sum,rain_sum,snowfall_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max" +
             "&forecast_days=16&timezone=auto"
     }
 }
