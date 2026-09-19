@@ -22,6 +22,8 @@ sealed class Screen {
         val transientLat: Double = 0.0,
         val transientLon: Double = 0.0
     ) : Screen()
+    data class HourlyDetail(val locationName: String, val forecast: HourlyForecast) : Screen()
+    data class DailyDetail(val locationName: String, val forecast: DailyForecast) : Screen()
     data class Radar(val lat: Double, val lon: Double) : Screen()
     data class Web(val url: String, val title: String = "") : Screen()
     data object Settings : Screen()
@@ -135,7 +137,27 @@ private fun ScreenContent(
                 viewModel = viewModel,
                 appSettings = appSettings,
                 onBack = { onGoBack() },
-                onRadarClick = { lat, lon -> onNavigate(Radar(lat, lon)) }
+                onRadarClick = { lat, lon -> onNavigate(Radar(lat, lon)) },
+                onHourlyClick = { locationName, forecast -> onNavigate(HourlyDetail(locationName, forecast)) },
+                onDailyClick = { locationName, forecast -> onNavigate(DailyDetail(locationName, forecast)) }
+            )
+        }
+        is HourlyDetail -> {
+            ForecastDetailScreen(
+                locationName = screen.locationName,
+                hourly = screen.forecast,
+                daily = null,
+                appSettings = appSettings,
+                onBack = { onGoBack() }
+            )
+        }
+        is DailyDetail -> {
+            ForecastDetailScreen(
+                locationName = screen.locationName,
+                hourly = null,
+                daily = screen.forecast,
+                appSettings = appSettings,
+                onBack = { onGoBack() }
             )
         }
         is Settings -> {
