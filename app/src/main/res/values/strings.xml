@@ -467,4 +467,5 @@
     <string name="sign_in_or_create_account">Sign in or create account</string>
     <string name="sync_requires_account">Sign in to synchronize settings and saved locations.</string>
     <string name="sign_in_social">Sign in with GitHub or GitLab</string>
+    <string name="last_synced">Last synced: %1$s</string>
 </resources>
