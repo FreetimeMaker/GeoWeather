@@ -56,6 +56,8 @@ fun SettingsScreen(
     val disablePrivateView by appSettings.disablePrivateView.collectAsState()
     val openExternalBrowser by appSettings.openExternalBrowser.collectAsState()
     val weatherAnimations by appSettings.weatherAnimations.collectAsState()
+    val notificationProfile by appSettings.notificationProfile.collectAsState()
+    val quietHours by appSettings.quietHours.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -315,6 +317,21 @@ fun SettingsScreen(
             )
 
                         SettingsSection(stringResource(Res.string.notification_settings_title))
+            Text(stringResource(Res.string.notification_profile), style = MaterialTheme.typography.bodyLarge)
+            UnitRadioRow(
+                options = listOf(
+                    "normal" to stringResource(Res.string.profile_normal),
+                    "outdoor" to stringResource(Res.string.profile_outdoor),
+                    "travel" to stringResource(Res.string.profile_travel)
+                ),
+                selected = notificationProfile,
+                onSelect = { appSettings.setNotificationProfile(it) }
+            )
+            SettingsToggle(
+                stringResource(Res.string.quiet_hours),
+                stringResource(Res.string.quiet_hours_desc),
+                quietHours
+            ) { appSettings.setQuietHours(it) }
             SettingsToggle(
                 stringResource(Res.string.persistent_notif_title),
                 stringResource(Res.string.persistent_notif_subtitle),
