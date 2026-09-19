@@ -473,4 +473,9 @@
     <string name="sign_out">Sign out</string>
     <string name="signed_out">Signed out. GeoWeather is using the Free plan.</string>
     <string name="recent_searches">Recent searches</string>
+    <string name="weather_animations_title">Weather animations</string>
+    <string name="animation_intensity">Animation intensity</string>
+    <string name="animation_full">Full</string>
+    <string name="animation_reduced">Reduced</string>
+    <string name="animation_off">Off</string>
 </resources>
