@@ -34,6 +34,8 @@ class WeatherViewModel(
     val locations = repository.getAllLocations()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    fun repositoryForSync(): WeatherRepository = repository
+
     fun searchCity(query: String) {
         searchJob?.cancel()
         if (query.length <= 2) {
