@@ -132,6 +132,22 @@ class WeatherRepository(
         locationDao.updateLocation(location.copy(notificationTime = time))
     }
 
+    suspend fun moveLocation(location: LocationEntity, direction: Int) {
+        val ordered = locationDao.getAllLocationsSync().toMutableList()
+        if (ordered.isEmpty()) return
+        ordered.forEachIndexed { index, item ->
+            if (item.sortOrder != index) locationDao.updateLocation(item.copy(sortOrder = index))
+        }
+        val currentIndex = ordered.indexOfFirst { it.id == location.id }
+        if (currentIndex < 0) return
+        val targetIndex = (currentIndex + direction).coerceIn(0, ordered.lastIndex)
+        if (targetIndex == currentIndex) return
+        val current = ordered[currentIndex]
+        val target = ordered[targetIndex]
+        locationDao.updateLocation(current.copy(sortOrder = targetIndex))
+        locationDao.updateLocation(target.copy(sortOrder = currentIndex))
+    }
+
     suspend fun toggleDefaultLocation(location: LocationEntity) {
         if (location.isDefault) {
             locationDao.updateLocation(location.copy(isDefault = false))
