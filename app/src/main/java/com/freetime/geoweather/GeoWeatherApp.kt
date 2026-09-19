@@ -38,7 +38,7 @@ class GeoWeatherApp : Application() {
             .build()
 
         val changeWorkRequest = PeriodicWorkRequestBuilder<WeatherChangeWorker>(
-            3, TimeUnit.HOURS
+            1, TimeUnit.HOURS
         ).setConstraints(constraints).build()
 
         // Remove the old global worker. Daily notifications are scheduled per location.
