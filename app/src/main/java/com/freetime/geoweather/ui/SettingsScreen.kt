@@ -116,6 +116,23 @@ fun SettingsScreen(
                 }
             }
 
+            if (account != null) {
+                OutlinedButton(
+                    onClick = {
+                        scope.launch {
+                            runCatching { com.freetime.geoweather.AppwriteAuth.signOut(context) }
+                            com.freetime.geoweather.AppwriteAutoSync.stop()
+                            account = null
+                            plans = SubscriptionPlans.load()
+                            snackbarHostState.showSnackbar(context.getString(Res.string.signed_out))
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                    border = null
+                ) { Text(stringResource(Res.string.sign_out)) }
+            }
+
             if (account == null) {
                 Text(
                     stringResource(Res.string.account_optional_description),
