@@ -47,6 +47,8 @@ private data class SyncPayload(
     val disablePrivateView: Boolean = false,
     val openExternalBrowser: Boolean,
     val weatherAnimations: String,
+    val notificationProfile: String = "normal",
+    val quietHours: Boolean = true,
     val locations: List<SyncedLocation>,
     val deletedLocations: List<DeletedLocation> = emptyList()
 )
@@ -72,6 +74,8 @@ object AppwriteSync {
             disablePrivateView = settings.disablePrivateView.value,
             openExternalBrowser = settings.openExternalBrowser.value,
             weatherAnimations = settings.weatherAnimations.value,
+            notificationProfile = settings.notificationProfile.value,
+            quietHours = settings.quietHours.value,
             locations = repository.getAllLocationsSync().map {
                 SyncedLocation(
                     name = it.name,
@@ -141,6 +145,8 @@ object AppwriteSync {
         settings.setDisablePrivateView(payload.disablePrivateView)
         settings.setOpenExternalBrowser(payload.openExternalBrowser)
         settings.setWeatherAnimations(payload.weatherAnimations)
+        settings.setNotificationProfile(payload.notificationProfile)
+        settings.setQuietHours(payload.quietHours)
 
         repository.applyDeletedLocations(payload.deletedLocations.map { it.latitude to it.longitude })
         repository.importBackupLocations(payload.locations.map {
