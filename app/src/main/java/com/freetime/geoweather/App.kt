@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -13,6 +16,9 @@ import com.freetime.geoweather.Screen.*
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import me.free_time.updater.UpdateInfo
 
 sealed class Screen {
     data object Main : Screen()
@@ -44,6 +50,18 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     }
     val viewModel = remember { WeatherViewModel(repository) }
     val context = LocalContext.current
+    val updateCheckerSource by appSettings.updateCheckerSource.collectAsState()
+    var availableUpdate by remember { mutableStateOf<UpdateInfo?>(null) }
+    LaunchedEffect(updateCheckerSource) {
+        availableUpdate = null
+        if (updateCheckerSource != "off") {
+            availableUpdate = withContext(Dispatchers.IO) {
+                GeoWeatherUpdateChecker.check(context.applicationContext, updateCheckerSource)
+                    .getOrNull()
+                    ?.takeIf { it.updateAvailable }
+            }
+        }
+    }
     val launchPrefs = remember { context.getSharedPreferences("launch_state", android.content.Context.MODE_PRIVATE) }
     val appVersion = remember {
         runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: "unknown"
@@ -99,6 +117,33 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     }
 
     GeoWeatherTheme(darkTheme = darkTheme) {
+        availableUpdate?.let { update ->
+            AlertDialog(
+                onDismissRequest = { availableUpdate = null },
+                title = { Text(androidx.compose.ui.res.stringResource(com.freetime.geoweather.R.string.update_available_title)) },
+                text = {
+                    Text(
+                        androidx.compose.ui.res.stringResource(
+                            com.freetime.geoweather.R.string.update_available_message,
+                            update.latest.versionName
+                        )
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        update.latest.downloadUrl?.let(::openUrl)
+                        availableUpdate = null
+                    }) {
+                        Text(androidx.compose.ui.res.stringResource(com.freetime.geoweather.R.string.update_now))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { availableUpdate = null }) {
+                        Text(androidx.compose.ui.res.stringResource(com.freetime.geoweather.R.string.update_later))
+                    }
+                }
+            )
+        }
         if (onboarding) {
             OnboardingScreen(onDone = {
                 launchPrefs.edit().putBoolean("onboarding_done", true).apply()
