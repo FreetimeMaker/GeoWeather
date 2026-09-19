@@ -1,17 +1,20 @@
 GeoWeather 4.2.0
 
-• Added Morning and Evening weather briefings
-• Added smart activity windows for walking, running, cycling and photography
-• Added travel planning foundations for weather-aware trips
-• Added location groups for organizing saved places
-• Added forecast accuracy tracking based on historical weather data
-• Added weather provider comparison foundations
-• Added configurable multi-widget preferences
-• Added Sync v3 foundations with stable location IDs, update timestamps and deletion tracking
+• Redesigned the interface with Liquid Glass effects and new liquid glass shapes
+• Improved Liquid Glass support for light and dark themes
+• Added up to 16 days of weather forecasts with Open-Meteo
+• Added pull-to-refresh to the weather details screen
+• Removed the redundant refresh button from the weather details top bar
+• Simplified saved locations by removing manual location sorting controls
+• Removed accounts, subscriptions, cloud sync and plan restrictions
+• All available forecast days are now accessible without subscription limits
+• Improved donation wallet handling and fixed a crash caused by duplicate wallet entries
+• Improved weather detail and forecast screens
 • Added Normal, Outdoor and Travel notification profiles
 • Added Quiet Hours for suppressing regular overnight weather notifications
 • Added a first-run onboarding experience
-• Added a privacy-friendly Diagnostics & Privacy screen with shareable diagnostics
+• Added a privacy-friendly Diagnostics & Privacy screen
 • Added Android app shortcuts for Current Location, Search and Settings
 • Added geoweather://open deep-link support
-• What’s New is now shown automatically once per app version
+• What’s New is shown automatically once per app version
+• Fixed several UI and build issues
