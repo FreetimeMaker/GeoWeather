@@ -6,6 +6,7 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.request.get
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import android.content.Context
 
 @Serializable
 data class SubscriptionPlan(
@@ -34,4 +35,23 @@ object SubscriptionPlans {
 
     fun planFor(plans: Map<String, SubscriptionPlan>, subscription: String?): SubscriptionPlan =
         plans[subscription?.lowercase() ?: "free"] ?: FREE
+
+    fun cachedSubscription(context: Context): String =
+        context.getSharedPreferences("subscription_cache", Context.MODE_PRIVATE)
+            .getString("plan", "free") ?: "free"
+
+    fun cacheSubscription(context: Context, subscription: String) {
+        context.getSharedPreferences("subscription_cache", Context.MODE_PRIVATE)
+            .edit().putString("plan", subscription.lowercase()).apply()
+    }
+
+    suspend fun effectiveSubscription(context: Context): String {
+        val account = runCatching { AppwriteData.account(context) }.getOrNull()
+        return if (account != null) {
+            cacheSubscription(context, account.subscription)
+            account.subscription.lowercase()
+        } else {
+            "free"
+        }
+    }
 }
