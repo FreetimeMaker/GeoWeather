@@ -15,8 +15,6 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -221,14 +219,6 @@ fun MainWeatherScreen(
                                         contentDescription = stringResource(Res.string.favorite_location),
                                         tint = if (loc.isDefault) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
-                                }
-                                Column {
-                                    IconButton(onClick = { viewModel.moveLocation(loc, -1) }, modifier = Modifier.size(28.dp)) {
-                                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
-                                    }
-                                    IconButton(onClick = { viewModel.moveLocation(loc, 1) }, modifier = Modifier.size(28.dp)) {
-                                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
-                                    }
                                 }
                                 IconButton(onClick = { locationToDelete = loc }) {
                                     Icon(
