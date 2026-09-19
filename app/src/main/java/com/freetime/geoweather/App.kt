@@ -66,16 +66,27 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         themeLocation?.let { viewModel.getDailyForecasts(it) }.orEmpty()
     }
     val today = daily.firstOrNull()
-    val sunrise = today?.sunrise?.takeLast(5)?.take(2)?.toIntOrNull() ?: 7
-    val sunset = today?.sunset?.takeLast(5)?.take(2)?.toIntOrNull() ?: 19
-    var currentHour by remember { mutableIntStateOf(java.time.LocalTime.now().hour) }
+    fun parseSunTime(value: String?): java.time.LocalTime? {
+        if (value.isNullOrBlank()) return null
+        return runCatching {
+            java.time.LocalTime.parse(value.takeLast(5))
+        }.getOrNull()
+    }
+    val sunrise = parseSunTime(today?.sunrise)
+    val sunset = parseSunTime(today?.sunset)
+    var currentTime by remember { mutableStateOf(java.time.LocalTime.now()) }
     LaunchedEffect(Unit) {
         while (true) {
-            currentHour = java.time.LocalTime.now().hour
-            kotlinx.coroutines.delay(60_000)
+            currentTime = java.time.LocalTime.now()
+            kotlinx.coroutines.delay(30_000)
         }
     }
-    val darkTheme = currentHour < sunrise || currentHour >= sunset
+    val darkTheme = if (sunrise != null && sunset != null) {
+        currentTime.isBefore(sunrise) || !currentTime.isBefore(sunset)
+    } else {
+        currentTime.isBefore(java.time.LocalTime.of(7, 0)) ||
+            !currentTime.isBefore(java.time.LocalTime.of(19, 0))
+    }
 
     GeoWeatherTheme(darkTheme = darkTheme) {
         Surface(modifier = Modifier.fillMaxSize(), color = androidx.compose.ui.graphics.Color.Transparent) {
