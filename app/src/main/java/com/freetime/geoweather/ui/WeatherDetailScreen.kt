@@ -806,26 +806,29 @@ fun moonPhaseFor(date: java.time.LocalDate): Pair<String, String> {
 @Composable
 fun ForecastDetailScreen(
     locationName: String,
-    hourly: HourlyForecast?,
-    daily: DailyForecast?,
+    hourlyForecasts: List<HourlyForecast>,
+    dailyForecasts: List<DailyForecast>,
+    initialIndex: Int,
     appSettings: AppSettings,
     onBack: () -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
+    var index by remember { mutableIntStateOf(initialIndex) }
+    val isHourly = hourlyForecasts.isNotEmpty()
+    val maxIndex = (if (isHourly) hourlyForecasts.lastIndex else dailyForecasts.lastIndex).coerceAtLeast(0)
+    index = index.coerceIn(0, maxIndex)
+    val hourly = hourlyForecasts.getOrNull(index)
+    val daily = dailyForecasts.getOrNull(index)
     val forecastCode = hourly?.code ?: daily?.code ?: 0
-    val title = if (hourly != null) {
-        "$locationName · ${hourly.time.takeLast(5)}"
-    } else {
-        "$locationName · ${daily?.date ?: ""}"
-    }
+    val title = if (hourly != null) "$locationName · ${hourly.time.takeLast(5)}"
+        else "$locationName · ${daily?.date ?: ""}"
 
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
-                modifier = Modifier
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                     .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 title = { Text(title, maxLines = 1) },
@@ -843,27 +846,26 @@ fun ForecastDetailScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                Icon(
-                    painter = painterResource(WeatherIconMapper.getWeatherIcon(forecastCode)),
-                    contentDescription = null,
-                    modifier = Modifier.size(120.dp),
-                    tint = Color.Unspecified
-                )
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = hourly?.let { formatTemp(it.temp.toDouble(), tempUnit) }
-                        ?: daily?.let { "${formatTemp(it.maxTemp.toDouble(), tempUnit)} / ${formatTemp(it.minTemp.toDouble(), tempUnit)}" }
-                        ?: "--",
-                    style = MaterialTheme.typography.displayMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = stringResource(WeatherCodes.getStringResource(forecastCode)),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                    TextButton(onClick = { index-- }, enabled = index > 0, modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))) {
+                        Text("‹", style = MaterialTheme.typography.headlineMedium)
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(painterResource(WeatherIconMapper.getWeatherIcon(forecastCode)), null, Modifier.size(104.dp), tint = Color.Unspecified)
+                        Text(
+                            hourly?.let { formatTemp(it.temp.toDouble(), tempUnit) }
+                                ?: daily?.let { "${formatTemp(it.maxTemp.toDouble(), tempUnit)} / ${formatTemp(it.minTemp.toDouble(), tempUnit)}" }
+                                ?: "--",
+                            style = MaterialTheme.typography.displaySmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(stringResource(WeatherCodes.getStringResource(forecastCode)), style = MaterialTheme.typography.titleLarge)
+                    }
+                    TextButton(onClick = { index++ }, enabled = index < maxIndex, modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))) {
+                        Text("›", style = MaterialTheme.typography.headlineMedium)
+                    }
+                }
             }
-
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
@@ -871,35 +873,33 @@ fun ForecastDetailScreen(
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                        if (hourly != null) {
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                WeatherDetailItem("Time", hourly.time.takeLast(5), modifier = Modifier.weight(1f))
-                                WeatherDetailItem("Temperature", formatTemp(hourly.temp.toDouble(), tempUnit), modifier = Modifier.weight(1f))
-                                WeatherDetailItem("Rain", "${hourly.precipProbability}%", modifier = Modifier.weight(1f))
-                            }
+                        hourly?.let { hour ->
+                            DetailRow("Time" to hour.time.takeLast(5), "Temperature" to formatTemp(hour.temp.toDouble(), tempUnit), "Feels like" to (hour.feelsLike?.let { formatTemp(it, tempUnit) } ?: "--"))
+                            DetailRow("Humidity" to (hour.humidity?.let { "$it%" } ?: "--"), "Rain chance" to "${hour.precipProbability}%", "Precipitation" to (hour.precipitation?.let { "$it mm" } ?: "--"))
+                            DetailRow("Rain" to (hour.rain?.let { "$it mm" } ?: "--"), "Snow" to (hour.snowfall?.let { "$it cm" } ?: "--"), "Visibility" to (hour.visibilityKm?.let { "${(it * 10).roundToInt() / 10.0} km" } ?: "--"))
+                            DetailRow("Pressure" to (hour.pressure?.let { "${it.roundToInt()} hPa" } ?: "--"), "Cloud base" to (hour.cloudBaseM?.let { "${it.roundToInt()} m" } ?: "--"), "UV" to (hour.uvIndex?.let { "${(it * 10).roundToInt() / 10.0}" } ?: "--"))
+                            DetailRow("Wind" to formatWind(hour.windSpeed, null, windUnit), "Gusts" to formatWind(hour.windGusts, null, windUnit))
                         }
-                        if (daily != null) {
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                WeatherDetailItem("High", formatTemp(daily.maxTemp.toDouble(), tempUnit), modifier = Modifier.weight(1f))
-                                WeatherDetailItem("Low", formatTemp(daily.minTemp.toDouble(), tempUnit), modifier = Modifier.weight(1f))
-                                WeatherDetailItem("Rain", "${daily.precipProbMax}%", modifier = Modifier.weight(1f))
-                            }
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .3f))
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                WeatherDetailItem(stringResource(Res.string.sunrise_label), daily.sunrise.takeLast(5), modifier = Modifier.weight(1f))
-                                WeatherDetailItem(stringResource(Res.string.sunset_label), daily.sunset.takeLast(5), modifier = Modifier.weight(1f))
-                                WeatherDetailItem(stringResource(Res.string.precipitation_label), "${daily.precipSum} mm", modifier = Modifier.weight(1f))
-                            }
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .3f))
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                WeatherDetailItem(stringResource(Res.string.wind_max_label), formatWind(daily.windMax, null, windUnit), modifier = Modifier.weight(1f))
-                                Spacer(Modifier.weight(2f))
-                            }
+                        daily?.let { day ->
+                            DetailRow("High" to formatTemp(day.maxTemp.toDouble(), tempUnit), "Low" to formatTemp(day.minTemp.toDouble(), tempUnit), "Rain chance" to "${day.precipProbMax}%")
+                            DetailRow("Feels high" to (day.feelsLikeMax?.let { formatTemp(it, tempUnit) } ?: "--"), "Feels low" to (day.feelsLikeMin?.let { formatTemp(it, tempUnit) } ?: "--"), "UV max" to (day.uvMax?.let { "${(it * 10).roundToInt() / 10.0}" } ?: "--"))
+                            DetailRow(stringResource(Res.string.sunrise_label) to day.sunrise.takeLast(5), stringResource(Res.string.sunset_label) to day.sunset.takeLast(5), "Sunshine" to (day.sunshineDuration?.let { "${(it / 3600.0 * 10).roundToInt() / 10.0} h" } ?: "--"))
+                            DetailRow(stringResource(Res.string.precipitation_label) to "${day.precipSum} mm", "Rain" to (day.rainSum?.let { "$it mm" } ?: "--"), "Snow" to (day.snowfallSum?.let { "$it cm" } ?: "--"))
+                            DetailRow("Wet hours" to (day.precipitationHours?.let { "${(it * 10).roundToInt() / 10.0} h" } ?: "--"), stringResource(Res.string.wind_max_label) to formatWind(day.windMax, null, windUnit), "Max gusts" to formatWind(day.windGustMax, null, windUnit))
                         }
                     }
                 }
             }
             if (forecastCode != 0) item { WeatherAlertsSection(forecastCode) }
+        }
+    }
+}
+
+@Composable
+private fun DetailRow(vararg values: Pair<String, String>) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        values.forEach { (label, value) ->
+            WeatherDetailItem(label, value, modifier = Modifier.weight(1f))
         }
     }
 }
