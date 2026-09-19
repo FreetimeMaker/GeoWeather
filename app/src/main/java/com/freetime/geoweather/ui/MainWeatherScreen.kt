@@ -175,7 +175,11 @@ fun MainWeatherScreen(
                     text = stringResource(Res.string.no_locations_msg),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .padding(24.dp)
+                        .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false)
+                        .padding(horizontal = 24.dp, vertical = 18.dp)
                 )
             }
         } else {
@@ -200,7 +204,8 @@ fun MainWeatherScreen(
                                 modifier = Modifier
                                     .width(156.dp)
                                     .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                             ) {
                                 Column(
                                     modifier = Modifier.padding(14.dp),
