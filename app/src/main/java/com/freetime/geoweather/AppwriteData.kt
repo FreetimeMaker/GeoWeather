@@ -19,11 +19,7 @@ object AppwriteData {
     private const val CODES_TABLE = "geoweather_codes"
     private const val SUBSCRIPTIONS_TABLE = "geoweather_subscriptions"
 
-    private fun tables(context: Context) = TablesDB(
-        io.appwrite.Client(context.applicationContext)
-            .setEndpoint("https://fra.cloud.appwrite.io/v1")
-            .setProject("6aad93080001aa8fad42")
-    )
+    private fun tables(context: Context) = TablesDB(AppwriteAuth.client(context))
 
     suspend fun account(context: Context): GeoWeatherAccount {
         val user = AppwriteAuth.currentUser(context)
@@ -54,10 +50,7 @@ object AppwriteData {
     }
 
     suspend fun redeemCode(context: Context, code: String): String? {
-        val client = io.appwrite.Client(context.applicationContext)
-            .setEndpoint("https://fra.cloud.appwrite.io/v1")
-            .setProject("6aad93080001aa8fad42")
-        val execution = Functions(client).createExecution(
+        val execution = Functions(AppwriteAuth.client(context)).createExecution(
             functionId = "redeem-geoweather-code",
             body = """{"code":${JSONObject.quote(code.trim())}}""",
             xasync = false
