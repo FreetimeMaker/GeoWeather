@@ -394,4 +394,19 @@
     <string name="favorite_location">Favorite location</string>
     <string name="offline_cached_weather">Offline · showing last saved weather</string>
     <string name="last_updated_minutes">Updated %1$d min ago</string>
+    <string name="confirm">OK</string>
+    <string name="time_label">Time</string>
+    <string name="temperature_label">Temperature</string>
+    <string name="rain_chance_label">Rain chance</string>
+    <string name="rain_label">Rain</string>
+    <string name="snow_label">Snow</string>
+    <string name="uv_label">UV</string>
+    <string name="feels_high_label">Feels high</string>
+    <string name="feels_low_label">Feels low</string>
+    <string name="uv_max_label">UV max</string>
+    <string name="sunshine_label">Sunshine</string>
+    <string name="wet_hours_label">Wet hours</string>
+    <string name="max_gusts_label">Max gusts</string>
+    <string name="strong_wind_gusts">Strong wind gusts</string>
+    <string name="heavy_precipitation">Heavy precipitation</string>
 </resources>
