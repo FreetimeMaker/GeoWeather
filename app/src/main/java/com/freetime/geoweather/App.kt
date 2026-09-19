@@ -75,7 +75,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     val darkTheme = currentHour < sunrise || currentHour >= sunset
 
     GeoWeatherTheme(darkTheme = darkTheme) {
-        Surface(modifier = Modifier.fillMaxSize()) {
+        Surface(modifier = Modifier.fillMaxSize(), color = androidx.compose.ui.graphics.Color.Transparent) {
             Box(Modifier.fillMaxSize()) {
                 backStack.forEachIndexed { index, screen ->
                     key(index) {
