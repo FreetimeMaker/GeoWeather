@@ -52,8 +52,7 @@ object AppwriteData {
     suspend fun redeemCode(context: Context, code: String): String? {
         val execution = Functions(AppwriteAuth.client(context)).createExecution(
             functionId = "redeem-geoweather-code",
-            body = """{"code":${JSONObject.quote(code.trim())}}""",
-            xasync = false
+            body = """{"code":${JSONObject.quote(code.trim())}}"""
         )
         val result = runCatching { JSONObject(execution.responseBody) }.getOrNull() ?: return null
         return if (result.optBoolean("ok")) result.optString("subscription").takeIf { it.isNotBlank() } else null
