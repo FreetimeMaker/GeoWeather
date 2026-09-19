@@ -387,4 +387,11 @@
     <string name="moon_waning_crescent">Waning Crescent</string>
     <string name="cl_401_fix_error">Fixed a Startup Error</string>
     <string name="cl_403_new_liquid">Added new Liquid Glass</string>
+    <string name="rain_alert_notification">Rain expected around %1$s in %2$s (%3$d%%)</string>
+    <string name="extreme_weather_notification">Severe weather expected in %1$s: %2$s</string>
+    <string name="notification_time_title">Daily notification time</string>
+    <string name="notification_disable">Disable notifications</string>
+    <string name="favorite_location">Favorite location</string>
+    <string name="offline_cached_weather">Offline · showing last saved weather</string>
+    <string name="last_updated_minutes">Updated %1$d min ago</string>
 </resources>
