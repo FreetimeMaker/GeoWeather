@@ -1,13 +1,17 @@
-• Added Appwrite account authentication with GitHub and GitLab OAuth
-• Added account profile names and OAuth profile pictures
-• Added GeoWeather subscriptions and subscription code redemption
-• Subscription features are now loaded dynamically from the GeoWeather API
-• Added plan-based limits for saved locations, forecast length and notifications
-• Added an Upgrade Subscription button for Free, Freemium and Premium users
+GeoWeather 4.1.0
+
+• Added optional Appwrite accounts with GitHub and GitLab OAuth
+• Signed-out users now use the Free plan automatically
+• Added account profiles, OAuth avatars and sign out
+• Added GeoWeather subscriptions, plan comparison and subscription code redemption
+• Added dynamic plan features and plan-based location, forecast and notification limits
 • Added cloud synchronization for settings and saved locations
-• Added automatic sync after local changes and login
-• Added manual Sync Now and Restore from Cloud controls
+• Added automatic sync, manual sync and cloud restore
+• Added Sync v2 support for synchronizing deleted locations
+• Added subscription caching and live plan refresh support
+• Added recent location searches
 • Added the current subscription to the main screen and weather details
 • Weather details now respect the forecast length included in the current plan
+• Improved automatic dark mode to use exact sunrise and sunset times
 • Improved Liquid Glass styling for account, subscription and sync UI
-• Updated the Appwrite Android SDK and fixed OAuth/TablesDB compatibility
+• Updated Appwrite integration and OAuth session handling
