@@ -24,6 +24,7 @@ class AppSettings(private val settings: Settings) {
         const val KEY_WEATHER_ANIMATIONS = "weather_animations"
         const val KEY_NOTIFICATION_PROFILE = "notification_profile"
         const val KEY_QUIET_HOURS = "quiet_hours"
+        const val KEY_UPDATE_CHECKER_SOURCE = "update_checker_source"
     }
 
     private val _persistentNotif = MutableStateFlow(settings.getBoolean(KEY_PERSISTENT_NOTIF, false))
@@ -133,6 +134,14 @@ class AppSettings(private val settings: Settings) {
     fun setQuietHours(value: Boolean) {
         settings[KEY_QUIET_HOURS] = value
         _quietHours.value = value
+    }
+
+    private val _updateCheckerSource = MutableStateFlow(settings.getString(KEY_UPDATE_CHECKER_SOURCE, "off"))
+    val updateCheckerSource: StateFlow<String> = _updateCheckerSource.asStateFlow()
+
+    fun setUpdateCheckerSource(source: String) {
+        settings[KEY_UPDATE_CHECKER_SOURCE] = source
+        _updateCheckerSource.value = source
     }
 
     private val _weatherAnimations = MutableStateFlow(settings.getString(KEY_WEATHER_ANIMATIONS, "full"))
