@@ -57,7 +57,7 @@ fun MainWeatherScreen(
     LaunchedEffect(Unit) {
         account = runCatching { AppwriteData.account(context) }.getOrNull()
         val plans = SubscriptionPlans.load()
-        plan = account?.subscription?.lowercase()?.let { plans[it] }
+        plan = SubscriptionPlans.planFor(plans, account?.subscription)
     }
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
     var notificationLocation by remember { mutableStateOf<LocationEntity?>(null) }
