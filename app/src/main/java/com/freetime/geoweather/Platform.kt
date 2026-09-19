@@ -8,6 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.location.LocationManager
+import android.location.Geocoder
+import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import android.net.Uri
 import androidx.annotation.RequiresPermission
 import androidx.compose.runtime.Composable
@@ -57,6 +61,25 @@ suspend fun getCurrentCoordinates(): Pair<Double, Double>? {
             }
         }
         best?.let { it.latitude to it.longitude }
+    } catch (_: Exception) {
+        null
+    }
+}
+
+@Suppress("DEPRECATION")
+suspend fun getDetectedLocationName(latitude: Double, longitude: Double): String? = withContext(Dispatchers.IO) {
+    val context = androidContext ?: return@withContext null
+    if (!Geocoder.isPresent()) return@withContext null
+    try {
+        val address = Geocoder(context, Locale.getDefault())
+            .getFromLocation(latitude, longitude, 1)
+            ?.firstOrNull()
+            ?: return@withContext null
+        listOfNotNull(
+            address.locality ?: address.subAdminArea ?: address.adminArea,
+            address.adminArea?.takeUnless { it == address.locality || it == address.subAdminArea },
+            address.countryName
+        ).distinct().joinToString(", ").takeIf { it.isNotBlank() }
     } catch (_: Exception) {
         null
     }
