@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthScreen(onAuthenticated: () -> Unit) {
+fun AuthScreen(onAuthenticated: () -> Unit, onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var register by remember { mutableStateOf(false) }
@@ -27,6 +28,7 @@ fun AuthScreen(onAuthenticated: () -> Unit) {
     var loading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
 
+    BackHandler(onBack = onBack)
     Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
         Card(
             modifier = Modifier.fillMaxWidth().widthIn(max = 520.dp)
@@ -38,7 +40,11 @@ fun AuthScreen(onAuthenticated: () -> Unit) {
                 Modifier.padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(stringResource(R.string.login_title), style = MaterialTheme.typography.headlineMedium)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    TextButton(onClick = onBack) { Text(stringResource(R.string.back_nav_desc)) }
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.login_title), style = MaterialTheme.typography.headlineMedium)
+                }
                 Text(stringResource(R.string.login_subtitle), color = MaterialTheme.colorScheme.onSurfaceVariant)
 
                 if (register) {
