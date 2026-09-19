@@ -145,8 +145,16 @@ fun MainWeatherScreen(
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                modifier = Modifier.geoWeatherGlass(RoundedCornerShape(24.dp)),
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .geoWeatherGlass(RoundedCornerShape(50)),
                 containerColor = Color.Transparent,
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 0.dp,
+                    pressedElevation = 0.dp,
+                    focusedElevation = 0.dp,
+                    hoveredElevation = 0.dp
+                ),
                 onClick = onAddLocationClick,
                 icon = { Icon(Icons.Default.Add, contentDescription = null) },
                 text = { Text(stringResource(Res.string.SearchBTNTXT)) }
@@ -173,7 +181,10 @@ fun MainWeatherScreen(
                     Text(
                         text = stringResource(Res.string.compare_locations),
                         style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .geoWeatherGlass(RoundedCornerShape(18.dp), interactive = false)
+                            .padding(horizontal = 14.dp, vertical = 8.dp)
                     )
                     LazyRow(
                         contentPadding = PaddingValues(horizontal = 12.dp),
@@ -210,7 +221,9 @@ fun MainWeatherScreen(
                     Spacer(Modifier.height(8.dp))
                 }
                 LazyColumn(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                 items(locations, key = { it.id }) { loc ->
                     ListItem(
@@ -244,15 +257,14 @@ fun MainWeatherScreen(
                                 onLocationClick(loc)
                             }
                     )
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant
-                    )
                 }
                 item {
                     TextButton(
                         onClick = onDonateClick,
-                        modifier = Modifier.fillMaxWidth().padding(16.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .geoWeatherGlass(RoundedCornerShape(24.dp))
                     ) {
                         Text(
                             text = stringResource(Res.string.main_donation_hint),
