@@ -43,7 +43,8 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onChangeLogClick: () -> Unit,
     onWebViewClick: (String, String) -> Unit,
-    onAccountClick: () -> Unit
+    onAccountClick: () -> Unit,
+    onSubscriptionsClick: () -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
@@ -131,6 +132,12 @@ fun SettingsScreen(
             }
 
             SettingsSection(stringResource(Res.string.subscription_title))
+            OutlinedButton(
+                onClick = onSubscriptionsClick,
+                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                border = null
+            ) { Text(stringResource(Res.string.compare_plans)) }
             val effectiveSubscription = account?.subscription?.lowercase() ?: "free"
             plans[effectiveSubscription]?.let { plan ->
                     Column(
