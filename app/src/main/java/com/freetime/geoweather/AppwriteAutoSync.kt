@@ -36,8 +36,10 @@ object AppwriteAutoSync {
                 settings.windThreshold.map { Unit },
                 settings.disablePrivateView.map { Unit },
                 settings.openExternalBrowser.map { Unit },
-                settings.weatherAnimations.map { Unit }
-            ).drop(14)
+                settings.weatherAnimations.map { Unit },
+                settings.notificationProfile.map { Unit },
+                settings.quietHours.map { Unit }
+            ).drop(16)
                 .debounce(1200)
                 .collect {
                     runCatching { AppwriteSync.push(context, repository, settings) }
