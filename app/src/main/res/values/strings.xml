@@ -463,4 +463,7 @@
     <string name="location_limit_reached">Your %1$s plan allows up to %2$d saved locations.</string>
     <string name="notifications_plan_required">Weather notifications are not included in your current plan.</string>
     <string name="upgrade_subscription">Upgrade subscription</string>
+    <string name="account_optional_description">An account is optional. Sign in to use cloud sync, subscriptions and code redemption.</string>
+    <string name="sign_in_or_create_account">Sign in or create account</string>
+    <string name="sync_requires_account">Sign in to synchronize settings and saved locations.</string>
 </resources>
