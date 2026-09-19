@@ -409,4 +409,15 @@
     <string name="max_gusts_label">Max gusts</string>
     <string name="strong_wind_gusts">Strong wind gusts</string>
     <string name="heavy_precipitation">Heavy precipitation</string>
+    <string name="login_title">Sign in to GeoWeather</string>
+    <string name="login_subtitle">An Appwrite account is required to use GeoWeather.</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="name_label">Name</string>
+    <string name="sign_in">Sign in</string>
+    <string name="create_account">Create account</string>
+    <string name="have_account">Already have an account? Sign in</string>
+    <string name="need_account">No account yet? Create one</string>
+    <string name="auth_failed">Authentication failed. Please check your details.</string>
+    <string name="logout">Sign out</string>
 </resources>
