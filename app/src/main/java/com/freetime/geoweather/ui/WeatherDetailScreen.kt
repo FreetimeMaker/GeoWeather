@@ -40,6 +40,10 @@ import com.freetime.geoweather.data.DailyForecast
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
 import com.freetime.geoweather.isNetworkAvailable
+import com.freetime.geoweather.AppwriteData
+import com.freetime.geoweather.GeoWeatherAccount
+import com.freetime.geoweather.SubscriptionPlan
+import com.freetime.geoweather.SubscriptionPlans
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import kotlin.math.cos
@@ -65,6 +69,13 @@ fun WeatherDetailScreen(
     val pressureUnit by appSettings.pressureUnit.collectAsState()
     val animationMode by appSettings.weatherAnimations.collectAsState()
     val context = LocalContext.current
+    var account by remember { mutableStateOf<GeoWeatherAccount?>(null) }
+    var subscriptionPlan by remember { mutableStateOf<SubscriptionPlan?>(null) }
+    LaunchedEffect(Unit) {
+        account = runCatching { AppwriteData.account(context) }.getOrNull()
+        val plans = SubscriptionPlans.load()
+        subscriptionPlan = account?.subscription?.lowercase()?.let { plans[it] }
+    }
     val isTransient = transientName != null
     val dbLocation by viewModel.observeLocation(locationId).collectAsState(initial = null)
     var transientLocation by remember { mutableStateOf<LocationEntity?>(null) }
@@ -99,7 +110,18 @@ fun WeatherDetailScreen(
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                     .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-                title = { Text(title) },
+                title = {
+                    Column {
+                        Text(title)
+                        account?.let {
+                            Text(
+                                stringResource(Res.string.plan_badge, it.subscription.uppercase()),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back_nav_desc))
@@ -162,12 +184,15 @@ fun WeatherDetailScreen(
             }
             else -> {
                 val hourly = remember(loc.weatherData) { viewModel.getHourlyForecasts(loc) }
-                val daily = remember(loc.weatherData) { viewModel.getDailyForecasts(loc) }
+                val allDaily = remember(loc.weatherData) { viewModel.getDailyForecasts(loc) }
+                val daily = remember(allDaily, subscriptionPlan?.forecastDays) {
+                    allDaily.take(subscriptionPlan?.forecastDays ?: allDaily.size)
+                }
                 val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
                 var airExtras by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.CurrentHourExtras?>(null) }
                 LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }
                 var forecastExpanded by remember { mutableStateOf(false) }
-                val visibleDaily = if (forecastExpanded) daily else daily.take(7)
+                val visibleDaily = if (forecastExpanded) daily else daily.take(minOf(7, subscriptionPlan?.forecastDays ?: 7))
                 val code = loc.currentWeatherCode
                 val rawTemp = loc.currentTemp
                 // Temporarily disable weather scene animations for GPU crash isolation.
