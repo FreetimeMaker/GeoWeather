@@ -130,6 +130,16 @@ class WeatherViewModel(
         }
     }
 
+    fun moveLocation(location: LocationEntity, direction: Int) {
+        viewModelScope.launch {
+            try {
+                repository.moveLocation(location, direction)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun toggleDefaultLocation(location: LocationEntity) {
         viewModelScope.launch {
             try {
