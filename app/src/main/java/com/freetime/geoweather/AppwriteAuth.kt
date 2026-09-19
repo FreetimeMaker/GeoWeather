@@ -3,7 +3,6 @@ package com.freetime.geoweather
 import android.content.Context
 import androidx.activity.ComponentActivity
 import io.appwrite.Client
-import io.appwrite.ID
 import io.appwrite.enums.OAuthProvider
 import io.appwrite.services.Account
 
@@ -34,19 +33,6 @@ object AppwriteAuth {
     suspend fun hasSession(context: Context): Boolean =
         runCatching { account(context).get() }.isSuccess
 
-    suspend fun signIn(context: Context, email: String, password: String) {
-        account(context).createEmailPasswordSession(email = email.trim(), password = password)
-    }
-
-    suspend fun signUp(context: Context, name: String, email: String, password: String) {
-        account(context).create(
-            userId = ID.unique(),
-            email = email.trim(),
-            password = password,
-            name = name.trim()
-        )
-        signIn(context, email, password)
-    }
 
     suspend fun currentUser(context: Context) = account(context).get()
 
