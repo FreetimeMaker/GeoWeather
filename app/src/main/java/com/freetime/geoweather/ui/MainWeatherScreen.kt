@@ -359,7 +359,7 @@ fun MainWeatherScreen(
                         notificationLocation = null
                     },
                     modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
-                ) { Text("OK") }
+                ) { Text(stringResource(Res.string.confirm)) }
             },
             dismissButton = {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
