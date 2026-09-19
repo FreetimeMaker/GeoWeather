@@ -25,18 +25,19 @@ import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.effects.vibrancy
+import com.kyant.backdrop.backdrops.LayerBackdrop
 import com.kyant.backdrop.backdrops.layerBackdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.shapes.Capsule
 import kotlinx.coroutines.launch
 
-val LocalGeoWeatherBackdrop = staticCompositionLocalOf<Backdrop?> { null }
+val LocalGeoWeatherBackdrop = staticCompositionLocalOf<LayerBackdrop?> { null }
 
 @Composable
-fun rememberGeoWeatherBackdrop(): Backdrop? =
+fun rememberGeoWeatherBackdrop(): LayerBackdrop? =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) rememberLayerBackdrop() else null
 
-fun Modifier.geoWeatherBackdropSource(backdrop: Backdrop?): Modifier =
+fun Modifier.geoWeatherBackdropSource(backdrop: LayerBackdrop?): Modifier =
     if (backdrop != null) layerBackdrop(backdrop) else this
 
 @Composable
