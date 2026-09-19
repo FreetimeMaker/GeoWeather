@@ -171,7 +171,7 @@ fun WeatherDetailScreen(
                 var airExtras by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.CurrentHourExtras?>(null) }
                 LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }
                 var forecastExpanded by remember { mutableStateOf(false) }
-                val visibleDaily = if (forecastExpanded) daily else daily.take(minOf(7, subscriptionPlan?.forecastDays ?: 7))
+                val visibleDaily = if (forecastExpanded) daily else daily.take(7)
                 val code = loc.currentWeatherCode
                 val rawTemp = loc.currentTemp
                 // Temporarily disable weather scene animations for GPU crash isolation.
