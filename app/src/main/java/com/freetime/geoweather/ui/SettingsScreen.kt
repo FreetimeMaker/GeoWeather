@@ -19,7 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.freetime.geoweather.AppwriteData
 import com.freetime.geoweather.GeoWeatherAccount
 import com.freetime.geoweather.AppwriteSync
