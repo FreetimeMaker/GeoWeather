@@ -4,7 +4,6 @@ import android.content.Context
 import io.appwrite.Client
 import io.appwrite.ID
 import io.appwrite.enums.OAuthProvider
-import io.appwrite.models.User
 import io.appwrite.services.Account
 
 object AppwriteAuth {
@@ -49,6 +48,24 @@ object AppwriteAuth {
     }
 
     suspend fun currentUser(context: Context) = account(context).get()
+
+    suspend fun syncOAuthProfile(context: Context) {
+        val service = account(context)
+        val session = runCatching { service.getSession(sessionId = "current") }.getOrNull() ?: return
+        val token = session.providerAccessToken
+        if (token.isBlank()) return
+
+        val profile = OAuthProfileLoader.load(session.provider, token) ?: return
+        val user = service.get()
+        if (profile.name.isNotBlank() && (user.name.isBlank() || user.name != profile.name)) {
+            runCatching { service.updateName(name = profile.name) }
+        }
+
+        val prefs = user.prefs.data.toMutableMap()
+        profile.avatarUrl?.takeIf { it.isNotBlank() }?.let { prefs["avatar_url"] = it }
+        prefs["oauth_provider"] = session.provider
+        runCatching { service.updatePrefs(prefs = prefs) }
+    }
 
     suspend fun signInWithGitHub(context: Context) {
         account(context).createOAuth2Session(provider = OAuthProvider.GITHUB)
