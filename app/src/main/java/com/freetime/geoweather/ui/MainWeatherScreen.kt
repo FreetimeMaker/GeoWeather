@@ -24,8 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import com.freetime.geoweather.ui.glass.geoWeatherLiquidGlass
-import com.freetime.geoweather.ui.glass.LocalGeoWeatherBackdrop
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
@@ -54,8 +52,6 @@ fun MainWeatherScreen(
     val scope = rememberCoroutineScope()
     val currentLocationName = stringResource(Res.string.current_location)
     val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
-    val backdrop = LocalGeoWeatherBackdrop.current
-    val navigationShape = RoundedCornerShape(50)
 
     fun openCurrentLocation() {
         scope.launch {
