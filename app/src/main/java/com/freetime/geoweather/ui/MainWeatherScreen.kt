@@ -169,7 +169,7 @@ fun MainWeatherScreen(
                                 modifier = Modifier
                                     .width(156.dp)
                                     .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                             ) {
                                 Column(
