@@ -4,6 +4,10 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.content.Intent
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
+import android.graphics.drawable.Icon
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import androidx.activity.ComponentActivity
@@ -34,6 +38,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         checkNotificationPermission()
         checkLocationPermission()
+        installShortcuts()
 
         val createDocument = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json"), ::onCreateDocumentResult)
         val openDocument = registerForActivityResult(ActivityResultContracts.OpenDocument(), ::onOpenDocumentResult)
@@ -92,6 +97,23 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+
+    private fun installShortcuts() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1) return
+        val manager = getSystemService(ShortcutManager::class.java)
+        fun shortcut(id: String, label: String, action: String, icon: Int) =
+            ShortcutInfo.Builder(this, id)
+                .setShortLabel(label)
+                .setIcon(Icon.createWithResource(this, icon))
+                .setIntent(Intent(this, MainActivity::class.java).setAction(action))
+                .build()
+        manager.dynamicShortcuts = listOf(
+            shortcut("current", getString(R.string.current_location), "com.freetime.geoweather.CURRENT", R.drawable.ic_notification),
+            shortcut("search", getString(R.string.search_title), "com.freetime.geoweather.SEARCH", R.drawable.ic_notification),
+            shortcut("settings", getString(R.string.settings_title), "com.freetime.geoweather.SETTINGS", R.drawable.ic_notification)
+        )
     }
 
     private fun checkNotificationPermission() {
