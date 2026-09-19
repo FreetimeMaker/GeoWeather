@@ -24,7 +24,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
             LinearProgressIndicator(progress = { (page + 1) / 3f }, modifier = Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 TextButton(onClick = onDone) { Text(stringResource(Res.string.skip)) }
-                Button(onClick = { if (page < 2) page++ else onDone() }, colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), modifier = Modifier.geoWeatherGlass(RoundedCornerShape(22.dp))) {
+                Button(onClick = { if (page < 2) page++ else onDone() }, colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface), modifier = Modifier.geoWeatherGlass(RoundedCornerShape(22.dp))) {
                     Text(stringResource(if (page < 2) Res.string.next else Res.string.done))
                 }
             }
