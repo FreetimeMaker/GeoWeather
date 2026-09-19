@@ -149,7 +149,7 @@ fun WeatherDetailScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(Modifier.height(16.dp))
-                        Button(onClick = { doRefresh() }) {
+                        Button(onClick = { doRefresh() }, modifier = Modifier.geoWeatherGlass(RoundedCornerShape(22.dp)), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp)) {
                             Text(stringResource(Res.string.refresh_nav_desc))
                         }
                     }
@@ -245,7 +245,7 @@ fun WeatherDetailScreen(
                             val moon = moonPhaseFor(java.time.LocalDate.now())
                             Card(
                                 modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                             ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     Text(stringResource(Res.string.sun_moon_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
@@ -260,7 +260,7 @@ fun WeatherDetailScreen(
                         item {
                             Card(
                                 modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                             ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     Text(stringResource(Res.string.trip_forecast_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
@@ -284,7 +284,7 @@ fun WeatherDetailScreen(
                         item {
                             Card(
                                 modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                             ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     Text(stringResource(Res.string.air_quality_pollen_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
@@ -314,7 +314,7 @@ fun WeatherDetailScreen(
                             } else stringResource(Res.string.no_rain_24h)
                             Card(
                                 modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                             ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                                     Text(stringResource(Res.string.next_rain_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
@@ -346,7 +346,7 @@ fun WeatherDetailScreen(
                         val feelsLike = loc.currentFeelsLike ?: loc.currentTemp
                         Card(
                             modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                            colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                         ) {
                             Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -551,7 +551,7 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth()
                                     .animateContentSize(animationSpec = spring())
                                     .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                                 onClick = { expanded = !expanded }
                             ) {
                                 Column(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
@@ -614,7 +614,8 @@ fun WeatherDetailScreen(
                             item {
                                 TextButton(
                                     onClick = { forecastExpanded = !forecastExpanded },
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+                                    colors = ButtonDefaults.textButtonColors(containerColor = Color.Transparent)
                                 ) {
                                     Text(
                                         text = if (forecastExpanded) {
@@ -696,7 +697,7 @@ fun WeatherAlertsSection(code: Int) {
     if (alertRes != null) {
         Card(
             modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
             Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text("⚠️", fontSize = 24.sp)
