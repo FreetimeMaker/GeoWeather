@@ -436,4 +436,10 @@
     <string name="sync_restore">Restore from cloud</string>
     <string name="sync_success">Synchronization completed.</string>
     <string name="sync_failed">Synchronization failed.</string>
+    <string name="plan_features">Plan features</string>
+    <string name="plan_locations">Up to %1$d saved locations</string>
+    <string name="plan_forecast_days">%1$d-day forecast</string>
+    <string name="plan_notifications_on">Weather notifications included</string>
+    <string name="plan_notifications_off">Weather notifications not included</string>
+    <string name="sync_automatic">Changes are synchronized automatically.</string>
 </resources>
