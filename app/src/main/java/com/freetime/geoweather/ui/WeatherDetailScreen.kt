@@ -74,7 +74,7 @@ fun WeatherDetailScreen(
     LaunchedEffect(Unit) {
         account = runCatching { AppwriteData.account(context) }.getOrNull()
         val plans = SubscriptionPlans.load()
-        subscriptionPlan = account?.subscription?.lowercase()?.let { plans[it] }
+        subscriptionPlan = SubscriptionPlans.planFor(plans, account?.subscription)
     }
     val isTransient = transientName != null
     val dbLocation by viewModel.observeLocation(locationId).collectAsState(initial = null)
@@ -113,13 +113,11 @@ fun WeatherDetailScreen(
                 title = {
                     Column {
                         Text(title)
-                        account?.let {
-                            Text(
-                                stringResource(Res.string.plan_badge, it.subscription.uppercase()),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        Text(
+                            stringResource(Res.string.plan_badge, (account?.subscription ?: "free").uppercase()),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 },
                 navigationIcon = {
