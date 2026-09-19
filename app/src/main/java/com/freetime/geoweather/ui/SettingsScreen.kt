@@ -18,6 +18,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import com.freetime.geoweather.AppwriteData
+import com.freetime.geoweather.GeoWeatherAccount
 import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.BACKUP_FILE_NAME
 import com.freetime.geoweather.data.BACKUP_MIME_TYPE
@@ -53,6 +57,13 @@ fun SettingsScreen(
     val exportFailed = stringResource(Res.string.export_failed)
     val importSuccess = stringResource(Res.string.import_success)
     val importFailed = stringResource(Res.string.import_failed)
+    val context = LocalContext.current
+    var account by remember { mutableStateOf<GeoWeatherAccount?>(null) }
+    var code by remember { mutableStateOf("") }
+    var codeBusy by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        account = runCatching { AppwriteData.account(context) }.getOrNull()
+    }
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -78,6 +89,56 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
+
+            SettingsSection(stringResource(Res.string.account_title))
+            account?.let { profile ->
+                Row(
+                    Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false).padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    if (!profile.avatarUrl.isNullOrBlank()) {
+                        AsyncImage(model = profile.avatarUrl, contentDescription = null, modifier = Modifier.size(56.dp))
+                    }
+                    Column(Modifier.weight(1f)) {
+                        Text(profile.name, style = MaterialTheme.typography.titleMedium)
+                        Text(profile.email, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(Res.string.subscription_current, profile.subscription.uppercase()), style = MaterialTheme.typography.labelLarge)
+                    }
+                }
+            }
+
+            SettingsSection(stringResource(Res.string.subscription_title))
+            OutlinedTextField(
+                value = code,
+                onValueChange = { code = it },
+                label = { Text(stringResource(Res.string.redeem_code_hint)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+                colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent)
+            )
+            Button(
+                enabled = code.isNotBlank() && !codeBusy,
+                onClick = {
+                    scope.launch {
+                        codeBusy = true
+                        val subscription = runCatching { AppwriteData.redeemCode(context, code) }.getOrNull()
+                        if (subscription != null) {
+                            account = runCatching { AppwriteData.account(context) }.getOrNull()
+                            code = ""
+                            snackbarHostState.showSnackbar(context.getString(Res.string.redeem_code_success, subscription.uppercase()))
+                        } else {
+                            snackbarHostState.showSnackbar(context.getString(Res.string.redeem_code_invalid))
+                        }
+                        codeBusy = false
+                    }
+                },
+                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+            ) {
+                if (codeBusy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                else Text(stringResource(Res.string.redeem_code))
+            }
 
             SettingsSection(stringResource(Res.string.unit_settings_title))
             Text(stringResource(Res.string.temperature_unit), style = MaterialTheme.typography.bodyLarge)
