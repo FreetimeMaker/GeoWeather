@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
@@ -44,6 +45,10 @@ fun MainWeatherScreen(
 ) {
     val locations by viewModel.locations.collectAsState()
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
+    var notificationLocation by remember { mutableStateOf<LocationEntity?>(null) }
+    val orderedLocations = remember(locations) {
+        locations.sortedWith(compareByDescending<LocationEntity> { it.isDefault }.thenBy { it.name.lowercase() })
+    }
     var isLocating by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -190,7 +195,7 @@ fun MainWeatherScreen(
                         contentPadding = PaddingValues(horizontal = 12.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        items(locations, key = { "compare-${it.id}" }) { loc ->
+                        items(orderedLocations, key = { "compare-${it.id}" }) { loc ->
                             Card(
                                 modifier = Modifier
                                     .width(156.dp)
@@ -225,17 +230,24 @@ fun MainWeatherScreen(
                     contentPadding = PaddingValues(bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                items(locations, key = { it.id }) { loc ->
+                items(orderedLocations, key = { it.id }) { loc ->
                     ListItem(
                         headlineContent = { Text(loc.name) },
                         supportingContent = { Text("${loc.latitude}, ${loc.longitude}") },
                         trailingContent = {
                             Row {
-                                IconButton(onClick = { viewModel.toggleLocationNotifications(loc) }) {
+                                IconButton(onClick = { notificationLocation = loc }) {
                                     Icon(
                                         if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
                                         contentDescription = null,
                                         tint = if (loc.notificationsEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                IconButton(onClick = { viewModel.toggleDefaultLocation(loc) }) {
+                                    Icon(
+                                        if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = stringResource(Res.string.favorite_location),
+                                        tint = if (loc.isDefault) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                                 IconButton(onClick = { locationToDelete = loc }) {
@@ -305,6 +317,52 @@ fun MainWeatherScreen(
                     modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
                 ) {
                     Text(stringResource(Res.string.CancelTXT))
+                }
+            }
+        )
+    }
+
+    notificationLocation?.let { location ->
+        val parts = location.notificationTime.split(":")
+        val initialHour = parts.getOrNull(0)?.toIntOrNull() ?: 8
+        val initialMinute = parts.getOrNull(1)?.toIntOrNull() ?: 0
+        val timeState = rememberTimePickerState(initialHour = initialHour, initialMinute = initialMinute, is24Hour = true)
+        AlertDialog(
+            onDismissRequest = { notificationLocation = null },
+            modifier = Modifier.padding(horizontal = 24.dp).geoWeatherGlass(RoundedCornerShape(32.dp), interactive = false),
+            containerColor = Color.Transparent,
+            tonalElevation = 0.dp,
+            title = { Text(stringResource(Res.string.notification_time_title)) },
+            text = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    TimePicker(state = timeState)
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val time = "%02d:%02d".format(timeState.hour, timeState.minute)
+                        viewModel.setLocationNotifications(location, true, time)
+                        notificationLocation = null
+                    },
+                    modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
+                ) { Text("OK") }
+            },
+            dismissButton = {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (location.notificationsEnabled) {
+                        TextButton(
+                            onClick = {
+                                viewModel.setLocationNotifications(location, false, location.notificationTime)
+                                notificationLocation = null
+                            },
+                            modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
+                        ) { Text(stringResource(Res.string.notification_disable)) }
+                    }
+                    TextButton(
+                        onClick = { notificationLocation = null },
+                        modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
+                    ) { Text(stringResource(Res.string.CancelTXT)) }
                 }
             }
         )
