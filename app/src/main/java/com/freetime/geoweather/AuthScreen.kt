@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import android.app.Activity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -93,13 +94,13 @@ fun AuthScreen(onAuthenticated: () -> Unit) {
 
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedButton(
-                        onClick = { scope.launch { runCatching { AppwriteAuth.signInWithGitHub(context) }.onFailure { error = it.message } } },
+                        onClick = { scope.launch { runCatching { AppwriteAuth.signInWithGitHub(context as Activity) }.onFailure { error = it.message } } },
                         modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp)),
                         colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
                         border = null
                     ) { Text(stringResource(R.string.sign_in_github)) }
                     OutlinedButton(
-                        onClick = { scope.launch { runCatching { AppwriteAuth.signInWithGitLab(context) }.onFailure { error = it.message } } },
+                        onClick = { scope.launch { runCatching { AppwriteAuth.signInWithGitLab(context as Activity) }.onFailure { error = it.message } } },
                         modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp)),
                         colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
                         border = null
