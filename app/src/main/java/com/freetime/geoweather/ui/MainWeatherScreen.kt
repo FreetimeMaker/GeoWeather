@@ -74,6 +74,9 @@ fun MainWeatherScreen(
 
     LaunchedEffect(locations.map { it.id }) {
         if (locations.isNotEmpty()) {
+            // Render cached Room data immediately. Refresh shortly after first paint
+            // so app startup/navigation never waits on network requests.
+            delay(1_500)
             viewModel.refreshAllLocations()
             while (true) {
                 delay(10 * 60 * 1000L)
