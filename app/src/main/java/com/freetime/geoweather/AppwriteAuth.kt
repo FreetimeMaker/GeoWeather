@@ -1,7 +1,7 @@
 package com.freetime.geoweather
 
 import android.content.Context
-import android.app.Activity
+import androidx.activity.ComponentActivity
 import io.appwrite.Client
 import io.appwrite.ID
 import io.appwrite.enums.OAuthProvider
@@ -68,11 +68,11 @@ object AppwriteAuth {
         runCatching { service.updatePrefs(prefs = prefs) }
     }
 
-    suspend fun signInWithGitHub(activity: Activity) {
+    suspend fun signInWithGitHub(activity: ComponentActivity) {
         account(activity).createOAuth2Session(activity = activity, provider = OAuthProvider.GITHUB)
     }
 
-    suspend fun signInWithGitLab(activity: Activity) {
+    suspend fun signInWithGitLab(activity: ComponentActivity) {
         account(activity).createOAuth2Session(activity = activity, provider = OAuthProvider.GITLAB)
     }
 
