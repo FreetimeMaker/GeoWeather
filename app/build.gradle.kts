@@ -35,8 +35,11 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("io.github.kyant0:backdrop:2.0.0")
-    implementation("io.github.kyant0:shapes:1.2.0")
+    implementation("me.free-time:freetime-core:1.0.0")
+    implementation("me.free-time:freetime-design:1.0.0")
+    implementation("me.free-time:freetime-updater:1.0.0")
+    implementation("me.free-time:freetime-browser:1.0.0")
+    implementation("me.free-time:freetime-donations:1.0.0")
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.content.negotiation)
