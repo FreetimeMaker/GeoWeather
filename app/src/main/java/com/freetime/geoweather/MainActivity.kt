@@ -58,6 +58,9 @@ class MainActivity : ComponentActivity() {
                     var authState by remember { mutableStateOf<Boolean?>(null) }
                     LaunchedEffect(Unit) {
                         authState = AppwriteAuth.hasSession(this@MainActivity)
+                        if (authState == true) {
+                            runCatching { AppwriteAuth.syncOAuthProfile(this@MainActivity) }
+                        }
                     }
                     when (authState) {
                         null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
