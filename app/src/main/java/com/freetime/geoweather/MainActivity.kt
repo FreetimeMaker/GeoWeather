@@ -8,8 +8,6 @@ import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
@@ -23,7 +21,6 @@ import com.freetime.geoweather.data.registerFilePickers
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.freetime.geoweather.ui.glass.LocalGeoWeatherBackdrop
 import com.freetime.geoweather.ui.glass.geoWeatherBackdropSource
@@ -56,23 +53,6 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .geoWeatherBackdropSource(backdrop)
                 ) {
-                    LaunchedEffect(Unit) {
-                        if (AppwriteAuth.hasSession(this@MainActivity)) {
-                            runCatching { AppwriteAuth.syncOAuthProfile(this@MainActivity) }
-                            runCatching {
-                                val repository = DependencyManager.getRepository()
-                                val settings = DependencyManager.getAppSettings()
-                                val restored = AppwriteSync.pull(this@MainActivity, repository, settings)
-                                if (!restored) AppwriteSync.push(this@MainActivity, repository, settings)
-                                AppwriteAutoSync.start(
-                                    this@MainActivity,
-                                    this,
-                                    repository,
-                                    settings
-                                )
-                            }
-                        }
-                    }
                     WeatherApp(
                         database = DependencyManager.getDatabase(),
                         appSettings = DependencyManager.getAppSettings()
@@ -81,24 +61,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch {
-            if (AppwriteAuth.hasSession(this@MainActivity)) {
-                runCatching { AppwriteAuth.syncOAuthProfile(this@MainActivity) }
-                runCatching {
-                    val repository = DependencyManager.getRepository()
-                    val settings = DependencyManager.getAppSettings()
-                    val restored = AppwriteSync.pull(this@MainActivity, repository, settings)
-                    if (!restored) AppwriteSync.push(this@MainActivity, repository, settings)
-                    AppwriteAutoSync.start(this@MainActivity, lifecycleScope, repository, settings)
-                }
-            }
-        }
-    }
-
 
     private fun installShortcuts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1) return

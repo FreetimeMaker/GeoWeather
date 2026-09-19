@@ -27,16 +27,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GeoWeather">
 
-        <activity
-            android:name="io.appwrite.views.CallbackActivity"
-            android:exported="true">
-            <intent-filter android:label="android_web_auth">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="appwrite-callback-6aad93080001aa8fad42" />
-            </intent-filter>
-        </activity>
 
         <activity
             android:name=".MainActivity"

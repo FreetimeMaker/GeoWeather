@@ -40,10 +40,6 @@ import com.freetime.geoweather.data.DailyForecast
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
 import com.freetime.geoweather.isNetworkAvailable
-import com.freetime.geoweather.AppwriteData
-import com.freetime.geoweather.GeoWeatherAccount
-import com.freetime.geoweather.SubscriptionPlan
-import com.freetime.geoweather.SubscriptionPlans
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import kotlin.math.cos
@@ -69,13 +65,6 @@ fun WeatherDetailScreen(
     val pressureUnit by appSettings.pressureUnit.collectAsState()
     val animationMode by appSettings.weatherAnimations.collectAsState()
     val context = LocalContext.current
-    var account by remember { mutableStateOf<GeoWeatherAccount?>(null) }
-    var subscriptionPlan by remember { mutableStateOf<SubscriptionPlan?>(null) }
-    LaunchedEffect(Unit) {
-        account = runCatching { AppwriteData.account(context) }.getOrNull()
-        val plans = SubscriptionPlans.load()
-        subscriptionPlan = SubscriptionPlans.planFor(plans, account?.subscription)
-    }
     val isTransient = transientName != null
     val dbLocation by viewModel.observeLocation(locationId).collectAsState(initial = null)
     var transientLocation by remember { mutableStateOf<LocationEntity?>(null) }
@@ -113,11 +102,6 @@ fun WeatherDetailScreen(
                 title = {
                     Column {
                         Text(title)
-                        Text(
-                            stringResource(Res.string.plan_badge, (account?.subscription ?: "free").uppercase()),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
                 },
                 navigationIcon = {
@@ -182,10 +166,7 @@ fun WeatherDetailScreen(
             }
             else -> {
                 val hourly = remember(loc.weatherData) { viewModel.getHourlyForecasts(loc) }
-                val allDaily = remember(loc.weatherData) { viewModel.getDailyForecasts(loc) }
-                val daily = remember(allDaily, subscriptionPlan?.forecastDays) {
-                    allDaily.take(subscriptionPlan?.forecastDays ?: allDaily.size)
-                }
+                val daily = remember(loc.weatherData) { viewModel.getDailyForecasts(loc) }
                 val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
                 var airExtras by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.CurrentHourExtras?>(null) }
                 LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }

@@ -19,12 +19,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
-import coil3.compose.AsyncImage
-import com.freetime.geoweather.AppwriteData
-import com.freetime.geoweather.GeoWeatherAccount
-import com.freetime.geoweather.AppwriteSync
-import com.freetime.geoweather.SubscriptionPlan
-import com.freetime.geoweather.SubscriptionPlans
 import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.BACKUP_FILE_NAME
 import com.freetime.geoweather.data.BACKUP_MIME_TYPE
@@ -43,8 +37,6 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onChangeLogClick: () -> Unit,
     onWebViewClick: (String, String) -> Unit,
-    onAccountClick: () -> Unit,
-    onSubscriptionsClick: () -> Unit,
     onDiagnosticsClick: () -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
@@ -66,16 +58,6 @@ fun SettingsScreen(
     val importSuccess = stringResource(Res.string.import_success)
     val importFailed = stringResource(Res.string.import_failed)
     val context = LocalContext.current
-    var account by remember { mutableStateOf<GeoWeatherAccount?>(null) }
-    var code by remember { mutableStateOf("") }
-    var codeBusy by remember { mutableStateOf(false) }
-    var plans by remember { mutableStateOf<Map<String, SubscriptionPlan>>(emptyMap()) }
-    var lastSyncAt by remember { mutableStateOf<String?>(null) }
-    LaunchedEffect(Unit) {
-        account = runCatching { AppwriteData.account(context) }.getOrNull()
-        plans = SubscriptionPlans.load()
-    }
-
     Scaffold(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -100,179 +82,6 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-
-            SettingsSection(stringResource(Res.string.account_title))
-            account?.let { profile ->
-                Row(
-                    Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false).padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
-                    if (!profile.avatarUrl.isNullOrBlank()) {
-                        AsyncImage(model = profile.avatarUrl, contentDescription = null, modifier = Modifier.size(56.dp))
-                    }
-                    Column(Modifier.weight(1f)) {
-                        Text(profile.name, style = MaterialTheme.typography.titleMedium)
-                        Text(profile.email, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text(stringResource(Res.string.subscription_current, profile.subscription.uppercase()), style = MaterialTheme.typography.labelLarge)
-                    }
-                }
-            }
-
-            if (account != null) {
-                OutlinedButton(
-                    onClick = {
-                        scope.launch {
-                            runCatching { com.freetime.geoweather.AppwriteAuth.signOut(context) }
-                            com.freetime.geoweather.AppwriteAutoSync.stop()
-                            account = null
-                            plans = SubscriptionPlans.load()
-                            snackbarHostState.showSnackbar(context.getString(Res.string.signed_out))
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                    border = null
-                ) { Text(stringResource(Res.string.sign_out)) }
-            }
-
-            if (account == null) {
-                Text(
-                    stringResource(Res.string.account_optional_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Button(
-                    onClick = onAccountClick,
-                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                ) {
-                    Text(stringResource(Res.string.sign_in_social))
-                }
-            }
-
-            SettingsSection(stringResource(Res.string.subscription_title))
-            OutlinedButton(
-                onClick = onSubscriptionsClick,
-                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                border = null
-            ) { Text(stringResource(Res.string.compare_plans)) }
-            val effectiveSubscription = account?.subscription?.lowercase() ?: "free"
-            plans[effectiveSubscription]?.let { plan ->
-                    Column(
-                        Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false).padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Text(stringResource(Res.string.plan_features), style = MaterialTheme.typography.titleMedium)
-                        Text(stringResource(Res.string.plan_locations, plan.maxLocations))
-                        Text(stringResource(Res.string.plan_forecast_days, plan.forecastDays))
-                        Text(stringResource(if (plan.notifications) Res.string.plan_notifications_on else Res.string.plan_notifications_off))
-                    }
-            }
-
-            if (account != null && effectiveSubscription != "ultrimium") {
-                Button(
-                    onClick = {
-                        val url = "https://dashboard.free-time.me/shop"
-                        if (openExternalBrowser) {
-                            openUrl(url)
-                        } else {
-                            onWebViewClick(url, context.getString(Res.string.upgrade_subscription))
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                ) {
-                    Text(stringResource(Res.string.upgrade_subscription))
-                }
-            }
-
-            if (account != null) {
-            OutlinedTextField(
-                value = code,
-                onValueChange = { code = it },
-                label = { Text(stringResource(Res.string.redeem_code_hint)) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-                colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent)
-            )
-            Button(
-                enabled = code.isNotBlank() && !codeBusy,
-                onClick = {
-                    scope.launch {
-                        codeBusy = true
-                        val subscription = runCatching { AppwriteData.redeemCode(context, code) }.getOrNull()
-                        if (subscription != null) {
-                            account = runCatching { AppwriteData.account(context) }.getOrNull()
-                            code = ""
-                            snackbarHostState.showSnackbar(context.getString(Res.string.redeem_code_success, subscription.uppercase()))
-                        } else {
-                            snackbarHostState.showSnackbar(context.getString(Res.string.redeem_code_invalid))
-                        }
-                        codeBusy = false
-                    }
-                },
-                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-            ) {
-                if (codeBusy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
-                else Text(stringResource(Res.string.redeem_code))
-            }
-
-            }
-
-            SettingsSection(stringResource(Res.string.sync_title))
-            Text(
-                stringResource(Res.string.sync_description) + " " + stringResource(Res.string.sync_automatic),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            if (account != null) {
-            lastSyncAt?.let {
-                Text(
-                    stringResource(Res.string.last_synced, it),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(
-                    onClick = {
-                        scope.launch {
-                            val ok = runCatching {
-                                AppwriteSync.push(context, viewModel.repositoryForSync(), appSettings)
-                            }.isSuccess
-                            if (ok) lastSyncAt = java.time.LocalTime.now().withSecond(0).withNano(0).toString()
-                            snackbarHostState.showSnackbar(context.getString(if (ok) Res.string.sync_success else Res.string.sync_failed))
-                        }
-                    },
-                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(22.dp)),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                ) { Text(stringResource(Res.string.sync_now)) }
-                OutlinedButton(
-                    onClick = {
-                        scope.launch {
-                            val ok = runCatching {
-                                AppwriteSync.pull(context, viewModel.repositoryForSync(), appSettings)
-                            }.getOrDefault(false)
-                            if (ok) lastSyncAt = java.time.LocalTime.now().withSecond(0).withNano(0).toString()
-                            snackbarHostState.showSnackbar(context.getString(if (ok) Res.string.sync_success else Res.string.sync_failed))
-                        }
-                    },
-                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(22.dp)),
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                    border = null
-                ) { Text(stringResource(Res.string.sync_restore)) }
-            }
-
-            } else {
-                Text(
-                    stringResource(Res.string.sync_requires_account),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
 
             SettingsSection(stringResource(Res.string.unit_settings_title))
             Text(stringResource(Res.string.temperature_unit), style = MaterialTheme.typography.bodyLarge)

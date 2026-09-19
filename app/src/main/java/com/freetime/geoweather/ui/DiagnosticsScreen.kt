@@ -22,13 +22,9 @@ import com.freetime.geoweather.ui.glass.geoWeatherGlass
 @Composable
 fun DiagnosticsScreen(onBack: () -> Unit) {
     val context = LocalContext.current
-    var session by remember { mutableStateOf(false) }
     var locations by remember { mutableIntStateOf(0) }
-    var plan by remember { mutableStateOf("free") }
     LaunchedEffect(Unit) {
-        session = AppwriteAuth.hasSession(context)
         locations = DependencyManager.getRepository().getAllLocationsSync().size
-        plan = if (session) runCatching { AppwriteData.account(context).subscription }.getOrDefault("free") else "free"
     }
     val network = if (isNetworkAvailable()) "online" else "offline"
     val packageInfo = remember { runCatching { context.packageManager.getPackageInfo(context.packageName, 0) }.getOrNull() }
@@ -37,7 +33,7 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
     val report = "GeoWeather $versionName ($versionCode)\n" +
         "Android ${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}\n" +
         "Device: ${Build.MANUFACTURER} ${Build.MODEL}\n" +
-        "Network: $network\nAccount session: $session\nPlan: ${plan.uppercase()}\nSaved locations: $locations"
+        "Network: $network\nSaved locations: $locations"
     Scaffold(containerColor = Color.Transparent, topBar = {
         TopAppBar(
             modifier = Modifier.padding(14.dp).geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),

@@ -30,8 +30,6 @@ sealed class Screen {
     data object Settings : Screen()
     data object Donate : Screen()
     data object ChangeLog : Screen()
-    data object Auth : Screen()
-    data object Subscriptions : Screen()
     data object Diagnostics : Screen()
 }
 
@@ -210,19 +208,8 @@ private fun ScreenContent(
                 onBack = { onGoBack() },
                 onChangeLogClick = { onNavigate(ChangeLog) },
                 onWebViewClick = { url, title -> onNavigate(Web(url, title)) },
-                onAccountClick = { onNavigate(Auth) },
-                onSubscriptionsClick = { onNavigate(Subscriptions) },
                 onDiagnosticsClick = { onNavigate(Diagnostics) }
             )
-        }
-        is Auth -> {
-            AuthScreen(
-                onAuthenticated = { onGoBack() },
-                onBack = { onGoBack() }
-            )
-        }
-        is Subscriptions -> {
-            SubscriptionScreen(onBack = { onGoBack() })
         }
         is Diagnostics -> {
             DiagnosticsScreen(onBack = { onGoBack() })

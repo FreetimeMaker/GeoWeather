@@ -32,10 +32,6 @@ import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.getDetectedLocationName
-import com.freetime.geoweather.AppwriteData
-import com.freetime.geoweather.GeoWeatherAccount
-import com.freetime.geoweather.SubscriptionPlan
-import com.freetime.geoweather.SubscriptionPlans
 import kotlinx.coroutines.delay
 import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.launch
@@ -52,13 +48,6 @@ fun MainWeatherScreen(
 ) {
     val locations by viewModel.locations.collectAsState()
     val context = LocalContext.current
-    var account by remember { mutableStateOf<GeoWeatherAccount?>(null) }
-    var plan by remember { mutableStateOf<SubscriptionPlan?>(null) }
-    LaunchedEffect(Unit) {
-        account = runCatching { AppwriteData.account(context) }.getOrNull()
-        val plans = SubscriptionPlans.load()
-        plan = SubscriptionPlans.planFor(plans, account?.subscription)
-    }
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
     var notificationLocation by remember { mutableStateOf<LocationEntity?>(null) }
     val orderedLocations = locations
@@ -109,11 +98,6 @@ fun MainWeatherScreen(
                 title = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(stringResource(Res.string.app_name))
-                        Text(
-                            stringResource(Res.string.plan_badge, (account?.subscription ?: "free").uppercase()),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
                 },
                 actions = {
@@ -143,23 +127,7 @@ fun MainWeatherScreen(
                     focusedElevation = 0.dp,
                     hoveredElevation = 0.dp
                 ),
-                onClick = {
-                    val activePlan = plan
-                    val activeAccount = account
-                    if (activePlan != null && locations.size >= activePlan.maxLocations) {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                context.getString(
-                                    Res.string.location_limit_reached,
-                                    (activeAccount?.subscription ?: "free").uppercase(),
-                                    activePlan.maxLocations
-                                )
-                            )
-                        }
-                    } else {
-                        onAddLocationClick()
-                    }
-                },
+                onClick = onAddLocationClick,
                 icon = { Icon(Icons.Default.Add, contentDescription = null) },
                 text = { Text(stringResource(Res.string.SearchBTNTXT)) }
             )
@@ -240,13 +208,7 @@ fun MainWeatherScreen(
                         supportingContent = { Text("${loc.latitude}, ${loc.longitude}") },
                         trailingContent = {
                             Row {
-                                IconButton(onClick = {
-                                    if (plan?.notifications == false) {
-                                        scope.launch { snackbarHostState.showSnackbar(context.getString(Res.string.notifications_plan_required)) }
-                                    } else {
-                                        notificationLocation = loc
-                                    }
-                                }) {
+                                IconButton(onClick = { notificationLocation = loc }) {
                                     Icon(
                                         if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
                                         contentDescription = null,
