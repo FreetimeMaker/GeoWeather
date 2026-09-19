@@ -31,7 +31,10 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
         plan = if (session) runCatching { AppwriteData.account(context).subscription }.getOrDefault("free") else "free"
     }
     val network = if (isNetworkAvailable()) "online" else "offline"
-    val report = "GeoWeather ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})\n" +
+    val packageInfo = remember { runCatching { context.packageManager.getPackageInfo(context.packageName, 0) }.getOrNull() }
+    val versionName = packageInfo?.versionName ?: "unknown"
+    val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo?.longVersionCode ?: 0L else @Suppress("DEPRECATION") (packageInfo?.versionCode?.toLong() ?: 0L)
+    val report = "GeoWeather $versionName ($versionCode)\n" +
         "Android ${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}\n" +
         "Device: ${Build.MANUFACTURER} ${Build.MODEL}\n" +
         "Network: $network\nAccount session: $session\nPlan: ${plan.uppercase()}\nSaved locations: $locations"

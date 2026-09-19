@@ -47,9 +47,12 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     val viewModel = remember { WeatherViewModel(repository) }
     val context = LocalContext.current
     val launchPrefs = remember { context.getSharedPreferences("launch_state", android.content.Context.MODE_PRIVATE) }
+    val appVersion = remember {
+        runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: "unknown"
+    }
     var onboarding by remember { mutableStateOf(!launchPrefs.getBoolean("onboarding_done", false)) }
     var whatsNew by remember {
-        mutableStateOf(!onboarding && launchPrefs.getString("last_seen_version", "") != BuildConfig.VERSION_NAME)
+        mutableStateOf(!onboarding && launchPrefs.getString("last_seen_version", "") != appVersion)
     }
     val backStack = remember { mutableStateListOf<Screen>(Main) }
     fun navigate(screen: Screen) { backStack.add(screen) }
@@ -103,13 +106,13 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 launchPrefs.edit().putBoolean("onboarding_done", true).apply()
                 onboarding = false
                 whatsNew = false
-                launchPrefs.edit().putString("last_seen_version", BuildConfig.VERSION_NAME).apply()
+                launchPrefs.edit().putString("last_seen_version", appVersion).apply()
             })
             return@GeoWeatherTheme
         }
         if (whatsNew) {
             ChangeLogScreen(onBack = {
-                launchPrefs.edit().putString("last_seen_version", BuildConfig.VERSION_NAME).apply()
+                launchPrefs.edit().putString("last_seen_version", appVersion).apply()
                 whatsNew = false
             })
             return@GeoWeatherTheme
