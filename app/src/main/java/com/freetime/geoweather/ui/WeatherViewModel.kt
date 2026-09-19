@@ -1,5 +1,8 @@
 package com.freetime.geoweather.ui
 
+import com.freetime.geoweather.WeatherNotificationScheduler
+import com.freetime.geoweather.getAndroidAppContext
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.freetime.geoweather.data.LocationEntity
@@ -89,6 +92,7 @@ class WeatherViewModel(
         viewModelScope.launch {
             try {
                 repository.deleteLocation(location)
+                getAndroidAppContext()?.let { WeatherNotificationScheduler.cancel(it, location.id) }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -99,6 +103,11 @@ class WeatherViewModel(
         viewModelScope.launch {
             try {
                 repository.toggleLocationNotifications(location)
+                val context = getAndroidAppContext()
+                if (context != null) {
+                    val updated = repository.getAllLocationsSync().firstOrNull { it.id == location.id }
+                    if (updated != null) WeatherNotificationScheduler.schedule(context, updated)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
