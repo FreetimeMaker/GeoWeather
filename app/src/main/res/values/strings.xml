@@ -419,4 +419,15 @@
     <string name="need_account">No account yet? Create one</string>
     <string name="auth_failed">Authentication failed. Please check your details.</string>
     <string name="logout">Sign out</string>
+    <string name="sign_in_github">GitHub</string>
+    <string name="sign_in_gitlab">GitLab</string>
+    <string name="account_title">Account</string>
+    <string name="subscription_title">Subscription</string>
+    <string name="subscription_current">Current subscription: %1$s</string>
+    <string name="subscription_none">No active subscription</string>
+    <string name="redeem_code_title">Redeem code</string>
+    <string name="redeem_code_hint">Subscription code</string>
+    <string name="redeem_code">Redeem</string>
+    <string name="redeem_code_invalid">This code is invalid or has already been used.</string>
+    <string name="redeem_code_success">Subscription activated: %1$s</string>
 </resources>
