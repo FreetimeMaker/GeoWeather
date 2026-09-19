@@ -541,4 +541,9 @@
     <string name="update_checker_luma_store">Luma Store</string>
     <string name="update_checker_github">GitHub</string>
     <string name="update_checker_fdroid">F-Droid</string>
+
+    <string name="update_available_title">Update available</string>
+    <string name="update_available_message">GeoWeather %1$s is available.</string>
+    <string name="update_now">Update</string>
+    <string name="update_later">Later</string>
 </resources>
