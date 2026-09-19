@@ -82,8 +82,22 @@ class WeatherRepository(
 
     suspend fun importBackupLocations(locations: List<LocationEntity>) {
         for (loc in locations) {
-            if (locationDao.findByCoordinates(loc.latitude, loc.longitude) == null) {
-                locationDao.insertLocation(loc.copy(id = 0, selected = false))
+            val existing = locationDao.findByCoordinates(loc.latitude, loc.longitude)
+            if (existing == null) {
+                locationDao.insertLocation(loc.copy(id = 0))
+            } else {
+                locationDao.updateLocation(
+                    existing.copy(
+                        name = loc.name,
+                        notificationsEnabled = loc.notificationsEnabled,
+                        notificationTime = loc.notificationTime,
+                        changeAlertsEnabled = loc.changeAlertsEnabled,
+                        changeAlertInterval = loc.changeAlertInterval,
+                        selected = loc.selected,
+                        isDefault = loc.isDefault,
+                        sortOrder = loc.sortOrder
+                    )
+                )
             }
         }
     }
