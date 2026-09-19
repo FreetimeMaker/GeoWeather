@@ -66,6 +66,7 @@ fun SettingsScreen(
     var code by remember { mutableStateOf("") }
     var codeBusy by remember { mutableStateOf(false) }
     var plans by remember { mutableStateOf<Map<String, SubscriptionPlan>>(emptyMap()) }
+    var lastSyncAt by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(Unit) {
         account = runCatching { AppwriteData.account(context) }.getOrNull()
         plans = SubscriptionPlans.load()
@@ -201,6 +202,13 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             if (account != null) {
+            lastSyncAt?.let {
+                Text(
+                    stringResource(Res.string.last_synced, it),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Button(
                     onClick = {
@@ -208,6 +216,7 @@ fun SettingsScreen(
                             val ok = runCatching {
                                 AppwriteSync.push(context, viewModel.repositoryForSync(), appSettings)
                             }.isSuccess
+                            if (ok) lastSyncAt = java.time.LocalTime.now().withSecond(0).withNano(0).toString()
                             snackbarHostState.showSnackbar(context.getString(if (ok) Res.string.sync_success else Res.string.sync_failed))
                         }
                     },
