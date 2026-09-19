@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.LocationEntity
+import com.freetime.geoweather.data.HourlyForecast
+import com.freetime.geoweather.data.DailyForecast
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
 import com.freetime.geoweather.R as Res
@@ -53,7 +55,9 @@ fun WeatherDetailScreen(
     viewModel: WeatherViewModel,
     appSettings: AppSettings,
     onBack: () -> Unit,
-    onRadarClick: (Double, Double) -> Unit
+    onRadarClick: (Double, Double) -> Unit,
+    onHourlyClick: (String, HourlyForecast) -> Unit,
+    onDailyClick: (String, DailyForecast) -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
@@ -513,7 +517,12 @@ fun WeatherDetailScreen(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 items(hourly, key = { it.time }) { hour ->
-                                    Card {
+                                    Card(
+                                        modifier = Modifier.geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false),
+                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                                        onClick = { onHourlyClick(loc.name, hour) }
+                                    ) {
                                         Column(
                                             modifier = Modifier.padding(12.dp),
                                             horizontalAlignment = Alignment.CenterHorizontally
@@ -552,7 +561,7 @@ fun WeatherDetailScreen(
                                     .animateContentSize(animationSpec = spring())
                                     .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                                onClick = { expanded = !expanded }
+                                onClick = { onDailyClick(loc.name, day) }
                             ) {
                                 Column(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
                                     Row(
@@ -787,5 +796,108 @@ fun moonPhaseFor(date: java.time.LocalDate): Pair<String, String> {
         age < 23.99 -> "🌗" to "Last Quarter"
         age < 27.68 -> "🌘" to "Waning Crescent"
         else -> "🌑" to "New Moon"
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ForecastDetailScreen(
+    locationName: String,
+    hourly: HourlyForecast?,
+    daily: DailyForecast?,
+    appSettings: AppSettings,
+    onBack: () -> Unit
+) {
+    val tempUnit by appSettings.tempUnit.collectAsState()
+    val windUnit by appSettings.windUnit.collectAsState()
+    val forecastCode = hourly?.code ?: daily?.code ?: 0
+    val title = if (hourly != null) {
+        "$locationName · ${hourly.time.takeLast(5)}"
+    } else {
+        "$locationName · ${daily?.date ?: ""}"
+    }
+
+    Scaffold(
+        containerColor = Color.Transparent,
+        topBar = {
+            TopAppBar(
+                modifier = Modifier
+                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+                title = { Text(title, maxLines = 1) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back_nav_desc))
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                Icon(
+                    painter = painterResource(WeatherIconMapper.getWeatherIcon(forecastCode)),
+                    contentDescription = null,
+                    modifier = Modifier.size(120.dp),
+                    tint = Color.Unspecified
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = hourly?.let { formatTemp(it.temp.toDouble(), tempUnit) }
+                        ?: daily?.let { "${formatTemp(it.maxTemp.toDouble(), tempUnit)} / ${formatTemp(it.minTemp.toDouble(), tempUnit)}" }
+                        ?: "--",
+                    style = MaterialTheme.typography.displayMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = stringResource(WeatherCodes.getStringResource(forecastCode)),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                ) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                        if (hourly != null) {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                WeatherDetailItem("Time", hourly.time.takeLast(5), Modifier.weight(1f))
+                                WeatherDetailItem("Temperature", formatTemp(hourly.temp.toDouble(), tempUnit), modifier = Modifier.weight(1f))
+                                WeatherDetailItem("Rain", "${hourly.precipProbability}%", modifier = Modifier.weight(1f))
+                            }
+                        }
+                        if (daily != null) {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                WeatherDetailItem("High", formatTemp(daily.maxTemp.toDouble(), tempUnit), modifier = Modifier.weight(1f))
+                                WeatherDetailItem("Low", formatTemp(daily.minTemp.toDouble(), tempUnit), modifier = Modifier.weight(1f))
+                                WeatherDetailItem("Rain", "${daily.precipProbMax}%", modifier = Modifier.weight(1f))
+                            }
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .3f))
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                WeatherDetailItem(stringResource(Res.string.sunrise_label), daily.sunrise.takeLast(5), modifier = Modifier.weight(1f))
+                                WeatherDetailItem(stringResource(Res.string.sunset_label), daily.sunset.takeLast(5), modifier = Modifier.weight(1f))
+                                WeatherDetailItem(stringResource(Res.string.precipitation_label), "${daily.precipSum} mm", modifier = Modifier.weight(1f))
+                            }
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .3f))
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                WeatherDetailItem(stringResource(Res.string.wind_max_label), formatWind(daily.windMax, null, windUnit), modifier = Modifier.weight(1f))
+                                Spacer(Modifier.weight(2f))
+                            }
+                        }
+                    }
+                }
+            }
+            if (forecastCode != 0) item { WeatherAlertsSection(forecastCode) }
+        }
     }
 }
