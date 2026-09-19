@@ -22,6 +22,8 @@ class AppSettings(private val settings: Settings) {
         const val KEY_DISABLE_PRIVATE_VIEW = "disable_private_view"
         const val KEY_OPEN_EXTERNAL_BROWSER = "open_external_browser"
         const val KEY_WEATHER_ANIMATIONS = "weather_animations"
+        const val KEY_NOTIFICATION_PROFILE = "notification_profile"
+        const val KEY_QUIET_HOURS = "quiet_hours"
     }
 
     private val _persistentNotif = MutableStateFlow(settings.getBoolean(KEY_PERSISTENT_NOTIF, false))
@@ -119,6 +121,20 @@ class AppSettings(private val settings: Settings) {
         settings[KEY_OPEN_EXTERNAL_BROWSER] = open
         _openExternalBrowser.value = open
     }
+    private val _notificationProfile = MutableStateFlow(settings.getString(KEY_NOTIFICATION_PROFILE, "normal"))
+    val notificationProfile: StateFlow<String> = _notificationProfile.asStateFlow()
+    fun setNotificationProfile(value: String) {
+        settings[KEY_NOTIFICATION_PROFILE] = value
+        _notificationProfile.value = value
+    }
+
+    private val _quietHours = MutableStateFlow(settings.getBoolean(KEY_QUIET_HOURS, true))
+    val quietHours: StateFlow<Boolean> = _quietHours.asStateFlow()
+    fun setQuietHours(value: Boolean) {
+        settings[KEY_QUIET_HOURS] = value
+        _quietHours.value = value
+    }
+
     private val _weatherAnimations = MutableStateFlow(settings.getString(KEY_WEATHER_ANIMATIONS, "full"))
     val weatherAnimations: StateFlow<String> = _weatherAnimations.asStateFlow()
 
