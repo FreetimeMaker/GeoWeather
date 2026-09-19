@@ -33,9 +33,14 @@ private data class SyncPayload(
     val tempUnit: String,
     val windUnit: String,
     val pressureUnit: String,
+    val useSystemTheme: Boolean,
+    val darkModeEnabled: Boolean,
+    val dynamicColor: Boolean,
+    val oledBlack: Boolean,
     val persistentNotif: Boolean,
     val tempThreshold: Int,
     val windThreshold: Int,
+    val disablePrivateView: Boolean,
     val openExternalBrowser: Boolean,
     val weatherAnimations: String,
     val locations: List<SyncedLocation>
@@ -52,9 +57,14 @@ object AppwriteSync {
             tempUnit = settings.tempUnit.value,
             windUnit = settings.windUnit.value,
             pressureUnit = settings.pressureUnit.value,
+            useSystemTheme = settings.useSystemTheme.value,
+            darkModeEnabled = settings.darkModeEnabled.value,
+            dynamicColor = settings.dynamicColor.value,
+            oledBlack = settings.oledBlack.value,
             persistentNotif = settings.persistentNotif.value,
             tempThreshold = settings.tempThreshold.value,
             windThreshold = settings.windThreshold.value,
+            disablePrivateView = settings.disablePrivateView.value,
             openExternalBrowser = settings.openExternalBrowser.value,
             weatherAnimations = settings.weatherAnimations.value,
             locations = repository.getAllLocationsSync().map {
@@ -113,9 +123,14 @@ object AppwriteSync {
         settings.setTempUnit(payload.tempUnit)
         settings.setWindUnit(payload.windUnit)
         settings.setPressureUnit(payload.pressureUnit)
+        settings.setUseSystemTheme(payload.useSystemTheme)
+        settings.setDarkModeEnabled(payload.darkModeEnabled)
+        settings.setDynamicColor(payload.dynamicColor)
+        settings.setOledBlack(payload.oledBlack)
         settings.setPersistentNotif(payload.persistentNotif)
         settings.setTempThreshold(payload.tempThreshold)
         settings.setWindThreshold(payload.windThreshold)
+        settings.setDisablePrivateView(payload.disablePrivateView)
         settings.setOpenExternalBrowser(payload.openExternalBrowser)
         settings.setWeatherAnimations(payload.weatherAnimations)
 
