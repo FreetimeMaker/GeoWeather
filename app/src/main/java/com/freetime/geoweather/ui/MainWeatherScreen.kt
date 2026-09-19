@@ -109,13 +109,11 @@ fun MainWeatherScreen(
                 title = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(stringResource(Res.string.app_name))
-                        account?.let {
-                            Text(
-                                stringResource(Res.string.plan_badge, it.subscription.uppercase()),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        Text(
+                            stringResource(Res.string.plan_badge, (account?.subscription ?: "free").uppercase()),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
@@ -187,12 +185,12 @@ fun MainWeatherScreen(
                 onClick = {
                     val activePlan = plan
                     val activeAccount = account
-                    if (activePlan != null && locations.size >= activePlan.maxLocations && activeAccount != null) {
+                    if (activePlan != null && locations.size >= activePlan.maxLocations) {
                         scope.launch {
                             snackbarHostState.showSnackbar(
                                 context.getString(
                                     Res.string.location_limit_reached,
-                                    activeAccount.subscription.uppercase(),
+                                    (activeAccount?.subscription ?: "free").uppercase(),
                                     activePlan.maxLocations
                                 )
                             )
