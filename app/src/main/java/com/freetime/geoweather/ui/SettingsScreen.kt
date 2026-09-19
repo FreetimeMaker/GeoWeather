@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import com.freetime.geoweather.AppwriteData
 import com.freetime.geoweather.GeoWeatherAccount
+import com.freetime.geoweather.AppwriteSync
 import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.BACKUP_FILE_NAME
 import com.freetime.geoweather.data.BACKUP_MIME_TYPE
@@ -138,6 +139,40 @@ fun SettingsScreen(
             ) {
                 if (codeBusy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                 else Text(stringResource(Res.string.redeem_code))
+            }
+
+            SettingsSection(stringResource(Res.string.sync_title))
+            Text(
+                stringResource(Res.string.sync_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(
+                    onClick = {
+                        scope.launch {
+                            val ok = runCatching {
+                                AppwriteSync.push(context, viewModel.repositoryForSync(), appSettings)
+                            }.isSuccess
+                            snackbarHostState.showSnackbar(context.getString(if (ok) Res.string.sync_success else Res.string.sync_failed))
+                        }
+                    },
+                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(22.dp)),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                ) { Text(stringResource(Res.string.sync_now)) }
+                OutlinedButton(
+                    onClick = {
+                        scope.launch {
+                            val ok = runCatching {
+                                AppwriteSync.pull(context, viewModel.repositoryForSync(), appSettings)
+                            }.getOrDefault(false)
+                            snackbarHostState.showSnackbar(context.getString(if (ok) Res.string.sync_success else Res.string.sync_failed))
+                        }
+                    },
+                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(22.dp)),
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                    border = null
+                ) { Text(stringResource(Res.string.sync_restore)) }
             }
 
             SettingsSection(stringResource(Res.string.unit_settings_title))
