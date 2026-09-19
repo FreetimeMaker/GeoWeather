@@ -533,6 +533,17 @@
     <string name="cl_430_whats_new">What’s New is shown automatically once per app version.</string>
     <string name="cl_430_fixes">Fixed several UI and build issues.</string>
 
+    <string name="cl_430_freetime_maven">Migrated shared app functionality to the me.free-time libraries from Maven Central.</string>
+    <string name="cl_430_freetime_modules">GeoWeather now uses Freetime Core, Design, Browser, Donations and Updater.</string>
+    <string name="cl_430_shared_glass">Moved Liquid Glass to the shared Freetime Design implementation.</string>
+    <string name="cl_430_shared_browser">Moved external browser handling to Freetime Browser.</string>
+    <string name="cl_430_shared_donations">Moved donation UI and donation models to Freetime Donations.</string>
+    <string name="cl_430_update_checker">Added an Update Checker setting with Off, Luma Store, GitHub and F-Droid sources.</string>
+    <string name="cl_430_update_default_off">Update checking is disabled by default.</string>
+    <string name="cl_430_update_startup">Added startup update checks using Freetime Updater when an update source is enabled.</string>
+    <string name="cl_430_update_dialog">Added an update-available dialog with direct access to the selected update source.</string>
+    <string name="cl_430_backdrop_fix">Fixed stale GeoWeather Liquid Glass backdrop references after the Freetime Design migration.</string>
+
     <!-- Update checker -->
     <string name="update_checker_title">Update checker</string>
     <string name="update_checker_source">Update source</string>
