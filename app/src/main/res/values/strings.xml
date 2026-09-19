@@ -512,4 +512,24 @@
     <string name="profile_travel">Travel</string>
     <string name="quiet_hours">Quiet hours</string>
     <string name="quiet_hours_desc">Suppress regular weather updates overnight. Important weather alerts remain available.</string>
+
+    <!-- v4.3.0 -->
+    <string name="cl_430_liquid_glass">Redesigned the interface with Liquid Glass effects and new Liquid Glass shapes.</string>
+    <string name="cl_430_dark_light">Improved Liquid Glass support for light and dark themes.</string>
+    <string name="cl_430_forecast_16_days">Added up to 16 days of weather forecasts with Open-Meteo.</string>
+    <string name="cl_430_pull_refresh">Added pull-to-refresh to the weather details screen.</string>
+    <string name="cl_430_refresh_button">Removed the redundant refresh button from the weather details top bar.</string>
+    <string name="cl_430_location_sorting">Simplified saved locations by removing manual location sorting controls.</string>
+    <string name="cl_430_accounts_removed">Removed accounts, subscriptions, cloud sync and plan restrictions.</string>
+    <string name="cl_430_forecast_limits">All available forecast days are now accessible without subscription limits.</string>
+    <string name="cl_430_donation_fix">Improved donation wallet handling and fixed a crash caused by duplicate wallet entries.</string>
+    <string name="cl_430_weather_details">Improved weather detail and forecast screens.</string>
+    <string name="cl_430_notification_profiles">Added Normal, Outdoor and Travel notification profiles.</string>
+    <string name="cl_430_quiet_hours">Added Quiet Hours for suppressing regular overnight weather notifications.</string>
+    <string name="cl_430_onboarding">Added a first-run onboarding experience.</string>
+    <string name="cl_430_diagnostics">Added a privacy-friendly Diagnostics &amp; Privacy screen.</string>
+    <string name="cl_430_shortcuts">Added Android app shortcuts for Current Location, Search and Settings.</string>
+    <string name="cl_430_deeplink">Added geoweather://open deep-link support.</string>
+    <string name="cl_430_whats_new">What’s New is shown automatically once per app version.</string>
+    <string name="cl_430_fixes">Fixed several UI and build issues.</string>
 </resources>
