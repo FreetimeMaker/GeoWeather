@@ -8,6 +8,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import com.freetime.geoweather.Screen.*
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
@@ -44,6 +45,12 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         )
     }
     val viewModel = remember { WeatherViewModel(repository) }
+    val context = LocalContext.current
+    val launchPrefs = remember { context.getSharedPreferences("launch_state", android.content.Context.MODE_PRIVATE) }
+    var onboarding by remember { mutableStateOf(!launchPrefs.getBoolean("onboarding_done", false)) }
+    var whatsNew by remember {
+        mutableStateOf(!onboarding && launchPrefs.getString("last_seen_version", "") != BuildConfig.VERSION_NAME)
+    }
     val backStack = remember { mutableStateListOf<Screen>(Main) }
     fun navigate(screen: Screen) { backStack.add(screen) }
     fun goBack() { if (backStack.size > 1) backStack.removeLast() }
@@ -91,6 +98,22 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     }
 
     GeoWeatherTheme(darkTheme = darkTheme) {
+        if (onboarding) {
+            OnboardingScreen(onDone = {
+                launchPrefs.edit().putBoolean("onboarding_done", true).apply()
+                onboarding = false
+                whatsNew = false
+                launchPrefs.edit().putString("last_seen_version", BuildConfig.VERSION_NAME).apply()
+            })
+            return@GeoWeatherTheme
+        }
+        if (whatsNew) {
+            ChangeLogScreen(onBack = {
+                launchPrefs.edit().putString("last_seen_version", BuildConfig.VERSION_NAME).apply()
+                whatsNew = false
+            })
+            return@GeoWeatherTheme
+        }
         Surface(modifier = Modifier.fillMaxSize(), color = androidx.compose.ui.graphics.Color.Transparent) {
             Box(Modifier.fillMaxSize()) {
                 backStack.forEachIndexed { index, screen ->
