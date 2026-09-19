@@ -20,6 +20,23 @@ import com.freetime.geoweather.ui.glass.geoWeatherGlass
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v4.1.0" to listOf(
+            stringResource(Res.string.cl_410_appwrite_auth),
+            stringResource(Res.string.cl_410_oauth),
+            stringResource(Res.string.cl_410_profile),
+            stringResource(Res.string.cl_410_subscriptions),
+            stringResource(Res.string.cl_410_codes),
+            stringResource(Res.string.cl_410_plan_features),
+            stringResource(Res.string.cl_410_plan_limits),
+            stringResource(Res.string.cl_410_upgrade),
+            stringResource(Res.string.cl_410_cloud_sync),
+            stringResource(Res.string.cl_410_auto_sync),
+            stringResource(Res.string.cl_410_sync_controls),
+            stringResource(Res.string.cl_410_main_plan),
+            stringResource(Res.string.cl_410_forecast_limits),
+            stringResource(Res.string.cl_410_liquid),
+            stringResource(Res.string.cl_410_sdk)
+        ),
         "v4.0.3" to listOf(
             stringResource(Res.string.cl_401_fix_error),
             stringResource(Res.string.cl_403_new_liquid)
