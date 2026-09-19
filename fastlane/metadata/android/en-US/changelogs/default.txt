@@ -1,5 +1,3 @@
-GeoWeather 4.1.0
-
 • Added Appwrite account authentication with GitHub and GitLab OAuth
 • Added account profile names and OAuth profile pictures
 • Added GeoWeather subscriptions and subscription code redemption
