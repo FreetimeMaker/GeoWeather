@@ -125,13 +125,13 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
-                    Text(stringResource(Res.string.sign_in_or_create_account))
+                    Text(stringResource(Res.string.sign_in_social))
                 }
             }
 
             SettingsSection(stringResource(Res.string.subscription_title))
-            account?.let { profile ->
-                plans[profile.subscription.lowercase()]?.let { plan ->
+            val effectiveSubscription = account?.subscription?.lowercase() ?: "free"
+            plans[effectiveSubscription]?.let { plan ->
                     Column(
                         Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false).padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -141,10 +141,9 @@ fun SettingsScreen(
                         Text(stringResource(Res.string.plan_forecast_days, plan.forecastDays))
                         Text(stringResource(if (plan.notifications) Res.string.plan_notifications_on else Res.string.plan_notifications_off))
                     }
-                }
             }
 
-            account?.takeIf { it.subscription.lowercase() != "ultrimium" }?.let {
+            if (effectiveSubscription != "ultrimium") {
                 Button(
                     onClick = {
                         val url = "https://dashboard.free-time.me/shop"
