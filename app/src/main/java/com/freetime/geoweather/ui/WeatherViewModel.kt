@@ -15,6 +15,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 
 class WeatherViewModel(
     private val repository: WeatherRepository
@@ -153,13 +155,11 @@ class WeatherViewModel(
     }
 
     suspend fun refreshAllLocations() {
-        locations.value.forEach { location ->
-            try {
-                repository.refreshLocationWeather(location.id)
-            } catch (e: Exception) {
-                e.printStackTrace()
+        locations.value.map { location ->
+            viewModelScope.async {
+                runCatching { repository.refreshLocationWeather(location.id) }
             }
-        }
+        }.awaitAll()
     }
 
     fun refreshWeather() {
