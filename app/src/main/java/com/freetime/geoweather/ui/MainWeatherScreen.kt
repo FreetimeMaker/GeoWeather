@@ -15,6 +15,8 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -46,9 +48,7 @@ fun MainWeatherScreen(
     val locations by viewModel.locations.collectAsState()
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
     var notificationLocation by remember { mutableStateOf<LocationEntity?>(null) }
-    val orderedLocations = remember(locations) {
-        locations.sortedWith(compareByDescending<LocationEntity> { it.isDefault }.thenBy { it.name.lowercase() })
-    }
+    val orderedLocations = locations
     var isLocating by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -249,6 +249,14 @@ fun MainWeatherScreen(
                                         contentDescription = stringResource(Res.string.favorite_location),
                                         tint = if (loc.isDefault) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
+                                }
+                                Column {
+                                    IconButton(onClick = { viewModel.moveLocation(loc, -1) }, modifier = Modifier.size(28.dp)) {
+                                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
+                                    }
+                                    IconButton(onClick = { viewModel.moveLocation(loc, 1) }, modifier = Modifier.size(28.dp)) {
+                                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+                                    }
                                 }
                                 IconButton(onClick = { locationToDelete = loc }) {
                                     Icon(
