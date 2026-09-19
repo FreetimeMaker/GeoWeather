@@ -532,4 +532,13 @@
     <string name="cl_430_deeplink">Added geoweather://open deep-link support.</string>
     <string name="cl_430_whats_new">What’s New is shown automatically once per app version.</string>
     <string name="cl_430_fixes">Fixed several UI and build issues.</string>
+
+    <!-- Update checker -->
+    <string name="update_checker_title">Update checker</string>
+    <string name="update_checker_source">Update source</string>
+    <string name="update_checker_description">Choose where GeoWeather should check for app updates. Update checking is disabled by default.</string>
+    <string name="update_checker_off">Off</string>
+    <string name="update_checker_luma_store">Luma Store</string>
+    <string name="update_checker_github">GitHub</string>
+    <string name="update_checker_fdroid">F-Droid</string>
 </resources>
