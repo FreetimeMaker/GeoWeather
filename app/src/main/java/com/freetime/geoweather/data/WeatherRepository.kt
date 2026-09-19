@@ -124,6 +124,14 @@ class WeatherRepository(
         locationDao.updateLocation(location.copy(notificationsEnabled = !location.notificationsEnabled))
     }
 
+    suspend fun setLocationNotifications(location: LocationEntity, enabled: Boolean, time: String = location.notificationTime) {
+        locationDao.updateLocation(location.copy(notificationsEnabled = enabled, notificationTime = time))
+    }
+
+    suspend fun setNotificationTime(location: LocationEntity, time: String) {
+        locationDao.updateLocation(location.copy(notificationTime = time))
+    }
+
     suspend fun toggleDefaultLocation(location: LocationEntity) {
         if (location.isDefault) {
             locationDao.updateLocation(location.copy(isDefault = false))
