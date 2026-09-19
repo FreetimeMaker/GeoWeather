@@ -128,6 +128,23 @@ fun SettingsScreen(
                 }
             }
 
+            account?.takeIf { it.subscription.lowercase() != "ultrimium" }?.let {
+                Button(
+                    onClick = {
+                        val url = "https://dashboard.free-time.me/shop"
+                        if (openExternalBrowser) {
+                            openUrl(url)
+                        } else {
+                            onWebViewClick(url, context.getString(Res.string.upgrade_subscription))
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                ) {
+                    Text(stringResource(Res.string.upgrade_subscription))
+                }
+            }
+
             OutlinedTextField(
                 value = code,
                 onValueChange = { code = it },
