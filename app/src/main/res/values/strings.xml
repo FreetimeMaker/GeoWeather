@@ -172,6 +172,23 @@
     <string name="temperature_change_msg">Temperature changed from %1$s to %2$s</string>
     <string name="WeatherNotificationTXT">Weather in %1$s: %2$s, %3$s</string>
 
+    <!-- Changelog v4.2.0 -->
+    <string name="cl_420_briefings">Added Morning and Evening weather briefings</string>
+    <string name="cl_420_activity_windows">Added smart activity windows for walking, running, cycling and photography</string>
+    <string name="cl_420_travel">Added travel planning foundations for weather-aware trips</string>
+    <string name="cl_420_location_groups">Added location groups for organizing saved places</string>
+    <string name="cl_420_accuracy">Added forecast accuracy tracking based on historical weather data</string>
+    <string name="cl_420_provider_compare">Added weather provider comparison foundations</string>
+    <string name="cl_420_widgets">Added configurable multi-widget preferences</string>
+    <string name="cl_420_sync_v3">Added Sync v3 foundations with stable location IDs, update timestamps and deletion tracking</string>
+    <string name="cl_420_notifications">Added Normal, Outdoor and Travel notification profiles</string>
+    <string name="cl_420_quiet_hours">Added Quiet Hours for suppressing regular overnight weather notifications</string>
+    <string name="cl_420_onboarding">Added a first-run onboarding experience</string>
+    <string name="cl_420_diagnostics">Added a privacy-friendly Diagnostics &amp; Privacy screen with shareable diagnostics</string>
+    <string name="cl_420_shortcuts">Added Android app shortcuts for Current Location, Search and Settings</string>
+    <string name="cl_420_deeplink">Added geoweather://open deep-link support</string>
+    <string name="cl_420_whats_new">What’s New is now shown automatically once per app version</string>
+
     <!-- Changelog v4.1.0 -->
     <string name="cl_410_appwrite_auth">Added Appwrite account authentication</string>
     <string name="cl_410_oauth">Added GitHub and GitLab OAuth login</string>
