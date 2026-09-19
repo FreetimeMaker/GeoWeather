@@ -468,4 +468,6 @@
     <string name="sync_requires_account">Sign in to synchronize settings and saved locations.</string>
     <string name="sign_in_social">Sign in with GitHub or GitLab</string>
     <string name="last_synced">Last synced: %1$s</string>
+    <string name="compare_plans">Compare plans</string>
+    <string name="current_plan">Current plan</string>
 </resources>
