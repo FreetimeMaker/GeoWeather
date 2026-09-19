@@ -15,6 +15,8 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -111,6 +113,41 @@ fun MainWeatherScreen(
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
             )
+        },
+        bottomBar = {
+            NavigationBar(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp, vertical = 14.dp)
+                    .height(68.dp)
+                    .geoWeatherGlass(RoundedCornerShape(50), interactive = false),
+                containerColor = Color.Transparent,
+                tonalElevation = 0.dp
+            ) {
+                NavigationBarItem(
+                    selected = true,
+                    onClick = { },
+                    icon = { Icon(Icons.Default.Home, contentDescription = stringResource(Res.string.app_name)) },
+                    colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent)
+                )
+                NavigationBarItem(
+                    selected = false,
+                    onClick = onAddLocationClick,
+                    icon = { Icon(Icons.Default.Search, contentDescription = stringResource(Res.string.SearchBTNTXT)) },
+                    colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent)
+                )
+                NavigationBarItem(
+                    selected = false,
+                    onClick = onDonateClick,
+                    icon = { Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc)) },
+                    colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent)
+                )
+                NavigationBarItem(
+                    selected = false,
+                    onClick = onSettingsClick,
+                    icon = { Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc)) },
+                    colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent)
+                )
+            }
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
