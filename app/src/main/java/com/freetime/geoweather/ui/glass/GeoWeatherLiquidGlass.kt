@@ -27,6 +27,7 @@ import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.backdrops.layerBackdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.kyant.shapes.Capsule
 import kotlinx.coroutines.launch
 
 val LocalGeoWeatherBackdrop = staticCompositionLocalOf<Backdrop?> { null }
@@ -49,6 +50,14 @@ fun GeoWeatherGlassRoot(content: @Composable () -> Unit) {
 @Composable
 fun Modifier.geoWeatherGlass(shape: Shape, interactive: Boolean = true): Modifier =
     geoWeatherLiquidGlass(LocalGeoWeatherBackdrop.current, shape, interactive)
+
+/**
+ * Native Kyant liquid-glass capsule for pills, FABs and compact actions.
+ * Use geoWeatherGlass(shape) for cards whose corner geometry must stay fixed.
+ */
+@Composable
+fun Modifier.geoWeatherGlassCapsule(interactive: Boolean = true): Modifier =
+    geoWeatherLiquidGlass(LocalGeoWeatherBackdrop.current, Capsule(), interactive)
 
 @Composable
 fun Modifier.geoWeatherLiquidGlass(
