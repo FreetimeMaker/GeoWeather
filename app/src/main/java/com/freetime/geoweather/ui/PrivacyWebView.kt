@@ -2,14 +2,13 @@ package com.freetime.geoweather.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.util.AttributeSet
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import me.free_time.browser.FreetimeBrowser
 
 class PrivacyWebView(context: Context, attrs: AttributeSet? = null) : WebView(context, attrs) {
     var disablePrivateView: Boolean = false
@@ -66,7 +65,7 @@ class PrivacyWebView(context: Context, attrs: AttributeSet? = null) : WebView(co
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
             val url = request?.url?.toString() ?: return false
             if (openLinksInExternalBrowser) {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                FreetimeBrowser.openExternal(context, url)
                 return true
             }
             return false
