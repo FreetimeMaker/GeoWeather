@@ -489,4 +489,10 @@
     <string name="skip">Skip</string>
     <string name="next">Next</string>
     <string name="done">Done</string>
+    <string name="notification_profile">Notification profile</string>
+    <string name="profile_normal">Normal</string>
+    <string name="profile_outdoor">Outdoor</string>
+    <string name="profile_travel">Travel</string>
+    <string name="quiet_hours">Quiet hours</string>
+    <string name="quiet_hours_desc">Suppress regular weather updates overnight. Important weather alerts remain available.</string>
 </resources>
