@@ -105,14 +105,15 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
             OnboardingScreen(onDone = {
                 launchPrefs.edit().putBoolean("onboarding_done", true).apply()
                 onboarding = false
-                whatsNew = false
-                launchPrefs.edit().putString("last_seen_version", appVersion).apply()
+                whatsNew = true
             })
             return@GeoWeatherTheme
         }
         if (whatsNew) {
             ChangeLogScreen(onBack = {
                 launchPrefs.edit().putString("last_seen_version", appVersion).apply()
+                backStack.clear()
+                backStack.add(Main)
                 whatsNew = false
             })
             return@GeoWeatherTheme
