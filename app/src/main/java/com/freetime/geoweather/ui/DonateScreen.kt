@@ -115,7 +115,7 @@ fun DonateScreen(
             TopAppBar(
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                     .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onSurface, navigationIconContentColor = MaterialTheme.colorScheme.onSurface, actionIconContentColor = MaterialTheme.colorScheme.onSurface),
                 title = { Text(stringResource(Res.string.donate_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -133,26 +133,26 @@ fun DonateScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = stringResource(Res.string.support_development),
                             style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(Modifier.height(8.dp))
                         Text(
                             text = stringResource(Res.string.select_option_msg),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
             }
 
             item {
-                Card(modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false), colors = CardDefaults.cardColors(containerColor = Color.Transparent)) {
+                Card(modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false), colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = stringResource(Res.string.about_developer_title),
@@ -170,7 +170,7 @@ fun DonateScreen(
             }
 
             item {
-                Card(modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false), colors = CardDefaults.cardColors(containerColor = Color.Transparent)) {
+                Card(modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false), colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = stringResource(Res.string.donation_mission_title),
@@ -231,7 +231,7 @@ fun DonateScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth()
                         .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)
                 ) {
                     Column(Modifier.padding(16.dp)) {
                         Text(name, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
