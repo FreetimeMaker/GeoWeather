@@ -1,4 +1,4 @@
-GeoWeather v4.2.0
+GeoWeather 4.2.0
 
 • Added Morning and Evening weather briefings
 • Added smart activity windows for walking, running, cycling and photography
