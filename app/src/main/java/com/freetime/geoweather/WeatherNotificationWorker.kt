@@ -15,30 +15,33 @@ class WeatherNotificationWorker(
         val repository = DependencyManager.getRepository()
         val appSettings = DependencyManager.getAppSettings()
 
-        val location = repository.getSelectedLocation() ?: return Result.success()
-        if (!location.notificationsEnabled) return Result.success()
+        val locations = repository.getAllLocationsSync().filter { it.notificationsEnabled }
+        if (locations.isEmpty()) return Result.success()
 
-        try {
-            val updatedLocation = repository.refreshSelectedLocationWeather() ?: location
-            val tempStr = repository.getDisplayTemp(updatedLocation, appSettings.tempUnit.value)
-            val code = updatedLocation.currentWeatherCode ?: 0
-            val description = WeatherCodes.getDescription(code)
-
-            val message = applicationContext.getString(
-                SharedRes.string.WeatherNotificationTXT,
-                updatedLocation.name,
-                tempStr,
-                description
-            )
-            WeatherNotifications.show(
-                applicationContext,
-                2001,
-                applicationContext.getString(SharedRes.string.app_name),
-                message
-            )
-        } catch (e: Exception) {
-            return Result.retry()
+        var shouldRetry = false
+        locations.forEach { location ->
+            try {
+                val updatedLocation = repository.refreshLocationWeather(location.id) ?: location
+                val tempStr = repository.getDisplayTemp(updatedLocation, appSettings.tempUnit.value)
+                val code = updatedLocation.currentWeatherCode ?: 0
+                val description = WeatherCodes.getDescription(code)
+                val message = applicationContext.getString(
+                    SharedRes.string.WeatherNotificationTXT,
+                    updatedLocation.name,
+                    tempStr,
+                    description
+                )
+                WeatherNotifications.show(
+                    applicationContext,
+                    2001 + (location.id % 100000).toInt(),
+                    applicationContext.getString(SharedRes.string.app_name),
+                    message
+                )
+            } catch (_: Exception) {
+                shouldRetry = true
+            }
         }
+        if (shouldRetry) return Result.retry()
 
         return Result.success()
     }
