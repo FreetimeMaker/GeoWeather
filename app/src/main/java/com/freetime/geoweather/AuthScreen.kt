@@ -91,6 +91,21 @@ fun AuthScreen(onAuthenticated: () -> Unit) {
                     else Text(stringResource(if (register) R.string.create_account else R.string.sign_in))
                 }
 
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedButton(
+                        onClick = { scope.launch { runCatching { AppwriteAuth.signInWithGitHub(context) }.onFailure { error = it.message } } },
+                        modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp)),
+                        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                        border = null
+                    ) { Text(stringResource(R.string.sign_in_github)) }
+                    OutlinedButton(
+                        onClick = { scope.launch { runCatching { AppwriteAuth.signInWithGitLab(context) }.onFailure { error = it.message } } },
+                        modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp)),
+                        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                        border = null
+                    ) { Text(stringResource(R.string.sign_in_gitlab)) }
+                }
+
                 TextButton(
                     onClick = { register = !register; error = null },
                     modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(20.dp))
