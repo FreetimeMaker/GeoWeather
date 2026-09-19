@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
@@ -70,6 +72,23 @@ class MainActivity : ComponentActivity() {
                         database = DependencyManager.getDatabase(),
                         appSettings = DependencyManager.getAppSettings()
                     )
+                }
+            }
+        }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            if (AppwriteAuth.hasSession(this@MainActivity)) {
+                runCatching { AppwriteAuth.syncOAuthProfile(this@MainActivity) }
+                runCatching {
+                    val repository = DependencyManager.getRepository()
+                    val settings = DependencyManager.getAppSettings()
+                    val restored = AppwriteSync.pull(this@MainActivity, repository, settings)
+                    if (!restored) AppwriteSync.push(this@MainActivity, repository, settings)
+                    AppwriteAutoSync.start(this@MainActivity, lifecycleScope, repository, settings)
                 }
             }
         }
