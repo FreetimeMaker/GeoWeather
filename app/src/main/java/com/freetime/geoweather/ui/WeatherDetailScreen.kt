@@ -39,6 +39,7 @@ import com.freetime.geoweather.data.HourlyForecast
 import com.freetime.geoweather.data.DailyForecast
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
+import com.freetime.geoweather.isNetworkAvailable
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import kotlin.math.cos
@@ -194,11 +195,34 @@ fun WeatherDetailScreen(
                             night = isNight
                         )
                     }
+                androidx.compose.material3.pulltorefresh.PullToRefreshBox(
+                    isRefreshing = isRefreshing,
+                    onRefresh = { doRefresh() },
+                    modifier = Modifier.fillMaxSize()
+                ) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    item {
+                        val minutesAgo = ((System.currentTimeMillis() - loc.lastUpdated).coerceAtLeast(0L) / 60_000L).toInt()
+                        if (!isNetworkAvailable() && loc.weatherData != null) {
+                            Text(
+                                stringResource(Res.string.offline_cached_weather),
+                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(18.dp), interactive = false).padding(12.dp),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        } else if (loc.lastUpdated > 0L) {
+                            Text(
+                                stringResource(Res.string.last_updated_minutes, minutesAgo),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
                     item {
                         if (code != null) {
                             AnimatedWeatherGlass(
@@ -640,6 +664,7 @@ fun WeatherDetailScreen(
                             }
                         }
                     }
+                }
                 }
                 }
             }
