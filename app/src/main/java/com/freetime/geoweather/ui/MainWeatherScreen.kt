@@ -116,59 +116,20 @@ fun MainWeatherScreen(
                         )
                     }
                 },
+                actions = {
+                    IconButton(onClick = { openCurrentLocation() }, enabled = !isLocating) {
+                        if (isLocating) CircularProgressIndicator(Modifier.size(22.dp), strokeWidth = 2.dp)
+                        else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
+                    }
+                    IconButton(onClick = onDonateClick) {
+                        Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
+                    }
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
+                    }
+                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
             )
-        },
-        bottomBar = {
-            NavigationBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    // Floating pill: leave visible space around all edges, especially the bottom.
-                    .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 20.dp)
-                    .height(68.dp)
-                    .geoWeatherLiquidGlass(backdrop, navigationShape, interactive = true),
-                containerColor = Color.Transparent,
-                tonalElevation = 0.dp
-            ) {
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { openCurrentLocation() },
-                    enabled = !isLocating,
-                    icon = {
-                        if (isLocating) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                strokeWidth = 2.dp
-                            )
-                        } else {
-                            Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
-                        }
-                    },
-                    label = { Text(currentLocationName) }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onDonateClick,
-                    icon = {
-                        Icon(
-                            Icons.Default.Favorite,
-                            contentDescription = stringResource(Res.string.donate_nav_desc)
-                        )
-                    },
-                    label = { Text(stringResource(Res.string.donate_nav_desc)) }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onSettingsClick,
-                    icon = {
-                        Icon(
-                            Icons.Default.Settings,
-                            contentDescription = stringResource(Res.string.settings_nav_desc)
-                        )
-                    },
-                    label = { Text(stringResource(Res.string.settings_nav_desc)) }
-                )
-            }
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
