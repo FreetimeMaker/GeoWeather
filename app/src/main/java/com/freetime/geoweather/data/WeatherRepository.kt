@@ -12,7 +12,23 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.*
 
-data class HourlyForecast(val time: String, val temp: Int, val code: Int, val precipProbability: Int = 0)
+data class HourlyForecast(
+    val time: String,
+    val temp: Int,
+    val code: Int,
+    val precipProbability: Int = 0,
+    val humidity: Int? = null,
+    val feelsLike: Double? = null,
+    val visibilityKm: Double? = null,
+    val pressure: Double? = null,
+    val cloudBaseM: Double? = null,
+    val precipitation: Double? = null,
+    val rain: Double? = null,
+    val snowfall: Double? = null,
+    val windSpeed: Double? = null,
+    val windGusts: Double? = null,
+    val uvIndex: Double? = null
+)
 
 data class DailyForecast(
     val date: String,
@@ -23,7 +39,16 @@ data class DailyForecast(
     val sunset: String = "--",
     val precipSum: Double = 0.0,
     val precipProbMax: Int = 0,
-    val windMax: Double = 0.0
+    val windMax: Double = 0.0,
+    val feelsLikeMax: Double? = null,
+    val feelsLikeMin: Double? = null,
+    val daylightDuration: Double? = null,
+    val sunshineDuration: Double? = null,
+    val uvMax: Double? = null,
+    val rainSum: Double? = null,
+    val snowfallSum: Double? = null,
+    val precipitationHours: Double? = null,
+    val windGustMax: Double? = null
 )
 
 data class CurrentHourExtras(
