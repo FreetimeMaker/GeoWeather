@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,16 @@ fun SearchScreen(
     onBack: () -> Unit = onCitySelected
 ) {
     var query by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val prefs = remember { context.getSharedPreferences("search_history", android.content.Context.MODE_PRIVATE) }
+    var recentSearches by remember {
+        mutableStateOf(prefs.getStringSet("queries", emptySet()).orEmpty().toList().take(5))
+    }
+    fun rememberQuery(value: String) {
+        if (value.isBlank()) return
+        recentSearches = (listOf(value.trim()) + recentSearches.filterNot { it.equals(value.trim(), true) }).take(5)
+        prefs.edit().putStringSet("queries", recentSearches.toSet()).apply()
+    }
     val results by viewModel.searchResults.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
 
@@ -65,7 +76,20 @@ fun SearchScreen(
                 singleLine = true
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+            if (recentSearches.isNotEmpty() && query.isBlank()) {
+                Text(stringResource(Res.string.recent_searches), style = MaterialTheme.typography.titleSmall)
+                Spacer(modifier = Modifier.height(8.dp))
+                androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(recentSearches) { recent ->
+                        AssistChip(
+                            onClick = { query = recent; viewModel.searchCity(recent) },
+                            label = { Text(recent) }
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
 
             when {
                 isSearching -> {
@@ -93,6 +117,7 @@ fun SearchScreen(
                                 supportingContent = { Text("${city.latitude}, ${city.longitude}") },
                                 colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                                 modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp), interactive = false).clickable {
+                                    rememberQuery(city.name)
                                     viewModel.addLocation(city)
                                     onCitySelected()
                                 }
