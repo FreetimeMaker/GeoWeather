@@ -1,2 +1,15 @@
-• Fixed a Startup Error
-• Use a new Liquid Glass
+GeoWeather 4.1.0
+
+• Added Appwrite account authentication with GitHub and GitLab OAuth
+• Added account profile names and OAuth profile pictures
+• Added GeoWeather subscriptions and subscription code redemption
+• Subscription features are now loaded dynamically from the GeoWeather API
+• Added plan-based limits for saved locations, forecast length and notifications
+• Added an Upgrade Subscription button for Free, Freemium and Premium users
+• Added cloud synchronization for settings and saved locations
+• Added automatic sync after local changes and login
+• Added manual Sync Now and Restore from Cloud controls
+• Added the current subscription to the main screen and weather details
+• Weather details now respect the forecast length included in the current plan
+• Improved Liquid Glass styling for account, subscription and sync UI
+• Updated the Appwrite Android SDK and fixed OAuth/TablesDB compatibility
