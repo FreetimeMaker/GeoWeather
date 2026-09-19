@@ -400,7 +400,6 @@
     <string name="rain_chance_label">Rain chance</string>
     <string name="rain_label">Rain</string>
     <string name="snow_label">Snow</string>
-    <string name="uv_label">UV</string>
     <string name="feels_high_label">Feels high</string>
     <string name="feels_low_label">Feels low</string>
     <string name="uv_max_label">UV max</string>
