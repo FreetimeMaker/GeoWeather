@@ -480,4 +480,13 @@
     <string name="animation_off">Off</string>
     <string name="diagnostics_title">Diagnostics &amp; privacy</string>
     <string name="export_diagnostics">Share diagnostics</string>
+    <string name="onboarding_weather">Your weather, your places</string>
+    <string name="onboarding_weather_desc">Add locations, compare forecasts and use the current-location view whenever you need it.</string>
+    <string name="onboarding_alerts">Useful weather alerts</string>
+    <string name="onboarding_alerts_desc">GeoWeather can notify you about weather changes. Notification access is optional.</string>
+    <string name="onboarding_account">Cloud sync is optional</string>
+    <string name="onboarding_account_desc">Use GeoWeather without an account on the Free plan, or sign in with GitHub or GitLab to synchronize supported data.</string>
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+    <string name="done">Done</string>
 </resources>
