@@ -22,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
@@ -31,6 +32,10 @@ import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.getDetectedLocationName
+import com.freetime.geoweather.AppwriteData
+import com.freetime.geoweather.GeoWeatherAccount
+import com.freetime.geoweather.SubscriptionPlan
+import com.freetime.geoweather.SubscriptionPlans
 import kotlinx.coroutines.delay
 import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.launch
@@ -46,6 +51,14 @@ fun MainWeatherScreen(
     onCurrentLocationClick: (String, Double, Double) -> Unit
 ) {
     val locations by viewModel.locations.collectAsState()
+    val context = LocalContext.current
+    var account by remember { mutableStateOf<GeoWeatherAccount?>(null) }
+    var plan by remember { mutableStateOf<SubscriptionPlan?>(null) }
+    LaunchedEffect(Unit) {
+        account = runCatching { AppwriteData.account(context) }.getOrNull()
+        val plans = SubscriptionPlans.load()
+        plan = account?.subscription?.lowercase()?.let { plans[it] }
+    }
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
     var notificationLocation by remember { mutableStateOf<LocationEntity?>(null) }
     val orderedLocations = locations
@@ -93,7 +106,18 @@ fun MainWeatherScreen(
             CenterAlignedTopAppBar(
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                     .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
-                title = { Text(stringResource(Res.string.app_name)) },
+                title = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(stringResource(Res.string.app_name))
+                        account?.let {
+                            Text(
+                                stringResource(Res.string.plan_badge, it.subscription.uppercase()),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
             )
         },
@@ -160,7 +184,23 @@ fun MainWeatherScreen(
                     focusedElevation = 0.dp,
                     hoveredElevation = 0.dp
                 ),
-                onClick = onAddLocationClick,
+                onClick = {
+                    val activePlan = plan
+                    val activeAccount = account
+                    if (activePlan != null && locations.size >= activePlan.maxLocations && activeAccount != null) {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                context.getString(
+                                    Res.string.location_limit_reached,
+                                    activeAccount.subscription.uppercase(),
+                                    activePlan.maxLocations
+                                )
+                            )
+                        }
+                    } else {
+                        onAddLocationClick()
+                    }
+                },
                 icon = { Icon(Icons.Default.Add, contentDescription = null) },
                 text = { Text(stringResource(Res.string.SearchBTNTXT)) }
             )
@@ -241,7 +281,13 @@ fun MainWeatherScreen(
                         supportingContent = { Text("${loc.latitude}, ${loc.longitude}") },
                         trailingContent = {
                             Row {
-                                IconButton(onClick = { notificationLocation = loc }) {
+                                IconButton(onClick = {
+                                    if (plan?.notifications == false) {
+                                        scope.launch { snackbarHostState.showSnackbar(context.getString(Res.string.notifications_plan_required)) }
+                                    } else {
+                                        notificationLocation = loc
+                                    }
+                                }) {
                                     Icon(
                                         if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
                                         contentDescription = null,
