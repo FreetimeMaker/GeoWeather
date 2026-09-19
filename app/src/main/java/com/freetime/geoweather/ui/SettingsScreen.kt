@@ -166,7 +166,9 @@ fun SettingsScreen(
                             snackbarHostState.showSnackbar(if (ok) exportSuccess else exportFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp))
+                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp)),
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                    border = null
                 ) {
                     Text(stringResource(Res.string.export_locations))
                 }
@@ -179,14 +181,16 @@ fun SettingsScreen(
                             snackbarHostState.showSnackbar(if (ok) importSuccess else importFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp))
+                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp)),
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                    border = null
                 ) {
                     Text(stringResource(Res.string.import_locations))
                 }
             }
 
             Spacer(Modifier.height(16.dp))
-            Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)) {
+            Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp)) {
                 Text(stringResource(Res.string.open_change_log))
             }
             Spacer(Modifier.height(8.dp))
@@ -199,14 +203,18 @@ fun SettingsScreen(
             )
             OutlinedButton(
                 onClick = { openUrl("mailto:FreetimeMaker@proton.me?subject=GeoWeather Feedback") },
-                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp))
+                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                border = null
             ) {
                 Text(stringResource(Res.string.feedback_btn))
             }
             Spacer(Modifier.height(8.dp))
             OutlinedButton(
                 onClick = { onWebViewClick("https://github.com/FreetimeMaker/GeoWeather/issues", "GitHub Issues") },
-                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp))
+                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+                border = null
             ) {
                 Text(stringResource(Res.string.feedback_github_btn))
             }
