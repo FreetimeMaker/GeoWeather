@@ -1,6 +1,8 @@
 package com.freetime.geoweather.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -317,19 +319,34 @@ fun WeatherDetailScreen(
                                     Text(stringResource(Res.string.next_rain_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Text(nextRainText, style = MaterialTheme.typography.bodyLarge)
                                     Text(stringResource(Res.string.timeline_24h), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                                        items(hourly) { hour ->
-                                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                                Text(hour.time, style = MaterialTheme.typography.labelSmall)
-                                                Icon(
-                                                    painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)),
-                                                    contentDescription = null,
-                                                    modifier = Modifier.size(32.dp),
-                                                    tint = Color.Unspecified
-                                                )
-                                                Text("${hour.temp}°", fontWeight = FontWeight.Bold)
-                                                if (hour.precipProbability > 0) {
-                                                    Text("${hour.precipProbability}%", style = MaterialTheme.typography.labelSmall)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        hourly.forEachIndexed { index, hour ->
+                                            val previous = hourly.getOrNull(index - 1)
+                                            val marksSunset = previous != null &&
+                                                previous.time.takeLast(5) < sunsetTime.toString().take(5) &&
+                                                hour.time.takeLast(5) >= sunsetTime.toString().take(5)
+                                            if (marksSunset) {
+                                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                    Text("🌇", style = MaterialTheme.typography.titleMedium)
+                                                    Text(sunsetTime.toString().take(5), style = MaterialTheme.typography.labelSmall)
+                                                }
+                                            }
+                                            GeoWeatherGlassPanel(depth = GeoWeatherGlassDepth.Subtle) {
+                                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                    Text(hour.time.takeLast(5), style = MaterialTheme.typography.labelSmall)
+                                                    Icon(
+                                                        painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)),
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(32.dp),
+                                                        tint = Color.Unspecified
+                                                    )
+                                                    Text("${hour.temp}°", fontWeight = FontWeight.Bold)
+                                                    if (hour.precipProbability > 0) {
+                                                        Text("${hour.precipProbability}%", style = MaterialTheme.typography.labelSmall)
+                                                    }
                                                 }
                                             }
                                         }
