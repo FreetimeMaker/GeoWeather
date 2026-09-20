@@ -413,6 +413,7 @@ fun MainWeatherScreen(
                 }
             }
         }
+        }
     }
 
     if (showAddLocationDialog) {
