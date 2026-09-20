@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.getDetectedLocationName
@@ -89,14 +91,8 @@ fun MainWeatherScreen(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            CenterAlignedTopAppBar(
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
-                title = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(stringResource(Res.string.app_name))
-                    }
-                },
+            GeoWeatherGlassTopBar(
+                title = stringResource(Res.string.app_name),
                 actions = {
                     IconButton(onClick = { openCurrentLocation() }, enabled = !isLocating) {
                         if (isLocating) CircularProgressIndicator(Modifier.size(22.dp), strokeWidth = 2.dp)
@@ -108,26 +104,17 @@ fun MainWeatherScreen(
                     IconButton(onClick = onSettingsClick) {
                         Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
                     }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
+                }
             )
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .geoWeatherGlass(RoundedCornerShape(50)),
-                containerColor = Color.Transparent,
-                elevation = FloatingActionButtonDefaults.elevation(
-                    defaultElevation = 0.dp,
-                    pressedElevation = 0.dp,
-                    focusedElevation = 0.dp,
-                    hoveredElevation = 0.dp
-                ),
+            GeoWeatherGlassAction(
                 onClick = onAddLocationClick,
-                icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                text = { Text(stringResource(Res.string.SearchBTNTXT)) }
-            )
+                modifier = Modifier.padding(bottom = 8.dp)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Text(stringResource(Res.string.SearchBTNTXT))
+            }
         }
     ) { padding ->
         if (locations.isEmpty()) {
@@ -164,16 +151,14 @@ fun MainWeatherScreen(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         items(orderedLocations, key = { "compare-${it.id}" }) { loc ->
-                            Card(
+                            Box(
                                 modifier = Modifier
                                     .width(156.dp)
                                     .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = true)
                                     .clickable {
                                         viewModel.selectLocation(loc)
                                         onLocationClick(loc)
-                                    },
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                                    }
                             ) {
                                 Column(
                                     modifier = Modifier.padding(14.dp),
