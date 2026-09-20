@@ -27,6 +27,9 @@ import androidx.compose.ui.graphics.Color
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.ui.glass.geoWeatherGlassCapsule
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassTextField
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.getDetectedLocationName
@@ -233,7 +236,7 @@ fun MainWeatherScreen(
                     )
                 }
                 item {
-                    TextButton(
+                    GeoWeatherGlassAction(
                         onClick = onDonateClick,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -261,28 +264,32 @@ fun MainWeatherScreen(
             title = { Text(stringResource(Res.string.search_title)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
+                    GeoWeatherGlassTextField(
                         value = addLocationQuery,
                         onValueChange = { addLocationQuery = it; viewModel.searchCity(it.trim()) },
-                        modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-                        colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent),
-                        label = { Text(stringResource(Res.string.search_hint)) },
-                        placeholder = { Text(stringResource(Res.string.search_placeholder)) },
-                        singleLine = true
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = stringResource(Res.string.search_placeholder)
                     )
                     if (isSearching) {
                         Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                     } else if (addLocationQuery.isNotBlank()) {
                         LazyColumn(modifier = Modifier.heightIn(max = 320.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             items(searchResults, key = { "add-${it.latitude},${it.longitude}" }) { city ->
-                                ListItem(
-                                    headlineContent = { Text(city.name) },
-                                    supportingContent = { Text("${city.latitude}, ${city.longitude}") },
-                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                                    modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp), interactive = true).clickable {
-                                        viewModel.addLocation(city); showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch()
-                                    }
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = true)
+                                        .clickable {
+                                            viewModel.addLocation(city)
+                                            showAddLocationDialog = false
+                                            addLocationQuery = ""
+                                            viewModel.clearSearch()
+                                        }
+                                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                                ) {
+                                    Text(city.name, style = MaterialTheme.typography.titleMedium)
+                                    Text("${city.latitude}, ${city.longitude}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
                             }
                         }
                     }
