@@ -622,6 +622,20 @@ fun WeatherDetailScreen(
     }
 }
 
+
+@androidx.annotation.DrawableRes
+private fun weatherIconForTime(code: Int, isNight: Boolean): Int = when (code) {
+    0 -> if (isNight) Res.drawable.google_clear_night else Res.drawable.google_clear_day
+    1 -> if (isNight) Res.drawable.google_mostly_clear_night else Res.drawable.google_mostly_clear_day
+    2 -> if (isNight) Res.drawable.google_partly_cloudy_night else Res.drawable.google_partly_cloudy_day
+    3 -> Res.drawable.google_cloudy
+    45, 48 -> Res.drawable.google_fog
+    51, 53, 55 -> Res.drawable.google_drizzle
+    61, 63, 65 -> if (isNight) Res.drawable.google_rain_with_sunny_dark else Res.drawable.google_rain_with_sunny_light
+    71, 73, 75 -> if (isNight) Res.drawable.google_snow_with_sunny_dark else Res.drawable.google_snow_with_sunny_light
+    else -> if (isNight) Res.drawable.google_cloudy_with_sunny_dark else Res.drawable.google_cloudy_with_sunny_light
+}
+
 @Composable
 fun WeatherDetailItem(
     label: String,
