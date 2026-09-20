@@ -120,12 +120,14 @@ fun WeatherDetailScreen(
                     if (loc?.currentTemp != null) {
                         GeoWeatherGlassIconAction(onClick = {
                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                            val shareText = "${loc.name}: ${formatTemp(loc.currentTemp!!, tempUnit)} · ${loc.currentWeatherCode?.let { context.getString(WeatherCodes.getStringResource(it)) } ?: ""}"
-                            val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(android.content.Intent.EXTRA_TEXT, shareText)
-                            }
-                            context.startActivity(android.content.Intent.createChooser(intent, context.getString(Res.string.share_weather)))
+                            val description = loc.currentWeatherCode?.let { context.getString(WeatherCodes.getStringResource(it)) } ?: ""
+                            val bitmap = createWeatherShareCard(
+                                title = loc.name,
+                                temperature = formatTemp(loc.currentTemp!!, tempUnit),
+                                description = description,
+                                subtitle = loc.currentHumidity?.let { "Humidity " + it + "%" } ?: ""
+                            )
+                            shareWeatherCard(context, bitmap, loc.name)
                         }) {
                             Icon(Icons.Default.Share, contentDescription = stringResource(Res.string.share_weather))
                         }
@@ -203,7 +205,8 @@ fun WeatherDetailScreen(
                             windSpeed = loc.currentWindSpeed ?: 0.0,
                             windDirection = loc.currentWindDirection ?: 0,
                             intensity = if (reducedMotion) .45f else rainIntensity,
-                            night = isNight
+                            night = isNight,
+                            reducedMotion = reducedMotion
                         )
                     }
                 androidx.compose.material3.pulltorefresh.PullToRefreshBox(
