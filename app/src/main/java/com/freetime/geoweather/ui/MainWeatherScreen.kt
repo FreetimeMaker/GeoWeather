@@ -237,8 +237,11 @@ fun MainWeatherScreen(
                     }
                 }
             } else {
-            Column(
-                modifier = Modifier.fillMaxSize().padding(padding)
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize().padding(padding),
+                contentPadding = PaddingValues(top = 8.dp, bottom = 112.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 if (locations.size > 1) {
                     val comparable = orderedLocations.filter { it.currentTemp != null }
@@ -247,134 +250,93 @@ fun MainWeatherScreen(
                         val maxTemp = comparable.maxOf { it.currentTemp!! }
                         val windiest = comparable.maxByOrNull { it.currentWindSpeed ?: 0.0 }
                         val humid = comparable.maxByOrNull { it.currentHumidity ?: 0 }
-                        Box(
-                            modifier = Modifier
-                                .padding(horizontal = 12.dp)
-                                .fillMaxWidth()
-                                .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false)
-                        ) {
-                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Text(stringResource(Res.string.compare_summary_title), style = MaterialTheme.typography.titleMedium)
-                                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Column {
-                                        Text(stringResource(Res.string.compare_temperature_spread), style = MaterialTheme.typography.labelSmall)
-                                        Text(minTemp.toInt().toString() + "–" + maxTemp.toInt() + "°C", style = MaterialTheme.typography.titleMedium)
-                                    }
-                                    Column {
-                                        Text(stringResource(Res.string.compare_windiest), style = MaterialTheme.typography.labelSmall)
-                                        Text(windiest?.name ?: "--", style = MaterialTheme.typography.titleSmall)
-                                    }
-                                    Column {
-                                        Text(stringResource(Res.string.compare_most_humid), style = MaterialTheme.typography.labelSmall)
-                                        Text(humid?.name ?: "--", style = MaterialTheme.typography.titleSmall)
-                                    }
-                                }
-                            }
-                        }
-                        Spacer(Modifier.height(10.dp))
-                    }
-                    Text(
-                        text = stringResource(Res.string.location_overview_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .geoWeatherGlass(RoundedCornerShape(18.dp), interactive = false)
-                            .padding(horizontal = 14.dp, vertical = 8.dp)
-                    )
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        items(orderedLocations, key = { "overview-" + it.id }) { loc ->
-                            val ageMinutes = ((System.currentTimeMillis() - loc.lastUpdated).coerceAtLeast(0L) / 60_000L).toInt()
+                        item(key = "comparison-summary") {
                             Box(
                                 modifier = Modifier
-                                    .width(210.dp)
-                                    .geoWeatherGlass(RoundedCornerShape(26.dp), interactive = true)
-                                    .clickable { viewModel.selectLocation(loc); onLocationClick(loc) }
+                                    .padding(horizontal = 12.dp)
+                                    .fillMaxWidth()
+                                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false)
                             ) {
-                                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                                Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text(stringResource(Res.string.compare_summary_title), style = MaterialTheme.typography.titleMedium)
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                        Text(loc.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, modifier = Modifier.weight(1f))
-                                        if (loc.isDefault) Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.favorite_location), modifier = Modifier.size(18.dp))
+                                        Column(Modifier.weight(1f)) {
+                                            Text(stringResource(Res.string.compare_temperature_spread), style = MaterialTheme.typography.labelSmall)
+                                            Text(minTemp.toInt().toString() + "–" + maxTemp.toInt() + "°C", style = MaterialTheme.typography.titleMedium)
+                                        }
+                                        Column(Modifier.weight(1f)) {
+                                            Text(stringResource(Res.string.compare_windiest), style = MaterialTheme.typography.labelSmall)
+                                            Text(windiest?.name ?: "--", style = MaterialTheme.typography.titleSmall, maxLines = 1)
+                                        }
+                                        Column(Modifier.weight(1f)) {
+                                            Text(stringResource(Res.string.compare_most_humid), style = MaterialTheme.typography.labelSmall)
+                                            Text(humid?.name ?: "--", style = MaterialTheme.typography.titleSmall, maxLines = 1)
+                                        }
                                     }
-                                    Text(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.headlineMedium)
-                                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                                        Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = MaterialTheme.typography.labelSmall)
-                                        Text(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--", style = MaterialTheme.typography.labelSmall)
-                                    }
-                                    if (loc.lastUpdated > 0L) Text(stringResource(Res.string.updated_age_short, ageMinutes), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                             }
                         }
                     }
+                    item(key = "location-overview-title") {
+                        Text(
+                            text = stringResource(Res.string.location_overview_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                        )
+                    }
+                    item(key = "location-overview") {
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            items(orderedLocations, key = { "overview-" + it.id }) { loc ->
+                                val ageMinutes = ((System.currentTimeMillis() - loc.lastUpdated).coerceAtLeast(0L) / 60_000L).toInt()
+                                Box(
+                                    modifier = Modifier
+                                        .width(184.dp)
+                                        .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = true)
+                                        .clickable { viewModel.selectLocation(loc); onLocationClick(loc) }
+                                ) {
+                                    Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                            Text(loc.name, style = MaterialTheme.typography.titleSmall, maxLines = 1, modifier = Modifier.weight(1f))
+                                            if (loc.isDefault) Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.favorite_location), modifier = Modifier.size(16.dp))
+                                        }
+                                        Text(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.headlineSmall)
+                                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                            Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = MaterialTheme.typography.labelSmall)
+                                            Text(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--", style = MaterialTheme.typography.labelSmall)
+                                        }
+                                        if (loc.lastUpdated > 0L) Text(stringResource(Res.string.updated_age_short, ageMinutes), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                item(key = "saved-locations-title") {
                     Text(
                         text = stringResource(Res.string.compare_locations),
                         style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .geoWeatherGlass(RoundedCornerShape(18.dp), interactive = false)
-                            .padding(horizontal = 14.dp, vertical = 8.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
                     )
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        items(orderedLocations, key = { "compare-${it.id}" }) { loc ->
-                            Box(
-                                modifier = Modifier
-                                    .width(156.dp)
-                                    .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = true)
-                                    .clickable {
-                                        viewModel.selectLocation(loc)
-                                        onLocationClick(loc)
-                                    }
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(14.dp),
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    Text(loc.name, style = MaterialTheme.typography.titleSmall, maxLines = 1)
-                                    Text(
-                                        loc.currentTemp?.let { "${it.toInt()}°C" } ?: "--",
-                                        style = MaterialTheme.typography.headlineMedium
-                                    )
-                                    Text(
-                                        loc.currentWindSpeed?.let { stringResource(Res.string.wind_value, it.toInt()) } ?: "--",
-                                        style = MaterialTheme.typography.labelSmall
-                                    )
-                                    Text(
-                                        loc.currentHumidity?.let { stringResource(Res.string.humidity_value, it) } ?: "--",
-                                        style = MaterialTheme.typography.labelSmall
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    Spacer(Modifier.height(8.dp))
                 }
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
                 items(orderedLocations, key = { it.id }) { loc ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 4.dp)
-                            .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = true)
+                            .padding(horizontal = 12.dp)
+                            .geoWeatherGlass(RoundedCornerShape(26.dp), interactive = true)
                             .clickable {
                                 viewModel.selectLocation(loc)
                                 onLocationClick(loc)
                             }
-                            .padding(start = 18.dp, end = 8.dp, top = 10.dp, bottom = 10.dp),
+                            .padding(start = 16.dp, end = 6.dp, top = 8.dp, bottom = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(loc.name, style = MaterialTheme.typography.titleMedium)
-                            Text("${loc.latitude}, ${loc.longitude}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.bodyMedium)
                         }
                         GeoWeatherGlassIconAction(onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); notificationLocation = loc }) {
                             Icon(if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff, contentDescription = null)
@@ -387,25 +349,15 @@ fun MainWeatherScreen(
                         }
                     }
                 }
-                item {
+                item(key = "donate") {
                     GeoWeatherGlassAction(
                         onClick = onDonateClick,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 8.dp)
-                            .geoWeatherGlass(RoundedCornerShape(24.dp))
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
                     ) {
-                        Text(
-                            text = stringResource(Res.string.main_donation_hint),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        Text(text = stringResource(Res.string.main_donation_hint), style = MaterialTheme.typography.labelMedium)
                     }
                 }
             }
-            }
-            }
-        }
 
             Row(
                 modifier = Modifier
