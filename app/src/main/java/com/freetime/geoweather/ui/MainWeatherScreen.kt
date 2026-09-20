@@ -38,7 +38,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainWeatherScreen(
     viewModel: WeatherViewModel,
-    onAddLocationClick: () -> Unit,
     onLocationClick: (LocationEntity) -> Unit,
     onSettingsClick: () -> Unit,
     onDonateClick: () -> Unit,
@@ -48,6 +47,10 @@ fun MainWeatherScreen(
     val context = LocalContext.current
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
     var notificationLocation by remember { mutableStateOf<LocationEntity?>(null) }
+    var showAddLocationDialog by remember { mutableStateOf(false) }
+    var addLocationQuery by remember { mutableStateOf("") }
+    val searchResults by viewModel.searchResults.collectAsState()
+    val isSearching by viewModel.isSearching.collectAsState()
     val orderedLocations = locations
     var isLocating by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -104,7 +107,7 @@ fun MainWeatherScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 IconButton(
-                    onClick = onAddLocationClick,
+                    onClick = { showAddLocationDialog = true },
                     modifier = Modifier
                         .size(56.dp)
                         .geoWeatherGlassCapsule(interactive = true)
@@ -266,6 +269,51 @@ fun MainWeatherScreen(
             }
             }
         }
+    }
+
+    if (showAddLocationDialog) {
+        AlertDialog(
+            onDismissRequest = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() },
+            modifier = Modifier.padding(horizontal = 20.dp).geoWeatherGlass(RoundedCornerShape(32.dp), interactive = false),
+            containerColor = Color.Transparent,
+            tonalElevation = 0.dp,
+            title = { Text(stringResource(Res.string.search_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedTextField(
+                        value = addLocationQuery,
+                        onValueChange = { addLocationQuery = it; viewModel.searchCity(it.trim()) },
+                        modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
+                        colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent),
+                        label = { Text(stringResource(Res.string.search_hint)) },
+                        placeholder = { Text(stringResource(Res.string.search_placeholder)) },
+                        singleLine = true
+                    )
+                    if (isSearching) {
+                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                    } else if (addLocationQuery.isNotBlank()) {
+                        LazyColumn(modifier = Modifier.heightIn(max = 320.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(searchResults, key = { "add-${it.latitude},${it.longitude}" }) { city ->
+                                ListItem(
+                                    headlineContent = { Text(city.name) },
+                                    supportingContent = { Text("${city.latitude}, ${city.longitude}") },
+                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                    modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp), interactive = true).clickable {
+                                        viewModel.addLocation(city); showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch()
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }, modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))) {
+                    Text(stringResource(Res.string.CancelTXT))
+                }
+            }
+        )
     }
 
     locationToDelete?.let { location ->
