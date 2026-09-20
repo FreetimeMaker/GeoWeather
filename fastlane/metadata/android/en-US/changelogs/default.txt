@@ -1,9 +1,12 @@
-• Redesigned GeoWeather with a more transparent, SimpMusic-inspired Liquid Glass interface
-• Reworked the main navigation into a compact floating glass control
-• Replaced more Material 3 surfaces, fields, actions and dialogs with dedicated GeoWeather glass components
-• Adding a location now happens directly in a Liquid Glass dialog instead of a separate screen
-• Location search now starts after the first character and hides locations that are already saved
-• Replaced the Material time picker with compact glass notification time controls
-• Improved light and dark mode text contrast across shared glass components
-• Improved settings, search, weather details and other screens for a more consistent interface
-• Fixed UI and build issues introduced during the design migration
+• Added Smart Weather insights and a 2-hour precipitation nowcast
+• Added a richer hourly weather timeline with precipitation and wind gusts
+• Added sun path details with sunrise, sunset, golden hour, blue hour and UV information
+• Added conditions and trend insights for visibility, cloud base, pressure and feels-like weather
+• Added local weather history, temperature range visualization and data freshness indicators
+• Added multiple data-based weather indicators with recent indicator history
+• Added a location overview and comparison summary for saved places
+• Improved widgets, persistent weather notifications and daily weather briefings
+• Added responsive landscape support and improved weather detail layouts for wider screens
+• Added a Liquid Glass weather detail sheet and shareable weather image cards
+• Expanded diagnostics and improved weather background motion with reduced-motion support
+• Fixed duplicate resources and several UI/build issues
