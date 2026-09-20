@@ -24,10 +24,10 @@ fun GeoWeatherGlassTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 14.dp, vertical = 8.dp)
-            .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false)
-            .padding(horizontal = 8.dp, vertical = 6.dp)
-            .heightIn(min = 52.dp),
+            .padding(horizontal = 18.dp, vertical = 10.dp)
+            .geoWeatherGlass(RoundedCornerShape(32.dp), interactive = false)
+            .padding(horizontal = 10.dp, vertical = 4.dp)
+            .heightIn(min = 56.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (onBack != null) {
@@ -54,9 +54,9 @@ fun GeoWeatherGlassAction(
 ) {
     Row(
         modifier = modifier
-            .geoWeatherGlassCapsule()
+            .geoWeatherGlassCapsule(interactive = true)
             .clickable(onClick = onClick)
-            .padding(horizontal = 18.dp, vertical = 12.dp),
+            .padding(horizontal = 20.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         content = content,
@@ -71,8 +71,8 @@ fun GeoWeatherGlassPanel(
 ) {
     Box(
         modifier = modifier
-            .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = interactive)
-            .padding(16.dp),
+            .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = interactive)
+            .padding(18.dp),
         content = content,
     )
 }
