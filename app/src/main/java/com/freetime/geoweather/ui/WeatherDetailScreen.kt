@@ -42,6 +42,8 @@ import com.freetime.geoweather.isNetworkAvailable
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -95,20 +97,9 @@ fun WeatherDetailScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onSurface, navigationIconContentColor = MaterialTheme.colorScheme.onSurface, actionIconContentColor = MaterialTheme.colorScheme.onSurface),
-                title = {
-                    Column {
-                        Text(title)
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back_nav_desc))
-                    }
-                },
+            GeoWeatherGlassTopBar(
+                title = title,
+                onBack = onBack,
                 actions = {
                     if (loc?.currentTemp != null) {
                         IconButton(onClick = {
@@ -169,7 +160,7 @@ fun WeatherDetailScreen(
                 val rawTemp = loc.currentTemp
                 // Temporarily disable weather scene animations for GPU crash isolation.
                 // Liquid Glass/Backdrop remains enabled.
-                val animationsEnabled = false
+                val animationsEnabled = animationMode != "off"
                 val reducedMotion = animationMode == "reduced"
                 val rainIntensity = when (code) {
                     in 51..55 -> .65f
@@ -178,10 +169,10 @@ fun WeatherDetailScreen(
                     else -> 1f
                 }
                 val firstDayForLight = daily.firstOrNull()
-                val nowHour = java.time.LocalTime.now().hour
-                val sunriseHour = firstDayForLight?.sunrise?.takeLast(5)?.take(2)?.toIntOrNull() ?: 7
-                val sunsetHour = firstDayForLight?.sunset?.takeLast(5)?.take(2)?.toIntOrNull() ?: 19
-                val isNight = nowHour < sunriseHour || nowHour >= sunsetHour
+                val nowTime = java.time.LocalTime.now()
+                val sunriseTime = runCatching { java.time.LocalTime.parse(firstDayForLight?.sunrise?.takeLast(5) ?: "07:00") }.getOrDefault(java.time.LocalTime.of(7, 0))
+                val sunsetTime = runCatching { java.time.LocalTime.parse(firstDayForLight?.sunset?.takeLast(5) ?: "19:00") }.getOrDefault(java.time.LocalTime.of(19, 0))
+                val isNight = nowTime.isBefore(sunriseTime) || !nowTime.isBefore(sunsetTime)
                 Box(Modifier.fillMaxSize()) {
                     if (animationsEnabled && code != null) {
                         FullScreenWeatherBackground(
@@ -231,7 +222,7 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
                             )
                             Icon(
-                                painter = painterResource(WeatherIconMapper.getWeatherIcon(code)),
+                                painter = painterResource(weatherIconForTime(code, isNight)),
                                 contentDescription = null,
                                 modifier = Modifier.size(120.dp),
                                 tint = Color.Unspecified
@@ -477,7 +468,8 @@ fun WeatherDetailScreen(
                                 ) {
                                     Text(
                                         stringResource(Res.string.open_weather_radar),
-                                        style = MaterialTheme.typography.labelLarge
+                                        style = MaterialTheme.typography.labelLarge,
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
