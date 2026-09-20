@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
@@ -49,6 +51,7 @@ fun MainWeatherScreen(
 ) {
     val locations by viewModel.locations.collectAsState()
     val context = LocalContext.current
+    val haptics = LocalHapticFeedback.current
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
     var notificationLocation by remember { mutableStateOf<LocationEntity?>(null) }
     var showAddLocationDialog by remember { mutableStateOf(false) }
@@ -193,13 +196,13 @@ fun MainWeatherScreen(
                             Text(loc.name, style = MaterialTheme.typography.titleMedium)
                             Text("${loc.latitude}, ${loc.longitude}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        IconButton(onClick = { notificationLocation = loc }) {
+                        GeoWeatherGlassIconAction(onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); notificationLocation = loc }) {
                             Icon(if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff, contentDescription = null)
                         }
-                        IconButton(onClick = { viewModel.toggleDefaultLocation(loc) }) {
+                        GeoWeatherGlassIconAction(onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); viewModel.toggleDefaultLocation(loc) }) {
                             Icon(if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder, contentDescription = stringResource(Res.string.favorite_location))
                         }
-                        IconButton(onClick = { locationToDelete = loc }) {
+                        GeoWeatherGlassIconAction(onClick = { haptics.performHapticFeedback(HapticFeedbackType.LongPress); locationToDelete = loc }) {
                             Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.DelLoc), tint = MaterialTheme.colorScheme.error)
                         }
                     }
@@ -234,17 +237,17 @@ fun MainWeatherScreen(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(Modifier.size(42.dp).clickable { openCurrentLocation() }, contentAlignment = Alignment.Center) {
+                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); openCurrentLocation() }, contentAlignment = Alignment.Center) {
                     if (isLocating) CircularProgressIndicator(Modifier.size(19.dp), strokeWidth = 2.dp)
                     else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
                 }
-                Box(Modifier.size(42.dp).clickable { showAddLocationDialog = true }, contentAlignment = Alignment.Center) {
+                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); showAddLocationDialog = true }, contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
                 }
-                Box(Modifier.size(42.dp).clickable(onClick = onDonateClick), contentAlignment = Alignment.Center) {
+                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onDonateClick() }, contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
                 }
-                Box(Modifier.size(42.dp).clickable(onClick = onSettingsClick), contentAlignment = Alignment.Center) {
+                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onSettingsClick() }, contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
                 }
             }
