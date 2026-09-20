@@ -13,6 +13,7 @@ import com.freetime.geoweather.Screen.*
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassRoot
 
 sealed class Screen {
     data object Main : Screen()
@@ -99,13 +100,14 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     }
 
     GeoWeatherTheme(darkTheme = darkTheme) {
+        GeoWeatherGlassRoot {
         if (onboarding) {
             OnboardingScreen(onDone = {
                 launchPrefs.edit().putBoolean("onboarding_done", true).apply()
                 onboarding = false
                 whatsNew = true
             })
-            return@GeoWeatherTheme
+            return@GeoWeatherGlassRoot
         }
         if (whatsNew) {
             ChangeLogScreen(onBack = {
@@ -114,7 +116,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 backStack.add(Main)
                 whatsNew = false
             })
-            return@GeoWeatherTheme
+            return@GeoWeatherGlassRoot
         }
         Surface(modifier = Modifier.fillMaxSize(), color = androidx.compose.ui.graphics.Color.Transparent) {
             Box(Modifier.fillMaxSize()) {
@@ -135,6 +137,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                     }
                 }
             }
+        }
         }
     }
 }
