@@ -1,13 +1,18 @@
 package com.freetime.geoweather.ui
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -15,8 +20,9 @@ import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.copyToClipboard
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
 import me.free_time.donations.DonationTarget
-import me.free_time.donations.FreetimeDonationScreen
 
 private data class ExternalDonation(@StringRes val labelKey: Int, val url: String)
 
@@ -123,14 +129,89 @@ fun DonateScreen(
             )
         }
     ) { innerPadding ->
-        FreetimeDonationScreen(
-            targets = targets,
-            title = stringResource(Res.string.support_development),
-            onLinkClick = { onWebViewClick(it.url, it.label) },
-            onWalletClick = { copyToClipboard(it.address) },
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-        )
+                .padding(innerPadding),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            item(key = "support-title") {
+                GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = stringResource(Res.string.support_development),
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
+            items(
+                items = targets,
+                key = { target ->
+                    when (target) {
+                        is DonationTarget.Link -> "link:${target.url}"
+                        is DonationTarget.Wallet -> "wallet:${target.currency}:${target.address}:${target.label}"
+                    }
+                }
+            ) { target ->
+                GeoWeatherGlassPanel(
+                    modifier = Modifier.fillMaxWidth(),
+                    interactive = true
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Text(
+                            text = target.label,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        when (target) {
+                            is DonationTarget.Link -> {
+                                GeoWeatherGlassAction(
+                                    onClick = { onWebViewClick(target.url, target.label) },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = target.label,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                            }
+
+                            is DonationTarget.Wallet -> {
+                                Text(
+                                    text = target.currency,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = target.address,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    softWrap = true,
+                                    overflow = TextOverflow.Clip
+                                )
+                                GeoWeatherGlassAction(
+                                    onClick = { copyToClipboard(target.address) },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = target.address,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        modifier = Modifier.weight(1f),
+                                        softWrap = true
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
