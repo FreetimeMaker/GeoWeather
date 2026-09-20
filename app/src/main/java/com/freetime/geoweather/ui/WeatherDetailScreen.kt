@@ -265,6 +265,63 @@ fun WeatherDetailScreen(
                     onRefresh = { doRefresh() },
                     modifier = Modifier.fillMaxSize()
                 ) {
+                if (isWideLayout) {
+                    Row(
+                        modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 28.dp, vertical = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(18.dp)
+                    ) {
+                        LazyColumn(
+                            modifier = Modifier.weight(.40f).fillMaxHeight(),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            item {
+                                GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Elevated) {
+                                    Column(
+                                        Modifier.fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        if (code != null && animationsEnabled) {
+                                            AnimatedWeatherGlass(
+                                                code = code,
+                                                windSpeed = loc.currentWindSpeed ?: 0.0,
+                                                windDirection = loc.currentWindDirection ?: 0,
+                                                intensity = if (reducedMotion) .45f else rainIntensity,
+                                                night = isNight,
+                                                modifier = Modifier.fillMaxWidth()
+                                            )
+                                        }
+                                        rawTemp?.let { Text(formatTemp(it, tempUnit), style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Bold) }
+                                        code?.let { Text(stringResource(WeatherCodes.getStringResource(it)), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold) }
+                                    }
+                                }
+                            }
+                            item {
+                                val smart = com.freetime.geoweather.WeatherIntelligence.smartHero(hourly, daily.firstOrNull())
+                                val nowcast = com.freetime.geoweather.WeatherIntelligence.nowcast(hourly)
+                                GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Elevated) {
+                                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        Text(stringResource(Res.string.smart_weather_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                        Text(smart.primary, style = MaterialTheme.typography.headlineSmall)
+                                        smart.secondary?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                                        HorizontalDivider()
+                                        Text(stringResource(Res.string.nowcast_title), fontWeight = FontWeight.Bold)
+                                        Text(
+                                            if (nowcast?.startsAt != null && nowcast.endsAt != null)
+                                                stringResource(Res.string.nowcast_wet, nowcast.startsAt, nowcast.endsAt, nowcast.peakProbability, String.format(java.util.Locale.US, "%.1f", nowcast.peakAmountMm))
+                                            else stringResource(Res.string.nowcast_dry)
+                                        )
+                                    }
+                                }
+                            }
+                            if (code != null) item { WeatherAlertsSection(loc.name, code, hourly, extras) }
+                            item {
+                                GeoWeatherGlassAction(onClick = { showDetailSheet = true }, modifier = Modifier.fillMaxWidth()) {
+                                    Text(stringResource(Res.string.details_sheet_title))
+                                }
+                            }
+                        }
+                        Box(Modifier.weight(.60f).fillMaxHeight()) {
                 LazyColumn(
                     state = detailListState,
                     modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
@@ -914,6 +971,37 @@ fun WeatherDetailScreen(
                                         },
                                         style = MaterialTheme.typography.labelLarge
                                     )
+                                }
+                            }
+                        }
+                    }
+                }
+                        }
+                    } else {
+                        LazyColumn(
+                            state = detailListState,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(padding)
+                                .padding(horizontal = 16.dp, vertical = 16.dp)
+                                .widthIn(max = 760.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            item {
+                                GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Elevated) {
+                                    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        if (code != null && animationsEnabled) {
+                                            AnimatedWeatherGlass(code, loc.currentWindSpeed ?: 0.0, loc.currentWindDirection ?: 0, if (reducedMotion) .45f else rainIntensity, isNight, modifier = Modifier.fillMaxWidth())
+                                        }
+                                        rawTemp?.let { Text(formatTemp(it, tempUnit), style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Bold) }
+                                        code?.let { Text(stringResource(WeatherCodes.getStringResource(it)), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold) }
+                                    }
+                                }
+                            }
+                            item {
+                                GeoWeatherGlassAction(onClick = { showDetailSheet = true }, modifier = Modifier.fillMaxWidth()) {
+                                    Text(stringResource(Res.string.details_sheet_title))
                                 }
                             }
                         }
