@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -381,14 +382,9 @@ fun ReleaseCard(
     details: List<String>,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)
-    ) {
+    GeoWeatherGlassPanel(modifier = modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.Start
         ) {
             Text(
