@@ -1,6 +1,7 @@
 package com.freetime.geoweather.ui.glass
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.SolidColor
 
 @Composable
 fun GeoWeatherGlassTopBar(
@@ -74,5 +76,49 @@ fun GeoWeatherGlassPanel(
             .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = interactive)
             .padding(18.dp),
         content = content,
+    )
+}
+
+@Composable
+fun GeoWeatherGlassIconAction(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .size(48.dp)
+            .geoWeatherGlassCapsule(interactive = true)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+        content = content,
+    )
+}
+
+@Composable
+fun GeoWeatherGlassTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    placeholder: String = "",
+    singleLine: Boolean = true,
+) {
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = singleLine,
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+        modifier = modifier
+            .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = true)
+            .padding(horizontal = 18.dp, vertical = 15.dp),
+        decorationBox = { inner ->
+            Box {
+                if (value.isEmpty() && placeholder.isNotEmpty()) {
+                    Text(placeholder, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                inner()
+            }
+        },
     )
 }
