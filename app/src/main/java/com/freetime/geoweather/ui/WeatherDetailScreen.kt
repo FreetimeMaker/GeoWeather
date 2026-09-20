@@ -85,6 +85,10 @@ fun WeatherDetailScreen(
     val dbLocation by viewModel.observeLocation(locationId).collectAsState(initial = null)
     var transientLocation by remember { mutableStateOf<LocationEntity?>(null) }
     var isRefreshing by remember { mutableStateOf(false) }
+    var showDetailSheet by remember { mutableStateOf(false) }
+    val configuration = androidx.compose.ui.platform.LocalConfiguration.current
+    val isWideLayout = configuration.screenWidthDp >= 700 ||
+        configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
     fun doRefresh() {
         isRefreshing = true
@@ -108,6 +112,41 @@ fun WeatherDetailScreen(
     val loc = if (isTransient) transientLocation else dbLocation
     val title = if (isTransient) transientName!! else loc?.name ?: ""
 
+    if (showDetailSheet && loc?.weatherData != null) {
+        val sheetHourly = remember(loc.weatherData) { viewModel.getHourlyForecasts(loc) }
+        val sheetExtras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
+        ModalBottomSheet(
+            onDismissRequest = { showDetailSheet = false },
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = .90f),
+            tonalElevation = 0.dp
+        ) {
+            GeoWeatherGlassPanel(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                depth = GeoWeatherGlassDepth.Elevated
+            ) {
+                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(Res.string.details_sheet_title), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                    val current = sheetHourly.firstOrNull()
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                        WeatherDetailItem(stringResource(Res.string.visibility_label), sheetExtras?.visibilityKm?.let { String.format(java.util.Locale.US, "%.1f km", it) } ?: "--", Modifier.weight(1f))
+                        WeatherDetailItem(stringResource(Res.string.gusts_label), current?.windGusts?.let { it.toInt().toString() + " km/h" } ?: "--", Modifier.weight(1f))
+                        WeatherDetailItem(stringResource(Res.string.uv_max_label), sheetExtras?.uvIndex?.let { String.format(java.util.Locale.US, "%.1f", it) } ?: "--", Modifier.weight(1f))
+                    }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                        WeatherDetailItem(stringResource(Res.string.cloud_base_label), sheetExtras?.cloudBaseM?.let { it.roundToInt().toString() + " m" } ?: "--", Modifier.weight(1f))
+                        WeatherDetailItem(stringResource(Res.string.pressure_trend_label), when (sheetExtras?.pressureTrend ?: 0) {
+                            1 -> stringResource(Res.string.pressure_rising)
+                            -1 -> stringResource(Res.string.pressure_falling)
+                            else -> stringResource(Res.string.pressure_steady)
+                        }, Modifier.weight(1f))
+                        WeatherDetailItem(stringResource(Res.string.humidity), loc.currentHumidity?.let { it.toString() + "%" } ?: "--", Modifier.weight(1f))
+                    }
+                    Spacer(Modifier.height(12.dp))
+                }
+            }
+        }
+    }
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -117,6 +156,14 @@ fun WeatherDetailScreen(
                 compact = detailTopBarCompact,
                 compactSubtitle = if (detailTopBarCompact) loc?.currentTemp?.let { formatTemp(it, tempUnit) } else null,
                 actions = {
+                    if (loc?.weatherData != null) {
+                        GeoWeatherGlassIconAction(onClick = {
+                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            showDetailSheet = true
+                        }) {
+                            Icon(Icons.Default.Info, contentDescription = stringResource(Res.string.details_sheet_title))
+                        }
+                    }
                     if (loc?.currentTemp != null) {
                         GeoWeatherGlassIconAction(onClick = {
                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -147,7 +194,11 @@ fun WeatherDetailScreen(
             }
             loc.weatherData == null -> {
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .padding(horizontal = if (isWideLayout) 28.dp else 16.dp, vertical = 16.dp)
+                        .widthIn(max = if (isWideLayout) 1180.dp else 760.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
