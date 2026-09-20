@@ -76,10 +76,12 @@ fun SearchScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(recentSearches) { recent ->
-                        AssistChip(
-                            onClick = { query = recent; viewModel.searchCity(recent) },
-                            label = { Text(recent) }
-                        )
+                        Box(
+                            modifier = Modifier
+                                .geoWeatherGlass(RoundedCornerShape(50), interactive = true)
+                                .clickable { query = recent; viewModel.searchCity(recent) }
+                                .padding(horizontal = 14.dp, vertical = 9.dp)
+                        ) { Text(recent) }
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
@@ -94,7 +96,7 @@ fun SearchScreen(
                         CircularProgressIndicator()
                     }
                 }
-                query.length > 2 && results.isEmpty() -> {
+                query.isNotBlank() && results.isEmpty() -> {
                     Text(
                         text = stringResource(Res.string.search_no_results),
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -106,17 +108,21 @@ fun SearchScreen(
                 else -> {
                     LazyColumn {
                         items(results, key = { "${it.latitude},${it.longitude}" }) { city ->
-                            ListItem(
-                                headlineContent = { Text(city.name) },
-                                supportingContent = { Text("${city.latitude}, ${city.longitude}") },
-                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                                modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp), interactive = false).clickable {
-                                    rememberQuery(city.name)
-                                    viewModel.addLocation(city)
-                                    onCitySelected()
-                                }
-                            )
-                            HorizontalDivider()
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = true)
+                                    .clickable {
+                                        rememberQuery(city.name)
+                                        viewModel.addLocation(city)
+                                        onCitySelected()
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                            ) {
+                                Text(city.name, style = MaterialTheme.typography.titleMedium)
+                                Text("${city.latitude}, ${city.longitude}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
                         }
                     }
                 }
