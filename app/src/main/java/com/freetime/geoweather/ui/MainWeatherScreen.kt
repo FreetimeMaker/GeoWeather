@@ -242,6 +242,41 @@ fun MainWeatherScreen(
             ) {
                 if (locations.size > 1) {
                     Text(
+                        text = stringResource(Res.string.location_overview_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .geoWeatherGlass(RoundedCornerShape(18.dp), interactive = false)
+                            .padding(horizontal = 14.dp, vertical = 8.dp)
+                    )
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(orderedLocations, key = { "overview-" + it.id }) { loc ->
+                            val ageMinutes = ((System.currentTimeMillis() - loc.lastUpdated).coerceAtLeast(0L) / 60_000L).toInt()
+                            Box(
+                                modifier = Modifier
+                                    .width(210.dp)
+                                    .geoWeatherGlass(RoundedCornerShape(26.dp), interactive = true)
+                                    .clickable { viewModel.selectLocation(loc); onLocationClick(loc) }
+                            ) {
+                                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                        Text(loc.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, modifier = Modifier.weight(1f))
+                                        if (loc.isDefault) Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.favorite_location), modifier = Modifier.size(18.dp))
+                                    }
+                                    Text(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.headlineMedium)
+                                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                        Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = MaterialTheme.typography.labelSmall)
+                                        Text(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--", style = MaterialTheme.typography.labelSmall)
+                                    }
+                                    if (loc.lastUpdated > 0L) Text(stringResource(Res.string.updated_age_short, ageMinutes), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                        }
+                    }
+                    Text(
                         text = stringResource(Res.string.compare_locations),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier
