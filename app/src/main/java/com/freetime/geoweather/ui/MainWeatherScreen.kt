@@ -241,6 +241,38 @@ fun MainWeatherScreen(
                 modifier = Modifier.fillMaxSize().padding(padding)
             ) {
                 if (locations.size > 1) {
+                    val comparable = orderedLocations.filter { it.currentTemp != null }
+                    if (comparable.size >= 2) {
+                        val minTemp = comparable.minOf { it.currentTemp!! }
+                        val maxTemp = comparable.maxOf { it.currentTemp!! }
+                        val windiest = comparable.maxByOrNull { it.currentWindSpeed ?: 0.0 }
+                        val humid = comparable.maxByOrNull { it.currentHumidity ?: 0 }
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 12.dp)
+                                .fillMaxWidth()
+                                .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false)
+                        ) {
+                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(stringResource(Res.string.compare_summary_title), style = MaterialTheme.typography.titleMedium)
+                                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                    Column {
+                                        Text(stringResource(Res.string.compare_temperature_spread), style = MaterialTheme.typography.labelSmall)
+                                        Text(minTemp.toInt().toString() + "–" + maxTemp.toInt() + "°C", style = MaterialTheme.typography.titleMedium)
+                                    }
+                                    Column {
+                                        Text(stringResource(Res.string.compare_windiest), style = MaterialTheme.typography.labelSmall)
+                                        Text(windiest?.name ?: "--", style = MaterialTheme.typography.titleSmall)
+                                    }
+                                    Column {
+                                        Text(stringResource(Res.string.compare_most_humid), style = MaterialTheme.typography.labelSmall)
+                                        Text(humid?.name ?: "--", style = MaterialTheme.typography.titleSmall)
+                                    }
+                                }
+                            }
+                        }
+                        Spacer(Modifier.height(10.dp))
+                    }
                     Text(
                         text = stringResource(Res.string.location_overview_title),
                         style = MaterialTheme.typography.titleMedium,
