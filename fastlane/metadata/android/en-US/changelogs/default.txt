@@ -16,13 +16,9 @@
 • Added geoweather://open deep-link support
 • What’s New is shown automatically once per app version
 • Migrated shared app functionality to the me.free-time libraries from Maven Central
-• GeoWeather now uses Freetime Core, Design, Browser, Donations and Updater
+• GeoWeather now uses Freetime Core, Design, Browser and Donations
 • Moved Liquid Glass to the shared Freetime Design implementation
 • Moved external browser handling to Freetime Browser
 • Moved donation UI and donation models to Freetime Donations
-• Added an Update Checker setting with Off, Luma Store, GitHub and F-Droid sources
-• Update checking is disabled by default
-• Added startup update checks using Freetime Updater when an update source is enabled
-• Added an update-available dialog with direct access to the selected update source
 • Fixed stale GeoWeather Liquid Glass backdrop references after the Freetime Design migration
 • Fixed several UI and build issues
