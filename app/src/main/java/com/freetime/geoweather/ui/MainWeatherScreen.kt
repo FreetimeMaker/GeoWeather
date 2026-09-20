@@ -167,7 +167,11 @@ fun MainWeatherScreen(
                             Card(
                                 modifier = Modifier
                                     .width(156.dp)
-                                    .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false),
+                                    .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = true)
+                                    .clickable {
+                                        viewModel.selectLocation(loc)
+                                        onLocationClick(loc)
+                                    },
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                             ) {
