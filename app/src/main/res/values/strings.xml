@@ -540,4 +540,15 @@
     <string name="cl_430_shared_donations">Moved donation UI and donation models to Freetime Donations.</string>
     <string name="cl_430_backdrop_fix">Fixed stale GeoWeather Liquid Glass backdrop references after the Freetime Design migration.</string>
 
+
+    <!-- v4.4.1 -->
+    <string name="cl_441_freetime_maven">Migrated shared app functionality to the me.free-time libraries from Maven Central.</string>
+    <string name="cl_441_freetime_modules">GeoWeather now uses Freetime Core, Design, Browser and Donations.</string>
+    <string name="cl_441_shared_glass">Moved Liquid Glass to the shared Freetime Design implementation.</string>
+    <string name="cl_441_shared_browser">Moved external browser handling to Freetime Browser.</string>
+    <string name="cl_441_shared_donations">Moved donation UI and donation models to Freetime Donations.</string>
+    <string name="cl_441_backdrop_fix">Fixed Liquid Glass backdrop integration after migrating to Freetime Design.</string>
+    <string name="cl_441_contrast">Improved text and icon contrast across light and dark themes.</string>
+    <string name="cl_441_fixes">Fixed additional UI and build issues.</string>
+
 </resources>
