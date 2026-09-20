@@ -291,7 +291,7 @@ fun WeatherDetailScreen(
                     }
 
                     if (code != null) {
-                        item { WeatherAlertsSection(code, hourly, extras) }
+                        item { WeatherAlertsSection(loc.name, code, hourly, extras) }
                     }
 
                     item {
@@ -963,6 +963,7 @@ fun formatWind(kmh: Double?, degrees: Int?, windUnit: String): String {
 
 @Composable
 fun WeatherAlertsSection(
+    locationName: String,
     code: Int,
     hourly: List<HourlyForecast>,
     extras: com.freetime.geoweather.data.CurrentHourExtras?
@@ -985,6 +986,16 @@ fun WeatherAlertsSection(
         if ((extras?.visibilityKm ?: Double.MAX_VALUE) <= 1.0) add(Res.string.alert_low_visibility)
     }.distinct()
 
+    val context = LocalContext.current
+    val alertLabels = alerts.map { stringResource(it) }
+    LaunchedEffect(locationName, alertLabels.joinToString("|")) {
+        com.freetime.geoweather.WeatherIndicatorHistory.update(context, locationName, alertLabels)
+    }
+    val history = remember(locationName, alertLabels) {
+        com.freetime.geoweather.WeatherIndicatorHistory.recent(context, locationName)
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
     if (alerts.isNotEmpty()) {
         GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Elevated) {
             Row(verticalAlignment = Alignment.Top) {
@@ -999,6 +1010,18 @@ fun WeatherAlertsSection(
                 }
             }
         }
+    }
+    if (history.isNotEmpty()) {
+        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Subtle) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(stringResource(Res.string.alert_history_title), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                history.take(5).forEach { record ->
+                    val state = if (record.endedAt == null) stringResource(Res.string.alert_active) else stringResource(Res.string.alert_ended)
+                    Text("• " + record.label + " · " + state, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
+    }
     }
 }
 
