@@ -234,7 +234,7 @@ fun MainWeatherScreen(
                         IconButton(onClick = { locationToDelete = loc }) {
                             Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.DelLoc), tint = MaterialTheme.colorScheme.error)
                         }
-                    )
+                    }
                 }
                 item {
                     GeoWeatherGlassAction(
