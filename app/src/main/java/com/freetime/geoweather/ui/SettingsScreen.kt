@@ -1,6 +1,7 @@
 package com.freetime.geoweather.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -166,7 +167,7 @@ fun SettingsScreen(
 
             SettingsSection(stringResource(Res.string.backup_restore_title))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(
+                GeoWeatherGlassAction(
                     onClick = {
                         scope.launch {
                             val json = viewModel.buildBackupJson()
@@ -174,13 +175,11 @@ fun SettingsScreen(
                             snackbarHostState.showSnackbar(if (ok) exportSuccess else exportFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp)),
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                    border = null
+                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp))
                 ) {
                     Text(stringResource(Res.string.export_locations))
                 }
-                OutlinedButton(
+                GeoWeatherGlassAction(
                     onClick = {
                         scope.launch {
                             val content = loadTextFile(arrayOf(BACKUP_MIME_TYPE))
@@ -189,9 +188,7 @@ fun SettingsScreen(
                             snackbarHostState.showSnackbar(if (ok) importSuccess else importFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp)),
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                    border = null
+                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp))
                 ) {
                     Text(stringResource(Res.string.import_locations))
                 }
@@ -211,20 +208,16 @@ fun SettingsScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            OutlinedButton(
+            GeoWeatherGlassAction(
                 onClick = { openUrl("mailto:FreetimeMaker@proton.me?subject=GeoWeather Feedback") },
-                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                border = null
+                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp))
             ) {
                 Text(stringResource(Res.string.feedback_btn))
             }
             Spacer(Modifier.height(8.dp))
-            OutlinedButton(
+            GeoWeatherGlassAction(
                 onClick = { onWebViewClick("https://github.com/FreetimeMaker/GeoWeather/issues", "GitHub Issues") },
-                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                border = null
+                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp))
             ) {
                 Text(stringResource(Res.string.feedback_github_btn))
             }
@@ -250,7 +243,7 @@ fun SettingsToggle(label: String, checked: Boolean, onCheckedChange: (Boolean) -
     ) {
         Text(label)
         Spacer(Modifier.weight(1f))
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Box(modifier = Modifier.geoWeatherGlassCapsule(interactive = true).clickable { onCheckedChange(!checked) }.padding(horizontal = 14.dp, vertical = 8.dp)) { Text(if (checked) "●" else "○") }
     }
 }
 
@@ -264,7 +257,7 @@ fun SettingsToggle(label: String, subtitle: String, checked: Boolean, onCheckedC
             Text(label)
             Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Box(modifier = Modifier.geoWeatherGlassCapsule(interactive = true).clickable { onCheckedChange(!checked) }.padding(horizontal = 14.dp, vertical = 8.dp)) { Text(if (checked) "●" else "○") }
     }
 }
 
@@ -282,9 +275,9 @@ fun UnitRadioRow(options: List<Pair<String, String>>, selected: String, onSelect
                     .padding(horizontal = 8.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(selected = selected == value, onClick = null)
-                Spacer(Modifier.width(4.dp))
-                Text(label, style = MaterialTheme.typography.bodyMedium)
+                Box(modifier = Modifier.geoWeatherGlassCapsule(interactive = true).padding(horizontal = 12.dp, vertical = 8.dp)) {
+                    Text(if (selected == value) "●  $label" else "○  $label", style = MaterialTheme.typography.bodyMedium)
+                }
             }
         }
     }
