@@ -620,4 +620,10 @@
     <string name="freshness_cached">Cached</string>
     <string name="location_overview_title">Location overview</string>
     <string name="updated_age_short">%1$d min ago</string>
+    <!-- Search commands and sharing -->
+    <string name="quick_actions_title">Quick actions</string>
+    <string name="command_current_location">Current location</string>
+    <string name="command_refresh_weather">Refresh saved weather</string>
+    <string name="command_saved_locations">Saved locations</string>
+    <string name="share_card_title">GeoWeather snapshot</string>
 </resources>
