@@ -222,7 +222,6 @@ fun MainWeatherScreen(
             }
             }
         }
-    }
 
             Row(
                 modifier = Modifier
@@ -250,6 +249,7 @@ fun MainWeatherScreen(
                 }
             }
         }
+    }
 
     if (showAddLocationDialog) {
         GeoWeatherGlassDialog(
