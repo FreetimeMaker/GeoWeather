@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
+import com.freetime.geoweather.ui.glass.geoWeatherGlassCapsule
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import com.freetime.geoweather.data.LocationEntity
