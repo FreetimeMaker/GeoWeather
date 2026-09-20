@@ -5,6 +5,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -59,6 +65,8 @@ fun MainWeatherScreen(
     val searchResults by viewModel.searchResults.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     val orderedLocations = locations
+    val listState = rememberLazyListState()
+    val navigationCompact by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 120 } }
     var isLocating by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -102,7 +110,9 @@ fun MainWeatherScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             GeoWeatherGlassTopBar(
-                title = stringResource(Res.string.app_name)
+                title = stringResource(Res.string.app_name),
+                compact = navigationCompact,
+                compactSubtitle = if (navigationCompact) locations.firstOrNull()?.currentTemp?.let { "${it.toInt()}°" } else null
             )
         } 
     ) { padding ->
@@ -175,6 +185,7 @@ fun MainWeatherScreen(
                     Spacer(Modifier.height(8.dp))
                 }
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -241,11 +252,19 @@ fun MainWeatherScreen(
                     if (isLocating) CircularProgressIndicator(Modifier.size(19.dp), strokeWidth = 2.dp)
                     else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
                 }
-                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); showAddLocationDialog = true }, contentAlignment = Alignment.Center) {
-                    Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
-                }
-                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onDonateClick() }, contentAlignment = Alignment.Center) {
-                    Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
+                AnimatedVisibility(
+                    visible = !navigationCompact,
+                    enter = fadeIn() + expandHorizontally(),
+                    exit = fadeOut() + shrinkHorizontally()
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); showAddLocationDialog = true }, contentAlignment = Alignment.Center) {
+                            Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
+                        }
+                        Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onDonateClick() }, contentAlignment = Alignment.Center) {
+                            Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
+                        }
+                    }
                 }
                 Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onSettingsClick() }, contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))

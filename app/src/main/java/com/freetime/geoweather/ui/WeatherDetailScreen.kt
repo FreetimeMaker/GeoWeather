@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
@@ -77,6 +78,8 @@ fun WeatherDetailScreen(
     val animationMode by appSettings.weatherAnimations.collectAsState()
     val oledBlack by appSettings.oledBlack.collectAsState()
     val haptics = LocalHapticFeedback.current
+    val detailListState = rememberLazyListState()
+    val detailTopBarCompact by remember { derivedStateOf { detailListState.firstVisibleItemIndex > 0 || detailListState.firstVisibleItemScrollOffset > 140 } }
     val context = LocalContext.current
     val isTransient = transientName != null
     val dbLocation by viewModel.observeLocation(locationId).collectAsState(initial = null)
@@ -111,6 +114,8 @@ fun WeatherDetailScreen(
             GeoWeatherGlassTopBar(
                 title = title,
                 onBack = onBack,
+                compact = detailTopBarCompact,
+                compactSubtitle = if (detailTopBarCompact) loc?.currentTemp?.let { formatTemp(it, tempUnit) } else null,
                 actions = {
                     if (loc?.currentTemp != null) {
                         GeoWeatherGlassIconAction(onClick = {
@@ -206,6 +211,7 @@ fun WeatherDetailScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                 LazyColumn(
+                    state = detailListState,
                     modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)

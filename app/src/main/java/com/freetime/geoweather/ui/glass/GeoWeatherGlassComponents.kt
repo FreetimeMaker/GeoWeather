@@ -13,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.spring
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -26,15 +28,18 @@ fun GeoWeatherGlassTopBar(
     title: String,
     modifier: Modifier = Modifier,
     onBack: (() -> Unit)? = null,
+    compact: Boolean = false,
+    compactSubtitle: String? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp, vertical = 10.dp)
-            .geoWeatherGlass(RoundedCornerShape(32.dp), interactive = false)
-            .padding(horizontal = 10.dp, vertical = 4.dp)
-            .heightIn(min = 56.dp),
+            .padding(horizontal = if (compact) 28.dp else 18.dp, vertical = if (compact) 6.dp else 10.dp)
+            .geoWeatherGlass(RoundedCornerShape(if (compact) 28.dp else 32.dp), interactive = false)
+            .animateContentSize(spring())
+            .padding(horizontal = 10.dp, vertical = if (compact) 1.dp else 4.dp)
+            .heightIn(min = if (compact) 48.dp else 56.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (onBack != null) {
@@ -42,13 +47,17 @@ fun GeoWeatherGlassTopBar(
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
             }
         }
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
-            maxLines = 2,
-        )
+        Column(modifier = Modifier.weight(1f).padding(horizontal = 8.dp)) {
+            Text(
+                text = title,
+                style = if (compact) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+            )
+            if (compact && !compactSubtitle.isNullOrBlank()) {
+                Text(compactSubtitle, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
+            }
+        }
         actions()
     }
 }
