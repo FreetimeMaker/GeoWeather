@@ -626,4 +626,14 @@
     <string name="command_refresh_weather">Refresh saved weather</string>
     <string name="command_saved_locations">Saved locations</string>
     <string name="share_card_title">GeoWeather snapshot</string>
+    <!-- Compare, detail sheets and alert history -->
+    <string name="compare_summary_title">Location comparison</string>
+    <string name="compare_temperature_spread">Temperature spread</string>
+    <string name="compare_windiest">Windiest</string>
+    <string name="compare_most_humid">Most humid</string>
+    <string name="details_sheet_title">Weather details</string>
+    <string name="alert_history_title">Recent weather indicators</string>
+    <string name="alert_history_empty">No recent weather indicators recorded.</string>
+    <string name="alert_active">Active</string>
+    <string name="alert_ended">Ended</string>
 </resources>
