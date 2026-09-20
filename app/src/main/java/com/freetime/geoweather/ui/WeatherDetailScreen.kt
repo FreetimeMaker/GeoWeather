@@ -724,29 +724,36 @@ fun formatWind(kmh: Double?, degrees: Int?, windUnit: String): String {
 @Composable
 fun WeatherAlertsSection(code: Int) {
     val alertRes = when (code) {
-        in 95..99 -> Res.string.alert_thunderstorm
-        in 71..86 -> Res.string.alert_snow
+        99 -> Res.string.alert_hail_thunderstorm
+        95, 96 -> Res.string.alert_thunderstorm
+        65 -> Res.string.alert_heavy_rain
+        66, 67 -> Res.string.alert_freezing_rain
+        75, 77 -> Res.string.alert_snow
+        82 -> Res.string.alert_rain_showers
+        86 -> Res.string.alert_snow_showers
+        45, 48 -> Res.string.alert_fog
         else -> null
     }
 
     if (alertRes != null) {
         GeoWeatherGlassPanel(
-            modifier = Modifier.fillMaxWidth()
-            ) {
-            Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            modifier = Modifier.fillMaxWidth(),
+            depth = GeoWeatherGlassDepth.Elevated
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("⚠️", fontSize = 24.sp)
                 Spacer(Modifier.width(12.dp))
                 Column {
                     Text(
                         stringResource(Res.string.weather_alerts_title),
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onErrorContainer
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         stringResource(alertRes),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onErrorContainer
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
