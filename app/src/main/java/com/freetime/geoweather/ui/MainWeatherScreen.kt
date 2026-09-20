@@ -96,27 +96,43 @@ fun MainWeatherScreen(
             )
         },
         bottomBar = {
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 28.dp, vertical = 14.dp)
-                    .geoWeatherGlassCapsule(interactive = false)
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 28.dp, vertical = 14.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                IconButton(onClick = { openCurrentLocation() }, enabled = !isLocating) {
-                    if (isLocating) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
-                    else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
+                IconButton(
+                    onClick = onAddLocationClick,
+                    modifier = Modifier
+                        .size(56.dp)
+                        .geoWeatherGlassCapsule(interactive = true)
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = stringResource(Res.string.SearchBTNTXT)
+                    )
                 }
-                IconButton(onClick = onAddLocationClick) {
-                    Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
-                }
-                IconButton(onClick = onDonateClick) {
-                    Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
-                }
-                IconButton(onClick = onSettingsClick) {
-                    Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .geoWeatherGlassCapsule(interactive = false)
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { openCurrentLocation() }, enabled = !isLocating) {
+                        if (isLocating) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                        else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
+                    }
+                    IconButton(onClick = onDonateClick) {
+                        Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
+                    }
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
+                    }
                 }
             }
         }
