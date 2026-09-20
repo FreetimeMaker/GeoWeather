@@ -1,6 +1,7 @@
 package com.freetime.geoweather.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -26,6 +27,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -42,6 +44,7 @@ import com.freetime.geoweather.ui.glass.GeoWeatherGlassDialog
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.getDetectedLocationName
+import com.freetime.geoweather.WeatherIconMapper
 import kotlinx.coroutines.delay
 import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.launch
@@ -302,7 +305,16 @@ fun MainWeatherScreen(
                                             Text(loc.name, style = MaterialTheme.typography.titleSmall, maxLines = 1, modifier = Modifier.weight(1f))
                                             if (loc.isDefault) Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.favorite_location), modifier = Modifier.size(16.dp))
                                         }
-                                        Text(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.headlineSmall)
+                                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                            loc.currentWeatherCode?.let { code ->
+                                                Image(
+                                                    painter = painterResource(WeatherIconMapper.getWeatherIcon(code)),
+                                                    contentDescription = stringResource(com.freetime.geoweather.WeatherCodes.getStringResource(code)),
+                                                    modifier = Modifier.size(40.dp)
+                                                )
+                                            }
+                                            Text(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.headlineSmall)
+                                        }
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                             Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = MaterialTheme.typography.labelSmall)
                                             Text(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--", style = MaterialTheme.typography.labelSmall)
@@ -334,6 +346,13 @@ fun MainWeatherScreen(
                             .padding(start = 16.dp, end = 6.dp, top = 8.dp, bottom = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        loc.currentWeatherCode?.let { code ->
+                            Image(
+                                painter = painterResource(WeatherIconMapper.getWeatherIcon(code)),
+                                contentDescription = stringResource(com.freetime.geoweather.WeatherCodes.getStringResource(code)),
+                                modifier = Modifier.size(46.dp).padding(end = 8.dp)
+                            )
+                        }
                         Column(modifier = Modifier.weight(1f)) {
                             Text(loc.name, style = MaterialTheme.typography.titleMedium)
                             Text(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.bodyMedium)
