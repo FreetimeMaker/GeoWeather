@@ -411,7 +411,8 @@ class WeatherRepository(
             CurrentHourExtras(
                 visibilityKm = visibilityM?.div(1000.0),
                 cloudBaseM = cloudBase,
-                pressureTrend = trend
+                pressureTrend = trend,
+                uvIndex = uvIndex
             )
         } catch (e: Exception) {
             null
