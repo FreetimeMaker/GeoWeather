@@ -42,7 +42,11 @@ class WeatherForegroundService : Service() {
 
         if (updatedLocation != null) {
             try {
-                val content = repository.getNotificationContent(updatedLocation, appSettings.tempUnit.value)
+                val base = repository.getNotificationContent(updatedLocation, appSettings.tempUnit.value)
+                val hourly = repository.getHourlyForecasts(updatedLocation)
+                val rain = hourly.take(6).maxOfOrNull { it.precipProbability } ?: 0
+                val gust = hourly.take(6).maxOfOrNull { it.windGusts ?: it.windSpeed ?: 0.0 } ?: 0.0
+                val content = base + " · Rain " + rain + "% · Gusts " + gust.toInt() + " km/h"
                 val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.notify(NOTIFICATION_ID, createNotification(content))
             } catch (_: Exception) {
@@ -61,6 +65,8 @@ class WeatherForegroundService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(content)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(content))
+            .setOnlyAlertOnce(true)
             .setSmallIcon(R.drawable.ic_notification)
             .setOngoing(true)
             .setContentIntent(pendingIntent)
