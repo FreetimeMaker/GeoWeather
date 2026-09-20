@@ -287,7 +287,41 @@ fun WeatherDetailScreen(
                     }
 
                     if (code != null) {
-                        item { WeatherAlertsSection(code) }
+                        item { WeatherAlertsSection(code, hourly, extras) }
+                    }
+
+                    item {
+                        val currentHour = hourly.firstOrNull()
+                        val feelsReason = when {
+                            (currentHour?.windSpeed ?: loc.currentWindSpeed ?: 0.0) >= 25.0 -> stringResource(Res.string.feels_like_wind)
+                            (loc.currentHumidity ?: 0) >= 75 -> stringResource(Res.string.feels_like_humidity)
+                            else -> stringResource(Res.string.feels_like_neutral)
+                        }
+                        val pressureTrend = when (extras?.pressureTrend ?: 0) {
+                            1 -> stringResource(Res.string.pressure_rising)
+                            -1 -> stringResource(Res.string.pressure_falling)
+                            else -> stringResource(Res.string.pressure_steady)
+                        }
+                        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Standard) {
+                            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                Text(stringResource(Res.string.conditions_insights_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                    WeatherDetailItem(
+                                        stringResource(Res.string.visibility_label),
+                                        extras?.visibilityKm?.let { String.format(java.util.Locale.US, "%.1f km", it) } ?: "--",
+                                        Modifier.weight(1f)
+                                    )
+                                    WeatherDetailItem(
+                                        stringResource(Res.string.cloud_base_label),
+                                        extras?.cloudBaseM?.let { it.roundToInt().toString() + " m" } ?: "--",
+                                        Modifier.weight(1f)
+                                    )
+                                    WeatherDetailItem(stringResource(Res.string.pressure_trend_label), pressureTrend, Modifier.weight(1f))
+                                }
+                                Text(stringResource(Res.string.feels_like_reason_title), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                                Text(feelsReason, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        }
                     }
 
                     item {
@@ -872,39 +906,40 @@ fun formatWind(kmh: Double?, degrees: Int?, windUnit: String): String {
 }
 
 @Composable
-fun WeatherAlertsSection(code: Int) {
-    val alertRes = when (code) {
-        99 -> Res.string.alert_hail_thunderstorm
-        95, 96 -> Res.string.alert_thunderstorm
-        65 -> Res.string.alert_heavy_rain
-        66, 67 -> Res.string.alert_freezing_rain
-        75, 77 -> Res.string.alert_snow
-        82 -> Res.string.alert_rain_showers
-        86 -> Res.string.alert_snow_showers
-        45, 48 -> Res.string.alert_fog
-        else -> null
-    }
+fun WeatherAlertsSection(
+    code: Int,
+    hourly: List<HourlyForecast>,
+    extras: com.freetime.geoweather.data.CurrentHourExtras?
+) {
+    val alerts = buildList {
+        when (code) {
+            99 -> add(Res.string.alert_hail_thunderstorm)
+            95, 96 -> add(Res.string.alert_thunderstorm)
+            65 -> add(Res.string.alert_heavy_rain)
+            66, 67 -> add(Res.string.alert_freezing_rain)
+            75, 77 -> add(Res.string.alert_snow)
+            82 -> add(Res.string.alert_rain_showers)
+            86 -> add(Res.string.alert_snow_showers)
+            45, 48 -> add(Res.string.alert_fog)
+        }
+        val nearTerm = hourly.take(6)
+        if (nearTerm.any { (it.windGusts ?: it.windSpeed ?: 0.0) >= 60.0 }) add(Res.string.alert_strong_wind)
+        if (nearTerm.any { (it.precipitation ?: 0.0) >= 5.0 }) add(Res.string.alert_heavy_precipitation)
+        if ((extras?.uvIndex ?: 0.0) >= 8.0) add(Res.string.alert_extreme_uv)
+        if ((extras?.visibilityKm ?: Double.MAX_VALUE) <= 1.0) add(Res.string.alert_low_visibility)
+    }.distinct()
 
-    if (alertRes != null) {
-        GeoWeatherGlassPanel(
-            modifier = Modifier.fillMaxWidth(),
-            depth = GeoWeatherGlassDepth.Elevated
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+    if (alerts.isNotEmpty()) {
+        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Elevated) {
+            Row(verticalAlignment = Alignment.Top) {
                 Text("⚠️", fontSize = 24.sp)
                 Spacer(Modifier.width(12.dp))
-                Column {
-                    Text(
-                        stringResource(Res.string.weather_alerts_title),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        stringResource(alertRes),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                    Text(stringResource(Res.string.weather_alerts_title), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    alerts.forEach { alert ->
+                        Text("• " + stringResource(alert), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    }
+                    Text(stringResource(Res.string.data_based_alert_note), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
