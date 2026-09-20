@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
 
 @Composable
 fun OnboardingScreen(onDone: () -> Unit) {
@@ -24,7 +25,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
             LinearProgressIndicator(progress = { (page + 1) / 3f }, modifier = Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 TextButton(onClick = onDone) { Text(stringResource(Res.string.skip)) }
-                Button(onClick = { if (page < 2) page++ else onDone() }, colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface), modifier = Modifier.geoWeatherGlass(RoundedCornerShape(22.dp))) {
+                GeoWeatherGlassAction(onClick = { if (page < 2) page++ else onDone() }) {
                     Text(stringResource(if (page < 2) Res.string.next else Res.string.done))
                 }
             }
