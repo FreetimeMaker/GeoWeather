@@ -161,7 +161,7 @@ fun WeatherDetailScreen(
                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             showDetailSheet = true
                         }) {
-                            Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.details_sheet_title))
+                            Icon(Icons.Default.Share, contentDescription = stringResource(Res.string.details_sheet_title))
                         }
                     }
                     if (loc?.currentTemp != null) {
