@@ -1,24 +1,8 @@
-• Redesigned the interface with Liquid Glass effects and new Liquid Glass shapes
-• Improved Liquid Glass support for light and dark themes
-• Added up to 16 days of weather forecasts with Open-Meteo
-• Added pull-to-refresh to the weather details screen
-• Removed the redundant refresh button from the weather details top bar
-• Simplified saved locations by removing manual location sorting controls
-• Removed accounts, subscriptions, cloud sync and plan restrictions
-• All available forecast days are now accessible without subscription limits
-• Improved donation wallet handling and fixed a crash caused by duplicate wallet entries
-• Improved weather detail and forecast screens
-• Added Normal, Outdoor and Travel notification profiles
-• Added Quiet Hours for suppressing regular overnight weather notifications
-• Added a first-run onboarding experience
-• Added a privacy-friendly Diagnostics & Privacy screen
-• Added Android app shortcuts for Current Location, Search and Settings
-• Added geoweather://open deep-link support
-• What’s New is shown automatically once per app version
 • Migrated shared app functionality to the me.free-time libraries from Maven Central
 • GeoWeather now uses Freetime Core, Design, Browser and Donations
 • Moved Liquid Glass to the shared Freetime Design implementation
 • Moved external browser handling to Freetime Browser
 • Moved donation UI and donation models to Freetime Donations
-• Fixed stale GeoWeather Liquid Glass backdrop references after the Freetime Design migration
-• Fixed several UI and build issues
+• Fixed Liquid Glass backdrop integration after migrating to Freetime Design
+• Improved text and icon contrast across light and dark themes
+• Fixed additional UI and build issues
