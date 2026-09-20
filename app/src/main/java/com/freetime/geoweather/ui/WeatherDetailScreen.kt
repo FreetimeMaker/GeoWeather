@@ -156,14 +156,6 @@ fun WeatherDetailScreen(
                 compact = detailTopBarCompact,
                 compactSubtitle = if (detailTopBarCompact) loc?.currentTemp?.let { formatTemp(it, tempUnit) } else null,
                 actions = {
-                    if (loc?.weatherData != null) {
-                        GeoWeatherGlassIconAction(onClick = {
-                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                            showDetailSheet = true
-                        }) {
-                            Icon(Icons.Default.Share, contentDescription = stringResource(Res.string.details_sheet_title))
-                        }
-                    }
                     if (loc?.currentTemp != null) {
                         GeoWeatherGlassIconAction(onClick = {
                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
