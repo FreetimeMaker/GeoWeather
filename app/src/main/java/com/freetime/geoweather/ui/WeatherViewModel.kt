@@ -40,7 +40,7 @@ class WeatherViewModel(
 
     fun searchCity(query: String) {
         searchJob?.cancel()
-        if (query.length <= 2) {
+        if (query.isBlank()) {
             _searchResults.value = emptyList()
             _isSearching.value = false
             return
