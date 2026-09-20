@@ -151,7 +151,6 @@ private fun ScreenContent(
         is Main -> {
             MainWeatherScreen(
                 viewModel = viewModel,
-                onAddLocationClick = { onNavigate(Search) },
                 onLocationClick = { onNavigate(Detail(locationId = it.id)) },
                 onSettingsClick = { onNavigate(Settings) },
                 onDonateClick = { onNavigate(Donate) },
