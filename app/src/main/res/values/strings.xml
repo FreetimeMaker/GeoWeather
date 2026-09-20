@@ -559,4 +559,15 @@
     <string name="cl_442_dependencies">Updated Freetime libraries and other app dependencies.</string>
     <string name="cl_442_fixes">Improved interface consistency and fixed additional UI issues.</string>
 
+    <!-- v4.5.0 -->
+    <string name="cl_450_redesign">Redesigned GeoWeather with a more transparent, SimpMusic-inspired Liquid Glass interface.</string>
+    <string name="cl_450_navigation">Reworked the main navigation into a compact floating glass control.</string>
+    <string name="cl_450_components">Replaced more Material 3 surfaces, fields, actions and dialogs with dedicated GeoWeather glass components.</string>
+    <string name="cl_450_add_location">Adding a location now happens directly in a Liquid Glass dialog instead of a separate screen.</string>
+    <string name="cl_450_search">Location search now starts after the first character and hides locations that are already saved.</string>
+    <string name="cl_450_time_picker">Replaced the Material time picker with compact glass notification time controls.</string>
+    <string name="cl_450_contrast">Improved light and dark mode text contrast across shared glass components.</string>
+    <string name="cl_450_consistency">Improved settings, search, weather details and other screens for a more consistent interface.</string>
+    <string name="cl_450_fixes">Fixed UI and build issues introduced during the design migration.</string>
+
 </resources>
