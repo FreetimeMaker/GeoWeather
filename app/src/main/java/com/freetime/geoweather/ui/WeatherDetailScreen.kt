@@ -10,6 +10,8 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,6 +47,7 @@ import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -142,7 +146,7 @@ fun WeatherDetailScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(Modifier.height(16.dp))
-                        Button(onClick = { doRefresh() }, modifier = Modifier.geoWeatherGlass(RoundedCornerShape(22.dp)), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface), elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp)) {
+                        GeoWeatherGlassAction(onClick = { doRefresh() }) {
                             Text(stringResource(Res.string.refresh_nav_desc))
                         }
                     }
@@ -173,7 +177,11 @@ fun WeatherDetailScreen(
                 val sunriseTime = runCatching { java.time.LocalTime.parse(firstDayForLight?.sunrise?.takeLast(5) ?: "07:00") }.getOrDefault(java.time.LocalTime.of(7, 0))
                 val sunsetTime = runCatching { java.time.LocalTime.parse(firstDayForLight?.sunset?.takeLast(5) ?: "19:00") }.getOrDefault(java.time.LocalTime.of(19, 0))
                 val isNight = nowTime.isBefore(sunriseTime) || !nowTime.isBefore(sunsetTime)
-                Box(Modifier.fillMaxSize()) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .background(weatherBackdropBrush(code, isNight))
+                ) {
                     if (animationsEnabled && code != null) {
                         FullScreenWeatherBackground(
                             code = code,
@@ -259,10 +267,9 @@ fun WeatherDetailScreen(
 
                     airExtras?.let { air ->
                         item {
-                            Card(
-                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                            ) {
+                            GeoWeatherGlassPanel(
+                                modifier = Modifier.fillMaxWidth()
+                                ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     Text(stringResource(Res.string.air_quality_pollen_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -270,7 +277,7 @@ fun WeatherDetailScreen(
                                         WeatherDetailItem(stringResource(Res.string.pm25_label), air.pm25?.let { "${it.roundToInt()} µg/m³" } ?: "--", modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.pm10_label), air.pm10?.let { "${it.roundToInt()} µg/m³" } ?: "--", modifier = Modifier.weight(1f))
                                     }
-                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .3f))
+                                    Spacer(Modifier.height(1.dp))
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                         WeatherDetailItem(stringResource(Res.string.alder_pollen_label), air.alderPollen?.let { "${it.roundToInt()}" } ?: "--", modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.birch_pollen_label), air.birchPollen?.let { "${it.roundToInt()}" } ?: "--", modifier = Modifier.weight(1f))
@@ -289,10 +296,9 @@ fun WeatherDetailScreen(
                                 if (nextRainIndex == 0) stringResource(Res.string.rain_possible_now, next.precipProbability)
                                 else stringResource(Res.string.next_rain_around, next.time, next.precipProbability)
                             } else stringResource(Res.string.no_rain_24h)
-                            Card(
-                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                            ) {
+                            GeoWeatherGlassPanel(
+                                modifier = Modifier.fillMaxWidth()
+                                ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                                     Text(stringResource(Res.string.next_rain_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Text(nextRainText, style = MaterialTheme.typography.bodyLarge)
@@ -321,10 +327,9 @@ fun WeatherDetailScreen(
 
                     item {
                         val feelsLike = loc.currentFeelsLike ?: loc.currentTemp
-                        Card(
-                            modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                            colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                        ) {
+                        GeoWeatherGlassPanel(
+                            modifier = Modifier.fillMaxWidth()
+                            ) {
                             Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                     WeatherDetailItem(
@@ -345,7 +350,7 @@ fun WeatherDetailScreen(
                                         modifier = Modifier.weight(1f)
                                     )
                                 }
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                Spacer(Modifier.height(1.dp))
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
                                         Text(stringResource(Res.string.wind_direction_label), style = MaterialTheme.typography.labelSmall)
@@ -367,7 +372,7 @@ fun WeatherDetailScreen(
                                     )
                                     Spacer(Modifier.weight(1f))
                                 }
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                Spacer(Modifier.height(1.dp))
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                     WeatherDetailItem(
                                         label = stringResource(Res.string.pressure_label),
@@ -400,7 +405,7 @@ fun WeatherDetailScreen(
                                         modifier = Modifier.weight(1f)
                                     )
                                 }
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                Spacer(Modifier.height(1.dp))
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                     val firstDay = daily.firstOrNull()
                                     WeatherDetailItem(
@@ -415,7 +420,7 @@ fun WeatherDetailScreen(
                                     )
                                     Spacer(Modifier.weight(1f))
                                 }
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                Spacer(Modifier.height(1.dp))
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                     val firstDay = daily.firstOrNull()
                                     val golden = if (firstDay != null && firstDay.sunrise != "--" && firstDay.sunset != "--") {
@@ -440,7 +445,7 @@ fun WeatherDetailScreen(
                                         modifier = Modifier.weight(1f)
                                     )
                                 }
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                Spacer(Modifier.height(1.dp))
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                     val trendText = when (extras?.pressureTrend) {
                                         1 -> "↗ ${stringResource(Res.string.pressure_rising)}"
@@ -458,13 +463,9 @@ fun WeatherDetailScreen(
                                         modifier = Modifier.weight(2f)
                                     )
                                 }
-                                Button(
+                                GeoWeatherGlassAction(
                                     onClick = { onRadarClick(loc.latitude, loc.longitude) },
-                                    modifier = Modifier.fillMaxWidth().height(40.dp).geoWeatherGlass(RoundedCornerShape(20.dp)),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color.Transparent
-                                    ),
-                                    contentPadding = PaddingValues(0.dp)
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
                                         stringResource(Res.string.open_weather_radar),
@@ -569,7 +570,7 @@ fun WeatherDetailScreen(
                                         exit = fadeOut() + shrinkVertically()
                                     ) {
                                         Column {
-                                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                        Spacer(Modifier.height(1.dp))
                                         DetailInfoRow(
                                             label = stringResource(Res.string.sunrise_label),
                                             value = day.sunrise.takeLast(5)
@@ -597,10 +598,9 @@ fun WeatherDetailScreen(
                         }
                         if (daily.size > 7) {
                             item {
-                                TextButton(
+                                GeoWeatherGlassAction(
                                     onClick = { forecastExpanded = !forecastExpanded },
-                                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-                                    colors = ButtonDefaults.textButtonColors(containerColor = Color.Transparent)
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
                                         text = if (forecastExpanded) {
@@ -622,6 +622,18 @@ fun WeatherDetailScreen(
     }
 }
 
+
+private fun weatherBackdropBrush(code: Int?, isNight: Boolean): Brush {
+    val colors = when {
+        isNight -> listOf(Color(0xFF07162E).copy(alpha = .58f), Color(0xFF18345C).copy(alpha = .34f), Color.Transparent)
+        code in 95..99 -> listOf(Color(0xFF252A3D).copy(alpha = .48f), Color(0xFF48536C).copy(alpha = .30f), Color.Transparent)
+        code in 51..67 || code in 80..82 -> listOf(Color(0xFF355B78).copy(alpha = .38f), Color(0xFF7AA6C2).copy(alpha = .22f), Color.Transparent)
+        code in 71..77 || code in 85..86 -> listOf(Color(0xFFB8C9D8).copy(alpha = .30f), Color(0xFFE4EDF4).copy(alpha = .18f), Color.Transparent)
+        code == 0 || code == 1 -> listOf(Color(0xFFFFC86B).copy(alpha = .24f), Color(0xFF87C8F5).copy(alpha = .20f), Color.Transparent)
+        else -> listOf(Color(0xFF8EA9BC).copy(alpha = .20f), Color(0xFFB7C6D0).copy(alpha = .14f), Color.Transparent)
+    }
+    return Brush.verticalGradient(colors)
+}
 
 @androidx.annotation.DrawableRes
 private fun weatherIconForTime(code: Int, isNight: Boolean): Int = when (code) {
@@ -695,10 +707,9 @@ fun WeatherAlertsSection(code: Int) {
     }
 
     if (alertRes != null) {
-        Card(
-            modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-            colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-        ) {
+        GeoWeatherGlassPanel(
+            modifier = Modifier.fillMaxWidth()
+            ) {
             Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text("⚠️", fontSize = 24.sp)
                 Spacer(Modifier.width(12.dp))
