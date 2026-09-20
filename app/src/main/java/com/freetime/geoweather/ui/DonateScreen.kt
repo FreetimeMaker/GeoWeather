@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.copyToClipboard
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import me.free_time.donations.DonationTarget
 import me.free_time.donations.FreetimeDonationScreen
 
@@ -116,25 +117,9 @@ fun DonateScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                modifier = Modifier
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
-                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                title = { Text(stringResource(Res.string.donate_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.back_nav_desc)
-                        )
-                    }
-                }
+            GeoWeatherGlassTopBar(
+                title = stringResource(Res.string.donate_title),
+                onBack = onBack
             )
         }
     ) { innerPadding ->
