@@ -101,42 +101,10 @@ fun MainWeatherScreen(
             GeoWeatherGlassTopBar(
                 title = stringResource(Res.string.app_name)
             )
-        },
-        bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 12.dp),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                Row(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .geoWeatherGlassCapsule(interactive = false)
-                        .padding(horizontal = 6.dp, vertical = 5.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { openCurrentLocation() }, enabled = !isLocating) {
-                        if (isLocating) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
-                        else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
-                    }
-                    IconButton(
-                        onClick = { showAddLocationDialog = true },
-                        modifier = Modifier.geoWeatherGlassCapsule(interactive = true)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
-                    }
-                    IconButton(onClick = onDonateClick) {
-                        Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
-                    }
-                    IconButton(onClick = onSettingsClick) {
-                        Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
-                    }
-                }
-            }
-        }
+        } 
     ) { padding ->
+        Box(Modifier.fillMaxSize()) {
+
         if (locations.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize().padding(padding),
@@ -255,6 +223,33 @@ fun MainWeatherScreen(
             }
         }
     }
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
+                    .padding(bottom = 14.dp)
+                    .wrapContentWidth()
+                    .geoWeatherGlassCapsule(interactive = false)
+                    .padding(horizontal = 7.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(3.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                GeoWeatherGlassIconAction(onClick = { openCurrentLocation() }) {
+                    if (isLocating) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                    else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
+                }
+                GeoWeatherGlassIconAction(onClick = { showAddLocationDialog = true }) {
+                    Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
+                }
+                GeoWeatherGlassIconAction(onClick = onDonateClick) {
+                    Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
+                }
+                GeoWeatherGlassIconAction(onClick = onSettingsClick) {
+                    Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
+                }
+            }
+        }
 
     if (showAddLocationDialog) {
         GeoWeatherGlassDialog(
