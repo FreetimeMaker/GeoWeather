@@ -178,6 +178,20 @@
     <string name="temperature_change_msg">Temperature changed from %1$s to %2$s</string>
     <string name="WeatherNotificationTXT">Weather in %1$s: %2$s, %3$s</string>
 
+    <!-- Changelog v4.6.0 -->
+    <string name="cl_460_smart">Added Smart Weather insights and a 2-hour precipitation nowcast</string>
+    <string name="cl_460_timeline">Added a richer hourly weather timeline with precipitation and wind gusts</string>
+    <string name="cl_460_sun">Added sun path details with sunrise, sunset, golden hour, blue hour and UV information</string>
+    <string name="cl_460_conditions">Added conditions and trend insights for visibility, cloud base, pressure and feels-like weather</string>
+    <string name="cl_460_history">Added local weather history, temperature range visualization and data freshness indicators</string>
+    <string name="cl_460_indicators">Added multiple data-based weather indicators with recent indicator history</string>
+    <string name="cl_460_locations">Added a location overview and comparison summary for saved places</string>
+    <string name="cl_460_widgets">Improved widgets, persistent weather notifications and daily weather briefings</string>
+    <string name="cl_460_landscape">Added responsive landscape support and improved weather details for wider screens</string>
+    <string name="cl_460_glass_details">Added a Liquid Glass weather detail sheet and shareable weather image cards</string>
+    <string name="cl_460_diagnostics">Expanded diagnostics and improved weather background motion with reduced-motion support</string>
+    <string name="cl_460_fixes">Fixed duplicate resources and several UI and build issues</string>
+
     <!-- Changelog v4.2.0 -->
     <string name="cl_420_briefings">Added Morning and Evening weather briefings</string>
     <string name="cl_420_activity_windows">Added smart activity windows for walking, running, cycling and photography</string>
