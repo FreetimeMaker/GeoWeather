@@ -15,8 +15,8 @@ android {
         applicationId = "com.freetime.geoweather"
         minSdk = 26
         targetSdk = 37
-        versionCode = 79
-        versionName = "4.4.0"
+        versionCode = 80
+        versionName = "4.4.1"
     }
 
     buildFeatures { compose = true }
