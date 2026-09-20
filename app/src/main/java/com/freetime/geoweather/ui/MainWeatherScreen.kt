@@ -227,24 +227,24 @@ fun MainWeatherScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding()
-                    .padding(bottom = 14.dp)
+                    .padding(bottom = 16.dp)
                     .wrapContentWidth()
-                    .geoWeatherGlassCapsule(interactive = false)
-                    .padding(horizontal = 7.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(3.dp),
+                    .geoWeatherGlassCapsule(interactive = true)
+                    .padding(horizontal = 10.dp, vertical = 7.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                GeoWeatherGlassIconAction(onClick = { openCurrentLocation() }) {
-                    if (isLocating) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                Box(Modifier.size(42.dp).clickable { openCurrentLocation() }, contentAlignment = Alignment.Center) {
+                    if (isLocating) CircularProgressIndicator(Modifier.size(19.dp), strokeWidth = 2.dp)
                     else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
                 }
-                GeoWeatherGlassIconAction(onClick = { showAddLocationDialog = true }) {
+                Box(Modifier.size(42.dp).clickable { showAddLocationDialog = true }, contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
                 }
-                GeoWeatherGlassIconAction(onClick = onDonateClick) {
+                Box(Modifier.size(42.dp).clickable(onClick = onDonateClick), contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
                 }
-                GeoWeatherGlassIconAction(onClick = onSettingsClick) {
+                Box(Modifier.size(42.dp).clickable(onClick = onSettingsClick), contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
                 }
             }
