@@ -18,7 +18,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier, windSpeed: Double = 0.0, windDirection: Int = 0, intensity: Float = 1f, night: Boolean = false) {
+fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier, windSpeed: Double = 0.0, windDirection: Int = 0, intensity: Float = 1f, night: Boolean = false, moonAge: Double = currentMoonAge()) {
     val transition = rememberInfiniteTransition(label = "weatherScene")
     val windFactor = (1f + (windSpeed / 35.0).toFloat()).coerceIn(1f, 3f)
     val directionFactor = if (windDirection in 90..270) -1f else 1f
@@ -48,11 +48,17 @@ fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier, windSpeed: Do
                         // At night the scene is moon-only. Do not draw the daytime sun
                         // or its rotating rays on top of the night sky.
                         drawCircle(Color(0xFFE9F2FF).copy(alpha = .20f), r * 1.65f * pulse, center)
-                        drawCircle(Color(0xFFF4F7FF).copy(alpha = .88f), r * .82f * pulse, center)
+                        val moonRadius = r * .82f * pulse
+                        drawCircle(Color(0xFFF4F7FF).copy(alpha = .90f), moonRadius, center)
+                        val phase = (moonAge / 29.53058867).coerceIn(0.0, 1.0)
+                        val illumination = kotlin.math.abs(kotlin.math.cos(phase * PI * 2)).toFloat()
+                        val waxing = phase < .5
+                        val shadowRadius = moonRadius * (0.45f + illumination * .62f)
+                        val shadowOffset = moonRadius * (1f - illumination) * if (waxing) -0.72f else 0.72f
                         drawCircle(
-                            Color(0xFF07162E).copy(alpha = .72f),
-                            r * .68f,
-                            Offset(center.x + r * .32f, center.y - r * .18f)
+                            Color(0xFF07162E).copy(alpha = .88f),
+                            shadowRadius,
+                            Offset(center.x + shadowOffset, center.y)
                         )
                     } else {
                         repeat(12) { i ->
@@ -133,6 +139,7 @@ fun FullScreenWeatherBackground(
     windDirection: Int = 0,
     intensity: Float = 1f,
     night: Boolean = false,
+    moonAge: Double = currentMoonAge(),
     modifier: Modifier = Modifier
 ) {
     Box(modifier.fillMaxSize()) {
@@ -142,6 +149,7 @@ fun FullScreenWeatherBackground(
             windDirection = windDirection,
             intensity = intensity,
             night = night,
+            moonAge = moonAge,
             modifier = Modifier.fillMaxSize().graphicsLayer { alpha = .48f; scaleX = 1.8f; scaleY = 4.8f }
         )
     }
@@ -152,4 +160,11 @@ fun SevereWeatherPulse(modifier: Modifier = Modifier): Modifier {
     val t = rememberInfiniteTransition(label = "severe")
     val scale by t.animateFloat(.985f, 1.015f, infiniteRepeatable(tween(900), RepeatMode.Reverse), label = "severeScale")
     return modifier.graphicsLayer { scaleX = scale; scaleY = scale }
+}
+
+
+private fun currentMoonAge(date: java.time.LocalDate = java.time.LocalDate.now()): Double {
+    val knownNewMoon = java.time.LocalDate.of(2000, 1, 6)
+    val days = java.time.temporal.ChronoUnit.DAYS.between(knownNewMoon, date).toDouble()
+    return ((days % 29.53058867) + 29.53058867) % 29.53058867
 }
