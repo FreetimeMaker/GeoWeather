@@ -48,6 +48,7 @@ import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassDepth
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -177,10 +178,11 @@ fun WeatherDetailScreen(
                 val sunriseTime = runCatching { java.time.LocalTime.parse(firstDayForLight?.sunrise?.takeLast(5) ?: "07:00") }.getOrDefault(java.time.LocalTime.of(7, 0))
                 val sunsetTime = runCatching { java.time.LocalTime.parse(firstDayForLight?.sunset?.takeLast(5) ?: "19:00") }.getOrDefault(java.time.LocalTime.of(19, 0))
                 val isNight = nowTime.isBefore(sunriseTime) || !nowTime.isBefore(sunsetTime)
+                val twilight = twilightAmount(nowTime, sunriseTime, sunsetTime)
                 Box(
                     Modifier
                         .fillMaxSize()
-                        .background(weatherBackdropBrush(code, isNight))
+                        .background(weatherBackdropBrush(code, isNight, twilight))
                 ) {
                     if (animationsEnabled && code != null) {
                         FullScreenWeatherBackground(
@@ -220,42 +222,54 @@ fun WeatherDetailScreen(
                     }
 
                     item {
-                        if (code != null) {
-                            AnimatedWeatherGlass(
-                                code = code,
-                                windSpeed = loc.currentWindSpeed ?: 0.0,
-                                windDirection = loc.currentWindDirection ?: 0,
-                                intensity = if (reducedMotion) .45f else rainIntensity,
-                                night = isNight,
-                                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
-                            )
-                            Icon(
-                                painter = painterResource(weatherIconForTime(code, isNight)),
-                                contentDescription = null,
-                                modifier = Modifier.size(120.dp),
-                                tint = Color.Unspecified
-                            )
-                        }
-                        if (rawTemp != null) {
-                            val displayTemp = if (tempUnit == "fahrenheit") (rawTemp * 9 / 5 + 32).toInt() else rawTemp.toInt()
-                            val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
-                            val animatedTemp by animateIntAsState(
-                                targetValue = displayTemp,
-                                animationSpec = spring(dampingRatio = .75f, stiffness = 120f),
-                                label = "temperature"
-                            )
-                            Text(
-                                text = "$animatedTemp$tempSuffix",
-                                style = MaterialTheme.typography.displayLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        if (code != null) {
-                            Text(
-                                text = stringResource(WeatherCodes.getStringResource(code)),
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold
-                            )
+                        GeoWeatherGlassPanel(
+                            modifier = Modifier.fillMaxWidth(),
+                            depth = GeoWeatherGlassDepth.Elevated
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                if (code != null && animationsEnabled) {
+                                    AnimatedWeatherGlass(
+                                        code = code,
+                                        windSpeed = loc.currentWindSpeed ?: 0.0,
+                                        windDirection = loc.currentWindDirection ?: 0,
+                                        intensity = if (reducedMotion) .45f else rainIntensity,
+                                        night = isNight,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                } else if (code != null) {
+                                    Icon(
+                                        painter = painterResource(weatherIconForTime(code, isNight)),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(120.dp),
+                                        tint = Color.Unspecified
+                                    )
+                                }
+                                if (rawTemp != null) {
+                                    val displayTemp = if (tempUnit == "fahrenheit") (rawTemp * 9 / 5 + 32).toInt() else rawTemp.toInt()
+                                    val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+                                    val animatedTemp by animateIntAsState(
+                                        targetValue = displayTemp,
+                                        animationSpec = spring(dampingRatio = .75f, stiffness = 120f),
+                                        label = "temperature"
+                                    )
+                                    Text(
+                                        text = "$animatedTemp$tempSuffix",
+                                        style = MaterialTheme.typography.displayLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                if (code != null) {
+                                    Text(
+                                        text = stringResource(WeatherCodes.getStringResource(code)),
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
                     }
 
@@ -620,7 +634,7 @@ fun WeatherDetailScreen(
 }
 
 
-private fun weatherBackdropBrush(code: Int?, isNight: Boolean): Brush {
+private fun weatherBackdropBrush(code: Int?, isNight: Boolean, twilight: Float): Brush {
     val colors = when {
         isNight -> listOf(Color(0xFF07162E).copy(alpha = .58f), Color(0xFF18345C).copy(alpha = .34f), Color.Transparent)
         code in 95..99 -> listOf(Color(0xFF252A3D).copy(alpha = .48f), Color(0xFF48536C).copy(alpha = .30f), Color.Transparent)
@@ -629,7 +643,17 @@ private fun weatherBackdropBrush(code: Int?, isNight: Boolean): Brush {
         code == 0 || code == 1 -> listOf(Color(0xFFFFC86B).copy(alpha = .24f), Color(0xFF87C8F5).copy(alpha = .20f), Color.Transparent)
         else -> listOf(Color(0xFF8EA9BC).copy(alpha = .20f), Color(0xFFB7C6D0).copy(alpha = .14f), Color.Transparent)
     }
-    return Brush.verticalGradient(colors)
+    val dusk = Color(0xFFFF8A65).copy(alpha = .30f * twilight)
+    return Brush.verticalGradient(if (twilight > .01f) listOf(colors.first(), dusk, colors.last()) else colors)
+}
+
+private fun twilightAmount(now: java.time.LocalTime, sunrise: java.time.LocalTime, sunset: java.time.LocalTime): Float {
+    fun minutes(t: java.time.LocalTime) = t.hour * 60 + t.minute
+    val n = minutes(now)
+    val rise = minutes(sunrise)
+    val set = minutes(sunset)
+    val distance = minOf(kotlin.math.abs(n - rise), kotlin.math.abs(n - set))
+    return (1f - distance / 30f).coerceIn(0f, 1f)
 }
 
 @androidx.annotation.DrawableRes
