@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
@@ -49,6 +51,7 @@ fun MainWeatherScreen(
 ) {
     val locations by viewModel.locations.collectAsState()
     val context = LocalContext.current
+    val haptics = LocalHapticFeedback.current
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
     var notificationLocation by remember { mutableStateOf<LocationEntity?>(null) }
     var showAddLocationDialog by remember { mutableStateOf(false) }
@@ -193,13 +196,13 @@ fun MainWeatherScreen(
                             Text(loc.name, style = MaterialTheme.typography.titleMedium)
                             Text("${loc.latitude}, ${loc.longitude}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        IconButton(onClick = { notificationLocation = loc }) {
+                        GeoWeatherGlassIconAction(onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); notificationLocation = loc }) {
                             Icon(if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff, contentDescription = null)
                         }
-                        IconButton(onClick = { viewModel.toggleDefaultLocation(loc) }) {
+                        GeoWeatherGlassIconAction(onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); viewModel.toggleDefaultLocation(loc) }) {
                             Icon(if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder, contentDescription = stringResource(Res.string.favorite_location))
                         }
-                        IconButton(onClick = { locationToDelete = loc }) {
+                        GeoWeatherGlassIconAction(onClick = { haptics.performHapticFeedback(HapticFeedbackType.LongPress); locationToDelete = loc }) {
                             Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.DelLoc), tint = MaterialTheme.colorScheme.error)
                         }
                     }
@@ -227,24 +230,24 @@ fun MainWeatherScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding()
-                    .padding(bottom = 14.dp)
+                    .padding(bottom = 16.dp)
                     .wrapContentWidth()
-                    .geoWeatherGlassCapsule(interactive = false)
-                    .padding(horizontal = 7.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(3.dp),
+                    .geoWeatherGlassCapsule(interactive = true)
+                    .padding(horizontal = 10.dp, vertical = 7.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                GeoWeatherGlassIconAction(onClick = { openCurrentLocation() }) {
-                    if (isLocating) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); openCurrentLocation() }, contentAlignment = Alignment.Center) {
+                    if (isLocating) CircularProgressIndicator(Modifier.size(19.dp), strokeWidth = 2.dp)
                     else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
                 }
-                GeoWeatherGlassIconAction(onClick = { showAddLocationDialog = true }) {
+                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); showAddLocationDialog = true }, contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
                 }
-                GeoWeatherGlassIconAction(onClick = onDonateClick) {
+                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onDonateClick() }, contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
                 }
-                GeoWeatherGlassIconAction(onClick = onSettingsClick) {
+                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onSettingsClick() }, contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
                 }
             }
@@ -287,35 +290,24 @@ fun MainWeatherScreen(
     }
 
     locationToDelete?.let { location ->
-        AlertDialog(
+        GeoWeatherGlassDialog(
             onDismissRequest = { locationToDelete = null },
-            modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .geoWeatherGlass(RoundedCornerShape(32.dp), interactive = false),
-            containerColor = Color.Transparent,
-            tonalElevation = 0.dp,
-            title = { Text(stringResource(Res.string.DelLoc)) },
-            text = { Text(stringResource(Res.string.DelLocConAsk, location.name)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.deleteLocation(location)
-                        locationToDelete = null
-                    },
-                    modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
-                ) {
-                    Text(stringResource(Res.string.DelTXT), color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { locationToDelete = null },
-                    modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
-                ) {
+            title = stringResource(Res.string.DelLoc),
+            actions = {
+                GeoWeatherGlassAction(onClick = { locationToDelete = null }) {
                     Text(stringResource(Res.string.CancelTXT))
                 }
+                Spacer(Modifier.width(8.dp))
+                GeoWeatherGlassAction(onClick = {
+                    viewModel.deleteLocation(location)
+                    locationToDelete = null
+                }) {
+                    Text(stringResource(Res.string.DelTXT), color = MaterialTheme.colorScheme.error)
+                }
             }
-        )
+        ) {
+            Text(stringResource(Res.string.DelLocConAsk, location.name))
+        }
     }
 
     notificationLocation?.let { location ->

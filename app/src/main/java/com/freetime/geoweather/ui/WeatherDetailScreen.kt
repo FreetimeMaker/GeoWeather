@@ -1,6 +1,8 @@
 package com.freetime.geoweather.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -31,6 +33,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,6 +52,7 @@ import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassDepth
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -70,6 +75,8 @@ fun WeatherDetailScreen(
     val windUnit by appSettings.windUnit.collectAsState()
     val pressureUnit by appSettings.pressureUnit.collectAsState()
     val animationMode by appSettings.weatherAnimations.collectAsState()
+    val oledBlack by appSettings.oledBlack.collectAsState()
+    val haptics = LocalHapticFeedback.current
     val context = LocalContext.current
     val isTransient = transientName != null
     val dbLocation by viewModel.observeLocation(locationId).collectAsState(initial = null)
@@ -106,7 +113,8 @@ fun WeatherDetailScreen(
                 onBack = onBack,
                 actions = {
                     if (loc?.currentTemp != null) {
-                        IconButton(onClick = {
+                        GeoWeatherGlassIconAction(onClick = {
+                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             val shareText = "${loc.name}: ${formatTemp(loc.currentTemp!!, tempUnit)} · ${loc.currentWeatherCode?.let { context.getString(WeatherCodes.getStringResource(it)) } ?: ""}"
                             val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
                                 type = "text/plain"
@@ -177,10 +185,11 @@ fun WeatherDetailScreen(
                 val sunriseTime = runCatching { java.time.LocalTime.parse(firstDayForLight?.sunrise?.takeLast(5) ?: "07:00") }.getOrDefault(java.time.LocalTime.of(7, 0))
                 val sunsetTime = runCatching { java.time.LocalTime.parse(firstDayForLight?.sunset?.takeLast(5) ?: "19:00") }.getOrDefault(java.time.LocalTime.of(19, 0))
                 val isNight = nowTime.isBefore(sunriseTime) || !nowTime.isBefore(sunsetTime)
+                val twilight = twilightAmount(nowTime, sunriseTime, sunsetTime)
                 Box(
                     Modifier
                         .fillMaxSize()
-                        .background(weatherBackdropBrush(code, isNight))
+                        .background(if (oledBlack && isNight) Brush.verticalGradient(listOf(Color.Black, Color.Black, Color(0xFF07162E).copy(alpha = .18f))) else weatherBackdropBrush(code, isNight, twilight))
                 ) {
                     if (animationsEnabled && code != null) {
                         FullScreenWeatherBackground(
@@ -220,42 +229,54 @@ fun WeatherDetailScreen(
                     }
 
                     item {
-                        if (code != null) {
-                            AnimatedWeatherGlass(
-                                code = code,
-                                windSpeed = loc.currentWindSpeed ?: 0.0,
-                                windDirection = loc.currentWindDirection ?: 0,
-                                intensity = if (reducedMotion) .45f else rainIntensity,
-                                night = isNight,
-                                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
-                            )
-                            Icon(
-                                painter = painterResource(weatherIconForTime(code, isNight)),
-                                contentDescription = null,
-                                modifier = Modifier.size(120.dp),
-                                tint = Color.Unspecified
-                            )
-                        }
-                        if (rawTemp != null) {
-                            val displayTemp = if (tempUnit == "fahrenheit") (rawTemp * 9 / 5 + 32).toInt() else rawTemp.toInt()
-                            val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
-                            val animatedTemp by animateIntAsState(
-                                targetValue = displayTemp,
-                                animationSpec = spring(dampingRatio = .75f, stiffness = 120f),
-                                label = "temperature"
-                            )
-                            Text(
-                                text = "$animatedTemp$tempSuffix",
-                                style = MaterialTheme.typography.displayLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        if (code != null) {
-                            Text(
-                                text = stringResource(WeatherCodes.getStringResource(code)),
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold
-                            )
+                        GeoWeatherGlassPanel(
+                            modifier = Modifier.fillMaxWidth(),
+                            depth = GeoWeatherGlassDepth.Elevated
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                if (code != null && animationsEnabled) {
+                                    AnimatedWeatherGlass(
+                                        code = code,
+                                        windSpeed = loc.currentWindSpeed ?: 0.0,
+                                        windDirection = loc.currentWindDirection ?: 0,
+                                        intensity = if (reducedMotion) .45f else rainIntensity,
+                                        night = isNight,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                } else if (code != null) {
+                                    Icon(
+                                        painter = painterResource(weatherIconForTime(code, isNight)),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(120.dp),
+                                        tint = Color.Unspecified
+                                    )
+                                }
+                                if (rawTemp != null) {
+                                    val displayTemp = if (tempUnit == "fahrenheit") (rawTemp * 9 / 5 + 32).toInt() else rawTemp.toInt()
+                                    val tempSuffix = if (tempUnit == "fahrenheit") "°F" else "°C"
+                                    val animatedTemp by animateIntAsState(
+                                        targetValue = displayTemp,
+                                        animationSpec = spring(dampingRatio = .75f, stiffness = 120f),
+                                        label = "temperature"
+                                    )
+                                    Text(
+                                        text = "$animatedTemp$tempSuffix",
+                                        style = MaterialTheme.typography.displayLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                if (code != null) {
+                                    Text(
+                                        text = stringResource(WeatherCodes.getStringResource(code)),
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
                     }
 
@@ -263,7 +284,21 @@ fun WeatherDetailScreen(
                         item { WeatherAlertsSection(code) }
                     }
 
-                    // Daily astronomy and trip details live in the dedicated daily forecast screen.
+                    item {
+                        val moon = moonPhaseDetails(java.time.LocalDate.now())
+                        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Subtle) {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                                Text(moon.icon, style = MaterialTheme.typography.displaySmall)
+                                Column(horizontalAlignment = Alignment.End) {
+                                    Text(moon.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text("${moon.illumination}% illuminated", style = MaterialTheme.typography.bodyMedium)
+                                    Text("Next full moon: ${moon.daysToFull} d · new moon: ${moon.daysToNew} d", style = MaterialTheme.typography.labelSmall)
+                                }
+                            }
+                        }
+                    }
+
+                                        // Daily astronomy and trip details live in the dedicated daily forecast screen.
 
                     airExtras?.let { air ->
                         item {
@@ -303,19 +338,34 @@ fun WeatherDetailScreen(
                                     Text(stringResource(Res.string.next_rain_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Text(nextRainText, style = MaterialTheme.typography.bodyLarge)
                                     Text(stringResource(Res.string.timeline_24h), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                                        items(hourly) { hour ->
-                                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                                Text(hour.time, style = MaterialTheme.typography.labelSmall)
-                                                Icon(
-                                                    painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)),
-                                                    contentDescription = null,
-                                                    modifier = Modifier.size(32.dp),
-                                                    tint = Color.Unspecified
-                                                )
-                                                Text("${hour.temp}°", fontWeight = FontWeight.Bold)
-                                                if (hour.precipProbability > 0) {
-                                                    Text("${hour.precipProbability}%", style = MaterialTheme.typography.labelSmall)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        hourly.forEachIndexed { index, hour ->
+                                            val previous = hourly.getOrNull(index - 1)
+                                            val marksSunset = previous != null &&
+                                                previous.time.takeLast(5) < sunsetTime.toString().take(5) &&
+                                                hour.time.takeLast(5) >= sunsetTime.toString().take(5)
+                                            if (marksSunset) {
+                                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                    Text("🌇", style = MaterialTheme.typography.titleMedium)
+                                                    Text(sunsetTime.toString().take(5), style = MaterialTheme.typography.labelSmall)
+                                                }
+                                            }
+                                            GeoWeatherGlassPanel(depth = GeoWeatherGlassDepth.Subtle) {
+                                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                    Text(hour.time.takeLast(5), style = MaterialTheme.typography.labelSmall)
+                                                    Icon(
+                                                        painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)),
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(32.dp),
+                                                        tint = Color.Unspecified
+                                                    )
+                                                    Text("${hour.temp}°", fontWeight = FontWeight.Bold)
+                                                    if (hour.precipProbability > 0) {
+                                                        Text("${hour.precipProbability}%", style = MaterialTheme.typography.labelSmall)
+                                                    }
                                                 }
                                             }
                                         }
@@ -463,8 +513,22 @@ fun WeatherDetailScreen(
                                         modifier = Modifier.weight(2f)
                                     )
                                 }
+                                GeoWeatherGlassPanel(
+                                    modifier = Modifier.fillMaxWidth().clickable {
+                                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                        onRadarClick(loc.latitude, loc.longitude)
+                                    },
+                                    interactive = true,
+                                    depth = GeoWeatherGlassDepth.Subtle
+                                ) {
+                                    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text("🌧️  ·  📡", style = MaterialTheme.typography.headlineMedium)
+                                        Text(stringResource(Res.string.open_weather_radar), style = MaterialTheme.typography.labelLarge)
+                                    }
+                                }
+                                /*
                                 GeoWeatherGlassAction(
-                                    onClick = { onRadarClick(loc.latitude, loc.longitude) },
+                                    onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onRadarClick(loc.latitude, loc.longitude) },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
@@ -473,6 +537,7 @@ fun WeatherDetailScreen(
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
+                                */
                             }
                         }
                     }
@@ -495,8 +560,9 @@ fun WeatherDetailScreen(
                                     val hour = hourly[hourIndex]
                                     GeoWeatherGlassPanel(
                                         modifier = Modifier.clickable { onHourlyClick(loc.name, hourly, hourIndex) },
-                                        interactive = true
-                                    ) {
+                                        interactive = true,
+                                        depth = GeoWeatherGlassDepth.Subtle
+                                        ) {
                                         Column(
                                             modifier = Modifier,
                                             horizontalAlignment = Alignment.CenterHorizontally
@@ -535,8 +601,9 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth()
                                     .animateContentSize(animationSpec = spring())
                                     .clickable { onDailyClick(loc.name, daily, daily.indexOf(day)) },
-                                interactive = true
-                            ) {
+                                interactive = true,
+                                depth = GeoWeatherGlassDepth.Subtle
+                                ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
@@ -620,7 +687,7 @@ fun WeatherDetailScreen(
 }
 
 
-private fun weatherBackdropBrush(code: Int?, isNight: Boolean): Brush {
+private fun weatherBackdropBrush(code: Int?, isNight: Boolean, twilight: Float): Brush {
     val colors = when {
         isNight -> listOf(Color(0xFF07162E).copy(alpha = .58f), Color(0xFF18345C).copy(alpha = .34f), Color.Transparent)
         code in 95..99 -> listOf(Color(0xFF252A3D).copy(alpha = .48f), Color(0xFF48536C).copy(alpha = .30f), Color.Transparent)
@@ -629,7 +696,17 @@ private fun weatherBackdropBrush(code: Int?, isNight: Boolean): Brush {
         code == 0 || code == 1 -> listOf(Color(0xFFFFC86B).copy(alpha = .24f), Color(0xFF87C8F5).copy(alpha = .20f), Color.Transparent)
         else -> listOf(Color(0xFF8EA9BC).copy(alpha = .20f), Color(0xFFB7C6D0).copy(alpha = .14f), Color.Transparent)
     }
-    return Brush.verticalGradient(colors)
+    val dusk = Color(0xFFFF8A65).copy(alpha = .30f * twilight)
+    return Brush.verticalGradient(if (twilight > .01f) listOf(colors.first(), dusk, colors.last()) else colors)
+}
+
+private fun twilightAmount(now: java.time.LocalTime, sunrise: java.time.LocalTime, sunset: java.time.LocalTime): Float {
+    fun minutes(t: java.time.LocalTime) = t.hour * 60 + t.minute
+    val n = minutes(now)
+    val rise = minutes(sunrise)
+    val set = minutes(sunset)
+    val distance = minOf(kotlin.math.abs(n - rise), kotlin.math.abs(n - set))
+    return (1f - distance / 30f).coerceIn(0f, 1f)
 }
 
 @androidx.annotation.DrawableRes
@@ -698,29 +775,36 @@ fun formatWind(kmh: Double?, degrees: Int?, windUnit: String): String {
 @Composable
 fun WeatherAlertsSection(code: Int) {
     val alertRes = when (code) {
-        in 95..99 -> Res.string.alert_thunderstorm
-        in 71..86 -> Res.string.alert_snow
+        99 -> Res.string.alert_hail_thunderstorm
+        95, 96 -> Res.string.alert_thunderstorm
+        65 -> Res.string.alert_heavy_rain
+        66, 67 -> Res.string.alert_freezing_rain
+        75, 77 -> Res.string.alert_snow
+        82 -> Res.string.alert_rain_showers
+        86 -> Res.string.alert_snow_showers
+        45, 48 -> Res.string.alert_fog
         else -> null
     }
 
     if (alertRes != null) {
         GeoWeatherGlassPanel(
-            modifier = Modifier.fillMaxWidth()
-            ) {
-            Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            modifier = Modifier.fillMaxWidth(),
+            depth = GeoWeatherGlassDepth.Elevated
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("⚠️", fontSize = 24.sp)
                 Spacer(Modifier.width(12.dp))
                 Column {
                     Text(
                         stringResource(Res.string.weather_alerts_title),
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onErrorContainer
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         stringResource(alertRes),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onErrorContainer
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -889,4 +973,27 @@ private fun DetailRow(vararg values: Pair<String, String>) {
             WeatherDetailItem(label, value, modifier = Modifier.weight(1f))
         }
     }
+}
+
+
+private data class MoonPhaseDetails(val icon: String, val name: String, val illumination: Int, val daysToFull: Int, val daysToNew: Int)
+private fun moonPhaseDetails(date: java.time.LocalDate): MoonPhaseDetails {
+    val known = java.time.LocalDate.of(2000, 1, 6)
+    val cycle = 29.53058867
+    val age = ((java.time.temporal.ChronoUnit.DAYS.between(known, date).toDouble() % cycle) + cycle) % cycle
+    val fraction = age / cycle
+    val illumination = ((1 - kotlin.math.cos(2 * kotlin.math.PI * fraction)) / 2 * 100).roundToInt()
+    val (icon, name) = when {
+        fraction < .0625 || fraction >= .9375 -> "🌑" to "New Moon"
+        fraction < .1875 -> "🌒" to "Waxing Crescent"
+        fraction < .3125 -> "🌓" to "First Quarter"
+        fraction < .4375 -> "🌔" to "Waxing Gibbous"
+        fraction < .5625 -> "🌕" to "Full Moon"
+        fraction < .6875 -> "🌖" to "Waning Gibbous"
+        fraction < .8125 -> "🌗" to "Last Quarter"
+        else -> "🌘" to "Waning Crescent"
+    }
+    val toFull = ((cycle / 2 - age + cycle) % cycle).roundToInt()
+    val toNew = ((cycle - age) % cycle).roundToInt()
+    return MoonPhaseDetails(icon, name, illumination, toFull, toNew)
 }

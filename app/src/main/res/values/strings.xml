@@ -154,6 +154,12 @@
     <string name="weather_alerts_title">Weather Alerts</string>
     <string name="alert_snow">Heavy Snowfall Warning</string>
     <string name="alert_thunderstorm">Thunderstorm Warning</string>
+    <string name="alert_hail_thunderstorm">Severe Thunderstorm / Hail Warning</string>
+    <string name="alert_heavy_rain">Heavy Rain Warning</string>
+    <string name="alert_rain_showers">Heavy Rain Shower Warning</string>
+    <string name="alert_freezing_rain">Freezing Rain Warning</string>
+    <string name="alert_fog">Dense Fog Warning</string>
+    <string name="alert_snow_showers">Heavy Snow Shower Warning</string>
     <string name="open_weather_radar">Open Weather Radar</string>
     <string name="cloud_base_label">Cloud Base</string>
     <string name="pressure_trend_label">Pressure Trend</string>
