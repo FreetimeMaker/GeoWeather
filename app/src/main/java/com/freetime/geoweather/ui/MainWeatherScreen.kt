@@ -325,7 +325,6 @@ fun MainWeatherScreen(
                             }
                         }
                     }
-                }
                 item(key = "saved-locations-title") {
                     Text(
                         text = stringResource(Res.string.compare_locations),
