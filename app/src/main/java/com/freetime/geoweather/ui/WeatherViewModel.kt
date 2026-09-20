@@ -190,6 +190,8 @@ class WeatherViewModel(
 
     fun getDailyForecasts(location: LocationEntity) = repository.getDailyForecasts(location)
 
+    fun getWeatherHistory(locationName: String) = repository.getWeatherHistory(locationName)
+
     fun getCurrentHourExtras(location: LocationEntity) = repository.getCurrentHourExtras(location)
 
     suspend fun getAirQualityExtras(location: LocationEntity) = repository.getAirQualityExtras(location)
