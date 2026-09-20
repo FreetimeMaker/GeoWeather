@@ -71,6 +71,7 @@ fun MainWeatherScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val currentLocationName = stringResource(Res.string.current_location)
+    val isLandscape = androidx.compose.ui.platform.LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
 
     fun openCurrentLocation() {
@@ -135,6 +136,107 @@ fun MainWeatherScreen(
                 )
             }
         } else {
+            if (isLandscape) {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.weight(0.42f).fillMaxHeight().padding(start = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.compare_locations),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier
+                                .geoWeatherGlass(RoundedCornerShape(18.dp), interactive = false)
+                                .padding(horizontal = 14.dp, vertical = 8.dp)
+                        )
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            contentPadding = PaddingValues(bottom = 96.dp)
+                        ) {
+                            items(orderedLocations, key = { "landscape-" + it.id }) { loc ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = true)
+                                        .clickable {
+                                            viewModel.selectLocation(loc)
+                                            onLocationClick(loc)
+                                        }
+                                        .padding(14.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(Modifier.weight(1f)) {
+                                        Text(loc.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                                        Text(
+                                            text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
+                                            style = MaterialTheme.typography.headlineSmall
+                                        )
+                                        Text(
+                                            text = loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--",
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
+                                    }
+                                    GeoWeatherGlassIconAction(
+                                        onClick = {
+                                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                            viewModel.toggleDefaultLocation(loc)
+                                        }
+                                    ) {
+                                        Icon(
+                                            if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                            contentDescription = stringResource(Res.string.favorite_location)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Column(
+                        modifier = Modifier.weight(0.58f).fillMaxHeight().padding(end = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        val featured = orderedLocations.firstOrNull { it.isDefault } ?: orderedLocations.firstOrNull()
+                        featured?.let { loc ->
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .geoWeatherGlass(RoundedCornerShape(30.dp), interactive = true)
+                                    .clickable {
+                                        viewModel.selectLocation(loc)
+                                        onLocationClick(loc)
+                                    }
+                                    .padding(20.dp)
+                            ) {
+                                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    Text(loc.name, style = MaterialTheme.typography.headlineSmall)
+                                    Text(
+                                        text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
+                                        style = MaterialTheme.typography.displaySmall
+                                    )
+                                    Text(
+                                        text = loc.currentWeatherCode?.let { code -> com.freetime.geoweather.WeatherCodes.getDescription(code) }.orEmpty(),
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                        Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--")
+                                        Text(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--")
+                                    }
+                                }
+                            }
+                        }
+                        GeoWeatherGlassAction(
+                            onClick = onDonateClick,
+                            modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp))
+                        ) {
+                            Text(stringResource(Res.string.main_donation_hint))
+                        }
+                    }
+                }
+            } else {
             Column(
                 modifier = Modifier.fillMaxSize().padding(padding)
             ) {
@@ -233,6 +335,7 @@ fun MainWeatherScreen(
                         )
                     }
                 }
+            }
             }
             }
         }
