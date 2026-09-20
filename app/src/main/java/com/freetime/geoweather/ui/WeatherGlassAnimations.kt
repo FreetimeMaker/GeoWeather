@@ -140,9 +140,17 @@ fun FullScreenWeatherBackground(
     intensity: Float = 1f,
     night: Boolean = false,
     moonAge: Double = currentMoonAge(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    reducedMotion: Boolean = false
 ) {
-    Box(modifier.fillMaxSize()) {
+    val transition = rememberInfiniteTransition(label = "weatherParallax")
+    val parallax by transition.animateFloat(
+        initialValue = if (reducedMotion) 0f else -10f,
+        targetValue = if (reducedMotion) 0f else 10f,
+        animationSpec = infiniteRepeatable(tween(7000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "weatherParallaxOffset"
+    )
+    Box(modifier.fillMaxSize().graphicsLayer { translationX = parallax; translationY = parallax * .35f }) {
         AnimatedWeatherGlass(
             code = code,
             windSpeed = windSpeed,
