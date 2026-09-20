@@ -325,6 +325,7 @@ fun MainWeatherScreen(
                             }
                         }
                     }
+                }
                 item(key = "saved-locations-title") {
                     Text(
                         text = stringResource(Res.string.compare_locations),
@@ -375,6 +376,7 @@ fun MainWeatherScreen(
                         Text(text = stringResource(Res.string.main_donation_hint), style = MaterialTheme.typography.labelMedium)
                     }
                 }
+            }
             }
 
             Row(
