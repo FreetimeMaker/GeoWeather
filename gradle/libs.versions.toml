@@ -15,6 +15,7 @@ multiplatform-settings = "1.3.0"
 androidx-activity = "1.13.0"
 androidx-work = "2.11.2"
 androidx-core-ktx = "1.19.0"
+freetime = "1.0.2"
 
 [libraries]
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
@@ -42,6 +43,11 @@ androidx-activity = { module = "androidx.activity:activity", version.ref = "andr
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
+
+freetime-core = { module = "me.free-time:freetime-core", version.ref = "freetime" }
+freetime-design = { module = "me.free-time:freetime-design", version.ref = "freetime" }
+freetime-browser = { module = "me.free-time:freetime-browser", version.ref = "freetime" }
+freetime-donations = { module = "me.free-time:freetime-donations", version.ref = "freetime" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
