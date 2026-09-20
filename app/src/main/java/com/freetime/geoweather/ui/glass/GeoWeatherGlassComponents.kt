@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.window.Dialog
 
+enum class GeoWeatherGlassDepth { Subtle, Standard, Elevated }
+
 @Composable
 fun GeoWeatherGlassTopBar(
     title: String,
@@ -75,12 +77,23 @@ fun GeoWeatherGlassAction(
 fun GeoWeatherGlassPanel(
     modifier: Modifier = Modifier,
     interactive: Boolean = false,
+    depth: GeoWeatherGlassDepth = GeoWeatherGlassDepth.Standard,
     content: @Composable BoxScope.() -> Unit,
 ) {
+    val shape = when (depth) {
+        GeoWeatherGlassDepth.Subtle -> RoundedCornerShape(22.dp)
+        GeoWeatherGlassDepth.Standard -> RoundedCornerShape(28.dp)
+        GeoWeatherGlassDepth.Elevated -> RoundedCornerShape(34.dp)
+    }
+    val padding = when (depth) {
+        GeoWeatherGlassDepth.Subtle -> 14.dp
+        GeoWeatherGlassDepth.Standard -> 18.dp
+        GeoWeatherGlassDepth.Elevated -> 22.dp
+    }
     Box(
         modifier = modifier
-            .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = interactive)
-            .padding(18.dp),
+            .geoWeatherGlass(shape, interactive = interactive)
+            .padding(padding),
     ) {
         CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
             content()
