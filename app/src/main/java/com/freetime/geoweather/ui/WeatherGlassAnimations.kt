@@ -42,19 +42,31 @@ fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier, windSpeed: Do
         }
         Canvas(Modifier.fillMaxSize()) {
             when (code) {
-                0, 1 -> { // sun: real rays rotate, glass glow underneath
+                0, 1 -> {
                     val r = 35.dp.toPx()
-                    repeat(12) { i ->
-                        val a = Math.toRadians((i * 30f + rotate).toDouble())
-                        drawLine(
-                            Color(0xFFFFC94A).copy(alpha = .75f),
-                            Offset(center.x + cos(a).toFloat() * r * 1.35f, center.y + sin(a).toFloat() * r * 1.35f),
-                            Offset(center.x + cos(a).toFloat() * r * 1.75f, center.y + sin(a).toFloat() * r * 1.75f),
-                            3.dp.toPx()
+                    if (night) {
+                        // At night the scene is moon-only. Do not draw the daytime sun
+                        // or its rotating rays on top of the night sky.
+                        drawCircle(Color(0xFFE9F2FF).copy(alpha = .20f), r * 1.65f * pulse, center)
+                        drawCircle(Color(0xFFF4F7FF).copy(alpha = .88f), r * .82f * pulse, center)
+                        drawCircle(
+                            Color(0xFF07162E).copy(alpha = .72f),
+                            r * .68f,
+                            Offset(center.x + r * .32f, center.y - r * .18f)
                         )
+                    } else {
+                        repeat(12) { i ->
+                            val a = Math.toRadians((i * 30f + rotate).toDouble())
+                            drawLine(
+                                Color(0xFFFFC94A).copy(alpha = .75f),
+                                Offset(center.x + cos(a).toFloat() * r * 1.35f, center.y + sin(a).toFloat() * r * 1.35f),
+                                Offset(center.x + cos(a).toFloat() * r * 1.75f, center.y + sin(a).toFloat() * r * 1.75f),
+                                3.dp.toPx()
+                            )
+                        }
+                        drawCircle(Color(0xFFFFC94A).copy(alpha = .82f), r * pulse, center)
+                        drawCircle(Color.White.copy(alpha = .16f), r * 1.7f * pulse, center)
                     }
-                    drawCircle(Color(0xFFFFC94A).copy(alpha = .82f), r * pulse, center)
-                    drawCircle(Color.White.copy(alpha = .16f), r * 1.7f * pulse, center)
                 }
                 2, 3 -> { // clouds physically drift over the glass
                     repeat(5) { i ->
