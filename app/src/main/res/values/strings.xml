@@ -609,4 +609,15 @@
     <string name="alert_low_visibility">Low visibility</string>
     <string name="alert_heavy_precipitation">Heavy precipitation</string>
     <string name="data_based_alert_note">Weather-data indicator, not an official government warning.</string>
+    <!-- Locations, history and freshness -->
+    <string name="weather_history_title">Recent weather history</string>
+    <string name="weather_history_empty">History will appear after weather updates have been recorded.</string>
+    <string name="history_samples">%1$d recorded samples</string>
+    <string name="history_range">Range %1$s – %2$s</string>
+    <string name="freshness_live">Fresh</string>
+    <string name="freshness_recent">Recent</string>
+    <string name="freshness_stale">Stale</string>
+    <string name="freshness_cached">Cached</string>
+    <string name="location_overview_title">Location overview</string>
+    <string name="updated_age_short">%1$d min ago</string>
 </resources>
