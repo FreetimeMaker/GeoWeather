@@ -218,7 +218,7 @@ fun MainWeatherScreen(
                                         style = MaterialTheme.typography.displaySmall
                                     )
                                     Text(
-                                        text = loc.currentWeatherCode?.let { code -> com.freetime.geoweather.WeatherCodes.getDescription(code) }.orEmpty(),
+                                        text = loc.currentWeatherCode?.let { code -> stringResource(com.freetime.geoweather.WeatherCodes.getStringResource(code)) }.orEmpty(),
                                         style = MaterialTheme.typography.bodyLarge
                                     )
                                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
