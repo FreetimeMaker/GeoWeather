@@ -94,26 +94,35 @@ fun MainWeatherScreen(
             GeoWeatherGlassTopBar(
                 title = stringResource(Res.string.app_name),
                 actions = {
-                    IconButton(onClick = { openCurrentLocation() }, enabled = !isLocating) {
-                        if (isLocating) CircularProgressIndicator(Modifier.size(22.dp), strokeWidth = 2.dp)
-                        else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
-                    }
-                    IconButton(onClick = onDonateClick) {
-                        Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
-                    }
-                    IconButton(onClick = onSettingsClick) {
-                        Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
+                    GeoWeatherGlassAction(onClick = onAddLocationClick) {
+                        Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
                     }
                 }
             )
         },
-        floatingActionButton = {
-            GeoWeatherGlassAction(
-                onClick = onAddLocationClick,
-                modifier = Modifier.padding(bottom = 8.dp)
+        bottomBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 28.dp, vertical = 14.dp)
+                    .geoWeatherGlassCapsule(interactive = false)
+                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Default.Add, contentDescription = null)
-                Text(stringResource(Res.string.SearchBTNTXT))
+                IconButton(onClick = { openCurrentLocation() }, enabled = !isLocating) {
+                    if (isLocating) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                    else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
+                }
+                IconButton(onClick = onAddLocationClick) {
+                    Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
+                }
+                IconButton(onClick = onDonateClick) {
+                    Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
+                }
+                IconButton(onClick = onSettingsClick) {
+                    Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
+                }
             }
         }
     ) { padding ->
@@ -221,7 +230,7 @@ fun MainWeatherScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 12.dp, vertical = 4.dp)
-                            .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false)
+                            .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = true)
                             .clickable {
                                 viewModel.selectLocation(loc)
                                 onLocationClick(loc)
