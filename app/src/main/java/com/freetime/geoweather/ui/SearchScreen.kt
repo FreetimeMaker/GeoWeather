@@ -21,6 +21,7 @@ import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTextField
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,6 +69,29 @@ fun SearchScreen(
             )
 
             Spacer(modifier = Modifier.height(12.dp))
+            if (query.isBlank()) {
+                Text(stringResource(Res.string.quick_actions_title), style = MaterialTheme.typography.titleSmall)
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .geoWeatherGlass(RoundedCornerShape(50), interactive = true)
+                            .clickable {
+                                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                                    viewModel.refreshAllLocations()
+                                }
+                            }
+                            .padding(horizontal = 14.dp, vertical = 9.dp)
+                    ) { Text(stringResource(Res.string.command_refresh_weather)) }
+                    Box(
+                        modifier = Modifier
+                            .geoWeatherGlass(RoundedCornerShape(50), interactive = true)
+                            .clickable(onClick = onBack)
+                            .padding(horizontal = 14.dp, vertical = 9.dp)
+                    ) { Text(stringResource(Res.string.command_saved_locations)) }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
             if (recentSearches.isNotEmpty() && query.isBlank()) {
                 Text(stringResource(Res.string.recent_searches), style = MaterialTheme.typography.titleSmall)
                 Spacer(modifier = Modifier.height(8.dp))
