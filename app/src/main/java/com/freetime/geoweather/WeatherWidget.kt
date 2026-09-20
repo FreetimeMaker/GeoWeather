@@ -46,10 +46,11 @@ class WeatherWidget : GlanceAppWidget() {
         private val SMALL_RECT = DpSize(120.dp, 60.dp)
         private val MEDIUM_RECT = DpSize(240.dp, 60.dp)
         private val LARGE_RECT = DpSize(240.dp, 120.dp)
+        private val EXTRA_LARGE_RECT = DpSize(320.dp, 180.dp)
     }
 
     override val sizeMode = SizeMode.Responsive(
-        setOf(SMALL_RECT, MEDIUM_RECT, LARGE_RECT)
+        setOf(SMALL_RECT, MEDIUM_RECT, LARGE_RECT, EXTRA_LARGE_RECT)
     )
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
@@ -96,6 +97,7 @@ class WeatherWidget : GlanceAppWidget() {
         refreshDesc: String
     ) {
         val isExpanded = size.width >= 200.dp
+        val isDetailed = size.height >= 140.dp
 
         Column(
             modifier = GlanceModifier
@@ -148,6 +150,16 @@ class WeatherWidget : GlanceAppWidget() {
                     modifier = GlanceModifier
                         .size(24.dp)
                         .clickable(actionRunCallback<RefreshActionCallback>())
+                )
+            }
+
+            if (isDetailed && hourly.isNotEmpty()) {
+                val rainPeak = hourly.maxOfOrNull { it.precipProbability } ?: 0
+                val gustPeak = hourly.maxOfOrNull { it.windGusts ?: it.windSpeed ?: 0.0 } ?: 0.0
+                Spacer(GlanceModifier.height(6.dp))
+                Text(
+                    text = "Rain " + rainPeak + "% · Gusts " + gustPeak.toInt() + " km/h",
+                    style = TextStyle(color = ColorProvider(Color(0xFF334E68)), fontSize = 11.sp)
                 )
             }
 
