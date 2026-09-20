@@ -99,36 +99,29 @@ fun MainWeatherScreen(
             )
         },
         bottomBar = {
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 28.dp, vertical = 14.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                contentAlignment = Alignment.BottomCenter
             ) {
-                IconButton(
-                    onClick = { showAddLocationDialog = true },
-                    modifier = Modifier
-                        .size(56.dp)
-                        .geoWeatherGlassCapsule(interactive = true)
-                ) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = stringResource(Res.string.SearchBTNTXT)
-                    )
-                }
-
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .wrapContentWidth()
                         .geoWeatherGlassCapsule(interactive = false)
-                        .padding(horizontal = 8.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                        .padding(horizontal = 6.dp, vertical = 5.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { openCurrentLocation() }, enabled = !isLocating) {
                         if (isLocating) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
                         else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
+                    }
+                    IconButton(
+                        onClick = { showAddLocationDialog = true },
+                        modifier = Modifier.geoWeatherGlassCapsule(interactive = true)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
                     }
                     IconButton(onClick = onDonateClick) {
                         Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
@@ -212,35 +205,7 @@ fun MainWeatherScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                 items(orderedLocations, key = { it.id }) { loc ->
-                    ListItem(
-                        headlineContent = { Text(loc.name) },
-                        supportingContent = { Text("${loc.latitude}, ${loc.longitude}") },
-                        trailingContent = {
-                            Row {
-                                IconButton(onClick = { notificationLocation = loc }) {
-                                    Icon(
-                                        if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
-                                        contentDescription = null,
-                                        tint = if (loc.notificationsEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                                IconButton(onClick = { viewModel.toggleDefaultLocation(loc) }) {
-                                    Icon(
-                                        if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                        contentDescription = stringResource(Res.string.favorite_location),
-                                        tint = if (loc.isDefault) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                                IconButton(onClick = { locationToDelete = loc }) {
-                                    Icon(
-                                        Icons.Default.Delete,
-                                        contentDescription = stringResource(Res.string.DelLoc),
-                                        tint = MaterialTheme.colorScheme.error
-                                    )
-                                }
-                            }
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 12.dp, vertical = 4.dp)
@@ -249,6 +214,22 @@ fun MainWeatherScreen(
                                 viewModel.selectLocation(loc)
                                 onLocationClick(loc)
                             }
+                            .padding(start = 18.dp, end = 8.dp, top = 10.dp, bottom = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(loc.name, style = MaterialTheme.typography.titleMedium)
+                            Text("${loc.latitude}, ${loc.longitude}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        IconButton(onClick = { notificationLocation = loc }) {
+                            Icon(if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff, contentDescription = null)
+                        }
+                        IconButton(onClick = { viewModel.toggleDefaultLocation(loc) }) {
+                            Icon(if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder, contentDescription = stringResource(Res.string.favorite_location))
+                        }
+                        IconButton(onClick = { locationToDelete = loc }) {
+                            Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.DelLoc), tint = MaterialTheme.colorScheme.error)
+                        }
                     )
                 }
                 item {
