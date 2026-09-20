@@ -128,18 +128,18 @@ fun WeatherDetailScreen(
                     Text(stringResource(Res.string.details_sheet_title), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
                     val current = sheetHourly.firstOrNull()
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                        WeatherDetailItem(stringResource(Res.string.visibility_label), sheetExtras?.visibilityKm?.let { String.format(java.util.Locale.US, "%.1f km", it) } ?: "--", Modifier.weight(1f))
-                        WeatherDetailItem(stringResource(Res.string.gusts_label), current?.windGusts?.let { it.toInt().toString() + " km/h" } ?: "--", Modifier.weight(1f))
-                        WeatherDetailItem(stringResource(Res.string.uv_max_label), sheetExtras?.uvIndex?.let { String.format(java.util.Locale.US, "%.1f", it) } ?: "--", Modifier.weight(1f))
+                        WeatherDetailItem(stringResource(Res.string.visibility_label), sheetExtras?.visibilityKm?.let { String.format(java.util.Locale.US, "%.1f km", it) } ?: "--", modifier = Modifier.weight(1f))
+                        WeatherDetailItem(stringResource(Res.string.gusts_label), current?.windGusts?.let { it.toInt().toString() + " km/h" } ?: "--", modifier = Modifier.weight(1f))
+                        WeatherDetailItem(stringResource(Res.string.uv_max_label), sheetExtras?.uvIndex?.let { String.format(java.util.Locale.US, "%.1f", it) } ?: "--", modifier = Modifier.weight(1f))
                     }
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                        WeatherDetailItem(stringResource(Res.string.cloud_base_label), sheetExtras?.cloudBaseM?.let { it.roundToInt().toString() + " m" } ?: "--", Modifier.weight(1f))
+                        WeatherDetailItem(stringResource(Res.string.cloud_base_label), sheetExtras?.cloudBaseM?.let { it.roundToInt().toString() + " m" } ?: "--", modifier = Modifier.weight(1f))
                         WeatherDetailItem(stringResource(Res.string.pressure_trend_label), when (sheetExtras?.pressureTrend ?: 0) {
                             1 -> stringResource(Res.string.pressure_rising)
                             -1 -> stringResource(Res.string.pressure_falling)
                             else -> stringResource(Res.string.pressure_steady)
-                        }, Modifier.weight(1f))
-                        WeatherDetailItem(stringResource(Res.string.humidity), loc.currentHumidity?.let { it.toString() + "%" } ?: "--", Modifier.weight(1f))
+                        }, modifier = Modifier.weight(1f))
+                        WeatherDetailItem(stringResource(Res.string.humidity_label), loc.currentHumidity?.let { it.toString() + "%" } ?: "--", modifier = Modifier.weight(1f))
                     }
                     Spacer(Modifier.height(12.dp))
                 }
@@ -161,7 +161,7 @@ fun WeatherDetailScreen(
                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             showDetailSheet = true
                         }) {
-                            Icon(Icons.Default.Info, contentDescription = stringResource(Res.string.details_sheet_title))
+                            Icon(Icons.Default.InfoOutline, contentDescription = stringResource(Res.string.details_sheet_title))
                         }
                     }
                     if (loc?.currentTemp != null) {
@@ -480,7 +480,7 @@ fun WeatherDetailScreen(
                                         extras?.cloudBaseM?.let { it.roundToInt().toString() + " m" } ?: "--",
                                         Modifier.weight(1f)
                                     )
-                                    WeatherDetailItem(stringResource(Res.string.pressure_trend_label), pressureTrend, Modifier.weight(1f))
+                                    WeatherDetailItem(stringResource(Res.string.pressure_trend_label), pressureTrend, modifier = Modifier.weight(1f))
                                 }
                                 Text(stringResource(Res.string.feels_like_reason_title), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                                 Text(feelsReason, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -992,7 +992,14 @@ fun WeatherDetailScreen(
                                 GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Elevated) {
                                     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                         if (code != null && animationsEnabled) {
-                                            AnimatedWeatherGlass(code, loc.currentWindSpeed ?: 0.0, loc.currentWindDirection ?: 0, if (reducedMotion) .45f else rainIntensity, isNight, modifier = Modifier.fillMaxWidth())
+                                            AnimatedWeatherGlass(
+                                                code = code,
+                                                modifier = Modifier.fillMaxWidth(),
+                                                windSpeed = loc.currentWindSpeed ?: 0.0,
+                                                windDirection = loc.currentWindDirection ?: 0,
+                                                intensity = if (reducedMotion) .45f else rainIntensity,
+                                                night = isNight
+                                            )
                                         }
                                         rawTemp?.let { Text(formatTemp(it, tempUnit), style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Bold) }
                                         code?.let { Text(stringResource(WeatherCodes.getStringResource(it)), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold) }
@@ -1313,7 +1320,7 @@ fun ForecastDetailScreen(
                     }
                 }
             }
-            if (forecastCode != 0) item { WeatherAlertsSection(forecastCode) }
+            
         }
     }
 }
