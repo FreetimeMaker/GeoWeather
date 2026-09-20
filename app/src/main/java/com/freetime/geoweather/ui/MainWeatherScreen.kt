@@ -327,45 +327,72 @@ fun MainWeatherScreen(
         val parts = location.notificationTime.split(":")
         val initialHour = parts.getOrNull(0)?.toIntOrNull() ?: 8
         val initialMinute = parts.getOrNull(1)?.toIntOrNull() ?: 0
-        val timeState = rememberTimePickerState(initialHour = initialHour, initialMinute = initialMinute, is24Hour = true)
-        AlertDialog(
+        var selectedHour by remember(location.id) { mutableIntStateOf(initialHour) }
+        var selectedMinute by remember(location.id) { mutableIntStateOf(initialMinute) }
+
+        GeoWeatherGlassDialog(
             onDismissRequest = { notificationLocation = null },
-            modifier = Modifier.padding(horizontal = 24.dp).geoWeatherGlass(RoundedCornerShape(32.dp), interactive = false),
-            containerColor = Color.Transparent,
-            tonalElevation = 0.dp,
-            title = { Text(stringResource(Res.string.notification_time_title)) },
-            text = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    TimePicker(state = timeState)
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val time = "%02d:%02d".format(timeState.hour, timeState.minute)
-                        viewModel.setLocationNotifications(location, true, time)
+            title = stringResource(Res.string.notification_time_title),
+            actions = {
+                if (location.notificationsEnabled) {
+                    GeoWeatherGlassAction(onClick = {
+                        viewModel.setLocationNotifications(location, false, location.notificationTime)
                         notificationLocation = null
-                    },
-                    modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
-                ) { Text(stringResource(Res.string.confirm)) }
-            },
-            dismissButton = {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    if (location.notificationsEnabled) {
-                        TextButton(
-                            onClick = {
-                                viewModel.setLocationNotifications(location, false, location.notificationTime)
-                                notificationLocation = null
-                            },
-                            modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
-                        ) { Text(stringResource(Res.string.notification_disable)) }
-                    }
-                    TextButton(
-                        onClick = { notificationLocation = null },
-                        modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
-                    ) { Text(stringResource(Res.string.CancelTXT)) }
+                    }) { Text(stringResource(Res.string.notification_disable)) }
+                    Spacer(Modifier.width(8.dp))
                 }
+                GeoWeatherGlassAction(onClick = { notificationLocation = null }) {
+                    Text(stringResource(Res.string.CancelTXT))
+                }
+                Spacer(Modifier.width(8.dp))
+                GeoWeatherGlassAction(onClick = {
+                    val time = "%02d:%02d".format(selectedHour, selectedMinute)
+                    viewModel.setLocationNotifications(location, true, time)
+                    notificationLocation = null
+                }) { Text(stringResource(Res.string.confirm)) }
             }
-        )
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                GlassTimePart(
+                    value = selectedHour,
+                    onDecrease = { selectedHour = (selectedHour + 23) % 24 },
+                    onIncrease = { selectedHour = (selectedHour + 1) % 24 }
+                )
+                Text(":", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(horizontal = 10.dp))
+                GlassTimePart(
+                    value = selectedMinute,
+                    onDecrease = { selectedMinute = (selectedMinute + 55) % 60 },
+                    onIncrease = { selectedMinute = (selectedMinute + 5) % 60 }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun GlassTimePart(
+    value: Int,
+    onDecrease: () -> Unit,
+    onIncrease: () -> Unit
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        GeoWeatherGlassAction(onClick = onIncrease) {
+            Text("+", style = MaterialTheme.typography.titleLarge)
+        }
+        Box(
+            modifier = Modifier
+                .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false)
+                .padding(horizontal = 18.dp, vertical = 14.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("%02d".format(value), style = MaterialTheme.typography.headlineMedium)
+        }
+        GeoWeatherGlassAction(onClick = onDecrease) {
+            Text("−", style = MaterialTheme.typography.titleLarge)
+        }
     }
 }
