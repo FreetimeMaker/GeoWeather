@@ -45,7 +45,7 @@ fun GeoWeatherGlassTopBar(
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
-            maxLines = 1,
+            maxLines = 2,
         )
         actions()
     }
