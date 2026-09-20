@@ -291,6 +291,99 @@ fun WeatherDetailScreen(
                     }
 
                     item {
+                        val smart = com.freetime.geoweather.WeatherIntelligence.smartHero(hourly, daily.firstOrNull())
+                        val nowcast = com.freetime.geoweather.WeatherIntelligence.nowcast(hourly)
+                        GeoWeatherGlassPanel(
+                            modifier = Modifier.fillMaxWidth(),
+                            depth = GeoWeatherGlassDepth.Elevated
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(stringResource(Res.string.smart_weather_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                Text(smart.primary, style = MaterialTheme.typography.headlineSmall)
+                                smart.secondary?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .12f))
+                                Text(stringResource(Res.string.nowcast_title), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                                if (nowcast?.startsAt != null && nowcast.endsAt != null) {
+                                    Text(
+                                        stringResource(
+                                            Res.string.nowcast_wet,
+                                            nowcast.startsAt,
+                                            nowcast.endsAt,
+                                            nowcast.peakProbability,
+                                            String.format(java.util.Locale.US, "%.1f", nowcast.peakAmountMm)
+                                        )
+                                    )
+                                } else {
+                                    Text(stringResource(Res.string.nowcast_dry))
+                                }
+                            }
+                        }
+                    }
+
+                    if (hourly.isNotEmpty()) {
+                        item {
+                            GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Standard) {
+                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    Text(stringResource(Res.string.weather_timeline_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        items(hourly.take(12)) { hour ->
+                                            GeoWeatherGlassPanel(
+                                                modifier = Modifier.width(94.dp),
+                                                depth = GeoWeatherGlassDepth.Subtle,
+                                                interactive = false
+                                            ) {
+                                                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                    Text(hour.time, style = MaterialTheme.typography.labelMedium)
+                                                    Text(formatTemp(hour.temp.toDouble(), tempUnit), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                                    Text(
+                                                        stringResource(
+                                                            Res.string.precipitation_short,
+                                                            hour.precipProbability,
+                                                            String.format(java.util.Locale.US, "%.1f", hour.precipitation ?: 0.0)
+                                                        ),
+                                                        style = MaterialTheme.typography.labelSmall
+                                                    )
+                                                    hour.windGusts?.let {
+                                                        Text(stringResource(Res.string.gusts_label) + " " + it.toInt() + " km/h", style = MaterialTheme.typography.labelSmall)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    firstDayForLight?.let { day ->
+                        item {
+                            val sunrise = sunriseTime
+                            val sunset = sunsetTime
+                            val morningGoldenEnd = sunrise.plusHours(1)
+                            val eveningGoldenStart = sunset.minusHours(1)
+                            val morningBlueStart = sunrise.minusMinutes(40)
+                            val eveningBlueEnd = sunset.plusMinutes(40)
+                            GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Standard) {
+                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    Text(stringResource(Res.string.sun_path_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                        WeatherDetailItem(stringResource(Res.string.sunrise_label), sunrise.toString(), modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.sunset_label), sunset.toString(), modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.uv_max_label), day.uvMax?.let { String.format(java.util.Locale.US, "%.1f", it) } ?: "--", modifier = Modifier.weight(1f))
+                                    }
+                                    Text(stringResource(Res.string.blue_hour_morning) + ": " + morningBlueStart + " – " + sunrise, style = MaterialTheme.typography.bodySmall)
+                                    Text(stringResource(Res.string.golden_hour_morning) + ": " + sunrise + " – " + morningGoldenEnd, style = MaterialTheme.typography.bodySmall)
+                                    Text(stringResource(Res.string.golden_hour_evening) + ": " + eveningGoldenStart + " – " + sunset, style = MaterialTheme.typography.bodySmall)
+                                    Text(stringResource(Res.string.blue_hour_evening) + ": " + sunset + " – " + eveningBlueEnd, style = MaterialTheme.typography.bodySmall)
+                                }
+                            }
+                        }
+                    }
+
+                    item {
                         val moon = moonPhaseDetails(java.time.LocalDate.now())
                         GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Subtle) {
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
