@@ -169,6 +169,7 @@ fun WeatherDetailScreen(
                 val hourly = remember(loc.weatherData) { viewModel.getHourlyForecasts(loc) }
                 val daily = remember(loc.weatherData) { viewModel.getDailyForecasts(loc) }
                 val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
+                val weatherHistory by viewModel.getWeatherHistory(loc.name).collectAsState(initial = emptyList())
                 var airExtras by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.CurrentHourExtras?>(null) }
                 LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }
                 var forecastExpanded by remember { mutableStateOf(false) }
@@ -288,6 +289,58 @@ fun WeatherDetailScreen(
 
                     if (code != null) {
                         item { WeatherAlertsSection(code, hourly, extras) }
+                    }
+
+                    item {
+                        val ageMinutes = ((System.currentTimeMillis() - loc.lastUpdated).coerceAtLeast(0L) / 60_000L).toInt()
+                        val freshness = when {
+                            !isNetworkAvailable() -> stringResource(Res.string.freshness_cached)
+                            ageMinutes <= 15 -> stringResource(Res.string.freshness_live)
+                            ageMinutes <= 60 -> stringResource(Res.string.freshness_recent)
+                            else -> stringResource(Res.string.freshness_stale)
+                        }
+                        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Subtle) {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                                Text(freshness, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                                Text(stringResource(Res.string.updated_age_short, ageMinutes), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        }
+                    }
+
+                    item {
+                        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Standard) {
+                            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                Text(stringResource(Res.string.weather_history_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                if (weatherHistory.isEmpty()) {
+                                    Text(stringResource(Res.string.weather_history_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                } else {
+                                    val recent = weatherHistory.take(24)
+                                    val low = recent.minOf { it.temperature }
+                                    val high = recent.maxOf { it.temperature }
+                                    Text(stringResource(Res.string.history_samples, weatherHistory.size), style = MaterialTheme.typography.labelMedium)
+                                    Text(
+                                        stringResource(Res.string.history_range, formatTemp(low, tempUnit), formatTemp(high, tempUnit)),
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().height(72.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(3.dp),
+                                        verticalAlignment = Alignment.Bottom
+                                    ) {
+                                        val spread = (high - low).takeIf { it > 0.1 } ?: 1.0
+                                        recent.reversed().forEach { sample ->
+                                            val fraction = ((sample.temperature - low) / spread).toFloat().coerceIn(0f, 1f)
+                                            Box(
+                                                Modifier
+                                                    .weight(1f)
+                                                    .height((12 + 56 * fraction).dp)
+                                                    .geoWeatherGlass(RoundedCornerShape(8.dp), interactive = false)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     item {
