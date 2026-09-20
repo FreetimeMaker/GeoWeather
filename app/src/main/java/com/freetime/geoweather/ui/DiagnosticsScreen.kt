@@ -18,6 +18,8 @@ import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
 import me.free_time.core.FreetimeCore
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,13 +46,13 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
         )
     }) { padding ->
         Column(Modifier.padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Card(Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false), colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)) {
-                Text(report, Modifier.padding(16.dp))
+            GeoWeatherGlassPanel(Modifier.fillMaxWidth()) {
+                Text(report)
             }
-            Button(onClick = {
+            GeoWeatherGlassAction(onClick = {
                 val intent = Intent(Intent.ACTION_SEND).apply { type = "text/plain"; putExtra(Intent.EXTRA_SUBJECT, "GeoWeather diagnostics"); putExtra(Intent.EXTRA_TEXT, report) }
                 context.startActivity(Intent.createChooser(intent, context.getString(Res.string.export_diagnostics)))
-            }, modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)) {
+            }, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(Res.string.export_diagnostics))
             }
         }
