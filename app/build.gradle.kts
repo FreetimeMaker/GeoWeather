@@ -37,7 +37,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("me.free-time:freetime-core:1.0.0")
     implementation("me.free-time:freetime-design:1.0.0")
-    implementation("me.free-time:freetime-updater:1.0.0")
     implementation("me.free-time:freetime-browser:1.0.0")
     implementation("me.free-time:freetime-donations:1.0.0")
 
