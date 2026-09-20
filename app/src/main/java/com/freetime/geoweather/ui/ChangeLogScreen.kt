@@ -22,6 +22,20 @@ import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v4.6.0" to listOf(
+            stringResource(Res.string.cl_460_smart),
+            stringResource(Res.string.cl_460_timeline),
+            stringResource(Res.string.cl_460_sun),
+            stringResource(Res.string.cl_460_conditions),
+            stringResource(Res.string.cl_460_history),
+            stringResource(Res.string.cl_460_indicators),
+            stringResource(Res.string.cl_460_locations),
+            stringResource(Res.string.cl_460_widgets),
+            stringResource(Res.string.cl_460_landscape),
+            stringResource(Res.string.cl_460_glass_details),
+            stringResource(Res.string.cl_460_diagnostics),
+            stringResource(Res.string.cl_460_fixes)
+        ),
         "v4.5.0" to listOf(
             stringResource(Res.string.cl_450_redesign),
             stringResource(Res.string.cl_450_navigation),
