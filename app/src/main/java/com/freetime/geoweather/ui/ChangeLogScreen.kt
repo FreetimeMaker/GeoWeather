@@ -22,6 +22,17 @@ import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v4.5.0" to listOf(
+            stringResource(Res.string.cl_450_redesign),
+            stringResource(Res.string.cl_450_navigation),
+            stringResource(Res.string.cl_450_components),
+            stringResource(Res.string.cl_450_add_location),
+            stringResource(Res.string.cl_450_search),
+            stringResource(Res.string.cl_450_time_picker),
+            stringResource(Res.string.cl_450_contrast),
+            stringResource(Res.string.cl_450_consistency),
+            stringResource(Res.string.cl_450_fixes)
+        ),
         "v4.4.2" to listOf(
             stringResource(Res.string.cl_442_glass),
             stringResource(Res.string.cl_442_components),
