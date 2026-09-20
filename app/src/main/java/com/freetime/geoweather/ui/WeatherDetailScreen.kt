@@ -161,7 +161,7 @@ fun WeatherDetailScreen(
                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             showDetailSheet = true
                         }) {
-                            Icon(Icons.Default.InfoOutline, contentDescription = stringResource(Res.string.details_sheet_title))
+                            Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.details_sheet_title))
                         }
                     }
                     if (loc?.currentTemp != null) {
@@ -416,12 +416,12 @@ fun WeatherDetailScreen(
                                     WeatherDetailItem(
                                         stringResource(Res.string.visibility_label),
                                         extras?.visibilityKm?.let { String.format(java.util.Locale.US, "%.1f km", it) } ?: "--",
-                                        Modifier.weight(1f)
+                                        modifier = Modifier.weight(1f)
                                     )
                                     WeatherDetailItem(
                                         stringResource(Res.string.cloud_base_label),
                                         extras?.cloudBaseM?.let { it.roundToInt().toString() + " m" } ?: "--",
-                                        Modifier.weight(1f)
+                                        modifier = Modifier.weight(1f)
                                     )
                                     WeatherDetailItem(stringResource(Res.string.pressure_trend_label), pressureTrend, modifier = Modifier.weight(1f))
                                 }
