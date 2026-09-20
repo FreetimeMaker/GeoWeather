@@ -17,6 +17,7 @@ import com.freetime.geoweather.*
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import me.free_time.core.FreetimeCore
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,11 +38,9 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
         "Device: ${Build.MANUFACTURER} ${Build.MODEL}\n" +
         "Network: $network\nSaved locations: $locations"
     Scaffold(containerColor = Color.Transparent, topBar = {
-        TopAppBar(
-            modifier = Modifier.padding(14.dp).geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onSurface, navigationIconContentColor = MaterialTheme.colorScheme.onSurface, actionIconContentColor = MaterialTheme.colorScheme.onSurface),
-            title = { Text(stringResource(Res.string.diagnostics_title)) },
-            navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(Res.string.back_nav_desc)) } }
+        GeoWeatherGlassTopBar(
+            title = stringResource(Res.string.diagnostics_title),
+            onBack = onBack
         )
     }) { padding ->
         Column(Modifier.padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
