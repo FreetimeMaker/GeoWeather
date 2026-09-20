@@ -49,11 +49,11 @@ class WeatherViewModel(
             delay(400)
             _isSearching.value = true
             try {
-                val alreadySaved = locations.value
-                _searchResults.value = repository.searchCity(query).filter { city ->
-                    alreadySaved.none { existing ->
-                        kotlin.math.abs(existing.latitude - city.latitude) < 1e-6 &&
-                            kotlin.math.abs(existing.longitude - city.longitude) < 1e-6
+                val alreadySaved = repository.getAllLocationsSync()
+                _searchResults.value = repository.searchCity(query).filterNot { city ->
+                    alreadySaved.any { existing ->
+                        kotlin.math.abs(existing.latitude - city.latitude) < 0.001 &&
+                            kotlin.math.abs(existing.longitude - city.longitude) < 0.001
                     }
                 }
             } catch (e: Exception) {
