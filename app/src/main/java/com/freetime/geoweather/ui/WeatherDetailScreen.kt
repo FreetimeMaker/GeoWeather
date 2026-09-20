@@ -33,6 +33,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -73,6 +75,8 @@ fun WeatherDetailScreen(
     val windUnit by appSettings.windUnit.collectAsState()
     val pressureUnit by appSettings.pressureUnit.collectAsState()
     val animationMode by appSettings.weatherAnimations.collectAsState()
+    val oledBlack by appSettings.oledBlack.collectAsState()
+    val haptics = LocalHapticFeedback.current
     val context = LocalContext.current
     val isTransient = transientName != null
     val dbLocation by viewModel.observeLocation(locationId).collectAsState(initial = null)
@@ -184,7 +188,7 @@ fun WeatherDetailScreen(
                 Box(
                     Modifier
                         .fillMaxSize()
-                        .background(weatherBackdropBrush(code, isNight, twilight))
+                        .background(if (oledBlack && isNight) Brush.verticalGradient(listOf(Color.Black, Color.Black, Color(0xFF07162E).copy(alpha = .18f))) else weatherBackdropBrush(code, isNight, twilight))
                 ) {
                     if (animationsEnabled && code != null) {
                         FullScreenWeatherBackground(
@@ -279,7 +283,21 @@ fun WeatherDetailScreen(
                         item { WeatherAlertsSection(code) }
                     }
 
-                    // Daily astronomy and trip details live in the dedicated daily forecast screen.
+                    item {
+                        val moon = moonPhaseDetails(java.time.LocalDate.now())
+                        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Subtle) {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                                Text(moon.icon, style = MaterialTheme.typography.displaySmall)
+                                Column(horizontalAlignment = Alignment.End) {
+                                    Text(moon.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text("${moon.illumination}% illuminated", style = MaterialTheme.typography.bodyMedium)
+                                    Text("Next full moon: ${moon.daysToFull} d · new moon: ${moon.daysToNew} d", style = MaterialTheme.typography.labelSmall)
+                                }
+                            }
+                        }
+                    }
+
+                                        // Daily astronomy and trip details live in the dedicated daily forecast screen.
 
                     airExtras?.let { air ->
                         item {
@@ -494,8 +512,22 @@ fun WeatherDetailScreen(
                                         modifier = Modifier.weight(2f)
                                     )
                                 }
+                                GeoWeatherGlassPanel(
+                                    modifier = Modifier.fillMaxWidth().clickable {
+                                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                        onRadarClick(loc.latitude, loc.longitude)
+                                    },
+                                    interactive = true,
+                                    depth = GeoWeatherGlassDepth.Subtle
+                                ) {
+                                    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text("🌧️  ·  📡", style = MaterialTheme.typography.headlineMedium)
+                                        Text(stringResource(Res.string.open_weather_radar), style = MaterialTheme.typography.labelLarge)
+                                    }
+                                }
+                                /*
                                 GeoWeatherGlassAction(
-                                    onClick = { onRadarClick(loc.latitude, loc.longitude) },
+                                    onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onRadarClick(loc.latitude, loc.longitude) },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
@@ -504,6 +536,7 @@ fun WeatherDetailScreen(
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
+                                */
                             }
                         }
                     }
@@ -939,4 +972,27 @@ private fun DetailRow(vararg values: Pair<String, String>) {
             WeatherDetailItem(label, value, modifier = Modifier.weight(1f))
         }
     }
+}
+
+
+private data class MoonPhaseDetails(val icon: String, val name: String, val illumination: Int, val daysToFull: Int, val daysToNew: Int)
+private fun moonPhaseDetails(date: java.time.LocalDate): MoonPhaseDetails {
+    val known = java.time.LocalDate.of(2000, 1, 6)
+    val cycle = 29.53058867
+    val age = ((java.time.temporal.ChronoUnit.DAYS.between(known, date).toDouble() % cycle) + cycle) % cycle
+    val fraction = age / cycle
+    val illumination = ((1 - kotlin.math.cos(2 * kotlin.math.PI * fraction)) / 2 * 100).roundToInt()
+    val (icon, name) = when {
+        fraction < .0625 || fraction >= .9375 -> "🌑" to "New Moon"
+        fraction < .1875 -> "🌒" to "Waxing Crescent"
+        fraction < .3125 -> "🌓" to "First Quarter"
+        fraction < .4375 -> "🌔" to "Waxing Gibbous"
+        fraction < .5625 -> "🌕" to "Full Moon"
+        fraction < .6875 -> "🌖" to "Waning Gibbous"
+        fraction < .8125 -> "🌗" to "Last Quarter"
+        else -> "🌘" to "Waning Crescent"
+    }
+    val toFull = ((cycle / 2 - age + cycle) % cycle).roundToInt()
+    val toNew = ((cycle - age) % cycle).roundToInt()
+    return MoonPhaseDetails(icon, name, illumination, toFull, toNew)
 }
