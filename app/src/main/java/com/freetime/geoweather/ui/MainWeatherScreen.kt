@@ -287,35 +287,24 @@ fun MainWeatherScreen(
     }
 
     locationToDelete?.let { location ->
-        AlertDialog(
+        GeoWeatherGlassDialog(
             onDismissRequest = { locationToDelete = null },
-            modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .geoWeatherGlass(RoundedCornerShape(32.dp), interactive = false),
-            containerColor = Color.Transparent,
-            tonalElevation = 0.dp,
-            title = { Text(stringResource(Res.string.DelLoc)) },
-            text = { Text(stringResource(Res.string.DelLocConAsk, location.name)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.deleteLocation(location)
-                        locationToDelete = null
-                    },
-                    modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
-                ) {
-                    Text(stringResource(Res.string.DelTXT), color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { locationToDelete = null },
-                    modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))
-                ) {
+            title = stringResource(Res.string.DelLoc),
+            actions = {
+                GeoWeatherGlassAction(onClick = { locationToDelete = null }) {
                     Text(stringResource(Res.string.CancelTXT))
                 }
+                Spacer(Modifier.width(8.dp))
+                GeoWeatherGlassAction(onClick = {
+                    viewModel.deleteLocation(location)
+                    locationToDelete = null
+                }) {
+                    Text(stringResource(Res.string.DelTXT), color = MaterialTheme.colorScheme.error)
+                }
             }
-        )
+        ) {
+            Text(stringResource(Res.string.DelLocConAsk, location.name))
+        }
     }
 
     notificationLocation?.let { location ->
