@@ -30,6 +30,8 @@ import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassTextField
+import com.freetime.geoweather.ui.glass.geoWeatherGlassCapsule
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -286,16 +288,16 @@ fun UnitRadioRow(options: List<Pair<String, String>>, selected: String, onSelect
 @Composable
 fun ThresholdField(label: String, value: Int, onValueChange: (Int) -> Unit) {
     var text by remember(value) { mutableStateOf(value.toString()) }
-    OutlinedTextField(
-        value = text,
-        onValueChange = {
-            text = it
-            it.toIntOrNull()?.let { parsed -> if (parsed >= 0) onValueChange(parsed) }
-        },
-        label = { Text(label) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).geoWeatherGlass(RoundedCornerShape(22.dp)),
-        colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent)
-    )
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+        Text(label, style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(start = 8.dp, bottom = 6.dp))
+        GeoWeatherGlassTextField(
+            value = text,
+            onValueChange = {
+                text = it.filter(Char::isDigit)
+                text.toIntOrNull()?.let { parsed -> onValueChange(parsed) }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = label
+        )
+    }
 }
