@@ -50,7 +50,6 @@ fun SettingsScreen(
     val weatherAnimations by appSettings.weatherAnimations.collectAsState()
     val notificationProfile by appSettings.notificationProfile.collectAsState()
     val quietHours by appSettings.quietHours.collectAsState()
-    val updateCheckerSource by appSettings.updateCheckerSource.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -169,27 +168,6 @@ fun SettingsScreen(
                 stringResource(Res.string.open_external_browser_subtitle),
                 openExternalBrowser
             ) { appSettings.setOpenExternalBrowser(it) }
-
-            SettingsSection(stringResource(Res.string.update_checker_title))
-            Text(
-                stringResource(Res.string.update_checker_source),
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                stringResource(Res.string.update_checker_description),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            UnitRadioRow(
-                options = listOf(
-                    "off" to stringResource(Res.string.update_checker_off),
-                    "luma_store" to stringResource(Res.string.update_checker_luma_store),
-                    "github" to stringResource(Res.string.update_checker_github),
-                    "f_droid" to stringResource(Res.string.update_checker_fdroid)
-                ),
-                selected = updateCheckerSource,
-                onSelect = { appSettings.setUpdateCheckerSource(it) }
-            )
 
             SettingsSection(stringResource(Res.string.backup_restore_title))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
