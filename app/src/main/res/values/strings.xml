@@ -576,4 +576,20 @@
     <string name="cl_450_consistency">Improved settings, search, weather details and other screens for a more consistent interface.</string>
     <string name="cl_450_fixes">Fixed UI and build issues introduced during the design migration.</string>
 
+    <!-- WeatherDetail 2.0 -->
+    <string name="smart_weather_title">Smart weather</string>
+    <string name="nowcast_title">Next 2 hours</string>
+    <string name="nowcast_dry">No significant precipitation expected in the next 2 hours.</string>
+    <string name="nowcast_wet">Precipitation from %1$s to %2$s · peak %3$d%% · %4$s mm</string>
+    <string name="weather_timeline_title">Weather timeline</string>
+    <string name="sun_path_title">Sun path</string>
+    <string name="sunrise_label">Sunrise</string>
+    <string name="sunset_label">Sunset</string>
+    <string name="golden_hour_morning">Morning golden hour</string>
+    <string name="golden_hour_evening">Evening golden hour</string>
+    <string name="blue_hour_morning">Morning blue hour</string>
+    <string name="blue_hour_evening">Evening blue hour</string>
+    <string name="uv_max_label">UV max</string>
+    <string name="gusts_label">Gusts</string>
+    <string name="precipitation_short">%1$d%% · %2$s mm</string>
 </resources>
