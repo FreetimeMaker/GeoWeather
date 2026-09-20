@@ -509,8 +509,9 @@ fun WeatherDetailScreen(
                                     val hour = hourly[hourIndex]
                                     GeoWeatherGlassPanel(
                                         modifier = Modifier.clickable { onHourlyClick(loc.name, hourly, hourIndex) },
-                                        interactive = true
-                                    ) {
+                                        interactive = true,
+                                        depth = GeoWeatherGlassDepth.Subtle
+                                        ) {
                                         Column(
                                             modifier = Modifier,
                                             horizontalAlignment = Alignment.CenterHorizontally
@@ -549,8 +550,9 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth()
                                     .animateContentSize(animationSpec = spring())
                                     .clickable { onDailyClick(loc.name, daily, daily.indexOf(day)) },
-                                interactive = true
-                            ) {
+                                interactive = true,
+                                depth = GeoWeatherGlassDepth.Subtle
+                                ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
