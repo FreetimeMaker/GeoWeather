@@ -27,6 +27,8 @@ import com.freetime.geoweather.data.saveTextFile
 import com.freetime.geoweather.openUrl
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,16 +64,9 @@ fun SettingsScreen(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false),
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onSurface, navigationIconContentColor = MaterialTheme.colorScheme.onSurface, actionIconContentColor = MaterialTheme.colorScheme.onSurface),
-                title = { Text(stringResource(Res.string.settings_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back_nav_desc))
-                    }
-                }
+            GeoWeatherGlassTopBar(
+                title = stringResource(Res.string.settings_title),
+                onBack = onBack
             )
         }
     ) { padding ->
@@ -203,14 +198,9 @@ fun SettingsScreen(
             }
 
             Spacer(Modifier.height(16.dp))
-            OutlinedButton(
-                onClick = onDiagnosticsClick,
-                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)),
-                colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                border = null
-            ) { Text(stringResource(Res.string.diagnostics_title)) }
+            GeoWeatherGlassAction(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp))) { Text(stringResource(Res.string.diagnostics_title)) }
             Spacer(Modifier.height(8.dp))
-            Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp)), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface), elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp)) {
+            GeoWeatherGlassAction(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(Res.string.open_change_log))
             }
             Spacer(Modifier.height(8.dp))
