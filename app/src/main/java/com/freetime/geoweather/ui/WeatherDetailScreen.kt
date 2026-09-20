@@ -493,14 +493,12 @@ fun WeatherDetailScreen(
                             ) {
                                 items(hourly.size, key = { hourly[it].time }) { hourIndex ->
                                     val hour = hourly[hourIndex]
-                                    Card(
-                                        modifier = Modifier.geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false),
-                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface),
-                                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                                        onClick = { onHourlyClick(loc.name, hourly, hourIndex) }
+                                    GeoWeatherGlassPanel(
+                                        modifier = Modifier.clickable { onHourlyClick(loc.name, hourly, hourIndex) },
+                                        interactive = true
                                     ) {
                                         Column(
-                                            modifier = Modifier.padding(12.dp),
+                                            modifier = Modifier,
                                             horizontalAlignment = Alignment.CenterHorizontally
                                         ) {
                                             Text(hour.time.take(5), style = MaterialTheme.typography.labelMedium)
@@ -533,14 +531,13 @@ fun WeatherDetailScreen(
                         items(visibleDaily.size, key = { visibleDaily[it].date }) { dayIndex ->
                             val day = visibleDaily[dayIndex]
                             var expanded by remember { mutableStateOf(false) }
-                            Card(
+                            GeoWeatherGlassPanel(
                                 modifier = Modifier.fillMaxWidth()
                                     .animateContentSize(animationSpec = spring())
-                                    .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface), elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                                onClick = { onDailyClick(loc.name, daily, daily.indexOf(day)) }
+                                    .clickable { onDailyClick(loc.name, daily, daily.indexOf(day)) },
+                                interactive = true
                             ) {
-                                Column(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
+                                Column(modifier = Modifier.fillMaxWidth()) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically
@@ -837,9 +834,11 @@ fun ForecastDetailScreen(
         ) {
             item {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-                    TextButton(onClick = { index-- }, enabled = index > 0, modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))) {
-                        Text("‹", style = MaterialTheme.typography.headlineMedium)
-                    }
+                    if (index > 0) {
+                        GeoWeatherGlassAction(onClick = { index-- }) {
+                            Text("‹", style = MaterialTheme.typography.headlineMedium)
+                        }
+                    } else Spacer(Modifier.width(52.dp))
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(painterResource(WeatherIconMapper.getWeatherIcon(forecastCode)), null, Modifier.size(104.dp), tint = Color.Unspecified)
                         Text(
@@ -851,18 +850,16 @@ fun ForecastDetailScreen(
                         )
                         Text(stringResource(WeatherCodes.getStringResource(forecastCode)), style = MaterialTheme.typography.titleLarge)
                     }
-                    TextButton(onClick = { index++ }, enabled = index < maxIndex, modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))) {
-                        Text("›", style = MaterialTheme.typography.headlineMedium)
-                    }
+                    if (index < maxIndex) {
+                        GeoWeatherGlassAction(onClick = { index++ }) {
+                            Text("›", style = MaterialTheme.typography.headlineMedium)
+                        }
+                    } else Spacer(Modifier.width(52.dp))
                 }
             }
             item {
-                Card(
-                    modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                ) {
-                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         hourly?.let { hour ->
                             DetailRow(stringResource(Res.string.time_label) to hour.time.takeLast(5), stringResource(Res.string.temperature_label) to formatTemp(hour.temp.toDouble(), tempUnit), stringResource(Res.string.feels_like_label) to (hour.feelsLike?.let { formatTemp(it, tempUnit) } ?: "--"))
                             DetailRow(stringResource(Res.string.humidity_label) to (hour.humidity?.let { "$it%" } ?: "--"), stringResource(Res.string.rain_chance_label) to "${hour.precipProbability}%", stringResource(Res.string.precipitation_label) to (hour.precipitation?.let { "$it mm" } ?: "--"))
