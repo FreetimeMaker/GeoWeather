@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.ui.glass.geoWeatherGlassCapsule
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
@@ -93,12 +92,7 @@ fun MainWeatherScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             GeoWeatherGlassTopBar(
-                title = stringResource(Res.string.app_name),
-                actions = {
-                    GeoWeatherGlassAction(onClick = onAddLocationClick) {
-                        Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
-                    }
-                }
+                title = stringResource(Res.string.app_name)
             )
         },
         bottomBar = {
