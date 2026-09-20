@@ -11,6 +11,11 @@ data class NowcastSummary(val startsAt: String?, val endsAt: String?, val peakPr
 data class SmartHeroInsight(val primary: String, val secondary: String?)
 
 object WeatherIntelligence {
+    private fun formatOneDecimal(value: Double): String {
+        val scaled = kotlin.math.round(value * 10.0).toInt()
+        return (scaled / 10).toString() + "." + kotlin.math.abs(scaled % 10)
+    }
+
     fun nowcast(hourly: List<HourlyForecast>, windowHours: Int = 2): NowcastSummary? {
         val window = hourly.take(windowHours.coerceAtLeast(1))
         if (window.isEmpty()) return null
@@ -49,7 +54,7 @@ object WeatherIntelligence {
             severeRain != null -> SmartHeroInsight(
                 primary = "Rain likely around " + severeRain.time,
                 secondary = severeRain.precipProbability.toString() + "% · " +
-                    String.format(java.util.Locale.US, "%.1f mm", severeRain.precipitation ?: 0.0)
+                    formatOneDecimal(severeRain.precipitation ?: 0.0) + " mm"
             )
             strongWind != null -> SmartHeroInsight(
                 primary = "Strong gusts around " + strongWind.time,
@@ -57,7 +62,7 @@ object WeatherIntelligence {
             )
             (daily?.uvMax ?: 0.0) >= 6.0 -> SmartHeroInsight(
                 primary = "High UV today",
-                secondary = "UV max " + String.format(java.util.Locale.US, "%.1f", daily?.uvMax ?: 0.0)
+                secondary = "UV max " + formatOneDecimal(daily?.uvMax ?: 0.0)
             )
             next != null -> SmartHeroInsight(
                 primary = "Next hour " + next.temp + "°",
