@@ -30,6 +30,7 @@ import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTextField
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassDialog
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.getDetectedLocationName
@@ -256,52 +257,38 @@ fun MainWeatherScreen(
     }
 
     if (showAddLocationDialog) {
-        AlertDialog(
+        GeoWeatherGlassDialog(
             onDismissRequest = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() },
-            modifier = Modifier.padding(horizontal = 20.dp).geoWeatherGlass(RoundedCornerShape(32.dp), interactive = false),
-            containerColor = Color.Transparent,
-            tonalElevation = 0.dp,
-            title = { Text(stringResource(Res.string.search_title)) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    GeoWeatherGlassTextField(
-                        value = addLocationQuery,
-                        onValueChange = { addLocationQuery = it; viewModel.searchCity(it.trim()) },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = stringResource(Res.string.search_placeholder)
-                    )
-                    if (isSearching) {
-                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-                    } else if (addLocationQuery.isNotBlank()) {
-                        LazyColumn(modifier = Modifier.heightIn(max = 320.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            items(searchResults, key = { "add-${it.latitude},${it.longitude}" }) { city ->
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = true)
-                                        .clickable {
-                                            viewModel.addLocation(city)
-                                            showAddLocationDialog = false
-                                            addLocationQuery = ""
-                                            viewModel.clearSearch()
-                                        }
-                                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                                ) {
-                                    Text(city.name, style = MaterialTheme.typography.titleMedium)
-                                    Text("${city.latitude}, ${city.longitude}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            confirmButton = {},
-            dismissButton = {
-                TextButton(onClick = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }, modifier = Modifier.geoWeatherGlass(RoundedCornerShape(20.dp))) {
+            title = stringResource(Res.string.search_title),
+            actions = {
+                GeoWeatherGlassAction(onClick = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }) {
                     Text(stringResource(Res.string.CancelTXT))
                 }
             }
-        )
+        ) {
+            GeoWeatherGlassTextField(
+                value = addLocationQuery,
+                onValueChange = { addLocationQuery = it; viewModel.searchCity(it.trim()) },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.search_placeholder)
+            )
+            if (isSearching) {
+                Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+            } else if (addLocationQuery.isNotBlank()) {
+                LazyColumn(modifier = Modifier.heightIn(max = 320.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(searchResults, key = { "add-${it.latitude},${it.longitude}" }) { city ->
+                        Column(
+                            modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp), interactive = true)
+                                .clickable { viewModel.addLocation(city); showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }
+                                .padding(horizontal = 16.dp, vertical = 12.dp)
+                        ) {
+                            Text(city.name, style = MaterialTheme.typography.titleMedium)
+                            Text("${city.latitude}, ${city.longitude}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     locationToDelete?.let { location ->
