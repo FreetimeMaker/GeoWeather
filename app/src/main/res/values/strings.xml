@@ -644,4 +644,11 @@
     <string name="alert_history_empty">No recent weather indicators recorded.</string>
     <string name="alert_active">Active</string>
     <string name="alert_ended">Ended</string>
+    <!-- v4.6.1 -->
+    <string name="cl_461_jitpack">Migrated Freetime Core, Design, Browser and Donations to JitPack and Freetime Core 1.3.0.</string>
+    <string name="cl_461_glass">Updated the shared Liquid Glass implementation with stronger backdrop blur.</string>
+    <string name="cl_461_icons">Restored weather condition icons on the main location overview and saved locations.</string>
+    <string name="cl_461_main_scroll">Made the main weather screen fully scrollable and more compact.</string>
+    <string name="cl_461_layout">Reduced redundant location UI and improved spacing around the floating navigation.</string>
+    <string name="cl_461_fixes">Fixed additional weather detail, resource and build issues.</string>
 </resources>
