@@ -7,8 +7,66 @@ import kotlin.math.abs
 
 data class ActivityWindow(val activity: String, val hours: List<String>, val score: Int)
 data class ProviderSnapshot(val provider: String, val temperature: Double?, val weatherCode: Int?)
+data class NowcastSummary(val startsAt: String?, val endsAt: String?, val peakProbability: Int, val peakAmountMm: Double)
+data class SmartHeroInsight(val primary: String, val secondary: String?)
 
 object WeatherIntelligence {
+    fun nowcast(hourly: List<HourlyForecast>, windowHours: Int = 2): NowcastSummary? {
+        val window = hourly.take(windowHours.coerceAtLeast(1))
+        if (window.isEmpty()) return null
+        val wet = window.filter { (it.precipitation ?: 0.0) > 0.05 || it.precipProbability >= 35 }
+        if (wet.isEmpty()) {
+            return NowcastSummary(
+                startsAt = null,
+                endsAt = null,
+                peakProbability = window.maxOfOrNull { it.precipProbability } ?: 0,
+                peakAmountMm = 0.0
+            )
+        }
+        return NowcastSummary(
+            startsAt = wet.first().time,
+            endsAt = wet.last().time,
+            peakProbability = wet.maxOf { it.precipProbability },
+            peakAmountMm = wet.maxOf { it.precipitation ?: 0.0 }
+        )
+    }
+
+    fun pressureTrendLabel(trend: Int): String = when {
+        trend > 0 -> "Rising"
+        trend < 0 -> "Falling"
+        else -> "Steady"
+    }
+
+    fun smartHero(hourly: List<HourlyForecast>, daily: DailyForecast?): SmartHeroInsight {
+        val next = hourly.firstOrNull()
+        val severeRain = hourly.firstOrNull {
+            (it.precipitation ?: 0.0) >= 2.5 || it.precipProbability >= 70
+        }
+        val strongWind = hourly.firstOrNull {
+            (it.windGusts ?: it.windSpeed ?: 0.0) >= 45.0
+        }
+        return when {
+            severeRain != null -> SmartHeroInsight(
+                primary = "Rain likely around " + severeRain.time,
+                secondary = severeRain.precipProbability.toString() + "% · " +
+                    String.format(java.util.Locale.US, "%.1f mm", severeRain.precipitation ?: 0.0)
+            )
+            strongWind != null -> SmartHeroInsight(
+                primary = "Strong gusts around " + strongWind.time,
+                secondary = ((strongWind.windGusts ?: strongWind.windSpeed ?: 0.0).toInt()).toString() + " km/h"
+            )
+            (daily?.uvMax ?: 0.0) >= 6.0 -> SmartHeroInsight(
+                primary = "High UV today",
+                secondary = "UV max " + String.format(java.util.Locale.US, "%.1f", daily?.uvMax ?: 0.0)
+            )
+            next != null -> SmartHeroInsight(
+                primary = "Next hour " + next.temp + "°",
+                secondary = next.precipProbability.toString() + "% precipitation"
+            )
+            else -> SmartHeroInsight("Weather overview", null)
+        }
+    }
+
     fun briefing(location: String, daily: DailyForecast?, hourly: List<HourlyForecast>, evening: Boolean = false): String {
         if (daily == null) return location
         val rain = hourly.firstOrNull { it.precipProbability >= 40 }
