@@ -82,6 +82,9 @@ class WeatherRepository(
     fun getAllLocations(): Flow<List<LocationEntity>> =
         locationDao.getAllLocationsFlow().distinctUntilChanged()
 
+    fun getWeatherHistory(locationName: String): Flow<List<WeatherHistoryEntity>> =
+        historyDao.getHistoryForLocation(locationName)
+
     suspend fun getAllLocationsSync(): List<LocationEntity> =
         locationDao.getAllLocationsSync()
 
