@@ -35,10 +35,21 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
     val versionName = packageInfo?.versionName ?: "unknown"
     val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo?.longVersionCode ?: 0L else @Suppress("DEPRECATION") (packageInfo?.versionCode?.toLong() ?: 0L)
     val appName = remember { FreetimeCore.appName(context) }
+    val notificationPermission = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+        androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED
+    ) "granted" else "not granted"
+    val locationPermission = if (
+        androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED ||
+        androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED
+    ) "granted" else "not granted"
+    val cacheMb = remember { context.cacheDir.walkTopDown().filter { it.isFile }.sumOf { it.length() } / (1024.0 * 1024.0) }
     val report = "$appName $versionName ($versionCode)\n" +
         "Android ${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}\n" +
         "Device: ${Build.MANUFACTURER} ${Build.MODEL}\n" +
-        "Network: $network\nSaved locations: $locations"
+        "Network: $network\nSaved locations: $locations\n" +
+        "Location permission: $locationPermission\nNotifications: $notificationPermission\n" +
+        "Cache: ${String.format(java.util.Locale.US, "%.1f", cacheMb)} MB\n" +
+        "Accounts: none\nWeather cache: local Room database\nShare cards: temporary app cache"
     Scaffold(containerColor = Color.Transparent, topBar = {
         GeoWeatherGlassTopBar(
             title = stringResource(Res.string.diagnostics_title),
