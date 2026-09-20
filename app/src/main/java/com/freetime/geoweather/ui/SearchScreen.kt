@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
+import com.freetime.geoweather.ui.glass.GeoWeatherGlassTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,18 +57,14 @@ fun SearchScreen(
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).padding(16.dp)) {
-            OutlinedTextField(
+            GeoWeatherGlassTextField(
                 value = query,
                 onValueChange = {
                     query = it
                     viewModel.searchCity(it)
                 },
-                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp)),
-                colors = OutlinedTextFieldDefaults.colors(unfocusedContainerColor = Color.Transparent, focusedContainerColor = Color.Transparent),
-                label = { Text(stringResource(Res.string.search_hint)) },
-                placeholder = { Text(stringResource(Res.string.search_placeholder)) },
-                trailingIcon = { Icon(Icons.Default.Search, null) },
-                singleLine = true
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.search_placeholder)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
