@@ -113,7 +113,8 @@ fun WeatherDetailScreen(
                 onBack = onBack,
                 actions = {
                     if (loc?.currentTemp != null) {
-                        IconButton(onClick = {
+                        GeoWeatherGlassIconAction(onClick = {
+                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             val shareText = "${loc.name}: ${formatTemp(loc.currentTemp!!, tempUnit)} · ${loc.currentWeatherCode?.let { context.getString(WeatherCodes.getStringResource(it)) } ?: ""}"
                             val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
                                 type = "text/plain"
