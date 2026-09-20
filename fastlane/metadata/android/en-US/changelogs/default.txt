@@ -1,12 +1,6 @@
-• Added Smart Weather insights and a 2-hour precipitation nowcast
-• Added a richer hourly weather timeline with precipitation and wind gusts
-• Added sun path details with sunrise, sunset, golden hour, blue hour and UV information
-• Added conditions and trend insights for visibility, cloud base, pressure and feels-like weather
-• Added local weather history, temperature range visualization and data freshness indicators
-• Added multiple data-based weather indicators with recent indicator history
-• Added a location overview and comparison summary for saved places
-• Improved widgets, persistent weather notifications and daily weather briefings
-• Added responsive landscape support and improved weather detail layouts for wider screens
-• Added a Liquid Glass weather detail sheet and shareable weather image cards
-• Expanded diagnostics and improved weather background motion with reduced-motion support
-• Fixed duplicate resources and several UI/build issues
+• Migrated Freetime Core, Design, Browser and Donations to JitPack and Freetime Core 1.3.0
+• Updated the shared Liquid Glass implementation with stronger backdrop blur
+• Restored weather condition icons on the main location overview and saved locations
+• Made the main weather screen fully scrollable and more compact
+• Reduced redundant location UI and improved spacing around the floating navigation
+• Fixed additional weather detail, resource and build issues
