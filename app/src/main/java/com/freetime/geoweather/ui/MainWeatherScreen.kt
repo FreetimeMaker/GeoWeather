@@ -140,8 +140,8 @@ fun MainWeatherScreen(
                 Text(
                     text = stringResource(Res.string.no_locations_msg),
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = FreetimeDesign.typography.bodyLarge,
+                    color = FreetimeDesign.palette.contentMuted,
                     modifier = Modifier
                         .padding(24.dp)
                         .freetimeGlass(RoundedCornerShape(24.dp), interactive = false)
@@ -160,7 +160,7 @@ fun MainWeatherScreen(
                     ) {
                         Text(
                             text = stringResource(Res.string.compare_locations),
-                            style = MaterialTheme.typography.titleMedium,
+                            style = FreetimeDesign.typography.titleMedium,
                             modifier = Modifier
                                 .freetimeGlass(RoundedCornerShape(18.dp), interactive = false)
                                 .padding(horizontal = 14.dp, vertical = 8.dp)
@@ -183,14 +183,14 @@ fun MainWeatherScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Column(Modifier.weight(1f)) {
-                                        Text(loc.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                                        Text(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
                                         Text(
                                             text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
                                             style = MaterialTheme.typography.headlineSmall
                                         )
                                         Text(
                                             text = loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--",
-                                            style = MaterialTheme.typography.labelSmall
+                                            style = FreetimeDesign.typography.labelSmall
                                         )
                                     }
                                     GeoWeatherGlassIconAction(
@@ -232,7 +232,7 @@ fun MainWeatherScreen(
                                     )
                                     Text(
                                         text = loc.currentWeatherCode?.let { code -> stringResource(com.freetime.geoweather.WeatherCodes.getStringResource(code)) }.orEmpty(),
-                                        style = MaterialTheme.typography.bodyLarge
+                                        style = FreetimeDesign.typography.bodyLarge
                                     )
                                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                         Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--")
@@ -271,18 +271,18 @@ fun MainWeatherScreen(
                                     .freetimeGlass(RoundedCornerShape(28.dp), interactive = false)
                             ) {
                                 Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Text(stringResource(Res.string.compare_summary_title), style = MaterialTheme.typography.titleMedium)
+                                    Text(stringResource(Res.string.compare_summary_title), style = FreetimeDesign.typography.titleMedium)
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                         Column(Modifier.weight(1f)) {
-                                            Text(stringResource(Res.string.compare_temperature_spread), style = MaterialTheme.typography.labelSmall)
-                                            Text(minTemp.toInt().toString() + "–" + maxTemp.toInt() + "°C", style = MaterialTheme.typography.titleMedium)
+                                            Text(stringResource(Res.string.compare_temperature_spread), style = FreetimeDesign.typography.labelSmall)
+                                            Text(minTemp.toInt().toString() + "–" + maxTemp.toInt() + "°C", style = FreetimeDesign.typography.titleMedium)
                                         }
                                         Column(Modifier.weight(1f)) {
-                                            Text(stringResource(Res.string.compare_windiest), style = MaterialTheme.typography.labelSmall)
+                                            Text(stringResource(Res.string.compare_windiest), style = FreetimeDesign.typography.labelSmall)
                                             Text(windiest?.name ?: "--", style = MaterialTheme.typography.titleSmall, maxLines = 1)
                                         }
                                         Column(Modifier.weight(1f)) {
-                                            Text(stringResource(Res.string.compare_most_humid), style = MaterialTheme.typography.labelSmall)
+                                            Text(stringResource(Res.string.compare_most_humid), style = FreetimeDesign.typography.labelSmall)
                                             Text(humid?.name ?: "--", style = MaterialTheme.typography.titleSmall, maxLines = 1)
                                         }
                                     }
@@ -293,7 +293,7 @@ fun MainWeatherScreen(
                     item(key = "location-overview-title") {
                         Text(
                             text = stringResource(Res.string.location_overview_title),
-                            style = MaterialTheme.typography.titleMedium,
+                            style = FreetimeDesign.typography.titleMedium,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         )
                     }
@@ -326,10 +326,10 @@ fun MainWeatherScreen(
                                             Text(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.headlineSmall)
                                         }
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                            Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = MaterialTheme.typography.labelSmall)
-                                            Text(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--", style = MaterialTheme.typography.labelSmall)
+                                            Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = FreetimeDesign.typography.labelSmall)
+                                            Text(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--", style = FreetimeDesign.typography.labelSmall)
                                         }
-                                        if (loc.lastUpdated > 0L) Text(stringResource(Res.string.updated_age_short, ageMinutes), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        if (loc.lastUpdated > 0L) Text(stringResource(Res.string.updated_age_short, ageMinutes), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
                                     }
                                 }
                             }
@@ -339,7 +339,7 @@ fun MainWeatherScreen(
                 item(key = "saved-locations-title") {
                     Text(
                         text = stringResource(Res.string.compare_locations),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = FreetimeDesign.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
                     )
                 }
@@ -364,8 +364,8 @@ fun MainWeatherScreen(
                             )
                         }
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(loc.name, style = MaterialTheme.typography.titleMedium)
-                            Text(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.bodyMedium)
+                            Text(loc.name, style = FreetimeDesign.typography.titleMedium)
+                            Text(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.bodyMedium)
                         }
                         GeoWeatherGlassIconAction(onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); notificationLocation = loc }) {
                             Icon(if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff, contentDescription = null)
@@ -383,7 +383,7 @@ fun MainWeatherScreen(
                         onClick = onDonateClick,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
                     ) {
-                        Text(text = stringResource(Res.string.main_donation_hint), style = MaterialTheme.typography.labelMedium)
+                        Text(text = stringResource(Res.string.main_donation_hint), style = FreetimeDesign.typography.labelMedium)
                     }
                 }
             }
@@ -488,8 +488,8 @@ fun MainWeatherScreen(
                                 .clickable { viewModel.addLocation(city); showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }
                                 .padding(horizontal = 16.dp, vertical = 12.dp)
                         ) {
-                            Text(city.name, style = MaterialTheme.typography.titleMedium)
-                            Text("${city.latitude}, ${city.longitude}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(city.name, style = FreetimeDesign.typography.titleMedium)
+                            Text("${city.latitude}, ${city.longitude}", style = FreetimeDesign.typography.bodySmall, color = FreetimeDesign.palette.contentMuted)
                         }
                     }
                 }
@@ -557,7 +557,7 @@ fun MainWeatherScreen(
                     onDecrease = { selectedHour = (selectedHour + 23) % 24 },
                     onIncrease = { selectedHour = (selectedHour + 1) % 24 }
                 )
-                Text(":", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(horizontal = 10.dp))
+                Text(":", style = FreetimeDesign.typography.headlineLarge, modifier = Modifier.padding(horizontal = 10.dp))
                 GlassTimePart(
                     value = selectedMinute,
                     onDecrease = { selectedMinute = (selectedMinute + 55) % 60 },
@@ -576,7 +576,7 @@ private fun GlassTimePart(
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         FreetimeGlassAction(onClick = onIncrease) {
-            Text("+", style = MaterialTheme.typography.titleLarge)
+            Text("+", style = FreetimeDesign.typography.titleLarge)
         }
         Box(
             modifier = Modifier
@@ -584,10 +584,10 @@ private fun GlassTimePart(
                 .padding(horizontal = 18.dp, vertical = 14.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text("%02d".format(value), style = MaterialTheme.typography.headlineMedium)
+            Text("%02d".format(value), style = FreetimeDesign.typography.headlineMedium)
         }
         FreetimeGlassAction(onClick = onDecrease) {
-            Text("−", style = MaterialTheme.typography.titleLarge)
+            Text("−", style = FreetimeDesign.typography.titleLarge)
         }
     }
 }
