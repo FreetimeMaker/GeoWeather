@@ -442,7 +442,7 @@ fun MainWeatherScreen(
     }
 
     if (showAddLocationDialog) {
-        GeoWeatherGlassDialog(
+        FreetimeDialog(
             onDismissRequest = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() },
             title = stringResource(Res.string.search_title),
             actions = {
@@ -497,7 +497,7 @@ fun MainWeatherScreen(
         var selectedHour by remember(location.id) { mutableIntStateOf(initialHour) }
         var selectedMinute by remember(location.id) { mutableIntStateOf(initialMinute) }
 
-        GeoWeatherGlassDialog(
+        FreetimeDialog(
             onDismissRequest = { notificationLocation = null },
             title = stringResource(Res.string.notification_time_title),
             actions = {
