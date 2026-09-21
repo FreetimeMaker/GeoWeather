@@ -58,8 +58,6 @@ import com.freetime.design.freetimeGlassCapsule
 import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeTextField
 import com.freetime.design.FreetimeGlassAction
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassDialog
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.getDetectedLocationName
@@ -187,17 +185,14 @@ fun MainWeatherScreen(
                                             style = FreetimeDesign.typography.labelSmall
                                         )
                                     }
-                                    GeoWeatherGlassIconAction(
+                                    FreetimeIconButton(
+                                        icon = if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = stringResource(Res.string.favorite_location),
                                         onClick = {
                                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                             viewModel.toggleDefaultLocation(loc)
                                         }
-                                    ) {
-                                        Icon(
-                                            if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                            contentDescription = stringResource(Res.string.favorite_location)
-                                        )
-                                    }
+                                    )
                                 }
                             }
                         }
@@ -405,39 +400,37 @@ fun MainWeatherScreen(
                         exit = fadeOut() + shrinkHorizontally()
                     ) {
                         Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                            GeoWeatherGlassIconAction(
+                            FreetimeIconButton(
+                                icon = Icons.Default.Favorite,
+                                contentDescription = stringResource(Res.string.donate_nav_desc),
                                 onClick = {
                                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                     onDonateClick()
-                                },
-                                modifier = Modifier.size(52.dp)
-                            ) {
-                                Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
-                            }
-                            GeoWeatherGlassIconAction(
+                                }
+                            )
+                            FreetimeIconButton(
+                                icon = Icons.Default.Settings,
+                                contentDescription = stringResource(Res.string.settings_nav_desc),
                                 onClick = {
                                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                     onSettingsClick()
-                                },
-                                modifier = Modifier.size(52.dp)
-                            ) {
-                                Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
-                            }
+                                }
+                            )
                         }
                     }
                 }
 
                 // Like SimpMusic's Search FAB: the primary creation action is its own
                 // circular glass surface instead of being buried inside the capsule.
-                GeoWeatherGlassIconAction(
+                FreetimeIconButton(
+                    icon = Icons.Default.Add,
+                    contentDescription = stringResource(Res.string.SearchBTNTXT),
                     onClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         showAddLocationDialog = true
                     },
                     modifier = Modifier.size(58.dp)
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
-                }
+                )
             }
         }
         }
