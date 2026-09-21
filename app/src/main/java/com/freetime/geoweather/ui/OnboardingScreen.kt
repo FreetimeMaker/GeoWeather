@@ -1,6 +1,6 @@
 package com.freetime.geoweather.ui
-import me.free_time.design.FreetimeDesign
-import me.free_time.design.FreetimeGlassAction
+import com.freetime.design.FreetimeDesign
+import com.freetime.design.FreetimeGlassAction
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,10 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
-import me.free_time.design.freetimeGlass
-import me.free_time.design.FreetimeButton
-import me.free_time.design.FreetimeCard
-import me.free_time.design.FreetimeProgressIndicator
+import com.freetime.design.freetimeGlass
+import com.freetime.design.FreetimeButton
+import com.freetime.design.FreetimeCard
+import com.freetime.design.FreetimeProgressIndicator
 
 @Composable
 fun OnboardingScreen(onDone: () -> Unit) {
