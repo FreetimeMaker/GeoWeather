@@ -1,4 +1,5 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeIconButton
 import me.free_time.design.freetimeGlass
 import me.free_time.design.FreetimeGlassTopBar
 import me.free_time.design.FreetimeGlassAction
@@ -57,7 +58,7 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
     Scaffold(containerColor = Color.Transparent, topBar = {
         FreetimeGlassTopBar(
             title = stringResource(Res.string.diagnostics_title),
-            onBack = onBack
+            navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
         )
     }) { padding ->
         Column(Modifier.padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
