@@ -7,6 +7,10 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 
 internal val LightColorScheme = lightColorScheme(
@@ -73,6 +77,16 @@ fun GeoWeatherTheme(
         colorScheme = colorScheme,
         typography = GeoTypography,
         shapes = GeoShapes,
-        content = content
-    )
+    ) {
+        // GeoWeather screens intentionally use transparent scaffolds so Liquid Glass
+        // can sample what is behind them. Always provide an opaque theme-colored root
+        // first; otherwise the Android window/light parent can shine through in dark mode.
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colorScheme.background)
+        ) {
+            content()
+        }
+    }
 }
