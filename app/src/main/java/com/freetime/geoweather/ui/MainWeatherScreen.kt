@@ -383,33 +383,69 @@ fun MainWeatherScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding()
-                    .padding(bottom = 16.dp)
-                    .wrapContentWidth()
-                    .geoWeatherGlassCapsule(interactive = true)
-                    .padding(horizontal = 10.dp, vertical = 7.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); openCurrentLocation() }, contentAlignment = Alignment.Center) {
-                    if (isLocating) CircularProgressIndicator(Modifier.size(19.dp), strokeWidth = 2.dp)
-                    else Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
-                }
-                AnimatedVisibility(
-                    visible = !navigationCompact,
-                    enter = fadeIn() + expandHorizontally(),
-                    exit = fadeOut() + shrinkHorizontally()
+                Row(
+                    modifier = Modifier
+                        .geoWeatherGlassCapsule(interactive = false)
+                        .padding(horizontal = 6.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); showAddLocationDialog = true }, contentAlignment = Alignment.Center) {
-                            Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
+                    GeoWeatherGlassIconAction(
+                        onClick = {
+                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            openCurrentLocation()
+                        },
+                        modifier = Modifier.size(if (navigationCompact) 48.dp else 52.dp)
+                    ) {
+                        if (isLocating) {
+                            CircularProgressIndicator(Modifier.size(19.dp), strokeWidth = 2.dp)
+                        } else {
+                            Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
                         }
-                        Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onDonateClick() }, contentAlignment = Alignment.Center) {
-                            Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
+                    }
+
+                    AnimatedVisibility(
+                        visible = !navigationCompact,
+                        enter = fadeIn() + expandHorizontally(),
+                        exit = fadeOut() + shrinkHorizontally()
+                    ) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                            GeoWeatherGlassIconAction(
+                                onClick = {
+                                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                    onDonateClick()
+                                },
+                                modifier = Modifier.size(52.dp)
+                            ) {
+                                Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
+                            }
+                            GeoWeatherGlassIconAction(
+                                onClick = {
+                                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                    onSettingsClick()
+                                },
+                                modifier = Modifier.size(52.dp)
+                            ) {
+                                Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
+                            }
                         }
                     }
                 }
-                Box(Modifier.size(42.dp).clickable { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onSettingsClick() }, contentAlignment = Alignment.Center) {
-                    Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
+
+                // Like SimpMusic's Search FAB: the primary creation action is its own
+                // circular glass surface instead of being buried inside the capsule.
+                GeoWeatherGlassIconAction(
+                    onClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        showAddLocationDialog = true
+                    },
+                    modifier = Modifier.size(58.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT))
                 }
             }
         }
