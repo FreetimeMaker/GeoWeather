@@ -6,6 +6,8 @@ import com.freetime.design.FreetimeSnackbarHost
 import com.freetime.design.rememberFreetimeMessageHostState
 import com.freetime.design.FreetimeTimePicker
 import com.freetime.design.FreetimeSearchBar
+import com.freetime.design.FreetimeAdaptiveNavigation
+import com.freetime.design.FreetimeNavigationDestination
 import com.freetime.design.FreetimeEmptyState
 import com.freetime.design.FreetimeInfoCard
 import com.freetime.design.FreetimeSectionHeader
@@ -100,6 +102,11 @@ fun MainWeatherScreen(
     val currentLocationName = stringResource(Res.string.current_location)
     val isLandscape = androidx.compose.ui.platform.LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
+    val adaptiveDestinations = listOf(
+        FreetimeNavigationDestination(currentLocationName, Icons.Default.MyLocation),
+        FreetimeNavigationDestination(stringResource(Res.string.donate_nav_desc), Icons.Default.Favorite),
+        FreetimeNavigationDestination(stringResource(Res.string.settings_nav_desc), Icons.Default.Settings)
+    )
 
     fun openCurrentLocation() {
         scope.launch {
@@ -380,71 +387,35 @@ fun MainWeatherScreen(
             }
             }
 
-            Row(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .navigationBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            FreetimeAdaptiveNavigation(
+                destinations = adaptiveDestinations,
+                selectedIndex = 0,
+                onDestinationSelected = { index ->
+                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    when (index) {
+                        0 -> if (!isLocating) openCurrentLocation()
+                        1 -> onDonateClick()
+                        2 -> onSettingsClick()
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
             ) {
-                FreetimeGlassNavigationBar {
-                    if (isLocating) {
-                        Box(
-                            modifier = Modifier.size(if (navigationCompact) 48.dp else 52.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            FreetimeProgressIndicator(Modifier.size(19.dp))
-                        }
-                    } else {
-                        FreetimeIconButton(
-                            icon = Icons.Default.MyLocation,
-                            contentDescription = currentLocationName,
-                            onClick = {
-                                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                openCurrentLocation()
-                            },
-                            modifier = Modifier.size(if (navigationCompact) 48.dp else 52.dp)
-                        )
-                    }
-
-                    AnimatedVisibility(
-                        visible = !navigationCompact,
-                        enter = fadeIn() + expandHorizontally(),
-                        exit = fadeOut() + shrinkHorizontally()
-                    ) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                            FreetimeIconButton(
-                                icon = Icons.Default.Favorite,
-                                contentDescription = stringResource(Res.string.donate_nav_desc),
-                                onClick = {
-                                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                    onDonateClick()
-                                }
-                            )
-                            FreetimeIconButton(
-                                icon = Icons.Default.Settings,
-                                contentDescription = stringResource(Res.string.settings_nav_desc),
-                                onClick = {
-                                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                    onSettingsClick()
-                                }
-                            )
-                        }
-                    }
-                }
-
-                // Like SimpMusic's Search FAB: the primary creation action is its own
-                // circular glass surface instead of being buried inside the capsule.
-                FreetimeFloatingActionButton(
-                    icon = Icons.Default.Add,
-                    contentDescription = stringResource(Res.string.SearchBTNTXT),
-                    onClick = {
-                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        showAddLocationDialog = true
-                    }
-                )
+                // The weather content remains the primary surface; adaptive navigation
+                // overlays its compact bottom bar or wide navigation rail.
             }
+
+            FreetimeFloatingActionButton(
+                icon = Icons.Default.Add,
+                contentDescription = stringResource(Res.string.SearchBTNTXT),
+                onClick = {
+                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    showAddLocationDialog = true
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .navigationBarsPadding()
+                    .padding(end = 20.dp, bottom = 92.dp)
+            )
         }
         }
     }
