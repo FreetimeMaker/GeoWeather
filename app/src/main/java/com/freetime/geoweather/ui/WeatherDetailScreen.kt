@@ -57,6 +57,7 @@ import com.freetime.geoweather.ui.glass.GeoWeatherGlassDepth
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import me.free_time.design.FreetimeProgressIndicator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -181,7 +182,7 @@ fun WeatherDetailScreen(
                     modifier = Modifier.fillMaxSize().padding(padding),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    FreetimeProgressIndicator()
                 }
             }
             loc.weatherData == null -> {
@@ -195,7 +196,7 @@ fun WeatherDetailScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     if (isRefreshing) {
-                        CircularProgressIndicator()
+                        FreetimeProgressIndicator()
                     } else {
                         Text(
                             text = stringResource(Res.string.error_loading_weather),
