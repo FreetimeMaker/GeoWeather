@@ -1,4 +1,7 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeGlassAction
+import me.free_time.design.FreetimeGlassPanel
 
 import android.content.Intent
 import android.os.Build
@@ -16,10 +19,10 @@ import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.*
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.R as Res
-import com.freetime.geoweather.ui.glass.geoWeatherGlass
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
+import com.freetime.geoweather.ui.glass.freetimeGlass
+import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
+import com.freetime.geoweather.ui.glass.FreetimeGlassAction
+import com.freetime.geoweather.ui.glass.FreetimeGlassPanel
 import me.free_time.core.FreetimeCore
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,16 +54,16 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
         "Cache: ${String.format(java.util.Locale.US, "%.1f", cacheMb)} MB\n" +
         "Accounts: none\nWeather cache: local Room database\nShare cards: temporary app cache"
     Scaffold(containerColor = Color.Transparent, topBar = {
-        GeoWeatherGlassTopBar(
+        FreetimeGlassTopBar(
             title = stringResource(Res.string.diagnostics_title),
             onBack = onBack
         )
     }) { padding ->
         Column(Modifier.padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            GeoWeatherGlassPanel(Modifier.fillMaxWidth()) {
+            FreetimeGlassPanel(Modifier.fillMaxWidth()) {
                 Text(report)
             }
-            GeoWeatherGlassAction(onClick = {
+            FreetimeGlassAction(onClick = {
                 val intent = Intent(Intent.ACTION_SEND).apply { type = "text/plain"; putExtra(Intent.EXTRA_SUBJECT, "GeoWeather diagnostics"); putExtra(Intent.EXTRA_TEXT, report) }
                 context.startActivity(Intent.createChooser(intent, context.getString(Res.string.export_diagnostics)))
             }, modifier = Modifier.fillMaxWidth()) {
