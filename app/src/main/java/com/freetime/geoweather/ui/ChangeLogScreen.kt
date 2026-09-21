@@ -1,4 +1,5 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeDesign
 import me.free_time.design.freetimeGlass
 import me.free_time.design.FreetimeGlassTopBar
 import me.free_time.design.FreetimeGlassPanel
@@ -443,15 +444,15 @@ fun ReleaseCard(
         ) {
             Text(
                 text = version,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
+                style = FreetimeDesign.typography.titleLarge,
+                color = FreetimeDesign.palette.primary
             )
             Spacer(modifier = Modifier.height(8.dp))
 
             details.forEach { line ->
                 Text(
                     text = "• $line",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = FreetimeDesign.typography.bodyMedium
                 )
             }
         }
