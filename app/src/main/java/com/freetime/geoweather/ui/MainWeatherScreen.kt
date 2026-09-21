@@ -1,5 +1,10 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeScaffold
+import com.freetime.design.FreetimeFloatingActionButton
+import com.freetime.design.FreetimeSnackbarHost
+import com.freetime.design.rememberFreetimeMessageHostState
+import com.freetime.design.FreetimeTimePicker
 import com.freetime.design.FreetimeEmptyState
 import com.freetime.design.FreetimeInfoCard
 import com.freetime.design.FreetimeSectionHeader
@@ -89,7 +94,7 @@ fun MainWeatherScreen(
     val listState = rememberLazyListState()
     val navigationCompact = rememberFreetimeCompactNavigation(listState)
     var isLocating by remember { mutableStateOf(false) }
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarHostState = rememberFreetimeMessageHostState()
     val scope = rememberCoroutineScope()
     val currentLocationName = stringResource(Res.string.current_location)
     val isLandscape = androidx.compose.ui.platform.LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
@@ -106,7 +111,7 @@ fun MainWeatherScreen(
                         ?: currentLocationName
                     onCurrentLocationClick(detectedLocationName, coords.first, coords.second)
                 } else {
-                    snackbarHostState.showSnackbar(locationUnavailableMsg)
+                    snackbarHostState.show(locationUnavailableMsg)
                 }
             } finally {
                 isLocating = false
@@ -127,18 +132,21 @@ fun MainWeatherScreen(
         }
     }
 
-    Scaffold(
-        containerColor = Color.Transparent,
-        snackbarHost = { snackbarHostState.currentSnackbarData?.let { data -> FreetimeSnackbar(message = data.visuals.message) } },
+    FreetimeScaffold(
         topBar = {
             FreetimeGlassTopBar(
                 title = stringResource(Res.string.app_name),
                 compact = navigationCompact,
                 subtitle = if (navigationCompact) locations.firstOrNull()?.currentTemp?.let { "${it.toInt()}°" } else null
             )
-        } 
-    ) { padding ->
+        }
+    ) {
         Box(Modifier.fillMaxSize()) {
+            FreetimeSnackbarHost(
+                state = snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 96.dp)
+            )
+            val padding = PaddingValues(0.dp)
 
         if (locations.isEmpty()) {
             FreetimeEmptyState(
