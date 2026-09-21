@@ -1,4 +1,5 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.freetimeGlass
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
@@ -12,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import com.freetime.geoweather.ui.glass.geoWeatherGlass
+import com.freetime.geoweather.ui.glass.freetimeGlass
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -32,7 +33,7 @@ fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier, windSpeed: Do
         0f at 0; 0f at 3100; 1f at 3150; .08f at 3230; .85f at 3310; 0f at 3420
     }), label = "flash")
 
-    Box(modifier.height(170.dp).geoWeatherGlass(CircleShape, interactive = false)) {
+    Box(modifier.height(170.dp).freetimeGlass(CircleShape, interactive = false)) {
         Canvas(Modifier.fillMaxSize()) {
             if (night) {
                 drawRect(Color(0xFF07162E).copy(alpha = .30f))
