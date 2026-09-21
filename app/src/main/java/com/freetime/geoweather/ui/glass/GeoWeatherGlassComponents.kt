@@ -18,16 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import me.free_time.design.FreetimeButton
-import me.free_time.design.FreetimeCard
-import me.free_time.design.FreetimeDesign
-import me.free_time.design.FreetimeGlassDepth
-import me.free_time.design.FreetimeGlassPanel
-import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeIconButton
-import me.free_time.design.FreetimeTextField
-import me.free_time.design.freetimeGlass
-import me.free_time.design.freetimeGlassCapsule
+import com.freetime.design.FreetimeButton
+import com.freetime.design.FreetimeCard
+import com.freetime.design.FreetimeDesign
+import com.freetime.design.FreetimeGlassDepth
+import com.freetime.design.FreetimeGlassPanel
+import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeTextField
+import com.freetime.design.freetimeGlass
+import com.freetime.design.freetimeGlassCapsule
 
 enum class GeoWeatherGlassDepth { Subtle, Standard, Elevated }
 
@@ -69,7 +69,7 @@ fun GeoWeatherGlassAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
-) = me.free_time.design.FreetimeGlassAction(onClick = onClick, modifier = modifier, content = content)
+) = com.freetime.design.FreetimeGlassAction(onClick = onClick, modifier = modifier, content = content)
 
 @Composable
 fun GeoWeatherGlassPanel(
