@@ -1,12 +1,23 @@
 package com.freetime.geoweather.ui.glass
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import me.free_time.design.FreetimeButton
 import me.free_time.design.FreetimeCard
 import me.free_time.design.FreetimeDesign
@@ -15,6 +26,8 @@ import me.free_time.design.FreetimeGlassPanel
 import me.free_time.design.FreetimeGlassTopBar
 import me.free_time.design.FreetimeIconButton
 import me.free_time.design.FreetimeTextField
+import me.free_time.design.freetimeGlass
+import me.free_time.design.freetimeGlassCapsule
 
 enum class GeoWeatherGlassDepth { Subtle, Standard, Elevated }
 
@@ -92,9 +105,16 @@ fun GeoWeatherGlassIconAction(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    // Compatibility bridge for existing call sites. New screens should use
-    // FreetimeIconButton directly so all controls come from Freetime-Core:Design.
-    FreetimeCard(modifier = modifier, onClick = onClick, content = content)
+    // Compatibility bridge for call sites that render custom icon content.
+    // Shape, interaction and glass rendering still come from Freetime-Core:Design.
+    Box(
+        modifier = modifier
+            .size(48.dp)
+            .freetimeGlassCapsule(interactive = true)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+        content = content,
+    )
 }
 
 @Deprecated("Use FreetimeDialog from Freetime-Core:Design directly")
@@ -106,7 +126,24 @@ fun GeoWeatherGlassDialog(
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    // Kept temporarily for source compatibility where dialogs have custom bodies.
-    // Its surface is still provided entirely by Freetime-Core:Design.
-    FreetimeGlassPanel(modifier = modifier) { }
+    Dialog(onDismissRequest = onDismissRequest) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .freetimeGlass(FreetimeDesign.shapes.dialog, interactive = false)
+                .padding(FreetimeDesign.spacing.xl),
+            verticalArrangement = Arrangement.spacedBy(FreetimeDesign.spacing.lg),
+        ) {
+            androidx.compose.foundation.text.BasicText(
+                title,
+                style = FreetimeDesign.typography.titleLarge.copy(color = FreetimeDesign.colors.contentStrong),
+            )
+            content()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(FreetimeDesign.spacing.sm, Alignment.End),
+                content = actions,
+            )
+        }
+    }
 }
