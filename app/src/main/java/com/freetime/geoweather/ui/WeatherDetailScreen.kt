@@ -222,6 +222,21 @@ fun WeatherDetailScreen(
                 val sunsetTime = runCatching { java.time.LocalTime.parse(firstDayForLight?.sunset?.takeLast(5) ?: "19:00") }.getOrDefault(java.time.LocalTime.of(19, 0))
                 val isNight = nowTime.isBefore(sunriseTime) || !nowTime.isBefore(sunsetTime)
                 val twilight = twilightAmount(nowTime, sunriseTime, sunsetTime)
+                val isForecastDaytime: (String) -> Boolean = { rawTime ->
+                    val forecastDateTime = runCatching { java.time.LocalDateTime.parse(rawTime) }.getOrNull()
+                    val forecastTime = forecastDateTime?.toLocalTime()
+                        ?: runCatching { java.time.LocalTime.parse(rawTime.takeLast(5)) }.getOrNull()
+                    val matchingDay = forecastDateTime?.toLocalDate()?.let { date ->
+                        daily.firstOrNull { runCatching { java.time.LocalDate.parse(it.date) }.getOrNull() == date }
+                    } ?: firstDayForLight
+                    val forecastSunrise = runCatching {
+                        java.time.LocalTime.parse(matchingDay?.sunrise?.takeLast(5) ?: "07:00")
+                    }.getOrDefault(java.time.LocalTime.of(7, 0))
+                    val forecastSunset = runCatching {
+                        java.time.LocalTime.parse(matchingDay?.sunset?.takeLast(5) ?: "19:00")
+                    }.getOrDefault(java.time.LocalTime.of(19, 0))
+                    forecastTime?.let { !it.isBefore(forecastSunrise) && it.isBefore(forecastSunset) } ?: true
+                }
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -590,7 +605,7 @@ fun WeatherDetailScreen(
                                             FreetimeGlassPanel(depth = FreetimeGlassDepth.SUBTLE) {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                                     FreetimeText(hour.time.takeLast(5), style = FreetimeDesign.typography.labelSmall)
-                                                    Image(painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)), contentDescription = null, modifier = Modifier.size(32.dp))
+                                                    Image(painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code, isForecastDaytime(hour.time))), contentDescription = null, modifier = Modifier.size(32.dp))
                                                     FreetimeText("${hour.temp}°", fontWeight = FontWeight.Bold)
                                                     if (hour.precipProbability > 0) {
                                                         FreetimeText("${hour.precipProbability}%", style = FreetimeDesign.typography.labelSmall)
@@ -797,7 +812,7 @@ fun WeatherDetailScreen(
                                             horizontalAlignment = Alignment.CenterHorizontally
                                         ) {
                                             FreetimeText(hour.time.take(5), style = FreetimeDesign.typography.labelMedium)
-                                            Image(painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)), contentDescription = null, modifier = Modifier.size(36.dp))
+                                            Image(painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code, isForecastDaytime(hour.time))), contentDescription = null, modifier = Modifier.size(36.dp))
                                             FreetimeText(
                                                 formatTemp(hour.temp.toDouble(), tempUnit),
                                                 style = FreetimeDesign.typography.bodyMedium
