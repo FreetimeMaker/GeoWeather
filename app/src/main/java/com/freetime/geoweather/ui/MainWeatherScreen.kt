@@ -39,11 +39,11 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import com.freetime.geoweather.ui.glass.freetimeGlass
-import com.freetime.geoweather.ui.glass.freetimeGlassCapsule
-import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
-import com.freetime.geoweather.ui.glass.FreetimeTextField
-import com.freetime.geoweather.ui.glass.FreetimeGlassAction
+import me.free_time.design.freetimeGlass
+import me.free_time.design.freetimeGlassCapsule
+import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeTextField
+import me.free_time.design.FreetimeGlassAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassDialog
 import com.freetime.geoweather.data.LocationEntity
