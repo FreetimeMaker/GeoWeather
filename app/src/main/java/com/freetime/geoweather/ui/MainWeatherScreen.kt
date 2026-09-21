@@ -2,6 +2,7 @@ package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
 import com.freetime.design.FreetimeScaffold
 import com.freetime.design.FreetimeFloatingActionButton
+import com.freetime.design.FreetimeExtendedFloatingActionButton
 import com.freetime.design.FreetimeSnackbarHost
 import com.freetime.design.rememberFreetimeMessageHostState
 import com.freetime.design.FreetimeTimePicker
@@ -413,18 +414,30 @@ fun MainWeatherScreen(
                 // overlays its compact bottom bar or wide navigation rail.
             }
 
-            FreetimeFloatingActionButton(
-                icon = Icons.Default.Add,
-                contentDescription = stringResource(Res.string.SearchBTNTXT),
-                onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    showAddLocationDialog = true
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .navigationBarsPadding()
-                    .padding(end = 20.dp, bottom = 92.dp)
-            )
+            val addLocationAction = {
+                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                showAddLocationDialog = true
+            }
+            val addLocationFabModifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(end = 20.dp, bottom = 92.dp)
+
+            if (isLandscape) {
+                FreetimeExtendedFloatingActionButton(
+                    text = stringResource(Res.string.SearchBTNTXT),
+                    icon = Icons.Default.Add,
+                    onClick = addLocationAction,
+                    modifier = addLocationFabModifier
+                )
+            } else {
+                FreetimeFloatingActionButton(
+                    icon = Icons.Default.Add,
+                    contentDescription = stringResource(Res.string.SearchBTNTXT),
+                    onClick = addLocationAction,
+                    modifier = addLocationFabModifier
+                )
+            }
         }
         }
     }
