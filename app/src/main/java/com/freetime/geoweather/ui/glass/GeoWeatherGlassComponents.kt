@@ -7,7 +7,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.LocalContentColor
@@ -35,11 +34,14 @@ fun GeoWeatherGlassTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = if (compact) 28.dp else 18.dp, vertical = if (compact) 6.dp else 10.dp)
-            .geoWeatherGlass(RoundedCornerShape(if (compact) 28.dp else 32.dp), interactive = false)
+            .padding(
+                horizontal = if (compact) 22.dp else 14.dp,
+                vertical = if (compact) 6.dp else 10.dp
+            )
+            .geoWeatherGlassCapsule(interactive = false)
             .animateContentSize(spring())
-            .padding(horizontal = 10.dp, vertical = if (compact) 1.dp else 4.dp)
-            .heightIn(min = if (compact) 48.dp else 56.dp),
+            .padding(horizontal = if (compact) 8.dp else 10.dp, vertical = 3.dp)
+            .heightIn(min = if (compact) 48.dp else 54.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (onBack != null) {
