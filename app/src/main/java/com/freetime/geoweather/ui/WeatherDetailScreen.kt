@@ -276,7 +276,7 @@ fun WeatherDetailScreen(
                         if (!isNetworkAvailable() && loc.weatherData != null) {
                             FreetimeStatusBanner(message = stringResource(Res.string.offline_cached_weather), modifier = Modifier.fillMaxWidth())
                         } else if (loc.lastUpdated > 0L) {
-                            Text(
+                            FreetimeText(
                                 stringResource(Res.string.last_updated_minutes, minutesAgo),
                                 style = FreetimeDesign.typography.labelSmall,
                                 color = FreetimeDesign.palette.contentMuted
@@ -320,14 +320,14 @@ fun WeatherDetailScreen(
                                         animationSpec = spring(dampingRatio = .75f, stiffness = 120f),
                                         label = "temperature"
                                     )
-                                    Text(
+                                    FreetimeText(
                                         text = "$animatedTemp$tempSuffix",
                                         style = FreetimeDesign.typography.displayLarge,
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
                                 if (code != null) {
-                                    Text(
+                                    FreetimeText(
                                         text = stringResource(WeatherCodes.getStringResource(code)),
                                         style = FreetimeDesign.typography.titleLarge,
                                         fontWeight = FontWeight.Bold
@@ -351,8 +351,8 @@ fun WeatherDetailScreen(
                         }
                         FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.SUBTLE) {
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                                Text(freshness, style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                Text(stringResource(Res.string.updated_age_short, ageMinutes), style = FreetimeDesign.typography.labelMedium, color = FreetimeDesign.palette.contentMuted)
+                                FreetimeText(freshness, style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                FreetimeText(stringResource(Res.string.updated_age_short, ageMinutes), style = FreetimeDesign.typography.labelMedium, color = FreetimeDesign.palette.contentMuted)
                             }
                         }
                     }
@@ -360,15 +360,15 @@ fun WeatherDetailScreen(
                     item {
                         FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
                             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                Text(stringResource(Res.string.weather_history_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                FreetimeText(stringResource(Res.string.weather_history_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 if (weatherHistory.isEmpty()) {
-                                    Text(stringResource(Res.string.weather_history_empty), color = FreetimeDesign.palette.contentMuted)
+                                    FreetimeText(stringResource(Res.string.weather_history_empty), color = FreetimeDesign.palette.contentMuted)
                                 } else {
                                     val recent = weatherHistory.take(24)
                                     val low = recent.minOf { it.temperature }
                                     val high = recent.maxOf { it.temperature }
-                                    Text(stringResource(Res.string.history_samples, weatherHistory.size), style = FreetimeDesign.typography.labelMedium)
-                                    Text(
+                                    FreetimeText(stringResource(Res.string.history_samples, weatherHistory.size), style = FreetimeDesign.typography.labelMedium)
+                                    FreetimeText(
                                         stringResource(Res.string.history_range, formatTemp(low, tempUnit), formatTemp(high, tempUnit)),
                                         style = FreetimeDesign.typography.bodyLarge
                                     )
@@ -407,7 +407,7 @@ fun WeatherDetailScreen(
                         }
                         FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
                             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                Text(stringResource(Res.string.conditions_insights_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                FreetimeText(stringResource(Res.string.conditions_insights_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                     WeatherDetailItem(
                                         stringResource(Res.string.visibility_label),
@@ -421,7 +421,7 @@ fun WeatherDetailScreen(
                                     )
                                     WeatherDetailItem(stringResource(Res.string.pressure_trend_label), pressureTrend, modifier = Modifier.weight(1f))
                                 }
-                                Text(stringResource(Res.string.feels_like_reason_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                FreetimeText(stringResource(Res.string.feels_like_reason_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 FreetimeText(feelsReason, color = FreetimeDesign.palette.contentMuted)
                             }
                         }
@@ -438,13 +438,13 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Text(stringResource(Res.string.smart_weather_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                FreetimeText(stringResource(Res.string.smart_weather_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 FreetimeText(smart.primary, style = FreetimeDesign.typography.titleLarge)
                                 smart.secondary?.let { FreetimeText(it, color = FreetimeDesign.palette.contentMuted) }
                                 FreetimeDivider()
-                                Text(stringResource(Res.string.nowcast_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                FreetimeText(stringResource(Res.string.nowcast_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 if (nowcast?.startsAt != null && nowcast.endsAt != null) {
-                                    Text(
+                                    FreetimeText(
                                         stringResource(
                                             Res.string.nowcast_wet,
                                             nowcast.startsAt,
@@ -454,7 +454,7 @@ fun WeatherDetailScreen(
                                         )
                                     )
                                 } else {
-                                    Text(stringResource(Res.string.nowcast_dry))
+                                    FreetimeText(stringResource(Res.string.nowcast_dry))
                                 }
                             }
                         }
@@ -464,7 +464,7 @@ fun WeatherDetailScreen(
                         item {
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Text(stringResource(Res.string.weather_timeline_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.weather_timeline_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                         items(hourly.take(12)) { hour ->
                                             FreetimeGlassPanel(
@@ -474,8 +474,8 @@ fun WeatherDetailScreen(
                                             ) {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                                     FreetimeText(hour.time, style = FreetimeDesign.typography.labelMedium)
-                                                    Text(formatTemp(hour.temp.toDouble(), tempUnit), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                                    Text(
+                                                    FreetimeText(formatTemp(hour.temp.toDouble(), tempUnit), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                                    FreetimeText(
                                                         stringResource(
                                                             Res.string.precipitation_short,
                                                             hour.precipProbability,
@@ -484,7 +484,7 @@ fun WeatherDetailScreen(
                                                         style = FreetimeDesign.typography.labelSmall
                                                     )
                                                     hour.windGusts?.let {
-                                                        Text(stringResource(Res.string.gusts_label) + " " + it.toInt() + " km/h", style = FreetimeDesign.typography.labelSmall)
+                                                        FreetimeText(stringResource(Res.string.gusts_label) + " " + it.toInt() + " km/h", style = FreetimeDesign.typography.labelSmall)
                                                     }
                                                 }
                                             }
@@ -505,16 +505,16 @@ fun WeatherDetailScreen(
                             val eveningBlueEnd = sunset.plusMinutes(40)
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Text(stringResource(Res.string.sun_path_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.sun_path_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                         WeatherDetailItem(stringResource(Res.string.sunrise_label), sunrise.toString(), modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.sunset_label), sunset.toString(), modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.uv_max_label), day.uvMax?.let { String.format(java.util.Locale.US, "%.1f", it) } ?: "--", modifier = Modifier.weight(1f))
                                     }
-                                    Text(stringResource(Res.string.blue_hour_morning) + ": " + morningBlueStart + " – " + sunrise, style = FreetimeDesign.typography.bodySmall)
-                                    Text(stringResource(Res.string.golden_hour_morning) + ": " + sunrise + " – " + morningGoldenEnd, style = FreetimeDesign.typography.bodySmall)
-                                    Text(stringResource(Res.string.golden_hour_evening) + ": " + eveningGoldenStart + " – " + sunset, style = FreetimeDesign.typography.bodySmall)
-                                    Text(stringResource(Res.string.blue_hour_evening) + ": " + sunset + " – " + eveningBlueEnd, style = FreetimeDesign.typography.bodySmall)
+                                    FreetimeText(stringResource(Res.string.blue_hour_morning) + ": " + morningBlueStart + " – " + sunrise, style = FreetimeDesign.typography.bodySmall)
+                                    FreetimeText(stringResource(Res.string.golden_hour_morning) + ": " + sunrise + " – " + morningGoldenEnd, style = FreetimeDesign.typography.bodySmall)
+                                    FreetimeText(stringResource(Res.string.golden_hour_evening) + ": " + eveningGoldenStart + " – " + sunset, style = FreetimeDesign.typography.bodySmall)
+                                    FreetimeText(stringResource(Res.string.blue_hour_evening) + ": " + sunset + " – " + eveningBlueEnd, style = FreetimeDesign.typography.bodySmall)
                                 }
                             }
                         }
@@ -526,7 +526,7 @@ fun WeatherDetailScreen(
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                                 FreetimeText(moon.icon, style = FreetimeDesign.typography.displayMedium)
                                 Column(horizontalAlignment = Alignment.End) {
-                                    Text(moon.name, style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(moon.name, style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     FreetimeText("${moon.illumination}% illuminated", style = FreetimeDesign.typography.bodyMedium)
                                     FreetimeText("Next full moon: ${moon.daysToFull} d · new moon: ${moon.daysToNew} d", style = FreetimeDesign.typography.labelSmall)
                                 }
@@ -542,7 +542,7 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth()
                                 ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Text(stringResource(Res.string.air_quality_pollen_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.air_quality_pollen_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                         WeatherDetailItem(stringResource(Res.string.aqi_label), air.europeanAqi?.toString() ?: "--", modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.pm25_label), air.pm25?.let { "${it.roundToInt()} µg/m³" } ?: "--", modifier = Modifier.weight(1f))
@@ -571,9 +571,9 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth()
                                 ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                    Text(stringResource(Res.string.next_rain_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.next_rain_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     FreetimeText(nextRainText, style = FreetimeDesign.typography.bodyLarge)
-                                    Text(stringResource(Res.string.timeline_24h), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.timeline_24h), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Row(
                                         modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -586,19 +586,19 @@ fun WeatherDetailScreen(
                                             if (marksSunset) {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                                     FreetimeText("🌇", style = FreetimeDesign.typography.titleMedium)
-                                                    Text(sunsetTime.toString().take(5), style = FreetimeDesign.typography.labelSmall)
+                                                    FreetimeText(sunsetTime.toString().take(5), style = FreetimeDesign.typography.labelSmall)
                                                 }
                                             }
                                             FreetimeGlassPanel(depth = FreetimeGlassDepth.SUBTLE) {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                                    Text(hour.time.takeLast(5), style = FreetimeDesign.typography.labelSmall)
+                                                    FreetimeText(hour.time.takeLast(5), style = FreetimeDesign.typography.labelSmall)
                                                     Icon(
                                                         painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)),
                                                         contentDescription = null,
                                                         modifier = Modifier.size(32.dp),
                                                         tint = Color.Unspecified
                                                     )
-                                                    Text("${hour.temp}°", fontWeight = FontWeight.Bold)
+                                                    FreetimeText("${hour.temp}°", fontWeight = FontWeight.Bold)
                                                     if (hour.precipProbability > 0) {
                                                         FreetimeText("${hour.precipProbability}%", style = FreetimeDesign.typography.labelSmall)
                                                     }
@@ -639,12 +639,12 @@ fun WeatherDetailScreen(
                                 Spacer(Modifier.height(1.dp))
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
-                                        Text(stringResource(Res.string.wind_direction_label), style = FreetimeDesign.typography.labelSmall)
+                                        FreetimeText(stringResource(Res.string.wind_direction_label), style = FreetimeDesign.typography.labelSmall)
                                         Spacer(Modifier.height(2.dp))
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             loc.currentWindDirection?.let { WindCompass(direction = it.toFloat()) }
                                             Spacer(Modifier.width(4.dp))
-                                            Text(
+                                            FreetimeText(
                                                 text = loc.currentWindDirection?.let { cardinal8(it.toFloat()) } ?: "--",
                                                 style = FreetimeDesign.typography.bodyMedium,
                                                 fontWeight = FontWeight.Bold
@@ -759,7 +759,7 @@ fun WeatherDetailScreen(
                                 ) {
                                     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                                         FreetimeText("🌧️  ·  📡", style = FreetimeDesign.typography.headlineMedium)
-                                        Text(stringResource(Res.string.open_weather_radar), style = FreetimeDesign.typography.labelLarge)
+                                        FreetimeText(stringResource(Res.string.open_weather_radar), style = FreetimeDesign.typography.labelLarge)
                                     }
                                 }
                                 /*
@@ -767,7 +767,7 @@ fun WeatherDetailScreen(
                                     onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onRadarClick(loc.latitude, loc.longitude) },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Text(
+                                    FreetimeText(
                                         stringResource(Res.string.open_weather_radar),
                                         style = FreetimeDesign.typography.labelLarge,
                                         color = FreetimeDesign.palette.contentStrong
@@ -780,7 +780,7 @@ fun WeatherDetailScreen(
 
                     if (hourly.isNotEmpty()) {
                         item {
-                            Text(
+                            FreetimeText(
                                 text = stringResource(Res.string.hourly_label),
                                 style = FreetimeDesign.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
@@ -803,14 +803,14 @@ fun WeatherDetailScreen(
                                             modifier = Modifier,
                                             horizontalAlignment = Alignment.CenterHorizontally
                                         ) {
-                                            Text(hour.time.take(5), style = FreetimeDesign.typography.labelMedium)
+                                            FreetimeText(hour.time.take(5), style = FreetimeDesign.typography.labelMedium)
                                             Icon(
                                                 painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(36.dp),
                                                 tint = Color.Unspecified
                                             )
-                                            Text(
+                                            FreetimeText(
                                                 formatTemp(hour.temp.toDouble(), tempUnit),
                                                 style = FreetimeDesign.typography.bodyMedium
                                             )
@@ -823,7 +823,7 @@ fun WeatherDetailScreen(
 
                     if (daily.isNotEmpty()) {
                         item {
-                            Text(
+                            FreetimeText(
                                 text = stringResource(Res.string.forecast_3day_label),
                                 style = FreetimeDesign.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
@@ -845,7 +845,7 @@ fun WeatherDetailScreen(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(
+                                        FreetimeText(
                                             text = day.date.takeLast(5),
                                             style = FreetimeDesign.typography.bodyMedium,
                                             fontWeight = FontWeight.Bold,
@@ -858,7 +858,7 @@ fun WeatherDetailScreen(
                                             tint = Color.Unspecified
                                         )
                                         Spacer(Modifier.width(8.dp))
-                                        Text(
+                                        FreetimeText(
                                             text = "${formatTemp(day.minTemp.toDouble(), tempUnit)} / ${formatTemp(day.maxTemp.toDouble(), tempUnit)}",
                                             style = FreetimeDesign.typography.bodyMedium,
                                             fontWeight = FontWeight.Bold
@@ -902,7 +902,7 @@ fun WeatherDetailScreen(
                                     onClick = { forecastExpanded = !forecastExpanded },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Text(
+                                    FreetimeText(
                                         text = if (forecastExpanded) {
                                             stringResource(Res.string.show_less_forecast)
                                         } else {
@@ -1046,14 +1046,14 @@ fun WeatherAlertsSection(
     if (alerts.isNotEmpty()) {
         FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.ELEVATED) {
             Row(verticalAlignment = Alignment.Top) {
-                Text("⚠️", fontSize = 24.sp)
+                FreetimeText("⚠️", fontSize = 24.sp)
                 Spacer(Modifier.width(12.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                    Text(stringResource(Res.string.weather_alerts_title), style = FreetimeDesign.typography.labelMedium, color = FreetimeDesign.palette.contentMuted)
+                    FreetimeText(stringResource(Res.string.weather_alerts_title), style = FreetimeDesign.typography.labelMedium, color = FreetimeDesign.palette.contentMuted)
                     alerts.forEach { alert ->
-                        Text("• " + stringResource(alert), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        FreetimeText("• " + stringResource(alert), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                     }
-                    Text(stringResource(Res.string.data_based_alert_note), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
+                    FreetimeText(stringResource(Res.string.data_based_alert_note), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
                 }
             }
         }
@@ -1061,7 +1061,7 @@ fun WeatherAlertsSection(
     if (history.isNotEmpty()) {
         FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.SUBTLE) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(Res.string.alert_history_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                FreetimeText(stringResource(Res.string.alert_history_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                 history.take(5).forEach { record ->
                     val state = if (record.endedAt == null) stringResource(Res.string.alert_active) else stringResource(Res.string.alert_ended)
                     FreetimeText("• " + record.label + " · " + state, style = FreetimeDesign.typography.bodySmall)
@@ -1197,14 +1197,14 @@ fun ForecastDetailScreen(
                     } else Spacer(Modifier.width(52.dp))
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(painterResource(WeatherIconMapper.getWeatherIcon(forecastCode, forecastIsDay)), null, Modifier.size(104.dp), tint = Color.Unspecified)
-                        Text(
+                        FreetimeText(
                             hourly?.let { formatTemp(it.temp.toDouble(), tempUnit) }
                                 ?: daily?.let { "${formatTemp(it.maxTemp.toDouble(), tempUnit)} / ${formatTemp(it.minTemp.toDouble(), tempUnit)}" }
                                 ?: "--",
                             style = FreetimeDesign.typography.displayMedium,
                             fontWeight = FontWeight.Bold
                         )
-                        Text(stringResource(WeatherCodes.getStringResource(forecastCode)), style = FreetimeDesign.typography.titleLarge)
+                        FreetimeText(stringResource(WeatherCodes.getStringResource(forecastCode)), style = FreetimeDesign.typography.titleLarge)
                     }
                     if (index < maxIndex) {
                         FreetimeGlassAction(onClick = { index++ }) {
