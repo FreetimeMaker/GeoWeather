@@ -1,26 +1,28 @@
 package com.freetime.geoweather.ui.glass
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.spring
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.window.Dialog
+import me.free_time.design.FreetimeButton
+import me.free_time.design.FreetimeCard
+import me.free_time.design.FreetimeDesign
+import me.free_time.design.FreetimeGlassDepth
+import me.free_time.design.FreetimeGlassPanel
+import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeIconButton
+import me.free_time.design.FreetimeTextField
 
 enum class GeoWeatherGlassDepth { Subtle, Standard, Elevated }
+
+private fun GeoWeatherGlassDepth.coreDepth(): FreetimeGlassDepth = when (this) {
+    GeoWeatherGlassDepth.Subtle -> FreetimeGlassDepth.SUBTLE
+    GeoWeatherGlassDepth.Standard -> FreetimeGlassDepth.STANDARD
+    GeoWeatherGlassDepth.Elevated -> FreetimeGlassDepth.ELEVATED
+}
 
 @Composable
 fun GeoWeatherGlassTopBar(
@@ -31,37 +33,22 @@ fun GeoWeatherGlassTopBar(
     compactSubtitle: String? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = if (compact) 22.dp else 14.dp,
-                vertical = if (compact) 6.dp else 10.dp
-            )
-            .geoWeatherGlassCapsule(interactive = false)
-            .animateContentSize(spring())
-            .padding(horizontal = if (compact) 8.dp else 10.dp, vertical = 3.dp)
-            .heightIn(min = if (compact) 48.dp else 54.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (onBack != null) {
-            GeoWeatherGlassIconAction(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+    FreetimeGlassTopBar(
+        title = title,
+        modifier = modifier,
+        compact = compact,
+        subtitle = compactSubtitle,
+        navigation = {
+            if (onBack != null) {
+                FreetimeIconButton(
+                    icon = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null,
+                    onClick = onBack,
+                )
             }
-        }
-        Column(modifier = Modifier.weight(1f).padding(horizontal = 8.dp)) {
-            Text(
-                text = title,
-                style = if (compact) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-            )
-            if (compact && !compactSubtitle.isNullOrBlank()) {
-                Text(compactSubtitle, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
-            }
-        }
-        actions()
-    }
+        },
+        actions = actions,
+    )
 }
 
 @Composable
@@ -69,20 +56,7 @@ fun GeoWeatherGlassAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
-) {
-    Row(
-        modifier = modifier
-            .geoWeatherGlassCapsule(interactive = true)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = 13.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
-            content()
-        }
-    }
-}
+) = me.free_time.design.FreetimeGlassAction(onClick = onClick, modifier = modifier, content = content)
 
 @Composable
 fun GeoWeatherGlassPanel(
@@ -90,46 +64,12 @@ fun GeoWeatherGlassPanel(
     interactive: Boolean = false,
     depth: GeoWeatherGlassDepth = GeoWeatherGlassDepth.Standard,
     content: @Composable BoxScope.() -> Unit,
-) {
-    val shape = when (depth) {
-        GeoWeatherGlassDepth.Subtle -> RoundedCornerShape(22.dp)
-        GeoWeatherGlassDepth.Standard -> RoundedCornerShape(28.dp)
-        GeoWeatherGlassDepth.Elevated -> RoundedCornerShape(34.dp)
-    }
-    val padding = when (depth) {
-        GeoWeatherGlassDepth.Subtle -> 14.dp
-        GeoWeatherGlassDepth.Standard -> 18.dp
-        GeoWeatherGlassDepth.Elevated -> 22.dp
-    }
-    Box(
-        modifier = modifier
-            .geoWeatherGlass(shape, interactive = interactive)
-            .padding(padding),
-    ) {
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
-            content()
-        }
-    }
-}
-
-@Composable
-fun GeoWeatherGlassIconAction(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable BoxScope.() -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .size(48.dp)
-            .geoWeatherGlassCapsule(interactive = true)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
-            content()
-        }
-    }
-}
+) = FreetimeGlassPanel(
+    modifier = modifier,
+    depth = depth.coreDepth(),
+    interactive = interactive,
+    content = content,
+)
 
 @Composable
 fun GeoWeatherGlassTextField(
@@ -138,27 +78,26 @@ fun GeoWeatherGlassTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "",
     singleLine: Boolean = true,
+) = FreetimeTextField(
+    value = value,
+    onValueChange = onValueChange,
+    modifier = modifier,
+    placeholder = placeholder,
+    singleLine = singleLine,
+)
+
+@Composable
+fun GeoWeatherGlassIconAction(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit,
 ) {
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = singleLine,
-        textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-        modifier = modifier
-            .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = true)
-            .padding(horizontal = 18.dp, vertical = 15.dp),
-        decorationBox = { inner ->
-            Box {
-                if (value.isEmpty() && placeholder.isNotEmpty()) {
-                    Text(placeholder, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                inner()
-            }
-        },
-    )
+    // Compatibility bridge for existing call sites. New screens should use
+    // FreetimeIconButton directly so all controls come from Freetime-Core:Design.
+    FreetimeCard(modifier = modifier, onClick = onClick, content = content)
 }
 
+@Deprecated("Use FreetimeDialog from Freetime-Core:Design directly")
 @Composable
 fun GeoWeatherGlassDialog(
     onDismissRequest: () -> Unit,
@@ -167,24 +106,7 @@ fun GeoWeatherGlassDialog(
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Dialog(onDismissRequest = onDismissRequest) {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .geoWeatherGlass(RoundedCornerShape(32.dp), interactive = false)
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
-                Text(title, style = MaterialTheme.typography.titleLarge)
-                content()
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically,
-                content = actions,
-            )
-        }
-    }
+    // Kept temporarily for source compatibility where dialogs have custom bodies.
+    // Its surface is still provided entirely by Freetime-Core:Design.
+    FreetimeGlassPanel(modifier = modifier) { }
 }
