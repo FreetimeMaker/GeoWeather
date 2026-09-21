@@ -137,16 +137,16 @@ fun WeatherDetailScreen(
                 append("\n" + stringResource(Res.string.humidity_label) + ": " + (loc.currentHumidity?.let { it.toString() + "%" } ?: "--"))
             }
         )
-    }    }
+    }
 
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
             FreetimeGlassTopBar(
                 title = title,
-                onBack = onBack,
+                navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) },
                 compact = detailTopBarCompact,
-                compactSubtitle = if (detailTopBarCompact) loc?.currentTemp?.let { formatTemp(it, tempUnit) } else null,
+                subtitle = if (detailTopBarCompact) loc?.currentTemp?.let { formatTemp(it, tempUnit) } else null,
                 actions = {
                     if (loc?.currentTemp != null) {
                         FreetimeIconButton(
@@ -1176,7 +1176,7 @@ fun ForecastDetailScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            FreetimeGlassTopBar(title = title, onBack = onBack)
+            FreetimeGlassTopBar(title = title, navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) })
         }
     ) { padding ->
         LazyColumn(
