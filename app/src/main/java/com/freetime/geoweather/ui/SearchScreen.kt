@@ -1,4 +1,5 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeDesign
 import me.free_time.design.FreetimeGlassTopBar
 import me.free_time.design.FreetimeTextField
 import me.free_time.design.freetimeGlass
@@ -116,8 +117,8 @@ fun SearchScreen(
                         text = stringResource(Res.string.search_no_results),
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        style = FreetimeDesign.typography.bodyLarge,
+                        color = FreetimeDesign.palette.contentMuted
                     )
                 }
                 else -> {
@@ -135,8 +136,8 @@ fun SearchScreen(
                                     }
                                     .padding(horizontal = 16.dp, vertical = 12.dp)
                             ) {
-                                Text(city.name, style = MaterialTheme.typography.titleMedium)
-                                Text("${city.latitude}, ${city.longitude}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(city.name, style = FreetimeDesign.typography.titleMedium)
+                                Text("${city.latitude}, ${city.longitude}", style = FreetimeDesign.typography.bodySmall, color = FreetimeDesign.palette.contentMuted)
                             }
                         }
                     }
