@@ -1,4 +1,5 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeIconButton
 import me.free_time.design.FreetimeSnackbar
 import me.free_time.design.FreetimeDesign
 import me.free_time.design.FreetimeChoiceSetting
@@ -79,7 +80,7 @@ fun SettingsScreen(
         topBar = {
             FreetimeGlassTopBar(
                 title = stringResource(Res.string.settings_title),
-                onBack = onBack
+                navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
             )
         }
     ) { padding ->
