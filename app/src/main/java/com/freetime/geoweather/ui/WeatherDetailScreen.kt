@@ -1175,14 +1175,13 @@ fun ForecastDetailScreen(
     val title = if (hourly != null) "$locationName · ${hourly.time.takeLast(5)}"
         else "$locationName · ${daily?.date ?: ""}"
 
-    Scaffold(
-        containerColor = Color.Transparent,
+    FreetimeScaffold(
         topBar = {
             FreetimeGlassTopBar(title = title, navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) })
         }
-    ) { padding ->
+    ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
