@@ -1,7 +1,9 @@
-• Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.7.0
-• Migrated shared Freetime libraries to the new com.freetime package names
-• Expanded use of the shared Freetime Design system across GeoWeather
-• Added shared empty, loading, error and status states from Freetime Design
-• Weather animations now respect Android's system reduced-motion setting
-• Updated diagnostics with shared Freetime info card and text components
-• Fixed Browser, Core and Donations integration after the Freetime Core 1.7.0 migration
+• Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.9.1
+• Migrated GeoWeather's main screens and shared UI to Freetime Design components
+• Added weather-adaptive Liquid Glass backgrounds and adaptive navigation
+• Added shared Freetime dialogs, search, time picker, tabs, bottom sheets and floating actions
+• Migrated the in-app browser and donation experience to the shared Freetime modules
+• Updated weather details with Freetime pull-to-refresh, dividers, scaffolds and typography
+• Removed obsolete GeoWeather-specific glass wrappers and the legacy Material 3 theme
+• Removed GeoWeather's direct Compose Material 3 UI dependency while keeping Glance Material 3 for widgets
+• Fixed Freetime 1.9.1 typography, dialog and weather icon integration issues
