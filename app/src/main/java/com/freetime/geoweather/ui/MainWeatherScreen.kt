@@ -1,5 +1,8 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeEmptyState
+import com.freetime.design.FreetimeInfoCard
+import com.freetime.design.FreetimeSectionHeader
 import com.freetime.design.FreetimeDialog
 import com.freetime.design.FreetimeCard
 import com.freetime.design.FreetimeSnackbar
@@ -137,27 +140,11 @@ fun MainWeatherScreen(
         Box(Modifier.fillMaxSize()) {
 
         if (locations.isEmpty()) {
-            Column(
-                Modifier.fillMaxWidth().padding(padding).padding(FreetimeDesign.spacing.lg),
-                verticalArrangement = Arrangement.spacedBy(FreetimeDesign.spacing.md)
-            ) {
-                repeat(3) { FreetimeGlassSkeleton(height = 84.dp) }
-            }
-            Box(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(Res.string.no_locations_msg),
-                    textAlign = TextAlign.Center,
-                    style = FreetimeDesign.typography.bodyLarge,
-                    color = FreetimeDesign.palette.contentMuted,
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .freetimeGlass(RoundedCornerShape(24.dp), interactive = false)
-                        .padding(horizontal = 24.dp, vertical = 18.dp)
-                )
-            }
+            FreetimeEmptyState(
+                title = stringResource(Res.string.app_name),
+                message = stringResource(Res.string.no_locations_msg),
+                modifier = Modifier.fillMaxSize().padding(padding)
+            )
         } else {
             if (isLandscape) {
                 Row(
@@ -168,13 +155,7 @@ fun MainWeatherScreen(
                         modifier = Modifier.weight(0.42f).fillMaxHeight().padding(start = 12.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            text = stringResource(Res.string.compare_locations),
-                            style = FreetimeDesign.typography.titleMedium,
-                            modifier = Modifier
-                                .freetimeGlass(RoundedCornerShape(18.dp), interactive = false)
-                                .padding(horizontal = 14.dp, vertical = 8.dp)
-                        )
+                        FreetimeSectionHeader(title = stringResource(Res.string.compare_locations))
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
