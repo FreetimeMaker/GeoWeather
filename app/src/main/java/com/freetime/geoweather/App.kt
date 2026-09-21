@@ -99,16 +99,18 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
             !currentTime.isBefore(java.time.LocalTime.of(19, 0))
     }
 
-    val weatherCode = themeLocation?.currentWeatherCode
-    val weatherIsDay = themeLocation?.isDay ?: !darkTheme
-    val adaptiveGlassColors = remember(weatherCode, weatherIsDay, darkTheme) {
-        weatherGlassBackdrop(weatherCode, weatherIsDay, darkTheme)
+    val glassBackdropColors = remember(darkTheme) {
+        if (darkTheme) {
+            listOf(Color(0xFF090909), Color(0xFF101010), Color(0xFF080808))
+        } else {
+            listOf(Color(0xFFF4F4F4), Color(0xFFEEEEEE), Color(0xFFF8F8F8))
+        }
     }
 
     FreetimeApp(
         config = FreetimeAppConfig(
             themeMode = if (darkTheme) FreetimeThemeMode.DARK else FreetimeThemeMode.LIGHT,
-            backdropColors = adaptiveGlassColors
+            backdropColors = glassBackdropColors
         )
     ) {
         if (onboarding) {
@@ -251,28 +253,3 @@ private fun ScreenContent(
     }
 }
 
-
-private fun weatherGlassBackdrop(code: Int?, isDay: Boolean, darkTheme: Boolean): List<Color> {
-    if (!isDay || darkTheme) {
-        return when (code) {
-            95, 96, 99 -> listOf(Color(0xFF090A18), Color(0xFF201538), Color(0xFF080910))
-            71, 73, 75, 77, 85, 86 -> listOf(Color(0xFF101824), Color(0xFF243447), Color(0xFF0A1018))
-            45, 48 -> listOf(Color(0xFF11171B), Color(0xFF273238), Color(0xFF0C1013))
-            51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82 ->
-                listOf(Color(0xFF08141F), Color(0xFF16344A), Color(0xFF081018))
-            else -> listOf(Color(0xFF07111F), Color(0xFF102A46), Color(0xFF070A10))
-        }
-    }
-
-    return when (code) {
-        0 -> listOf(Color(0xFF75C8FF), Color(0xFFFFD27A), Color(0xFFBCE7FF))
-        1, 2 -> listOf(Color(0xFF8CCFFF), Color(0xFFC8E8F6), Color(0xFFFFD89A))
-        3 -> listOf(Color(0xFF9CB4C5), Color(0xFFD5DEE4), Color(0xFFB9C9D3))
-        45, 48 -> listOf(Color(0xFFB9C7C9), Color(0xFFE1E7E5), Color(0xFFAABABC))
-        51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82 ->
-            listOf(Color(0xFF5E9FC7), Color(0xFF9EC6D8), Color(0xFF6F91AA))
-        71, 73, 75, 77, 85, 86 -> listOf(Color(0xFFD8ECF7), Color(0xFFF7FBFF), Color(0xFFB8D5E7))
-        95, 96, 99 -> listOf(Color(0xFF48557A), Color(0xFF746B9A), Color(0xFF34445D))
-        else -> listOf(Color(0xFF83C9F4), Color(0xFFD8EEF7), Color(0xFFB5DCEC))
-    }
-}
