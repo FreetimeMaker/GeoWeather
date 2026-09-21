@@ -1,4 +1,7 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeTextField
+import me.free_time.design.freetimeGlass
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,9 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
-import com.freetime.geoweather.ui.glass.geoWeatherGlass
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassTextField
+import com.freetime.geoweather.ui.glass.freetimeGlass
+import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
+import com.freetime.geoweather.ui.glass.FreetimeTextField
 import kotlinx.coroutines.launch
 import me.free_time.design.FreetimeChip
 import me.free_time.design.FreetimeCard
@@ -54,14 +57,14 @@ fun SearchScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            GeoWeatherGlassTopBar(
+            FreetimeGlassTopBar(
                 title = stringResource(Res.string.search_title),
                 onBack = onBack
             )
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).padding(16.dp)) {
-            GeoWeatherGlassTextField(
+            FreetimeTextField(
                 value = query,
                 onValueChange = {
                     query = it
@@ -124,7 +127,7 @@ fun SearchScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 4.dp)
-                                    .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = true)
+                                    .freetimeGlass(RoundedCornerShape(22.dp), interactive = true)
                                     .clickable {
                                         rememberQuery(city.name)
                                         viewModel.addLocation(city)
