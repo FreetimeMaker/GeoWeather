@@ -1,5 +1,6 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeScaffold
 import com.freetime.design.FreetimeInfoCard
 import com.freetime.design.FreetimeText
 import com.freetime.design.FreetimeGlassButton
@@ -58,13 +59,13 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
         "Location permission: $locationPermission\nNotifications: $notificationPermission\n" +
         "Cache: ${String.format(java.util.Locale.US, "%.1f", cacheMb)} MB\n" +
         "Accounts: none\nWeather cache: local Room database\nShare cards: temporary app cache"
-    Scaffold(containerColor = Color.Transparent, topBar = {
+    FreetimeScaffold(topBar = {
         FreetimeGlassTopBar(
             title = stringResource(Res.string.diagnostics_title),
             navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
         )
-    }) { padding ->
-        Column(Modifier.padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    }) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             FreetimeInfoCard(
                 title = stringResource(Res.string.diagnostics_title),
                 modifier = Modifier.fillMaxWidth()
