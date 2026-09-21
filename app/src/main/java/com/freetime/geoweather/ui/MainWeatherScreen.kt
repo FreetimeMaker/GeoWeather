@@ -104,7 +104,8 @@ fun MainWeatherScreen(
     val snackbarHostState = rememberFreetimeMessageHostState()
     val scope = rememberCoroutineScope()
     val currentLocationName = stringResource(Res.string.current_location)
-    val isLandscape = androidx.compose.ui.platform.LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+    val configuration = androidx.compose.ui.platform.LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
     val adaptiveDestinations = listOf(
         FreetimeNavigationDestination(currentLocationName, Icons.Default.MyLocation),
