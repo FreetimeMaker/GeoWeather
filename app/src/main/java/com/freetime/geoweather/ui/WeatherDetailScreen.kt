@@ -300,11 +300,12 @@ fun WeatherDetailScreen(
                                         night = isNight,
                                         modifier = Modifier.fillMaxWidth()
                                     )
-                                } else if (code != null) {
+                                }
+                                if (code != null) {
                                     Icon(
                                         painter = painterResource(weatherIconForTime(code, isNight)),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(120.dp),
+                                        contentDescription = stringResource(WeatherCodes.getStringResource(code)),
+                                        modifier = Modifier.size(104.dp),
                                         tint = Color.Unspecified
                                     )
                                 }
@@ -1158,6 +1159,19 @@ fun ForecastDetailScreen(
     val hourly = hourlyForecasts.getOrNull(index)
     val daily = dailyForecasts.getOrNull(index)
     val forecastCode = hourly?.code ?: daily?.code ?: 0
+    val forecastIsDay = hourly?.let { hour ->
+        val forecastDateTime = runCatching { java.time.LocalDateTime.parse(hour.time) }.getOrNull()
+        val forecastTime = forecastDateTime?.toLocalTime()
+            ?: runCatching { java.time.LocalTime.parse(hour.time.takeLast(5)) }.getOrNull()
+        val matchingDay = forecastDateTime?.toLocalDate()?.let { date ->
+            dailyForecasts.firstOrNull { runCatching { java.time.LocalDate.parse(it.date) }.getOrNull() == date }
+        } ?: dailyForecasts.firstOrNull()
+        val sunrise = runCatching { java.time.LocalTime.parse(matchingDay?.sunrise?.takeLast(5) ?: "07:00") }
+            .getOrDefault(java.time.LocalTime.of(7, 0))
+        val sunset = runCatching { java.time.LocalTime.parse(matchingDay?.sunset?.takeLast(5) ?: "19:00") }
+            .getOrDefault(java.time.LocalTime.of(19, 0))
+        forecastTime?.let { !it.isBefore(sunrise) && it.isBefore(sunset) } ?: true
+    } ?: true
     val title = if (hourly != null) "$locationName · ${hourly.time.takeLast(5)}"
         else "$locationName · ${daily?.date ?: ""}"
 
@@ -1180,7 +1194,7 @@ fun ForecastDetailScreen(
                         }
                     } else Spacer(Modifier.width(52.dp))
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(painterResource(WeatherIconMapper.getWeatherIcon(forecastCode)), null, Modifier.size(104.dp), tint = Color.Unspecified)
+                        Icon(painterResource(WeatherIconMapper.getWeatherIcon(forecastCode, forecastIsDay)), null, Modifier.size(104.dp), tint = Color.Unspecified)
                         Text(
                             hourly?.let { formatTemp(it.temp.toDouble(), tempUnit) }
                                 ?: daily?.let { "${formatTemp(it.maxTemp.toDouble(), tempUnit)} / ${formatTemp(it.minTemp.toDouble(), tempUnit)}" }
