@@ -502,8 +502,9 @@ fun MainWeatherScreen(
         val parts = location.notificationTime.split(":")
         val initialHour = parts.getOrNull(0)?.toIntOrNull() ?: 8
         val initialMinute = parts.getOrNull(1)?.toIntOrNull() ?: 0
-        var selectedHour by remember(location.id) { mutableIntStateOf(initialHour) }
-        var selectedMinute by remember(location.id) { mutableIntStateOf(initialMinute) }
+        var selectedTime by remember(location.id) {
+            mutableStateOf(java.time.LocalTime.of(initialHour, initialMinute))
+        }
 
         FreetimeDialog(
             onDismissRequest = { notificationLocation = null },
@@ -521,53 +522,18 @@ fun MainWeatherScreen(
                 }
                 Spacer(Modifier.width(8.dp))
                 FreetimeGlassAction(onClick = {
-                    val time = "%02d:%02d".format(selectedHour, selectedMinute)
+                    val time = "%02d:%02d".format(selectedTime.hour, selectedTime.minute)
                     viewModel.setLocationNotifications(location, true, time)
                     notificationLocation = null
                 }) { Text(stringResource(Res.string.confirm)) }
             }
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                GlassTimePart(
-                    value = selectedHour,
-                    onDecrease = { selectedHour = (selectedHour + 23) % 24 },
-                    onIncrease = { selectedHour = (selectedHour + 1) % 24 }
-                )
-                Text(":", style = FreetimeDesign.typography.headlineLarge, modifier = Modifier.padding(horizontal = 10.dp))
-                GlassTimePart(
-                    value = selectedMinute,
-                    onDecrease = { selectedMinute = (selectedMinute + 55) % 60 },
-                    onIncrease = { selectedMinute = (selectedMinute + 5) % 60 }
-                )
-            }
+            FreetimeTimePicker(
+                value = selectedTime,
+                onValueChange = { selectedTime = it },
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
 
-@Composable
-private fun GlassTimePart(
-    value: Int,
-    onDecrease: () -> Unit,
-    onIncrease: () -> Unit
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        FreetimeGlassAction(onClick = onIncrease) {
-            Text("+", style = FreetimeDesign.typography.titleLarge)
-        }
-        Box(
-            modifier = Modifier
-                .freetimeGlass(RoundedCornerShape(22.dp), interactive = false)
-                .padding(horizontal = 18.dp, vertical = 14.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("%02d".format(value), style = FreetimeDesign.typography.headlineMedium)
-        }
-        FreetimeGlassAction(onClick = onDecrease) {
-            Text("−", style = FreetimeDesign.typography.titleLarge)
-        }
-    }
-}
