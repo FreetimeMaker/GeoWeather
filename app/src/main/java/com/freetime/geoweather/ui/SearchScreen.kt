@@ -3,6 +3,10 @@ import com.freetime.design.FreetimeIconButton
 import com.freetime.design.FreetimeDesign
 import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeGlassSearchField
+import com.freetime.design.FreetimeLoadingState
+import com.freetime.design.FreetimeEmptyState
+import com.freetime.design.FreetimeSectionHeader
+import com.freetime.design.FreetimeListItem
 import com.freetime.design.freetimeGlass
 
 import androidx.compose.foundation.clickable
@@ -78,7 +82,7 @@ fun SearchScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
             if (query.isBlank()) {
-                Text(stringResource(Res.string.quick_actions_title), style = MaterialTheme.typography.titleSmall)
+                FreetimeSectionHeader(title = stringResource(Res.string.quick_actions_title))
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     FreetimeChip(
@@ -94,7 +98,7 @@ fun SearchScreen(
                 Spacer(modifier = Modifier.height(12.dp))
             }
             if (recentSearches.isNotEmpty() && query.isBlank()) {
-                Text(stringResource(Res.string.recent_searches), style = MaterialTheme.typography.titleSmall)
+                FreetimeSectionHeader(title = stringResource(Res.string.recent_searches))
                 Spacer(modifier = Modifier.height(8.dp))
                 androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(recentSearches) { recent ->
@@ -105,39 +109,21 @@ fun SearchScreen(
             }
 
             when {
-                isSearching -> {
-                    Box(
-                        modifier = Modifier.fillMaxWidth().padding(32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        FreetimeProgressIndicator()
-                    }
-                }
-                query.isNotBlank() && results.isEmpty() -> {
-                    Text(
-                        text = stringResource(Res.string.search_no_results),
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        textAlign = TextAlign.Center,
-                        style = FreetimeDesign.typography.bodyLarge,
-                        color = FreetimeDesign.palette.contentMuted
-                    )
-                }
+                isSearching -> { FreetimeLoadingState(modifier = Modifier.fillMaxWidth()) }
+                query.isNotBlank() && results.isEmpty() -> { FreetimeEmptyState(title = stringResource(Res.string.search_no_results), modifier = Modifier.fillMaxWidth()) }
                 else -> {
                     LazyColumn {
                         items(results, key = { "${it.latitude},${it.longitude}" }) { city ->
-                            FreetimeCard(
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                            FreetimeListItem(
+                                title = city.name,
+                                subtitle = "${city.latitude}, ${city.longitude}",
+                                modifier = Modifier.padding(vertical = 4.dp),
                                 onClick = {
-                                        rememberQuery(city.name)
-                                        viewModel.addLocation(city)
-                                        onCitySelected()
-                                    }
-                            ) {
-                                Column {
-                                Text(city.name, style = FreetimeDesign.typography.titleMedium)
-                                Text("${city.latitude}, ${city.longitude}", style = FreetimeDesign.typography.bodySmall, color = FreetimeDesign.palette.contentMuted)
+                                    rememberQuery(city.name)
+                                    viewModel.addLocation(city)
+                                    onCitySelected()
                                 }
-                            }
+                            )
                         }
                     }
                 }
