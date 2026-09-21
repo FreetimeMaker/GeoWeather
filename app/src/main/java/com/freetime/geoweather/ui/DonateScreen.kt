@@ -29,6 +29,7 @@ import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeGlassPanel
 import com.freetime.design.FreetimeGlassAction
 import com.freetime.donations.DonationTarget
+import com.freetime.donations.FreetimeDonationScreen
 
 private data class ExternalDonation(@StringRes val labelKey: Int, val url: String)
 
@@ -135,109 +136,13 @@ fun DonateScreen(
             )
         }
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            item(key = "support-title") {
-                FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = stringResource(Res.string.support_development),
-                        style = FreetimeDesign.typography.headlineMedium,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-
-            item(key = "support-mission") {
-                FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.donation_mission_title),
-                            style = FreetimeDesign.typography.titleLarge
-                        )
-                        Text(
-                            text = stringResource(Res.string.donation_mission_text),
-                            style = FreetimeDesign.typography.bodyLarge,
-                            color = FreetimeDesign.palette.contentMuted,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                }
-            }
-
-            items(
-                items = targets,
-                key = { target ->
-                    when (target) {
-                        is DonationTarget.Link -> "link:${target.url}"
-                        is DonationTarget.Wallet -> "wallet:${target.currency}:${target.address}:${target.label}"
-                    }
-                }
-            ) { target ->
-                FreetimeGlassPanel(
-                    modifier = Modifier.fillMaxWidth(),
-                    interactive = true
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Text(
-                            text = target.label,
-                            style = FreetimeDesign.typography.titleMedium,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        when (target) {
-                            is DonationTarget.Link -> {
-                                FreetimeGlassAction(
-                                    onClick = { onWebViewClick(target.url, target.label) },
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = target.label,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                }
-                            }
-
-                            is DonationTarget.Wallet -> {
-                                Text(
-                                    text = target.currency,
-                                    style = FreetimeDesign.typography.labelLarge,
-                                    color = FreetimeDesign.palette.primary
-                                )
-                                Text(
-                                    text = target.address,
-                                    style = FreetimeDesign.typography.bodySmall,
-                                    color = FreetimeDesign.palette.contentMuted,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    softWrap = true,
-                                    overflow = TextOverflow.Clip
-                                )
-                                FreetimeGlassAction(
-                                    onClick = { copyToClipboard(target.address) },
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = target.address,
-                                        style = FreetimeDesign.typography.bodySmall,
-                                        modifier = Modifier.weight(1f),
-                                        softWrap = true
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        FreetimeDonationScreen(
+            targets = targets,
+            title = stringResource(Res.string.support_development),
+            onLinkClick = { target -> onWebViewClick(target.url, target.label) },
+            onWalletClick = { target -> copyToClipboard(target.address) },
+            onCopyWallet = { target -> copyToClipboard(target.address) },
+            modifier = Modifier.fillMaxSize().padding(innerPadding)
+        )
     }
 }
