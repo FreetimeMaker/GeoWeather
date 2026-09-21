@@ -1,5 +1,6 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeScaffold
 import com.freetime.design.freetimeGlass
 import com.freetime.design.FreetimeGlassTopBar
 
@@ -25,18 +26,17 @@ fun RadarScreen(
     onBack: () -> Unit
 ) {
     val url = "https://www.windy.com/?$lat,$lon,8"
-    Scaffold(
-        containerColor = Color.Transparent,
+    FreetimeScaffold(
         topBar = {
             FreetimeGlassTopBar(
                 title = stringResource(Res.string.radar_title),
                 navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
             )
         }
-    ) { padding ->
+    ) {
         PlatformWebView(
             url = url,
-            modifier = Modifier.fillMaxSize().padding(padding)
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
