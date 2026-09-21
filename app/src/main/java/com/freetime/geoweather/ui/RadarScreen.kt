@@ -1,7 +1,7 @@
 package com.freetime.geoweather.ui
-import me.free_time.design.FreetimeIconButton
-import me.free_time.design.freetimeGlass
-import me.free_time.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeIconButton
+import com.freetime.design.freetimeGlass
+import com.freetime.design.FreetimeGlassTopBar
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,8 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
-import me.free_time.design.freetimeGlass
-import me.free_time.design.FreetimeGlassTopBar
+import com.freetime.design.freetimeGlass
+import com.freetime.design.FreetimeGlassTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
