@@ -651,6 +651,14 @@
     <string name="cl_461_main_scroll">Made the main weather screen fully scrollable and more compact.</string>
     <string name="cl_461_layout">Reduced redundant location UI and improved spacing around the floating navigation.</string>
     <string name="cl_461_fixes">Fixed additional weather detail, resource and build issues.</string>
+    <!-- v4.6.3 -->
+    <string name="cl_463_core">Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.7.0.</string>
+    <string name="cl_463_packages">Migrated shared Freetime libraries to their new com.freetime package names.</string>
+    <string name="cl_463_design">Expanded use of the shared Freetime Design system across GeoWeather.</string>
+    <string name="cl_463_states">Added shared empty, loading, error and status states from Freetime Design.</string>
+    <string name="cl_463_motion">Weather animations now respect Android’s system reduced-motion setting.</string>
+    <string name="cl_463_diagnostics">Updated diagnostics to use the new shared Freetime info card and text components.</string>
+    <string name="cl_463_fixes">Fixed Freetime Browser, Core and Donations integration after the 1.7.0 package migration.</string>
     <!-- v4.6.2 -->
     <string name="cl_462_core">Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.5.1.</string>
     <string name="cl_462_glass">Updated Liquid Glass with a more transparent, SimpMusic-inspired appearance and interactive press effects.</string>
