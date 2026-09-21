@@ -1,5 +1,7 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeText
+import com.freetime.design.FreetimeScaffold
 import com.freetime.design.FreetimeSnackbar
 import com.freetime.design.FreetimeDesign
 import com.freetime.design.FreetimeChoiceSetting
@@ -76,26 +78,23 @@ fun SettingsScreen(
     val importSuccess = stringResource(Res.string.import_success)
     val importFailed = stringResource(Res.string.import_failed)
     val context = LocalContext.current
-    Scaffold(
-        containerColor = Color.Transparent,
-        snackbarHost = { snackbarHostState.currentSnackbarData?.let { data -> FreetimeSnackbar(message = data.visuals.message) } },
+    FreetimeScaffold(
         topBar = {
             FreetimeGlassTopBar(
                 title = stringResource(Res.string.settings_title),
                 navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
             )
         }
-    ) { padding ->
+    ) {
         Column(
             modifier = Modifier
-                .padding(padding)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
 
             FreetimeSettingsGroup(stringResource(Res.string.unit_settings_title)) {
-            Text(stringResource(Res.string.temperature_unit), style = FreetimeDesign.typography.bodyLarge)
+            FreetimeText(stringResource(Res.string.temperature_unit), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "celsius" to stringResource(Res.string.unit_celsius),
@@ -104,7 +103,7 @@ fun SettingsScreen(
                 selected = tempUnit,
                 onSelect = { appSettings.setTempUnit(it) }
             )
-            Text(stringResource(Res.string.wind_speed_unit), style = FreetimeDesign.typography.bodyLarge)
+            FreetimeText(stringResource(Res.string.wind_speed_unit), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "kmh" to stringResource(Res.string.unit_kmh),
@@ -114,7 +113,7 @@ fun SettingsScreen(
                 selected = windUnit,
                 onSelect = { appSettings.setWindUnit(it) }
             )
-            Text(stringResource(Res.string.pressure_unit), style = FreetimeDesign.typography.bodyLarge)
+            FreetimeText(stringResource(Res.string.pressure_unit), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "hpa" to stringResource(Res.string.unit_hpa),
@@ -126,7 +125,7 @@ fun SettingsScreen(
 
             }
             FreetimeSettingsGroup(stringResource(Res.string.weather_animations_title)) {
-            Text(stringResource(Res.string.animation_intensity), style = FreetimeDesign.typography.bodyLarge)
+            FreetimeText(stringResource(Res.string.animation_intensity), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "full" to stringResource(Res.string.animation_full),
@@ -139,7 +138,7 @@ fun SettingsScreen(
 
 }
             FreetimeSettingsGroup(stringResource(Res.string.notification_settings_title)) {
-            Text(stringResource(Res.string.notification_profile), style = FreetimeDesign.typography.bodyLarge)
+            FreetimeText(stringResource(Res.string.notification_profile), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "normal" to stringResource(Res.string.profile_normal),
@@ -196,7 +195,7 @@ fun SettingsScreen(
                     },
                     modifier = Modifier.weight(1f).freetimeGlass(RoundedCornerShape(20.dp))
                 ) {
-                    Text(stringResource(Res.string.export_locations))
+                    FreetimeText(stringResource(Res.string.export_locations))
                 }
                 FreetimeGlassAction(
                     onClick = {
@@ -209,19 +208,19 @@ fun SettingsScreen(
                     },
                     modifier = Modifier.weight(1f).freetimeGlass(RoundedCornerShape(20.dp))
                 ) {
-                    Text(stringResource(Res.string.import_locations))
+                    FreetimeText(stringResource(Res.string.import_locations))
                 }
             }
 
             }
             Spacer(Modifier.height(FreetimeDesign.spacing.lg))
-            FreetimeGlassAction(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))) { Text(stringResource(Res.string.diagnostics_title)) }
+            FreetimeGlassAction(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))) { FreetimeText(stringResource(Res.string.diagnostics_title)) }
             Spacer(Modifier.height(8.dp))
             FreetimeGlassAction(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(Res.string.open_change_log))
+                FreetimeText(stringResource(Res.string.open_change_log))
             }
             Spacer(Modifier.height(8.dp))
-            Text(
+            FreetimeText(
                 text = stringResource(Res.string.feedback_alternative_hint),
                 style = FreetimeDesign.typography.bodySmall,
                 color = FreetimeDesign.palette.contentMuted,
@@ -232,14 +231,14 @@ fun SettingsScreen(
                 onClick = { openUrl("mailto:FreetimeMaker@proton.me?subject=GeoWeather Feedback") },
                 modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
             ) {
-                Text(stringResource(Res.string.feedback_btn))
+                FreetimeText(stringResource(Res.string.feedback_btn))
             }
             Spacer(Modifier.height(8.dp))
             FreetimeGlassAction(
                 onClick = { onWebViewClick("https://github.com/FreetimeMaker/GeoWeather/issues", "GitHub Issues") },
                 modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
             ) {
-                Text(stringResource(Res.string.feedback_github_btn))
+                FreetimeText(stringResource(Res.string.feedback_github_btn))
             }
         }
     }
@@ -269,7 +268,7 @@ fun UnitRadioRow(options: List<Pair<String, String>>, selected: String, onSelect
 fun ThresholdField(label: String, value: Int, onValueChange: (Int) -> Unit) {
     var text by remember(value) { mutableStateOf(value.toString()) }
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        Text(label, style = FreetimeDesign.typography.labelMedium, modifier = Modifier.padding(start = 8.dp, bottom = 6.dp))
+        FreetimeText(label, style = FreetimeDesign.typography.labelMedium, modifier = Modifier.padding(start = 8.dp, bottom = 6.dp))
         FreetimeTextField(
             value = text,
             onValueChange = {
