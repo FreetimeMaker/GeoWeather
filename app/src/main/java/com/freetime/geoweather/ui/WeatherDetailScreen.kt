@@ -71,6 +71,9 @@ import com.freetime.design.FreetimeProgressIndicator
 import com.freetime.design.FreetimeDialog
 import com.freetime.design.FreetimeTabRow
 import com.freetime.design.FreetimeScaffold
+import com.freetime.design.FreetimePullRefresh
+import com.freetime.design.rememberFreetimePullRefreshState
+import com.freetime.design.FreetimeDivider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -234,15 +237,14 @@ fun WeatherDetailScreen(
                             reducedMotion = reducedMotion
                         )
                     }
-                androidx.compose.material3.pulltorefresh.PullToRefreshBox(
-                    isRefreshing = isRefreshing,
-                    onRefresh = { doRefresh() },
+                val pullRefreshState = rememberFreetimePullRefreshState(
+                    refreshing = isRefreshing,
+                    onRefresh = { doRefresh() }
+                )
+                FreetimePullRefresh(
+                    state = pullRefreshState,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                FreetimeGlassPullRefreshIndicator(
-                    refreshing = isRefreshing,
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = FreetimeDesign.spacing.sm)
-                )
                 LazyColumn(
                     state = detailListState,
                     modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
@@ -438,7 +440,7 @@ fun WeatherDetailScreen(
                                 Text(stringResource(Res.string.smart_weather_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 Text(smart.primary, style = FreetimeDesign.typography.titleLarge)
                                 smart.secondary?.let { Text(it, color = FreetimeDesign.palette.contentMuted) }
-                                HorizontalDivider(color = FreetimeDesign.palette.outline.copy(alpha = .12f))
+                                FreetimeDivider()
                                 Text(stringResource(Res.string.nowcast_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 if (nowcast?.startsAt != null && nowcast.endsAt != null) {
                                     Text(
