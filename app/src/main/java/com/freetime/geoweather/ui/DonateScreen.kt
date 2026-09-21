@@ -28,7 +28,7 @@ import com.freetime.design.freetimeGlass
 import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeGlassPanel
 import com.freetime.design.FreetimeGlassAction
-import me.free_time.donations.DonationTarget
+import com.freetime.donations.DonationTarget
 
 private data class ExternalDonation(@StringRes val labelKey: Int, val url: String)
 
