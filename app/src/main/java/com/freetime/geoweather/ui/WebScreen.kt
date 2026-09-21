@@ -1,41 +1,23 @@
 package com.freetime.geoweather.ui
-import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeIconButton
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.freetime.geoweather.R as Res
-import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.browser.BrowserMode
+import com.freetime.browser.BrowserOptions
+import com.freetime.browser.FreetimeBrowserScreen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebScreen(
     url: String,
     title: String,
     onBack: () -> Unit
 ) {
-    Scaffold(
-        containerColor = Color.Transparent,
-        topBar = {
-            FreetimeGlassTopBar(
-                title = title,
-                navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
-            )
-        }
-    ) { padding ->
-        PlatformWebView(
-            url = url,
-            modifier = Modifier.fillMaxSize().padding(padding)
-        )
-    }
+    FreetimeBrowserScreen(
+        initialUrl = url,
+        modifier = Modifier,
+        options = BrowserOptions(mode = BrowserMode.IN_APP),
+        title = title,
+        javaScriptEnabled = true,
+        onClose = onBack,
+    )
 }
