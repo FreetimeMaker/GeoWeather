@@ -380,18 +380,23 @@ fun MainWeatherScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FreetimeGlassNavigationBar {
-                    GeoWeatherGlassIconAction(
-                        onClick = {
-                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                            openCurrentLocation()
-                        },
-                        modifier = Modifier.size(if (navigationCompact) 48.dp else 52.dp)
-                    ) {
-                        if (isLocating) {
+                    if (isLocating) {
+                        Box(
+                            modifier = Modifier.size(if (navigationCompact) 48.dp else 52.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
                             FreetimeProgressIndicator(Modifier.size(19.dp))
-                        } else {
-                            Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
                         }
+                    } else {
+                        FreetimeIconButton(
+                            icon = Icons.Default.MyLocation,
+                            contentDescription = currentLocationName,
+                            onClick = {
+                                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                openCurrentLocation()
+                            },
+                            modifier = Modifier.size(if (navigationCompact) 48.dp else 52.dp)
+                        )
                     }
 
                     AnimatedVisibility(
