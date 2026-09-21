@@ -14,6 +14,9 @@ import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeGlassAction
 import com.freetime.design.FreetimeTextField
 import com.freetime.design.freetimeGlassCapsule
+import com.freetime.design.FreetimeGlassNavigationBar
+import com.freetime.design.FreetimeGlassTitle
+import com.freetime.design.freetimeWideGlass
 import com.freetime.design.freetimeGlass
 
 import androidx.compose.foundation.clickable
@@ -282,9 +285,8 @@ fun MainWeatherScreen(
                         }
                     }
                     item(key = "location-overview-title") {
-                        Text(
+                        FreetimeGlassTitle(
                             text = stringResource(Res.string.location_overview_title),
-                            style = FreetimeDesign.typography.titleMedium,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         )
                     }
@@ -382,13 +384,7 @@ fun MainWeatherScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier
-                        .freetimeGlassCapsule(interactive = false)
-                        .padding(horizontal = 6.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                FreetimeGlassNavigationBar {
                     GeoWeatherGlassIconAction(
                         onClick = {
                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
