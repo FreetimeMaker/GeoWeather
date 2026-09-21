@@ -1,17 +1,17 @@
 package com.freetime.geoweather.ui
-import me.free_time.design.FreetimeIconButton
-import me.free_time.design.FreetimeDialog
-import me.free_time.design.FreetimeCard
-import me.free_time.design.FreetimeSnackbar
-import me.free_time.design.rememberFreetimeCompactNavigation
-import me.free_time.design.FreetimeDesign
-import me.free_time.design.FreetimeGlassPullRefreshIndicator
-import me.free_time.design.FreetimeGlassSkeleton
-import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeGlassAction
-import me.free_time.design.FreetimeTextField
-import me.free_time.design.freetimeGlassCapsule
-import me.free_time.design.freetimeGlass
+import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeDialog
+import com.freetime.design.FreetimeCard
+import com.freetime.design.FreetimeSnackbar
+import com.freetime.design.rememberFreetimeCompactNavigation
+import com.freetime.design.FreetimeDesign
+import com.freetime.design.FreetimeGlassPullRefreshIndicator
+import com.freetime.design.FreetimeGlassSkeleton
+import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeGlassAction
+import com.freetime.design.FreetimeTextField
+import com.freetime.design.freetimeGlassCapsule
+import com.freetime.design.freetimeGlass
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
@@ -47,11 +47,11 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import me.free_time.design.freetimeGlass
-import me.free_time.design.freetimeGlassCapsule
-import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeTextField
-import me.free_time.design.FreetimeGlassAction
+import com.freetime.design.freetimeGlass
+import com.freetime.design.freetimeGlassCapsule
+import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeTextField
+import com.freetime.design.FreetimeGlassAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassDialog
 import com.freetime.geoweather.data.LocationEntity
@@ -61,7 +61,7 @@ import com.freetime.geoweather.WeatherIconMapper
 import kotlinx.coroutines.delay
 import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.launch
-import me.free_time.design.FreetimeProgressIndicator
+import com.freetime.design.FreetimeProgressIndicator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
