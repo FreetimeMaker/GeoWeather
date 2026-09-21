@@ -23,7 +23,8 @@ fun OnboardingScreen(onDone: () -> Unit) {
     val titles = listOf(Res.string.onboarding_weather, Res.string.onboarding_alerts, Res.string.onboarding_account)
     val texts = listOf(Res.string.onboarding_weather_desc, Res.string.onboarding_alerts_desc, Res.string.onboarding_account_desc)
     Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
-        FreetimeCard(modifier = Modifier.fillMaxWidth()) {\n            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        FreetimeCard(modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text(stringResource(titles[page]), style = FreetimeDesign.typography.headlineMedium)
             Text(stringResource(texts[page]), style = FreetimeDesign.typography.bodyLarge)
             FreetimeProgressIndicator(progress = (page + 1) / 3f, modifier = Modifier.fillMaxWidth())
@@ -32,6 +33,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
                 FreetimeGlassAction(onClick = { if (page < 2) page++ else onDone() }) {
                     Text(stringResource(if (page < 2) Res.string.next else Res.string.done))
                 }
+            }
             }
         }
     }
