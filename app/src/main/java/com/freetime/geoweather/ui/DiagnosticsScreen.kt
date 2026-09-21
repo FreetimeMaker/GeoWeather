@@ -20,10 +20,10 @@ import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.*
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.R as Res
-import com.freetime.geoweather.ui.glass.freetimeGlass
-import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
-import com.freetime.geoweather.ui.glass.FreetimeGlassAction
-import com.freetime.geoweather.ui.glass.FreetimeGlassPanel
+import me.free_time.design.freetimeGlass
+import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeGlassAction
+import me.free_time.design.FreetimeGlassPanel
 import me.free_time.core.FreetimeCore
 
 @OptIn(ExperimentalMaterial3Api::class)
