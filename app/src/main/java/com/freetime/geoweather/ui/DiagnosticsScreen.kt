@@ -2,6 +2,7 @@ package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
 import com.freetime.design.FreetimeInfoCard
 import com.freetime.design.FreetimeText
+import com.freetime.design.FreetimeGlassButton
 import com.freetime.design.freetimeGlass
 import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeGlassAction
@@ -70,12 +71,14 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
             ) {
                 FreetimeText(report)
             }
-            FreetimeGlassAction(onClick = {
+            FreetimeGlassButton(
+                text = stringResource(Res.string.export_diagnostics),
+                onClick = {
                 val intent = Intent(Intent.ACTION_SEND).apply { type = "text/plain"; putExtra(Intent.EXTRA_SUBJECT, "GeoWeather diagnostics"); putExtra(Intent.EXTRA_TEXT, report) }
                 context.startActivity(Intent.createChooser(intent, context.getString(Res.string.export_diagnostics)))
-            }, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(Res.string.export_diagnostics))
-            }
+            },
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
