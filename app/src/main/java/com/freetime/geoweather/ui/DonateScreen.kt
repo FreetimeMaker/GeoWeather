@@ -1,4 +1,7 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeGlassAction
+import me.free_time.design.FreetimeGlassPanel
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -18,10 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.copyToClipboard
-import com.freetime.geoweather.ui.glass.geoWeatherGlass
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
+import com.freetime.geoweather.ui.glass.freetimeGlass
+import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
+import com.freetime.geoweather.ui.glass.FreetimeGlassPanel
+import com.freetime.geoweather.ui.glass.FreetimeGlassAction
 import me.free_time.donations.DonationTarget
 
 private data class ExternalDonation(@StringRes val labelKey: Int, val url: String)
@@ -123,7 +126,7 @@ fun DonateScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            GeoWeatherGlassTopBar(
+            FreetimeGlassTopBar(
                 title = stringResource(Res.string.donate_title),
                 onBack = onBack
             )
@@ -137,7 +140,7 @@ fun DonateScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item(key = "support-title") {
-                GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = stringResource(Res.string.support_development),
                         style = MaterialTheme.typography.headlineMedium,
@@ -147,7 +150,7 @@ fun DonateScreen(
             }
 
             item(key = "support-mission") {
-                GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -175,7 +178,7 @@ fun DonateScreen(
                     }
                 }
             ) { target ->
-                GeoWeatherGlassPanel(
+                FreetimeGlassPanel(
                     modifier = Modifier.fillMaxWidth(),
                     interactive = true
                 ) {
@@ -191,7 +194,7 @@ fun DonateScreen(
 
                         when (target) {
                             is DonationTarget.Link -> {
-                                GeoWeatherGlassAction(
+                                FreetimeGlassAction(
                                     onClick = { onWebViewClick(target.url, target.label) },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
@@ -216,7 +219,7 @@ fun DonateScreen(
                                     softWrap = true,
                                     overflow = TextOverflow.Clip
                                 )
-                                GeoWeatherGlassAction(
+                                FreetimeGlassAction(
                                     onClick = { copyToClipboard(target.address) },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
