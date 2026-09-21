@@ -3,6 +3,8 @@ import com.freetime.design.FreetimeIconButton
 import com.freetime.design.FreetimeSnackbar
 import com.freetime.design.FreetimeDesign
 import com.freetime.design.FreetimeChoiceSetting
+import com.freetime.design.FreetimeOptionGroup
+import com.freetime.design.FreetimeGlassText
 import com.freetime.design.FreetimeSwitchSetting
 import com.freetime.design.FreetimeSettingsGroup
 import com.freetime.design.FreetimeGlassTopBar
@@ -255,18 +257,12 @@ fun SettingsToggle(label: String, subtitle: String, checked: Boolean, onCheckedC
 
 @Composable
 fun UnitRadioRow(options: List<Pair<String, String>>, selected: String, onSelect: (String) -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(FreetimeDesign.spacing.sm)
-    ) {
-        options.forEach { (value, label) ->
-            FreetimeChoiceSetting(
-                title = label,
-                selected = selected == value,
-                onClick = { onSelect(value) }
-            )
-        }
-    }
+    FreetimeOptionGroup(
+        options = options,
+        selected = selected,
+        onSelect = onSelect,
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 @Composable
