@@ -198,7 +198,7 @@ fun MainWeatherScreen(
                                         FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
                                         FreetimeText(
                                             text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
-                                            style = FreetimeDesign.typography.headlineSmall
+                                            style = FreetimeDesign.typography.titleLarge
                                         )
                                         FreetimeText(
                                             text = loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--",
@@ -234,10 +234,10 @@ fun MainWeatherScreen(
                                     .padding(20.dp)
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    FreetimeText(loc.name, style = FreetimeDesign.typography.headlineSmall)
+                                    FreetimeText(loc.name, style = FreetimeDesign.typography.titleLarge)
                                     FreetimeText(
                                         text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
-                                        style = MaterialTheme.typography.displaySmall
+                                        style = FreetimeDesign.typography.headlineLarge
                                     )
                                     FreetimeText(
                                         text = loc.currentWeatherCode?.let { code -> stringResource(com.freetime.geoweather.WeatherCodes.getStringResource(code)) }.orEmpty(),
@@ -288,11 +288,11 @@ fun MainWeatherScreen(
                                         }
                                         Column(Modifier.weight(1f)) {
                                             FreetimeText(stringResource(Res.string.compare_windiest), style = FreetimeDesign.typography.labelSmall)
-                                            FreetimeText(windiest?.name ?: "--", style = FreetimeDesign.typography.titleSmall, maxLines = 1)
+                                            FreetimeText(windiest?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
                                         }
                                         Column(Modifier.weight(1f)) {
                                             FreetimeText(stringResource(Res.string.compare_most_humid), style = FreetimeDesign.typography.labelSmall)
-                                            FreetimeText(humid?.name ?: "--", style = FreetimeDesign.typography.titleSmall, maxLines = 1)
+                                            FreetimeText(humid?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
                                         }
                                     }
                                 }
@@ -320,7 +320,7 @@ fun MainWeatherScreen(
                                 ) {
                                     Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                            FreetimeText(loc.name, style = FreetimeDesign.typography.titleSmall, maxLines = 1, modifier = Modifier.weight(1f))
+                                            FreetimeText(loc.name, style = FreetimeDesign.typography.labelLarge, maxLines = 1, modifier = Modifier.weight(1f))
                                             if (loc.isDefault) Image(imageVector = Icons.Default.Favorite, contentDescription = stringResource(Res.string.favorite_location), modifier = Modifier.size(16.dp))
                                         }
                                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -331,7 +331,7 @@ fun MainWeatherScreen(
                                                     modifier = Modifier.size(40.dp)
                                                 )
                                             }
-                                            FreetimeText(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.headlineSmall)
+                                            FreetimeText(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.titleLarge)
                                         }
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                             FreetimeText(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = FreetimeDesign.typography.labelSmall)
@@ -480,12 +480,7 @@ fun MainWeatherScreen(
         FreetimeDialog(
             onDismissRequest = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() },
             title = stringResource(Res.string.search_title),
-            actions = {
-                FreetimeGlassAction(onClick = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }) {
-                    FreetimeText(stringResource(Res.string.CancelTXT))
-                }
-            }
-        ) {
+            content = {
             FreetimeSearchBar(
                 value = addLocationQuery,
                 onValueChange = { addLocationQuery = it; viewModel.searchCity(it.trim()) },
@@ -517,7 +512,13 @@ fun MainWeatherScreen(
                     }
                 }
             }
-        }
+            },
+            actions = {
+                FreetimeGlassAction(onClick = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }) {
+                    FreetimeText(stringResource(Res.string.CancelTXT))
+                }
+            }
+        )
     }
 
     locationToDelete?.let { location ->
@@ -545,6 +546,13 @@ fun MainWeatherScreen(
         FreetimeDialog(
             onDismissRequest = { notificationLocation = null },
             title = stringResource(Res.string.notification_time_title),
+            content = {
+                FreetimeTimePicker(
+                    value = selectedTime,
+                    onValueChange = { selectedTime = it },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             actions = {
                 if (location.notificationsEnabled) {
                     FreetimeGlassAction(onClick = {
@@ -563,13 +571,7 @@ fun MainWeatherScreen(
                     notificationLocation = null
                 }) { FreetimeText(stringResource(Res.string.confirm)) }
             }
-        ) {
-            FreetimeTimePicker(
-                value = selectedTime,
-                onValueChange = { selectedTime = it },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+        )
     }
 }
 
