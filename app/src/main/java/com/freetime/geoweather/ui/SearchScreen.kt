@@ -1,5 +1,6 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeScaffold
 import com.freetime.design.FreetimeDesign
 import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeGlassSearchField
@@ -60,16 +61,15 @@ fun SearchScreen(
         onDispose { viewModel.clearSearch() }
     }
 
-    Scaffold(
-        containerColor = Color.Transparent,
+    FreetimeScaffold(
         topBar = {
             FreetimeGlassTopBar(
                 title = stringResource(Res.string.search_title),
                 navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
             )
         }
-    ) { padding ->
-        Column(modifier = Modifier.padding(padding).padding(16.dp)) {
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             FreetimeGlassSearchField(
                 value = query,
                 onValueChange = {
