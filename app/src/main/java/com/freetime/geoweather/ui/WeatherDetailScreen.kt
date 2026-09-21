@@ -304,11 +304,10 @@ fun WeatherDetailScreen(
                                     )
                                 }
                                 if (code != null) {
-                                    Icon(
+                                    Image(
                                         painter = painterResource(weatherIconForTime(code, isNight)),
                                         contentDescription = stringResource(WeatherCodes.getStringResource(code)),
-                                        modifier = Modifier.size(104.dp),
-                                        tint = Color.Unspecified
+                                        modifier = Modifier.size(104.dp)
                                     )
                                 }
                                 if (rawTemp != null) {
@@ -1179,7 +1178,7 @@ fun ForecastDetailScreen(
                         }
                     } else Spacer(Modifier.width(52.dp))
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(painterResource(WeatherIconMapper.getWeatherIcon(forecastCode, forecastIsDay)), null, Modifier.size(104.dp), tint = Color.Unspecified)
+                        Image(painter = painterResource(WeatherIconMapper.getWeatherIcon(forecastCode, forecastIsDay)), contentDescription = null, modifier = Modifier.size(104.dp))
                         FreetimeText(
                             hourly?.let { formatTemp(it.temp.toDouble(), tempUnit) }
                                 ?: daily?.let { "${formatTemp(it.maxTemp.toDouble(), tempUnit)} / ${formatTemp(it.minTemp.toDouble(), tempUnit)}" }
