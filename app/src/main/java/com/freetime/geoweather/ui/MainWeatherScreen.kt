@@ -1,4 +1,7 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeIconButton
+import me.free_time.design.FreetimeDialog
+import me.free_time.design.FreetimeCard
 import me.free_time.design.FreetimeSnackbar
 import me.free_time.design.rememberFreetimeCompactNavigation
 import me.free_time.design.FreetimeDesign
@@ -368,15 +371,9 @@ fun MainWeatherScreen(
                             Text(loc.name, style = FreetimeDesign.typography.titleMedium)
                             Text(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.bodyMedium)
                         }
-                        GeoWeatherGlassIconAction(onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); notificationLocation = loc }) {
-                            Icon(if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff, contentDescription = null)
-                        }
-                        GeoWeatherGlassIconAction(onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); viewModel.toggleDefaultLocation(loc) }) {
-                            Icon(if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder, contentDescription = stringResource(Res.string.favorite_location))
-                        }
-                        GeoWeatherGlassIconAction(onClick = { haptics.performHapticFeedback(HapticFeedbackType.LongPress); locationToDelete = loc }) {
-                            Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.DelLoc), tint = MaterialTheme.colorScheme.error)
-                        }
+                        FreetimeIconButton(icon = if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff, contentDescription = null, onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); notificationLocation = loc })
+                        FreetimeIconButton(icon = if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder, contentDescription = stringResource(Res.string.favorite_location), onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); viewModel.toggleDefaultLocation(loc) })
+                        FreetimeIconButton(icon = Icons.Default.Delete, contentDescription = stringResource(Res.string.DelLoc), onClick = { haptics.performHapticFeedback(HapticFeedbackType.LongPress); locationToDelete = loc })
                     }
                 }
                 item(key = "donate") {
