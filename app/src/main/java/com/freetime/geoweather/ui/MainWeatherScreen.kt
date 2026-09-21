@@ -1,4 +1,8 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.rememberFreetimeCompactNavigation
+import me.free_time.design.FreetimeDesign
+import me.free_time.design.FreetimeGlassPullRefreshIndicator
+import me.free_time.design.FreetimeGlassSkeleton
 import me.free_time.design.FreetimeGlassTopBar
 import me.free_time.design.FreetimeGlassAction
 import me.free_time.design.FreetimeTextField
@@ -75,7 +79,7 @@ fun MainWeatherScreen(
     val isSearching by viewModel.isSearching.collectAsState()
     val orderedLocations = locations
     val listState = rememberLazyListState()
-    val navigationCompact by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 120 } }
+    val navigationCompact = rememberFreetimeCompactNavigation(listState)
     var isLocating by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -128,7 +132,7 @@ fun MainWeatherScreen(
     ) { padding ->
         Box(Modifier.fillMaxSize()) {
 
-        if (locations.isEmpty()) {
+        if (locations.isEmpty()) {\n            Column(Modifier.fillMaxWidth().padding(padding).padding(FreetimeDesign.spacing.lg), verticalArrangement = Arrangement.spacedBy(FreetimeDesign.spacing.md)) {\n                repeat(3) { FreetimeGlassSkeleton(height = 84.dp) }\n            }
             Box(
                 modifier = Modifier.fillMaxSize().padding(padding),
                 contentAlignment = Alignment.Center
