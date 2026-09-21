@@ -91,7 +91,7 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
 
-            SettingsSection(stringResource(Res.string.unit_settings_title))
+            FreetimeSettingsGroup(stringResource(Res.string.unit_settings_title)) {
             Text(stringResource(Res.string.temperature_unit), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
@@ -121,7 +121,8 @@ fun SettingsScreen(
                 onSelect = { appSettings.setPressureUnit(it) }
             )
 
-            SettingsSection(stringResource(Res.string.weather_animations_title))
+            }
+            FreetimeSettingsGroup(stringResource(Res.string.weather_animations_title)) {
             Text(stringResource(Res.string.animation_intensity), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
@@ -133,7 +134,8 @@ fun SettingsScreen(
                 onSelect = { appSettings.setWeatherAnimations(it) }
             )
 
-                        SettingsSection(stringResource(Res.string.notification_settings_title))
+}
+            FreetimeSettingsGroup(stringResource(Res.string.notification_settings_title)) {
             Text(stringResource(Res.string.notification_profile), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
@@ -165,7 +167,8 @@ fun SettingsScreen(
                 onValueChange = { appSettings.setWindThreshold(it) }
             )
 
-            SettingsSection(stringResource(Res.string.webview_settings_title))
+            }
+            FreetimeSettingsGroup(stringResource(Res.string.webview_settings_title)) {
             SettingsToggle(
                 stringResource(Res.string.disable_private_view),
                 stringResource(Res.string.disable_private_view_subtitle),
@@ -177,7 +180,8 @@ fun SettingsScreen(
                 openExternalBrowser
             ) { appSettings.setOpenExternalBrowser(it) }
 
-            SettingsSection(stringResource(Res.string.backup_restore_title))
+            }
+            FreetimeSettingsGroup(stringResource(Res.string.backup_restore_title)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FreetimeGlassAction(
                     onClick = {
@@ -206,7 +210,8 @@ fun SettingsScreen(
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            }
+            Spacer(Modifier.height(FreetimeDesign.spacing.lg))
             FreetimeGlassAction(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))) { Text(stringResource(Res.string.diagnostics_title)) }
             Spacer(Modifier.height(8.dp))
             FreetimeGlassAction(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
@@ -235,16 +240,6 @@ fun SettingsScreen(
             }
         }
     }
-}
-
-@Composable
-fun SettingsSection(title: String) {
-    Text(
-        text = title,
-        style = FreetimeDesign.typography.titleMedium,
-        color = FreetimeDesign.palette.primary,
-        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
-    )
 }
 
 @Composable
