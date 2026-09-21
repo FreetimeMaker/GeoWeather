@@ -668,4 +668,14 @@
     <string name="cl_462_forecast_icons">Forecast weather icons now automatically switch between day and night using the forecast time and sunrise/sunset.</string>
     <string name="cl_462_dark_mode">Fixed dark mode so the complete app background is covered by the dark theme.</string>
     <string name="cl_462_fixes">Fixed additional weather detail, resource and UI issues.</string>
+    <!-- v4.6.4 -->
+    <string name="cl_464_core">Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.9.1.</string>
+    <string name="cl_464_design">Migrated GeoWeather’s main screens and shared UI to Freetime Design components.</string>
+    <string name="cl_464_adaptive">Added weather-adaptive Liquid Glass backgrounds and adaptive navigation.</string>
+    <string name="cl_464_components">Added shared Freetime dialogs, search, time picker, tabs, bottom sheets and floating actions.</string>
+    <string name="cl_464_modules">Migrated the in-app browser and donation experience to the shared Freetime modules.</string>
+    <string name="cl_464_details">Updated weather details with Freetime pull-to-refresh, dividers, scaffolds and typography.</string>
+    <string name="cl_464_material">Removed obsolete GeoWeather glass wrappers, the legacy Material 3 theme and the direct Compose Material 3 UI dependency.</string>
+    <string name="cl_464_widgets">Kept Glance Material 3 specifically for Android widgets.</string>
+    <string name="cl_464_fixes">Fixed Freetime 1.9.1 typography, dialog and weather icon integration issues.</string>
 </resources>
