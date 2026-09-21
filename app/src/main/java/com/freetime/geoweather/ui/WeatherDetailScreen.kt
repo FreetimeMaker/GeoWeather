@@ -13,6 +13,7 @@ import com.freetime.design.FreetimeGlassPanel
 import com.freetime.design.freetimeGlass
 import com.freetime.design.FreetimeGlassDepth
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -35,7 +36,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -76,7 +76,6 @@ import com.freetime.design.rememberFreetimePullRefreshState
 import com.freetime.design.FreetimeDivider
 import com.freetime.design.FreetimeText
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherDetailScreen(
     locationId: Long,
@@ -592,12 +591,7 @@ fun WeatherDetailScreen(
                                             FreetimeGlassPanel(depth = FreetimeGlassDepth.SUBTLE) {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                                     FreetimeText(hour.time.takeLast(5), style = FreetimeDesign.typography.labelSmall)
-                                                    Icon(
-                                                        painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)),
-                                                        contentDescription = null,
-                                                        modifier = Modifier.size(32.dp),
-                                                        tint = Color.Unspecified
-                                                    )
+                                                    Image(painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)), contentDescription = null, modifier = Modifier.size(32.dp))
                                                     FreetimeText("${hour.temp}°", fontWeight = FontWeight.Bold)
                                                     if (hour.precipProbability > 0) {
                                                         FreetimeText("${hour.precipProbability}%", style = FreetimeDesign.typography.labelSmall)
@@ -804,12 +798,7 @@ fun WeatherDetailScreen(
                                             horizontalAlignment = Alignment.CenterHorizontally
                                         ) {
                                             FreetimeText(hour.time.take(5), style = FreetimeDesign.typography.labelMedium)
-                                            Icon(
-                                                painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(36.dp),
-                                                tint = Color.Unspecified
-                                            )
+                                            Image(painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code)), contentDescription = null, modifier = Modifier.size(36.dp))
                                             FreetimeText(
                                                 formatTemp(hour.temp.toDouble(), tempUnit),
                                                 style = FreetimeDesign.typography.bodyMedium
@@ -851,12 +840,7 @@ fun WeatherDetailScreen(
                                             fontWeight = FontWeight.Bold,
                                             modifier = Modifier.weight(1f)
                                         )
-                                        Icon(
-                                            painter = painterResource(WeatherIconMapper.getWeatherIcon(day.code)),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(32.dp),
-                                            tint = Color.Unspecified
-                                        )
+                                        Image(painter = painterResource(WeatherIconMapper.getWeatherIcon(day.code)), contentDescription = null, modifier = Modifier.size(32.dp))
                                         Spacer(Modifier.width(8.dp))
                                         FreetimeText(
                                             text = "${formatTemp(day.minTemp.toDouble(), tempUnit)} / ${formatTemp(day.maxTemp.toDouble(), tempUnit)}",
@@ -1143,7 +1127,6 @@ fun moonPhaseFor(date: java.time.LocalDate): Pair<String, String> {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForecastDetailScreen(
     locationName: String,
