@@ -1,4 +1,5 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeDesign
 import me.free_time.design.freetimeGlass
 import me.free_time.design.FreetimeGlassTopBar
 import me.free_time.design.FreetimeGlassAction
@@ -144,7 +145,7 @@ fun DonateScreen(
                 FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = stringResource(Res.string.support_development),
-                        style = MaterialTheme.typography.headlineMedium,
+                        style = FreetimeDesign.typography.headlineMedium,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -158,12 +159,12 @@ fun DonateScreen(
                     ) {
                         Text(
                             text = stringResource(Res.string.donation_mission_title),
-                            style = MaterialTheme.typography.titleLarge
+                            style = FreetimeDesign.typography.titleLarge
                         )
                         Text(
                             text = stringResource(Res.string.donation_mission_text),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = FreetimeDesign.typography.bodyLarge,
+                            color = FreetimeDesign.palette.contentMuted,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -189,7 +190,7 @@ fun DonateScreen(
                     ) {
                         Text(
                             text = target.label,
-                            style = MaterialTheme.typography.titleMedium,
+                            style = FreetimeDesign.typography.titleMedium,
                             modifier = Modifier.fillMaxWidth()
                         )
 
@@ -209,13 +210,13 @@ fun DonateScreen(
                             is DonationTarget.Wallet -> {
                                 Text(
                                     text = target.currency,
-                                    style = MaterialTheme.typography.labelLarge,
-                                    color = MaterialTheme.colorScheme.primary
+                                    style = FreetimeDesign.typography.labelLarge,
+                                    color = FreetimeDesign.palette.primary
                                 )
                                 Text(
                                     text = target.address,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = FreetimeDesign.typography.bodySmall,
+                                    color = FreetimeDesign.palette.contentMuted,
                                     modifier = Modifier.fillMaxWidth(),
                                     softWrap = true,
                                     overflow = TextOverflow.Clip
@@ -226,7 +227,7 @@ fun DonateScreen(
                                 ) {
                                     Text(
                                         text = target.address,
-                                        style = MaterialTheme.typography.bodySmall,
+                                        style = FreetimeDesign.typography.bodySmall,
                                         modifier = Modifier.weight(1f),
                                         softWrap = true
                                     )
