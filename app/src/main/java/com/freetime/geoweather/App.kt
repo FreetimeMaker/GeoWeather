@@ -14,6 +14,8 @@ import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import com.freetime.design.FreetimeGlassRoot
+import com.freetime.design.FreetimeDynamicBackdrop
+import com.freetime.design.FreetimeDesign
 
 sealed class Screen {
     data object Main : Screen()
@@ -100,7 +102,11 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     }
 
     GeoWeatherTheme(darkTheme = darkTheme) {
-        FreetimeGlassRoot {
+        FreetimeGlassRoot(
+            dynamicBackdrop = FreetimeDynamicBackdrop(
+                colors = listOf(FreetimeDesign.palette.background, FreetimeDesign.palette.surface)
+            )
+        ) {
         if (onboarding) {
             OnboardingScreen(onDone = {
                 launchPrefs.edit().putBoolean("onboarding_done", true).apply()
