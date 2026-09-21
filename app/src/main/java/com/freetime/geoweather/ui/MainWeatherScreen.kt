@@ -435,14 +435,13 @@ fun MainWeatherScreen(
 
                 // Like SimpMusic's Search FAB: the primary creation action is its own
                 // circular glass surface instead of being buried inside the capsule.
-                FreetimeIconButton(
+                FreetimeFloatingActionButton(
                     icon = Icons.Default.Add,
                     contentDescription = stringResource(Res.string.SearchBTNTXT),
                     onClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         showAddLocationDialog = true
-                    },
-                    modifier = Modifier.size(58.dp)
+                    }
                 )
             }
         }
