@@ -55,7 +55,7 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
         "Device: ${Build.MANUFACTURER} ${Build.MODEL}\n" +
         "Network: $network\nSaved locations: $locations\n" +
         "Location permission: $locationPermission\nNotifications: $notificationPermission\n" +
-        "Cache: ${String.format(java.util.Locale.US, "%.1f", cacheMb)} MB\n" +
+        "Cache: ${String.format(java.util.Locale.US, "%.1f", cacheMb)} MB\n"
     FreetimeScaffold(topBar = {
         FreetimeGlassTopBar(
             title = stringResource(Res.string.diagnostics_title),
