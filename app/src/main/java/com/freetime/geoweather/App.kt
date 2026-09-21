@@ -13,7 +13,7 @@ import com.freetime.geoweather.Screen.*
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
-import me.free_time.design.FreetimeGlassRoot
+import com.freetime.design.FreetimeGlassRoot
 
 sealed class Screen {
     data object Main : Screen()
