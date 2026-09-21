@@ -1,5 +1,6 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeScaffold
 import com.freetime.design.FreetimeDesign
 import com.freetime.design.freetimeGlass
 import com.freetime.design.FreetimeGlassTopBar
@@ -127,22 +128,21 @@ fun DonateScreen(
         }
     }
 
-    Scaffold(
-        containerColor = Color.Transparent,
+    FreetimeScaffold(
         topBar = {
             FreetimeGlassTopBar(
                 title = stringResource(Res.string.donate_title),
                 navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
             )
         }
-    ) { innerPadding ->
+    ) {
         FreetimeDonationScreen(
             targets = targets,
             title = stringResource(Res.string.support_development),
             onLinkClick = { target -> onWebViewClick(target.url, target.label) },
             onWalletClick = { target -> copyToClipboard(target.address) },
             onCopyWallet = { target -> copyToClipboard(target.address) },
-            modifier = Modifier.fillMaxSize().padding(innerPadding)
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
