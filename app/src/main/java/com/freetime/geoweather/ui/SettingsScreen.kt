@@ -32,11 +32,11 @@ import com.freetime.geoweather.data.loadTextFile
 import com.freetime.geoweather.data.saveTextFile
 import com.freetime.geoweather.openUrl
 import com.freetime.geoweather.R as Res
-import com.freetime.geoweather.ui.glass.freetimeGlass
-import com.freetime.geoweather.ui.glass.FreetimeGlassAction
-import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
-import com.freetime.geoweather.ui.glass.FreetimeTextField
-import com.freetime.geoweather.ui.glass.freetimeGlassCapsule
+import me.free_time.design.freetimeGlass
+import me.free_time.design.FreetimeGlassAction
+import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeTextField
+import me.free_time.design.freetimeGlassCapsule
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
