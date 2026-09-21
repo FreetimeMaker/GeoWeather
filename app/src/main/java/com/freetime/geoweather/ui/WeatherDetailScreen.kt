@@ -1,13 +1,13 @@
 package com.freetime.geoweather.ui
-import me.free_time.design.FreetimeIconButton
-import me.free_time.design.FreetimeCard
-import me.free_time.design.FreetimeGlassPullRefreshIndicator
-import me.free_time.design.FreetimeDesign
-import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeGlassAction
-import me.free_time.design.FreetimeGlassPanel
-import me.free_time.design.freetimeGlass
-import me.free_time.design.FreetimeGlassDepth
+import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeCard
+import com.freetime.design.FreetimeGlassPullRefreshIndicator
+import com.freetime.design.FreetimeDesign
+import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeGlassAction
+import com.freetime.design.FreetimeGlassPanel
+import com.freetime.design.freetimeGlass
+import com.freetime.design.FreetimeGlassDepth
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
@@ -56,15 +56,15 @@ import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
 import com.freetime.geoweather.isNetworkAvailable
 import com.freetime.geoweather.R as Res
-import me.free_time.design.freetimeGlass
-import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeGlassPanel
-import me.free_time.design.FreetimeGlassAction
+import com.freetime.design.freetimeGlass
+import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeGlassPanel
+import com.freetime.design.FreetimeGlassAction
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
-import me.free_time.design.FreetimeProgressIndicator
-import me.free_time.design.FreetimeDialog
+import com.freetime.design.FreetimeProgressIndicator
+import com.freetime.design.FreetimeDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
