@@ -1,4 +1,5 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeSnackbar
 import me.free_time.design.rememberFreetimeCompactNavigation
 import me.free_time.design.FreetimeDesign
 import me.free_time.design.FreetimeGlassPullRefreshIndicator
@@ -121,7 +122,7 @@ fun MainWeatherScreen(
 
     Scaffold(
         containerColor = Color.Transparent,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { snackbarHostState.currentSnackbarData?.let { data -> FreetimeSnackbar(message = data.visuals.message) } },
         topBar = {
             FreetimeGlassTopBar(
                 title = stringResource(Res.string.app_name),
