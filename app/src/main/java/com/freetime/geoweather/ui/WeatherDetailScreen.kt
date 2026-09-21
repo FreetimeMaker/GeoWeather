@@ -70,6 +70,7 @@ import kotlin.math.sin
 import com.freetime.design.FreetimeProgressIndicator
 import com.freetime.design.FreetimeDialog
 import com.freetime.design.FreetimeTabRow
+import com.freetime.design.FreetimeScaffold
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -144,8 +145,7 @@ fun WeatherDetailScreen(
         )
     }
 
-    Scaffold(
-        containerColor = Color.Transparent,
+    FreetimeScaffold(
         topBar = {
             FreetimeGlassTopBar(
                 title = title,
@@ -173,7 +173,8 @@ fun WeatherDetailScreen(
                 }
             )
         }
-    ) { padding ->
+    ) {
+        val padding = PaddingValues(0.dp)
         when {
             loc == null -> {
                 FreetimeLoadingState(modifier = Modifier.fillMaxSize().padding(padding))
