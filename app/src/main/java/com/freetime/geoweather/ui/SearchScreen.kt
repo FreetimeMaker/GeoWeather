@@ -22,6 +22,9 @@ import com.freetime.geoweather.ui.glass.geoWeatherGlass
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassTextField
 import kotlinx.coroutines.launch
+import me.free_time.design.FreetimeChip
+import me.free_time.design.FreetimeCard
+import me.free_time.design.FreetimeProgressIndicator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,22 +76,15 @@ fun SearchScreen(
                 Text(stringResource(Res.string.quick_actions_title), style = MaterialTheme.typography.titleSmall)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Box(
-                        modifier = Modifier
-                            .geoWeatherGlass(RoundedCornerShape(50), interactive = true)
-                            .clickable {
-                                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-                                    viewModel.refreshAllLocations()
-                                }
+                    FreetimeChip(
+                        text = stringResource(Res.string.command_refresh_weather),
+                        onClick = {
+                            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                                viewModel.refreshAllLocations()
                             }
-                            .padding(horizontal = 14.dp, vertical = 9.dp)
-                    ) { Text(stringResource(Res.string.command_refresh_weather)) }
-                    Box(
-                        modifier = Modifier
-                            .geoWeatherGlass(RoundedCornerShape(50), interactive = true)
-                            .clickable(onClick = onBack)
-                            .padding(horizontal = 14.dp, vertical = 9.dp)
-                    ) { Text(stringResource(Res.string.command_saved_locations)) }
+                        }
+                    )
+                    FreetimeChip(text = stringResource(Res.string.command_saved_locations), onClick = onBack)
                 }
                 Spacer(modifier = Modifier.height(12.dp))
             }
@@ -97,12 +93,7 @@ fun SearchScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(recentSearches) { recent ->
-                        Box(
-                            modifier = Modifier
-                                .geoWeatherGlass(RoundedCornerShape(50), interactive = true)
-                                .clickable { query = recent; viewModel.searchCity(recent) }
-                                .padding(horizontal = 14.dp, vertical = 9.dp)
-                        ) { Text(recent) }
+                        FreetimeChip(text = recent, onClick = { query = recent; viewModel.searchCity(recent) })
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
@@ -114,7 +105,7 @@ fun SearchScreen(
                         modifier = Modifier.fillMaxWidth().padding(32.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        FreetimeProgressIndicator()
                     }
                 }
                 query.isNotBlank() && results.isEmpty() -> {
