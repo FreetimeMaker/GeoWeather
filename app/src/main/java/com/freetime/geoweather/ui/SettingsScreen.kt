@@ -1,4 +1,8 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeDesign
+import me.free_time.design.FreetimeChoiceSetting
+import me.free_time.design.FreetimeSwitchSetting
+import me.free_time.design.FreetimeSettingsGroup
 import me.free_time.design.FreetimeGlassTopBar
 import me.free_time.design.FreetimeGlassAction
 import me.free_time.design.FreetimeTextField
@@ -244,48 +248,26 @@ fun SettingsSection(title: String) {
 
 @Composable
 fun SettingsToggle(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(label)
-        Spacer(Modifier.weight(1f))
-        Box(modifier = Modifier.freetimeGlassCapsule(interactive = true).clickable { onCheckedChange(!checked) }.padding(horizontal = 14.dp, vertical = 8.dp)) { Text(if (checked) "●" else "○") }
-    }
+    FreetimeSwitchSetting(title = label, checked = checked, onCheckedChange = onCheckedChange)
 }
 
 @Composable
 fun SettingsToggle(label: String, subtitle: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(modifier = Modifier.weight(1f).freetimeGlass(RoundedCornerShape(20.dp))) {
-            Text(label)
-            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        Box(modifier = Modifier.freetimeGlassCapsule(interactive = true).clickable { onCheckedChange(!checked) }.padding(horizontal = 14.dp, vertical = 8.dp)) { Text(if (checked) "●" else "○") }
-    }
+    FreetimeSwitchSetting(title = label, description = subtitle, checked = checked, onCheckedChange = onCheckedChange)
 }
 
 @Composable
 fun UnitRadioRow(options: List<Pair<String, String>>, selected: String, onSelect: (String) -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(FreetimeDesign.spacing.sm)
+    ) {
         options.forEach { (value, label) ->
-            Row(
-                modifier = Modifier
-                    .selectable(
-                        selected = selected == value,
-                        onClick = { onSelect(value) },
-                        role = Role.RadioButton
-                    )
-                    .padding(horizontal = 8.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(modifier = Modifier.freetimeGlassCapsule(interactive = true).padding(horizontal = 12.dp, vertical = 8.dp)) {
-                    Text(if (selected == value) "●  $label" else "○  $label", style = MaterialTheme.typography.bodyMedium)
-                }
-            }
+            FreetimeChoiceSetting(
+                title = label,
+                selected = selected == value,
+                onClick = { onSelect(value) }
+            )
         }
     }
 }
