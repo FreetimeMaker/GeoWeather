@@ -48,6 +48,7 @@ import com.freetime.geoweather.WeatherIconMapper
 import kotlinx.coroutines.delay
 import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.launch
+import me.free_time.design.FreetimeProgressIndicator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -402,7 +403,7 @@ fun MainWeatherScreen(
                         modifier = Modifier.size(if (navigationCompact) 48.dp else 52.dp)
                     ) {
                         if (isLocating) {
-                            CircularProgressIndicator(Modifier.size(19.dp), strokeWidth = 2.dp)
+                            FreetimeProgressIndicator(Modifier.size(19.dp))
                         } else {
                             Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
                         }
@@ -469,7 +470,7 @@ fun MainWeatherScreen(
                 placeholder = stringResource(Res.string.search_placeholder)
             )
             if (isSearching) {
-                Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) { FreetimeProgressIndicator() }
             } else if (addLocationQuery.isNotBlank()) {
                 LazyColumn(modifier = Modifier.heightIn(max = 320.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(searchResults, key = { "add-${it.latitude},${it.longitude}" }) { city ->
