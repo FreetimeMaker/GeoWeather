@@ -14,9 +14,9 @@ import com.freetime.geoweather.Screen.*
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
 import com.freetime.geoweather.ui.theme.GeoWeatherTheme
-import com.freetime.design.FreetimeGlassRoot
-import com.freetime.design.FreetimeDynamicBackdrop
-import com.freetime.design.FreetimeDesign
+import com.freetime.design.FreetimeApp
+import com.freetime.design.FreetimeAppConfig
+import com.freetime.design.FreetimeThemeMode
 
 sealed class Screen {
     data object Main : Screen()
@@ -108,19 +108,19 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         weatherGlassBackdrop(weatherCode, weatherIsDay, darkTheme)
     }
 
-    GeoWeatherTheme(darkTheme = darkTheme) {
-        FreetimeGlassRoot(
-            dynamicBackdrop = FreetimeDynamicBackdrop(
-                colors = adaptiveGlassColors
-            )
-        ) {
+    FreetimeApp(
+        config = FreetimeAppConfig(
+            themeMode = if (darkTheme) FreetimeThemeMode.DARK else FreetimeThemeMode.LIGHT,
+            backdropColors = adaptiveGlassColors
+        )
+    ) {
         if (onboarding) {
             OnboardingScreen(onDone = {
                 launchPrefs.edit().putBoolean("onboarding_done", true).apply()
                 onboarding = false
                 whatsNew = true
             })
-            return@FreetimeGlassRoot
+            return@FreetimeApp
         }
         if (whatsNew) {
             ChangeLogScreen(onBack = {
@@ -129,7 +129,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 backStack.add(Main)
                 whatsNew = false
             })
-            return@FreetimeGlassRoot
+            return@FreetimeApp
         }
         Surface(modifier = Modifier.fillMaxSize(), color = androidx.compose.ui.graphics.Color.Transparent) {
             Box(Modifier.fillMaxSize()) {
@@ -150,7 +150,6 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                     }
                 }
             }
-        }
         }
     }
 }
