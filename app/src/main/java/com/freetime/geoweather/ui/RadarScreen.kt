@@ -1,4 +1,5 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeGlassTopBar
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,8 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
-import com.freetime.geoweather.ui.glass.geoWeatherGlass
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
+import com.freetime.geoweather.ui.glass.freetimeGlass
+import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,7 +26,7 @@ fun RadarScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            GeoWeatherGlassTopBar(
+            FreetimeGlassTopBar(
                 title = stringResource(Res.string.radar_title),
                 onBack = onBack
             )
