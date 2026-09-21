@@ -1,6 +1,10 @@
-• Migrated Freetime Core, Design, Browser and Donations to JitPack and Freetime Core 1.3.0
-• Updated the shared Liquid Glass implementation with stronger backdrop blur
+• Migrated Freetime Core, Design, Browser and Donations to JitPack and Freetime Core 1.5.1
+• Updated Liquid Glass with a more transparent, SimpMusic-inspired appearance and interactive press effects
+• Redesigned the floating main navigation with a glass capsule and separate circular add-location action
+• Refined the glass top bar and shared glass controls for a more consistent interface
+• Restored weather condition icons below weather animations in the weather detail screen
+• Forecast weather icons now automatically switch between day and night using the forecast time and sunrise/sunset
+• Fixed dark mode so the complete app background is covered by the dark theme
 • Restored weather condition icons on the main location overview and saved locations
 • Made the main weather screen fully scrollable and more compact
-• Reduced redundant location UI and improved spacing around the floating navigation
-• Fixed additional weather detail, resource and build issues
+• Fixed additional weather detail, resource and UI issues
