@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import com.freetime.geoweather.ui.glass.freetimeGlass
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
