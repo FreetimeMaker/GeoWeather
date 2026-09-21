@@ -56,7 +56,6 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
         "Network: $network\nSaved locations: $locations\n" +
         "Location permission: $locationPermission\nNotifications: $notificationPermission\n" +
         "Cache: ${String.format(java.util.Locale.US, "%.1f", cacheMb)} MB\n" +
-        "Accounts: none\nWeather cache: local Room database\nShare cards: temporary app cache"
     FreetimeScaffold(topBar = {
         FreetimeGlassTopBar(
             title = stringResource(Res.string.diagnostics_title),
