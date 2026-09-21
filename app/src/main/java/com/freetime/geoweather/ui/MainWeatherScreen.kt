@@ -130,13 +130,19 @@ fun MainWeatherScreen(
             FreetimeGlassTopBar(
                 title = stringResource(Res.string.app_name),
                 compact = navigationCompact,
-                compactSubtitle = if (navigationCompact) locations.firstOrNull()?.currentTemp?.let { "${it.toInt()}°" } else null
+                subtitle = if (navigationCompact) locations.firstOrNull()?.currentTemp?.let { "${it.toInt()}°" } else null
             )
         } 
     ) { padding ->
         Box(Modifier.fillMaxSize()) {
 
-        if (locations.isEmpty()) {\n            Column(Modifier.fillMaxWidth().padding(padding).padding(FreetimeDesign.spacing.lg), verticalArrangement = Arrangement.spacedBy(FreetimeDesign.spacing.md)) {\n                repeat(3) { FreetimeGlassSkeleton(height = 84.dp) }\n            }
+        if (locations.isEmpty()) {
+            Column(
+                Modifier.fillMaxWidth().padding(padding).padding(FreetimeDesign.spacing.lg),
+                verticalArrangement = Arrangement.spacedBy(FreetimeDesign.spacing.md)
+            ) {
+                repeat(3) { FreetimeGlassSkeleton(height = 84.dp) }
+            }
             Box(
                 modifier = Modifier.fillMaxSize().padding(padding),
                 contentAlignment = Alignment.Center
