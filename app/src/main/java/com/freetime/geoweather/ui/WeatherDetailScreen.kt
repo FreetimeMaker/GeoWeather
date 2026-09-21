@@ -1,4 +1,9 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeGlassAction
+import me.free_time.design.FreetimeGlassPanel
+import me.free_time.design.freetimeGlass
+import me.free_time.design.FreetimeGlassDepth
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
@@ -48,12 +53,11 @@ import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
 import com.freetime.geoweather.isNetworkAvailable
 import com.freetime.geoweather.R as Res
-import com.freetime.geoweather.ui.glass.geoWeatherGlass
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassPanel
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
+import com.freetime.geoweather.ui.glass.freetimeGlass
+import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
+import com.freetime.geoweather.ui.glass.FreetimeGlassPanel
+import com.freetime.geoweather.ui.glass.FreetimeGlassAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassDepth
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -136,7 +140,7 @@ fun WeatherDetailScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            GeoWeatherGlassTopBar(
+            FreetimeGlassTopBar(
                 title = title,
                 onBack = onBack,
                 compact = detailTopBarCompact,
@@ -190,7 +194,7 @@ fun WeatherDetailScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(Modifier.height(16.dp))
-                        GeoWeatherGlassAction(onClick = { doRefresh() }) {
+                        FreetimeGlassAction(onClick = { doRefresh() }) {
                             Text(stringResource(Res.string.refresh_nav_desc))
                         }
                     }
@@ -254,7 +258,7 @@ fun WeatherDetailScreen(
                         if (!isNetworkAvailable() && loc.weatherData != null) {
                             Text(
                                 stringResource(Res.string.offline_cached_weather),
-                                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(18.dp), interactive = false).padding(12.dp),
+                                modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(18.dp), interactive = false).padding(12.dp),
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.labelLarge
                             )
@@ -268,9 +272,9 @@ fun WeatherDetailScreen(
                     }
 
                     item {
-                        GeoWeatherGlassPanel(
+                        FreetimeGlassPanel(
                             modifier = Modifier.fillMaxWidth(),
-                            depth = GeoWeatherGlassDepth.Elevated
+                            depth = FreetimeGlassDepth.ELEVATED
                         ) {
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
@@ -332,7 +336,7 @@ fun WeatherDetailScreen(
                             ageMinutes <= 60 -> stringResource(Res.string.freshness_recent)
                             else -> stringResource(Res.string.freshness_stale)
                         }
-                        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Subtle) {
+                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.SUBTLE) {
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                                 Text(freshness, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                                 Text(stringResource(Res.string.updated_age_short, ageMinutes), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -341,7 +345,7 @@ fun WeatherDetailScreen(
                     }
 
                     item {
-                        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Standard) {
+                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
                             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                 Text(stringResource(Res.string.weather_history_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 if (weatherHistory.isEmpty()) {
@@ -367,7 +371,7 @@ fun WeatherDetailScreen(
                                                 Modifier
                                                     .weight(1f)
                                                     .height((12 + 56 * fraction).dp)
-                                                    .geoWeatherGlass(RoundedCornerShape(8.dp), interactive = false)
+                                                    .freetimeGlass(RoundedCornerShape(8.dp), interactive = false)
                                             )
                                         }
                                     }
@@ -388,7 +392,7 @@ fun WeatherDetailScreen(
                             -1 -> stringResource(Res.string.pressure_falling)
                             else -> stringResource(Res.string.pressure_steady)
                         }
-                        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Standard) {
+                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
                             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                 Text(stringResource(Res.string.conditions_insights_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -413,9 +417,9 @@ fun WeatherDetailScreen(
                     item {
                         val smart = com.freetime.geoweather.WeatherIntelligence.smartHero(hourly, daily.firstOrNull())
                         val nowcast = com.freetime.geoweather.WeatherIntelligence.nowcast(hourly)
-                        GeoWeatherGlassPanel(
+                        FreetimeGlassPanel(
                             modifier = Modifier.fillMaxWidth(),
-                            depth = GeoWeatherGlassDepth.Elevated
+                            depth = FreetimeGlassDepth.ELEVATED
                         ) {
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
@@ -445,14 +449,14 @@ fun WeatherDetailScreen(
 
                     if (hourly.isNotEmpty()) {
                         item {
-                            GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Standard) {
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     Text(stringResource(Res.string.weather_timeline_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                         items(hourly.take(12)) { hour ->
-                                            GeoWeatherGlassPanel(
+                                            FreetimeGlassPanel(
                                                 modifier = Modifier.width(94.dp),
-                                                depth = GeoWeatherGlassDepth.Subtle,
+                                                depth = FreetimeGlassDepth.SUBTLE,
                                                 interactive = false
                                             ) {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -486,7 +490,7 @@ fun WeatherDetailScreen(
                             val eveningGoldenStart = sunset.minusHours(1)
                             val morningBlueStart = sunrise.minusMinutes(40)
                             val eveningBlueEnd = sunset.plusMinutes(40)
-                            GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Standard) {
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     Text(stringResource(Res.string.sun_path_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -505,7 +509,7 @@ fun WeatherDetailScreen(
 
                     item {
                         val moon = moonPhaseDetails(java.time.LocalDate.now())
-                        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Subtle) {
+                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.SUBTLE) {
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                                 Text(moon.icon, style = MaterialTheme.typography.displaySmall)
                                 Column(horizontalAlignment = Alignment.End) {
@@ -521,7 +525,7 @@ fun WeatherDetailScreen(
 
                     airExtras?.let { air ->
                         item {
-                            GeoWeatherGlassPanel(
+                            FreetimeGlassPanel(
                                 modifier = Modifier.fillMaxWidth()
                                 ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -550,7 +554,7 @@ fun WeatherDetailScreen(
                                 if (nextRainIndex == 0) stringResource(Res.string.rain_possible_now, next.precipProbability)
                                 else stringResource(Res.string.next_rain_around, next.time, next.precipProbability)
                             } else stringResource(Res.string.no_rain_24h)
-                            GeoWeatherGlassPanel(
+                            FreetimeGlassPanel(
                                 modifier = Modifier.fillMaxWidth()
                                 ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -572,7 +576,7 @@ fun WeatherDetailScreen(
                                                     Text(sunsetTime.toString().take(5), style = MaterialTheme.typography.labelSmall)
                                                 }
                                             }
-                                            GeoWeatherGlassPanel(depth = GeoWeatherGlassDepth.Subtle) {
+                                            FreetimeGlassPanel(depth = FreetimeGlassDepth.SUBTLE) {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                                     Text(hour.time.takeLast(5), style = MaterialTheme.typography.labelSmall)
                                                     Icon(
@@ -596,7 +600,7 @@ fun WeatherDetailScreen(
 
                     item {
                         val feelsLike = loc.currentFeelsLike ?: loc.currentTemp
-                        GeoWeatherGlassPanel(
+                        FreetimeGlassPanel(
                             modifier = Modifier.fillMaxWidth()
                             ) {
                             Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -732,13 +736,13 @@ fun WeatherDetailScreen(
                                         modifier = Modifier.weight(2f)
                                     )
                                 }
-                                GeoWeatherGlassPanel(
+                                FreetimeGlassPanel(
                                     modifier = Modifier.fillMaxWidth().clickable {
                                         haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                         onRadarClick(loc.latitude, loc.longitude)
                                     },
                                     interactive = true,
-                                    depth = GeoWeatherGlassDepth.Subtle
+                                    depth = FreetimeGlassDepth.SUBTLE
                                 ) {
                                     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                                         Text("🌧️  ·  📡", style = MaterialTheme.typography.headlineMedium)
@@ -746,7 +750,7 @@ fun WeatherDetailScreen(
                                     }
                                 }
                                 /*
-                                GeoWeatherGlassAction(
+                                FreetimeGlassAction(
                                     onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onRadarClick(loc.latitude, loc.longitude) },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
@@ -777,10 +781,10 @@ fun WeatherDetailScreen(
                             ) {
                                 items(hourly.size, key = { hourly[it].time }) { hourIndex ->
                                     val hour = hourly[hourIndex]
-                                    GeoWeatherGlassPanel(
+                                    FreetimeGlassPanel(
                                         modifier = Modifier.clickable { onHourlyClick(loc.name, hourly, hourIndex) },
                                         interactive = true,
-                                        depth = GeoWeatherGlassDepth.Subtle
+                                        depth = FreetimeGlassDepth.SUBTLE
                                         ) {
                                         Column(
                                             modifier = Modifier,
@@ -816,12 +820,12 @@ fun WeatherDetailScreen(
                         items(visibleDaily.size, key = { visibleDaily[it].date }) { dayIndex ->
                             val day = visibleDaily[dayIndex]
                             var expanded by remember { mutableStateOf(false) }
-                            GeoWeatherGlassPanel(
+                            FreetimeGlassPanel(
                                 modifier = Modifier.fillMaxWidth()
                                     .animateContentSize(animationSpec = spring())
                                     .clickable { onDailyClick(loc.name, daily, daily.indexOf(day)) },
                                 interactive = true,
-                                depth = GeoWeatherGlassDepth.Subtle
+                                depth = FreetimeGlassDepth.SUBTLE
                                 ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     Row(
@@ -881,7 +885,7 @@ fun WeatherDetailScreen(
                         }
                         if (daily.size > 7) {
                             item {
-                                GeoWeatherGlassAction(
+                                FreetimeGlassAction(
                                     onClick = { forecastExpanded = !forecastExpanded },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
@@ -1027,7 +1031,7 @@ fun WeatherAlertsSection(
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
     if (alerts.isNotEmpty()) {
-        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Elevated) {
+        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.ELEVATED) {
             Row(verticalAlignment = Alignment.Top) {
                 Text("⚠️", fontSize = 24.sp)
                 Spacer(Modifier.width(12.dp))
@@ -1042,7 +1046,7 @@ fun WeatherAlertsSection(
         }
     }
     if (history.isNotEmpty()) {
-        GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth(), depth = GeoWeatherGlassDepth.Subtle) {
+        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.SUBTLE) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(stringResource(Res.string.alert_history_title), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                 history.take(5).forEach { record ->
@@ -1164,7 +1168,7 @@ fun ForecastDetailScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            GeoWeatherGlassTopBar(title = title, onBack = onBack)
+            FreetimeGlassTopBar(title = title, onBack = onBack)
         }
     ) { padding ->
         LazyColumn(
@@ -1175,7 +1179,7 @@ fun ForecastDetailScreen(
             item {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                     if (index > 0) {
-                        GeoWeatherGlassAction(onClick = { index-- }) {
+                        FreetimeGlassAction(onClick = { index-- }) {
                             Text("‹", style = MaterialTheme.typography.headlineMedium)
                         }
                     } else Spacer(Modifier.width(52.dp))
@@ -1191,14 +1195,14 @@ fun ForecastDetailScreen(
                         Text(stringResource(WeatherCodes.getStringResource(forecastCode)), style = MaterialTheme.typography.titleLarge)
                     }
                     if (index < maxIndex) {
-                        GeoWeatherGlassAction(onClick = { index++ }) {
+                        FreetimeGlassAction(onClick = { index++ }) {
                             Text("›", style = MaterialTheme.typography.headlineMedium)
                         }
                     } else Spacer(Modifier.width(52.dp))
                 }
             }
             item {
-                GeoWeatherGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         hourly?.let { hour ->
                             DetailRow(stringResource(Res.string.time_label) to hour.time.takeLast(5), stringResource(Res.string.temperature_label) to formatTemp(hour.temp.toDouble(), tempUnit), stringResource(Res.string.feels_like_label) to (hour.feelsLike?.let { formatTemp(it, tempUnit) } ?: "--"))
