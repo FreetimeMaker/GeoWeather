@@ -8,7 +8,7 @@ import com.freetime.design.FreetimeSnackbarHost
 import com.freetime.design.rememberFreetimeMessageHostState
 import com.freetime.design.FreetimeTimePicker
 import com.freetime.design.FreetimeSearchBar
-import com.freetime.design.FreetimeAdaptiveNavigation
+import com.freetime.design.FreetimeNavigationRail
 import com.freetime.design.FreetimeNavigationDestination
 import com.freetime.design.FreetimeBottomSheet
 import com.freetime.design.FreetimeButton
@@ -396,21 +396,56 @@ fun MainWeatherScreen(
             }
             }
 
-            FreetimeAdaptiveNavigation(
-                destinations = adaptiveDestinations,
-                selectedIndex = 0,
-                onDestinationSelected = { index ->
-                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    when (index) {
-                        0 -> if (!isLocating) openCurrentLocation()
-                        1 -> onDonateClick()
-                        2 -> onSettingsClick()
+            val onNavigationSelected: (Int) -> Unit = { index ->
+                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                when (index) {
+                    0 -> if (!isLocating) openCurrentLocation()
+                    1 -> onDonateClick()
+                    2 -> onSettingsClick()
+                }
+            }
+            if (configuration.screenWidthDp >= 720) {
+                FreetimeNavigationRail(
+                    destinations = adaptiveDestinations,
+                    selectedIndex = 0,
+                    onDestinationSelected = onNavigationSelected,
+                    modifier = Modifier.align(Alignment.CenterStart)
+                )
+            } else {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding()
+                        .padding(horizontal = 18.dp, vertical = 12.dp)
+                        .freetimeGlassCapsule(interactive = false)
+                        .padding(horizontal = 6.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    adaptiveDestinations.forEachIndexed { index, destination ->
+                        val selected = index == 0
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { onNavigationSelected(index) }
+                                .padding(horizontal = 10.dp, vertical = 7.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            FreetimeIconButton(
+                                icon = destination.icon,
+                                contentDescription = destination.label,
+                                onClick = { onNavigationSelected(index) },
+                                tint = if (selected) FreetimeDesign.palette.primary else Color.Unspecified
+                            )
+                            FreetimeText(
+                                text = destination.label,
+                                style = FreetimeDesign.typography.labelSmall,
+                                color = if (selected) FreetimeDesign.palette.primary else FreetimeDesign.colors.contentMuted,
+                                maxLines = 1
+                            )
+                        }
                     }
-                },
-                modifier = Modifier.fillMaxSize()
-            ) {
-                // The weather content remains the primary surface; adaptive navigation
-                // overlays its compact bottom bar or wide navigation rail.
+                }
             }
 
             val addLocationAction = {
