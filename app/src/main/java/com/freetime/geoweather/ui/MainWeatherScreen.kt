@@ -5,6 +5,7 @@ import com.freetime.design.FreetimeFloatingActionButton
 import com.freetime.design.FreetimeSnackbarHost
 import com.freetime.design.rememberFreetimeMessageHostState
 import com.freetime.design.FreetimeTimePicker
+import com.freetime.design.FreetimeSearchBar
 import com.freetime.design.FreetimeEmptyState
 import com.freetime.design.FreetimeInfoCard
 import com.freetime.design.FreetimeSectionHeader
@@ -458,9 +459,18 @@ fun MainWeatherScreen(
                 }
             }
         ) {
-            FreetimeTextField(
+            FreetimeSearchBar(
                 value = addLocationQuery,
                 onValueChange = { addLocationQuery = it; viewModel.searchCity(it.trim()) },
+                suggestions = searchResults.map { it.name },
+                onSuggestionSelected = { selected ->
+                    searchResults.firstOrNull { it.name == selected }?.let { city ->
+                        viewModel.addLocation(city)
+                        showAddLocationDialog = false
+                        addLocationQuery = ""
+                        viewModel.clearSearch()
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = stringResource(Res.string.search_placeholder)
             )
