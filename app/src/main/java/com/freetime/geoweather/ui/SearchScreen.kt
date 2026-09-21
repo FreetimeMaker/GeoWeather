@@ -1,7 +1,7 @@
 package com.freetime.geoweather.ui
 import me.free_time.design.FreetimeDesign
 import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeTextField
+import me.free_time.design.FreetimeGlassSearchField
 import me.free_time.design.freetimeGlass
 
 import androidx.compose.foundation.clickable
@@ -65,7 +65,7 @@ fun SearchScreen(
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).padding(16.dp)) {
-            FreetimeTextField(
+            FreetimeGlassSearchField(
                 value = query,
                 onValueChange = {
                     query = it
@@ -124,20 +124,18 @@ fun SearchScreen(
                 else -> {
                     LazyColumn {
                         items(results, key = { "${it.latitude},${it.longitude}" }) { city ->
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp)
-                                    .freetimeGlass(RoundedCornerShape(22.dp), interactive = true)
-                                    .clickable {
+                            FreetimeCard(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                                onClick = {
                                         rememberQuery(city.name)
                                         viewModel.addLocation(city)
                                         onCitySelected()
                                     }
-                                    .padding(horizontal = 16.dp, vertical = 12.dp)
                             ) {
+                                Column {
                                 Text(city.name, style = FreetimeDesign.typography.titleMedium)
                                 Text("${city.latitude}, ${city.longitude}", style = FreetimeDesign.typography.bodySmall, color = FreetimeDesign.palette.contentMuted)
+                                }
                             }
                         }
                     }
