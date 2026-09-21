@@ -1,4 +1,9 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeGlassAction
+import me.free_time.design.FreetimeTextField
+import me.free_time.design.freetimeGlassCapsule
+import me.free_time.design.freetimeGlass
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.clickable
@@ -27,11 +32,11 @@ import com.freetime.geoweather.data.loadTextFile
 import com.freetime.geoweather.data.saveTextFile
 import com.freetime.geoweather.openUrl
 import com.freetime.geoweather.R as Res
-import com.freetime.geoweather.ui.glass.geoWeatherGlass
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassTextField
-import com.freetime.geoweather.ui.glass.geoWeatherGlassCapsule
+import com.freetime.geoweather.ui.glass.freetimeGlass
+import com.freetime.geoweather.ui.glass.FreetimeGlassAction
+import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
+import com.freetime.geoweather.ui.glass.FreetimeTextField
+import com.freetime.geoweather.ui.glass.freetimeGlassCapsule
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,7 +72,7 @@ fun SettingsScreen(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            GeoWeatherGlassTopBar(
+            FreetimeGlassTopBar(
                 title = stringResource(Res.string.settings_title),
                 onBack = onBack
             )
@@ -169,7 +174,7 @@ fun SettingsScreen(
 
             SettingsSection(stringResource(Res.string.backup_restore_title))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                GeoWeatherGlassAction(
+                FreetimeGlassAction(
                     onClick = {
                         scope.launch {
                             val json = viewModel.buildBackupJson()
@@ -177,11 +182,11 @@ fun SettingsScreen(
                             snackbarHostState.showSnackbar(if (ok) exportSuccess else exportFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp))
+                    modifier = Modifier.weight(1f).freetimeGlass(RoundedCornerShape(20.dp))
                 ) {
                     Text(stringResource(Res.string.export_locations))
                 }
-                GeoWeatherGlassAction(
+                FreetimeGlassAction(
                     onClick = {
                         scope.launch {
                             val content = loadTextFile(arrayOf(BACKUP_MIME_TYPE))
@@ -190,16 +195,16 @@ fun SettingsScreen(
                             snackbarHostState.showSnackbar(if (ok) importSuccess else importFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp))
+                    modifier = Modifier.weight(1f).freetimeGlass(RoundedCornerShape(20.dp))
                 ) {
                     Text(stringResource(Res.string.import_locations))
                 }
             }
 
             Spacer(Modifier.height(16.dp))
-            GeoWeatherGlassAction(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp))) { Text(stringResource(Res.string.diagnostics_title)) }
+            FreetimeGlassAction(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))) { Text(stringResource(Res.string.diagnostics_title)) }
             Spacer(Modifier.height(8.dp))
-            GeoWeatherGlassAction(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
+            FreetimeGlassAction(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(Res.string.open_change_log))
             }
             Spacer(Modifier.height(8.dp))
@@ -210,16 +215,16 @@ fun SettingsScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            GeoWeatherGlassAction(
+            FreetimeGlassAction(
                 onClick = { openUrl("mailto:FreetimeMaker@proton.me?subject=GeoWeather Feedback") },
-                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp))
+                modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
             ) {
                 Text(stringResource(Res.string.feedback_btn))
             }
             Spacer(Modifier.height(8.dp))
-            GeoWeatherGlassAction(
+            FreetimeGlassAction(
                 onClick = { onWebViewClick("https://github.com/FreetimeMaker/GeoWeather/issues", "GitHub Issues") },
-                modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp))
+                modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
             ) {
                 Text(stringResource(Res.string.feedback_github_btn))
             }
@@ -245,7 +250,7 @@ fun SettingsToggle(label: String, checked: Boolean, onCheckedChange: (Boolean) -
     ) {
         Text(label)
         Spacer(Modifier.weight(1f))
-        Box(modifier = Modifier.geoWeatherGlassCapsule(interactive = true).clickable { onCheckedChange(!checked) }.padding(horizontal = 14.dp, vertical = 8.dp)) { Text(if (checked) "●" else "○") }
+        Box(modifier = Modifier.freetimeGlassCapsule(interactive = true).clickable { onCheckedChange(!checked) }.padding(horizontal = 14.dp, vertical = 8.dp)) { Text(if (checked) "●" else "○") }
     }
 }
 
@@ -255,11 +260,11 @@ fun SettingsToggle(label: String, subtitle: String, checked: Boolean, onCheckedC
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(modifier = Modifier.weight(1f).geoWeatherGlass(RoundedCornerShape(20.dp))) {
+        Column(modifier = Modifier.weight(1f).freetimeGlass(RoundedCornerShape(20.dp))) {
             Text(label)
             Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        Box(modifier = Modifier.geoWeatherGlassCapsule(interactive = true).clickable { onCheckedChange(!checked) }.padding(horizontal = 14.dp, vertical = 8.dp)) { Text(if (checked) "●" else "○") }
+        Box(modifier = Modifier.freetimeGlassCapsule(interactive = true).clickable { onCheckedChange(!checked) }.padding(horizontal = 14.dp, vertical = 8.dp)) { Text(if (checked) "●" else "○") }
     }
 }
 
@@ -277,7 +282,7 @@ fun UnitRadioRow(options: List<Pair<String, String>>, selected: String, onSelect
                     .padding(horizontal = 8.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(modifier = Modifier.geoWeatherGlassCapsule(interactive = true).padding(horizontal = 12.dp, vertical = 8.dp)) {
+                Box(modifier = Modifier.freetimeGlassCapsule(interactive = true).padding(horizontal = 12.dp, vertical = 8.dp)) {
                     Text(if (selected == value) "●  $label" else "○  $label", style = MaterialTheme.typography.bodyMedium)
                 }
             }
@@ -290,7 +295,7 @@ fun ThresholdField(label: String, value: Int, onValueChange: (Int) -> Unit) {
     var text by remember(value) { mutableStateOf(value.toString()) }
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
         Text(label, style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(start = 8.dp, bottom = 6.dp))
-        GeoWeatherGlassTextField(
+        FreetimeTextField(
             value = text,
             onValueChange = {
                 text = it.filter(Char::isDigit)
