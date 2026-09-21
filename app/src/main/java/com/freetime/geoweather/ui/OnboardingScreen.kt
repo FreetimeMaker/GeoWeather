@@ -1,4 +1,5 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeGlassAction
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
-import com.freetime.geoweather.ui.glass.geoWeatherGlass
+import com.freetime.geoweather.ui.glass.freetimeGlass
 import me.free_time.design.FreetimeButton
 import me.free_time.design.FreetimeCard
 import me.free_time.design.FreetimeProgressIndicator
@@ -27,7 +28,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
             FreetimeProgressIndicator(progress = (page + 1) / 3f, modifier = Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 FreetimeButton(text = stringResource(Res.string.skip), onClick = onDone)
-                GeoWeatherGlassAction(onClick = { if (page < 2) page++ else onDone() }) {
+                FreetimeGlassAction(onClick = { if (page < 2) page++ else onDone() }) {
                     Text(stringResource(if (page < 2) Res.string.next else Res.string.done))
                 }
             }
