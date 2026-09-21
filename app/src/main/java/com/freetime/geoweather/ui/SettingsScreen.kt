@@ -91,7 +91,7 @@ fun SettingsScreen(
         ) {
 
             SettingsSection(stringResource(Res.string.unit_settings_title))
-            Text(stringResource(Res.string.temperature_unit), style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(Res.string.temperature_unit), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "celsius" to stringResource(Res.string.unit_celsius),
@@ -100,7 +100,7 @@ fun SettingsScreen(
                 selected = tempUnit,
                 onSelect = { appSettings.setTempUnit(it) }
             )
-            Text(stringResource(Res.string.wind_speed_unit), style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(Res.string.wind_speed_unit), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "kmh" to stringResource(Res.string.unit_kmh),
@@ -110,7 +110,7 @@ fun SettingsScreen(
                 selected = windUnit,
                 onSelect = { appSettings.setWindUnit(it) }
             )
-            Text(stringResource(Res.string.pressure_unit), style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(Res.string.pressure_unit), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "hpa" to stringResource(Res.string.unit_hpa),
@@ -121,7 +121,7 @@ fun SettingsScreen(
             )
 
             SettingsSection(stringResource(Res.string.weather_animations_title))
-            Text(stringResource(Res.string.animation_intensity), style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(Res.string.animation_intensity), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "full" to stringResource(Res.string.animation_full),
@@ -133,7 +133,7 @@ fun SettingsScreen(
             )
 
                         SettingsSection(stringResource(Res.string.notification_settings_title))
-            Text(stringResource(Res.string.notification_profile), style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(Res.string.notification_profile), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "normal" to stringResource(Res.string.profile_normal),
@@ -214,8 +214,8 @@ fun SettingsScreen(
             Spacer(Modifier.height(8.dp))
             Text(
                 text = stringResource(Res.string.feedback_alternative_hint),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = FreetimeDesign.typography.bodySmall,
+                color = FreetimeDesign.palette.contentMuted,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -240,8 +240,8 @@ fun SettingsScreen(
 fun SettingsSection(title: String) {
     Text(
         text = title,
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.primary,
+        style = FreetimeDesign.typography.titleMedium,
+        color = FreetimeDesign.palette.primary,
         modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
     )
 }
@@ -276,7 +276,7 @@ fun UnitRadioRow(options: List<Pair<String, String>>, selected: String, onSelect
 fun ThresholdField(label: String, value: Int, onValueChange: (Int) -> Unit) {
     var text by remember(value) { mutableStateOf(value.toString()) }
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        Text(label, style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(start = 8.dp, bottom = 6.dp))
+        Text(label, style = FreetimeDesign.typography.labelMedium, modifier = Modifier.padding(start = 8.dp, bottom = 6.dp))
         FreetimeTextField(
             value = text,
             onValueChange = {
