@@ -1,15 +1,15 @@
 package com.freetime.geoweather.ui
-import me.free_time.design.FreetimeIconButton
-import me.free_time.design.FreetimeSnackbar
-import me.free_time.design.FreetimeDesign
-import me.free_time.design.FreetimeChoiceSetting
-import me.free_time.design.FreetimeSwitchSetting
-import me.free_time.design.FreetimeSettingsGroup
-import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeGlassAction
-import me.free_time.design.FreetimeTextField
-import me.free_time.design.freetimeGlassCapsule
-import me.free_time.design.freetimeGlass
+import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeSnackbar
+import com.freetime.design.FreetimeDesign
+import com.freetime.design.FreetimeChoiceSetting
+import com.freetime.design.FreetimeSwitchSetting
+import com.freetime.design.FreetimeSettingsGroup
+import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeGlassAction
+import com.freetime.design.FreetimeTextField
+import com.freetime.design.freetimeGlassCapsule
+import com.freetime.design.freetimeGlass
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.clickable
@@ -38,11 +38,11 @@ import com.freetime.geoweather.data.loadTextFile
 import com.freetime.geoweather.data.saveTextFile
 import com.freetime.geoweather.openUrl
 import com.freetime.geoweather.R as Res
-import me.free_time.design.freetimeGlass
-import me.free_time.design.FreetimeGlassAction
-import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeTextField
-import me.free_time.design.freetimeGlassCapsule
+import com.freetime.design.freetimeGlass
+import com.freetime.design.FreetimeGlassAction
+import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeTextField
+import com.freetime.design.freetimeGlassCapsule
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
