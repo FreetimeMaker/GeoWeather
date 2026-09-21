@@ -25,8 +25,11 @@ object WeatherIconMapper {
     }
 
     @DrawableRes
-    fun getWeatherIcon(code: Int, theme: String = "google"): Int {
-        val isDay = isDaytime()
+    fun getWeatherIcon(code: Int, theme: String = "google"): Int =
+        getWeatherIcon(code, isDaytime(), theme)
+
+    @DrawableRes
+    fun getWeatherIcon(code: Int, isDay: Boolean, theme: String = "google"): Int {
         return when (code) {
             0 -> if (isDay) Res.drawable.google_clear_day else Res.drawable.google_clear_night
             1 -> if (isDay) Res.drawable.google_mostly_clear_day else Res.drawable.google_mostly_clear_night
