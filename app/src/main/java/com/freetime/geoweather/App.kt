@@ -3,8 +3,6 @@ package com.freetime.geoweather
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -13,7 +11,6 @@ import androidx.compose.ui.platform.LocalContext
 import com.freetime.geoweather.Screen.*
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
-import com.freetime.geoweather.ui.theme.GeoWeatherTheme
 import com.freetime.design.FreetimeApp
 import com.freetime.design.FreetimeAppConfig
 import com.freetime.design.FreetimeThemeMode
@@ -131,8 +128,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
             })
             return@FreetimeApp
         }
-        Surface(modifier = Modifier.fillMaxSize(), color = androidx.compose.ui.graphics.Color.Transparent) {
-            Box(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize()) {
                 backStack.forEachIndexed { index, screen ->
                     key(index) {
                         val isTop = index == backStack.lastIndex
@@ -150,7 +146,6 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                     }
                 }
             }
-        }
     }
 }
 
