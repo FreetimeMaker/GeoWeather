@@ -27,7 +27,7 @@ import com.freetime.design.freetimeGlass
 import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeGlassAction
 import com.freetime.design.FreetimeGlassPanel
-import me.free_time.core.FreetimeCore
+import com.freetime.core.FreetimeCore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
