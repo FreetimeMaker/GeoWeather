@@ -1,5 +1,5 @@
 package com.freetime.geoweather.ui
-import me.free_time.design.freetimeGlass
+import com.freetime.design.freetimeGlass
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
