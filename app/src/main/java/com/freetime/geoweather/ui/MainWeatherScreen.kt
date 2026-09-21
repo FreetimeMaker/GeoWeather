@@ -54,7 +54,6 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,7 +79,6 @@ import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.launch
 import com.freetime.design.FreetimeProgressIndicator
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainWeatherScreen(
     viewModel: WeatherViewModel,
@@ -200,7 +198,7 @@ fun MainWeatherScreen(
                                         FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
                                         FreetimeText(
                                             text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
-                                            style = MaterialTheme.typography.headlineSmall
+                                            style = FreetimeDesign.typography.headlineSmall
                                         )
                                         FreetimeText(
                                             text = loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--",
@@ -236,7 +234,7 @@ fun MainWeatherScreen(
                                     .padding(20.dp)
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    FreetimeText(loc.name, style = MaterialTheme.typography.headlineSmall)
+                                    FreetimeText(loc.name, style = FreetimeDesign.typography.headlineSmall)
                                     FreetimeText(
                                         text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
                                         style = MaterialTheme.typography.displaySmall
@@ -290,11 +288,11 @@ fun MainWeatherScreen(
                                         }
                                         Column(Modifier.weight(1f)) {
                                             FreetimeText(stringResource(Res.string.compare_windiest), style = FreetimeDesign.typography.labelSmall)
-                                            FreetimeText(windiest?.name ?: "--", style = MaterialTheme.typography.titleSmall, maxLines = 1)
+                                            FreetimeText(windiest?.name ?: "--", style = FreetimeDesign.typography.titleSmall, maxLines = 1)
                                         }
                                         Column(Modifier.weight(1f)) {
                                             FreetimeText(stringResource(Res.string.compare_most_humid), style = FreetimeDesign.typography.labelSmall)
-                                            FreetimeText(humid?.name ?: "--", style = MaterialTheme.typography.titleSmall, maxLines = 1)
+                                            FreetimeText(humid?.name ?: "--", style = FreetimeDesign.typography.titleSmall, maxLines = 1)
                                         }
                                     }
                                 }
@@ -322,8 +320,8 @@ fun MainWeatherScreen(
                                 ) {
                                     Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                            FreetimeText(loc.name, style = MaterialTheme.typography.titleSmall, maxLines = 1, modifier = Modifier.weight(1f))
-                                            if (loc.isDefault) Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.favorite_location), modifier = Modifier.size(16.dp))
+                                            FreetimeText(loc.name, style = FreetimeDesign.typography.titleSmall, maxLines = 1, modifier = Modifier.weight(1f))
+                                            if (loc.isDefault) Image(imageVector = Icons.Default.Favorite, contentDescription = stringResource(Res.string.favorite_location), modifier = Modifier.size(16.dp))
                                         }
                                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                             loc.currentWeatherCode?.let { code ->
@@ -333,7 +331,7 @@ fun MainWeatherScreen(
                                                     modifier = Modifier.size(40.dp)
                                                 )
                                             }
-                                            FreetimeText(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.headlineSmall)
+                                            FreetimeText(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.headlineSmall)
                                         }
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                             FreetimeText(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = FreetimeDesign.typography.labelSmall)
