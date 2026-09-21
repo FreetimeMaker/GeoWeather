@@ -1,4 +1,5 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeSnackbar
 import me.free_time.design.FreetimeDesign
 import me.free_time.design.FreetimeChoiceSetting
 import me.free_time.design.FreetimeSwitchSetting
@@ -74,7 +75,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     Scaffold(
         containerColor = Color.Transparent,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { snackbarHostState.currentSnackbarData?.let { data -> FreetimeSnackbar(message = data.visuals.message) } },
         topBar = {
             FreetimeGlassTopBar(
                 title = stringResource(Res.string.settings_title),
