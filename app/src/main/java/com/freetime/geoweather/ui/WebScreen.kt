@@ -13,8 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
-import com.freetime.geoweather.ui.glass.freetimeGlass
-import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
+import me.free_time.design.freetimeGlass
+import me.free_time.design.FreetimeGlassTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
