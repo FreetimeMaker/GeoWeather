@@ -862,6 +862,45 @@ fun WeatherDetailScreen(
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
+                                    val dayHours = hourly.filter { hour ->
+                                        hour.time.substringBefore("T", missingDelimiterValue = "") == day.date
+                                    }
+                                    if (dayHours.isNotEmpty()) {
+                                        Spacer(Modifier.height(10.dp))
+                                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                            items(dayHours, key = { it.time }) { hour ->
+                                                val hourIsDay = isForecastDaytime(hour.time)
+                                                FreetimeGlassPanel(
+                                                    modifier = Modifier.width(78.dp),
+                                                    depth = FreetimeGlassDepth.SUBTLE,
+                                                    interactive = false
+                                                ) {
+                                                    Column(
+                                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                                                    ) {
+                                                        FreetimeText(hour.time.takeLast(5), style = FreetimeDesign.typography.labelSmall)
+                                                        Image(
+                                                            painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code, hourIsDay)),
+                                                            contentDescription = null,
+                                                            modifier = Modifier.size(32.dp)
+                                                        )
+                                                        FreetimeText(
+                                                            formatTemp(hour.temp.toDouble(), tempUnit),
+                                                            style = FreetimeDesign.typography.labelMedium,
+                                                            fontWeight = FontWeight.Bold
+                                                        )
+                                                        if (hour.precipProbability > 0) {
+                                                            FreetimeText(
+                                                                "${hour.precipProbability}%",
+                                                                style = FreetimeDesign.typography.labelSmall
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                     AnimatedVisibility(
                                         visible = expanded,
                                         enter = fadeIn() + expandVertically(),
