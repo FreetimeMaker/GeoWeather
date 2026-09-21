@@ -74,6 +74,7 @@ import com.freetime.design.FreetimeScaffold
 import com.freetime.design.FreetimePullRefresh
 import com.freetime.design.rememberFreetimePullRefreshState
 import com.freetime.design.FreetimeDivider
+import com.freetime.design.FreetimeText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -421,7 +422,7 @@ fun WeatherDetailScreen(
                                     WeatherDetailItem(stringResource(Res.string.pressure_trend_label), pressureTrend, modifier = Modifier.weight(1f))
                                 }
                                 Text(stringResource(Res.string.feels_like_reason_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                Text(feelsReason, color = FreetimeDesign.palette.contentMuted)
+                                FreetimeText(feelsReason, color = FreetimeDesign.palette.contentMuted)
                             }
                         }
                     }
@@ -438,8 +439,8 @@ fun WeatherDetailScreen(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Text(stringResource(Res.string.smart_weather_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                Text(smart.primary, style = FreetimeDesign.typography.titleLarge)
-                                smart.secondary?.let { Text(it, color = FreetimeDesign.palette.contentMuted) }
+                                FreetimeText(smart.primary, style = FreetimeDesign.typography.titleLarge)
+                                smart.secondary?.let { FreetimeText(it, color = FreetimeDesign.palette.contentMuted) }
                                 FreetimeDivider()
                                 Text(stringResource(Res.string.nowcast_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 if (nowcast?.startsAt != null && nowcast.endsAt != null) {
@@ -472,7 +473,7 @@ fun WeatherDetailScreen(
                                                 interactive = false
                                             ) {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                                    Text(hour.time, style = FreetimeDesign.typography.labelMedium)
+                                                    FreetimeText(hour.time, style = FreetimeDesign.typography.labelMedium)
                                                     Text(formatTemp(hour.temp.toDouble(), tempUnit), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                                     Text(
                                                         stringResource(
@@ -523,11 +524,11 @@ fun WeatherDetailScreen(
                         val moon = moonPhaseDetails(java.time.LocalDate.now())
                         FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.SUBTLE) {
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                                Text(moon.icon, style = FreetimeDesign.typography.displayMedium)
+                                FreetimeText(moon.icon, style = FreetimeDesign.typography.displayMedium)
                                 Column(horizontalAlignment = Alignment.End) {
                                     Text(moon.name, style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    Text("${moon.illumination}% illuminated", style = FreetimeDesign.typography.bodyMedium)
-                                    Text("Next full moon: ${moon.daysToFull} d · new moon: ${moon.daysToNew} d", style = FreetimeDesign.typography.labelSmall)
+                                    FreetimeText("${moon.illumination}% illuminated", style = FreetimeDesign.typography.bodyMedium)
+                                    FreetimeText("Next full moon: ${moon.daysToFull} d · new moon: ${moon.daysToNew} d", style = FreetimeDesign.typography.labelSmall)
                                 }
                             }
                         }
@@ -571,7 +572,7 @@ fun WeatherDetailScreen(
                                 ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                                     Text(stringResource(Res.string.next_rain_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    Text(nextRainText, style = FreetimeDesign.typography.bodyLarge)
+                                    FreetimeText(nextRainText, style = FreetimeDesign.typography.bodyLarge)
                                     Text(stringResource(Res.string.timeline_24h), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Row(
                                         modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
@@ -584,7 +585,7 @@ fun WeatherDetailScreen(
                                                 hour.time.takeLast(5) >= sunsetTime.toString().take(5)
                                             if (marksSunset) {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                                    Text("🌇", style = FreetimeDesign.typography.titleMedium)
+                                                    FreetimeText("🌇", style = FreetimeDesign.typography.titleMedium)
                                                     Text(sunsetTime.toString().take(5), style = FreetimeDesign.typography.labelSmall)
                                                 }
                                             }
@@ -599,7 +600,7 @@ fun WeatherDetailScreen(
                                                     )
                                                     Text("${hour.temp}°", fontWeight = FontWeight.Bold)
                                                     if (hour.precipProbability > 0) {
-                                                        Text("${hour.precipProbability}%", style = FreetimeDesign.typography.labelSmall)
+                                                        FreetimeText("${hour.precipProbability}%", style = FreetimeDesign.typography.labelSmall)
                                                     }
                                                 }
                                             }
@@ -757,7 +758,7 @@ fun WeatherDetailScreen(
                                     depth = FreetimeGlassDepth.SUBTLE
                                 ) {
                                     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Text("🌧️  ·  📡", style = FreetimeDesign.typography.headlineMedium)
+                                        FreetimeText("🌧️  ·  📡", style = FreetimeDesign.typography.headlineMedium)
                                         Text(stringResource(Res.string.open_weather_radar), style = FreetimeDesign.typography.labelLarge)
                                     }
                                 }
@@ -965,8 +966,8 @@ fun WeatherDetailItem(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, style = FreetimeDesign.typography.labelSmall)
-        Text(value, style = FreetimeDesign.typography.bodyMedium, color = valueColor)
+        FreetimeText(label, style = FreetimeDesign.typography.labelSmall)
+        FreetimeText(value, style = FreetimeDesign.typography.bodyMedium, color = valueColor)
     }
 }
 
@@ -976,8 +977,8 @@ fun DetailInfoRow(label: String, value: String) {
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, style = FreetimeDesign.typography.bodyMedium)
-        Text(value, style = FreetimeDesign.typography.bodyMedium)
+        FreetimeText(label, style = FreetimeDesign.typography.bodyMedium)
+        FreetimeText(value, style = FreetimeDesign.typography.bodyMedium)
     }
 }
 
@@ -1063,7 +1064,7 @@ fun WeatherAlertsSection(
                 Text(stringResource(Res.string.alert_history_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                 history.take(5).forEach { record ->
                     val state = if (record.endedAt == null) stringResource(Res.string.alert_active) else stringResource(Res.string.alert_ended)
-                    Text("• " + record.label + " · " + state, style = FreetimeDesign.typography.bodySmall)
+                    FreetimeText("• " + record.label + " · " + state, style = FreetimeDesign.typography.bodySmall)
                 }
             }
         }
@@ -1191,7 +1192,7 @@ fun ForecastDetailScreen(
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                     if (index > 0) {
                         FreetimeGlassAction(onClick = { index-- }) {
-                            Text("‹", style = FreetimeDesign.typography.headlineMedium)
+                            FreetimeText("‹", style = FreetimeDesign.typography.headlineMedium)
                         }
                     } else Spacer(Modifier.width(52.dp))
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -1207,7 +1208,7 @@ fun ForecastDetailScreen(
                     }
                     if (index < maxIndex) {
                         FreetimeGlassAction(onClick = { index++ }) {
-                            Text("›", style = FreetimeDesign.typography.headlineMedium)
+                            FreetimeText("›", style = FreetimeDesign.typography.headlineMedium)
                         }
                     } else Spacer(Modifier.width(52.dp))
                 }
