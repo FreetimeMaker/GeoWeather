@@ -1,5 +1,9 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeLoadingState
+import com.freetime.design.FreetimeErrorState
+import com.freetime.design.FreetimeStatusBanner
+import com.freetime.design.rememberFreetimeReducedMotion
 import com.freetime.design.FreetimeCard
 import com.freetime.design.FreetimeGlassPullRefreshIndicator
 import com.freetime.design.FreetimeDesign
@@ -171,37 +175,18 @@ fun WeatherDetailScreen(
     ) { padding ->
         when {
             loc == null -> {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    FreetimeProgressIndicator()
-                }
+                FreetimeLoadingState(modifier = Modifier.fillMaxSize().padding(padding))
             }
             loc.weatherData == null -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                        .padding(horizontal = if (isWideLayout) 28.dp else 16.dp, vertical = 16.dp)
-                        .widthIn(max = if (isWideLayout) 1180.dp else 760.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    if (isRefreshing) {
-                        FreetimeProgressIndicator()
-                    } else {
-                        Text(
-                            text = stringResource(Res.string.error_loading_weather),
-                            textAlign = TextAlign.Center,
-                            style = FreetimeDesign.typography.bodyLarge,
-                            color = FreetimeDesign.palette.contentMuted
-                        )
-                        Spacer(Modifier.height(16.dp))
-                        FreetimeGlassAction(onClick = { doRefresh() }) {
-                            Text(stringResource(Res.string.refresh_nav_desc))
-                        }
-                    }
+                if (isRefreshing) {
+                    FreetimeLoadingState(modifier = Modifier.fillMaxSize().padding(padding))
+                } else {
+                    FreetimeErrorState(
+                        title = stringResource(Res.string.error_loading_weather),
+                        retryLabel = stringResource(Res.string.refresh_nav_desc),
+                        onRetry = { doRefresh() },
+                        modifier = Modifier.fillMaxSize().padding(padding)
+                    )
                 }
             }
             else -> {
@@ -218,7 +203,8 @@ fun WeatherDetailScreen(
                 // Temporarily disable weather scene animations for GPU crash isolation.
                 // Liquid Glass/Backdrop remains enabled.
                 val animationsEnabled = animationMode != "off"
-                val reducedMotion = animationMode == "reduced"
+                val systemReducedMotion = rememberFreetimeReducedMotion()
+                val reducedMotion = animationMode == "reduced" || systemReducedMotion
                 val rainIntensity = when (code) {
                     in 51..55 -> .65f
                     in 61..65, in 80..82 -> 1.35f
@@ -264,12 +250,7 @@ fun WeatherDetailScreen(
                     item {
                         val minutesAgo = ((System.currentTimeMillis() - loc.lastUpdated).coerceAtLeast(0L) / 60_000L).toInt()
                         if (!isNetworkAvailable() && loc.weatherData != null) {
-                            Text(
-                                stringResource(Res.string.offline_cached_weather),
-                                modifier = Modifier.fillMaxWidth().freetimeGlass(FreetimeDesign.shapes.surface, interactive = false).padding(FreetimeDesign.spacing.md),
-                                textAlign = TextAlign.Center,
-                                style = FreetimeDesign.typography.labelLarge
-                            )
+                            FreetimeStatusBanner(message = stringResource(Res.string.offline_cached_weather), modifier = Modifier.fillMaxWidth())
                         } else if (loc.lastUpdated > 0L) {
                             Text(
                                 stringResource(Res.string.last_updated_minutes, minutesAgo),
