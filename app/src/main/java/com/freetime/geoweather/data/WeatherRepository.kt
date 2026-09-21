@@ -289,12 +289,13 @@ class WeatherRepository(
                 it.jsonPrimitive.content.startsWith(currentHourPrefix)
             }.takeIf { it >= 0 } ?: 0
 
-            val availableCount = minOf(times.size, temps.size, codes.size) - startIndex
-            val count = minOf(availableCount, 24).coerceAtLeast(0)
+            // Open-Meteo returns hourly values for the full 16-day request.
+            // Keep the complete remaining forecast so every daily forecast can expose its hours.
+            val count = (minOf(times.size, temps.size, codes.size) - startIndex).coerceAtLeast(0)
 
             List(count) { offset ->
                 val i = startIndex + offset
-                val timeStr = times[i].jsonPrimitive.content.split("T").last()
+                val timeStr = times[i].jsonPrimitive.content
                 val temp = temps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0
                 val code = codes[i].jsonPrimitive.intOrNull ?: 0
                 HourlyForecast(
