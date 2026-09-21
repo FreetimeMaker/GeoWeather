@@ -496,24 +496,17 @@ fun MainWeatherScreen(
     }
 
     locationToDelete?.let { location ->
-        GeoWeatherGlassDialog(
-            onDismissRequest = { locationToDelete = null },
+        FreetimeDialog(
             title = stringResource(Res.string.DelLoc),
-            actions = {
-                FreetimeGlassAction(onClick = { locationToDelete = null }) {
-                    Text(stringResource(Res.string.CancelTXT))
-                }
-                Spacer(Modifier.width(8.dp))
-                FreetimeGlassAction(onClick = {
-                    viewModel.deleteLocation(location)
-                    locationToDelete = null
-                }) {
-                    Text(stringResource(Res.string.DelTXT), color = MaterialTheme.colorScheme.error)
-                }
-            }
-        ) {
-            Text(stringResource(Res.string.DelLocConAsk, location.name))
-        }
+            text = stringResource(Res.string.DelLocConAsk, location.name),
+            confirmText = stringResource(Res.string.DelTXT),
+            onConfirm = {
+                viewModel.deleteLocation(location)
+                locationToDelete = null
+            },
+            dismissText = stringResource(Res.string.CancelTXT),
+            onDismissRequest = { locationToDelete = null }
+        )
     }
 
     notificationLocation?.let { location ->
