@@ -17,7 +17,7 @@ import android.net.NetworkCapabilities
 import androidx.annotation.RequiresPermission
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import me.free_time.browser.FreetimeBrowser
+import com.freetime.browser.FreetimeBrowser
 
 private var androidContext: Context? = null
 
