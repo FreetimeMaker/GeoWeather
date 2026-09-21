@@ -24,7 +24,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -61,7 +60,6 @@ import me.free_time.design.freetimeGlass
 import me.free_time.design.FreetimeGlassTopBar
 import me.free_time.design.FreetimeGlassPanel
 import me.free_time.design.FreetimeGlassAction
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -436,7 +434,7 @@ fun WeatherDetailScreen(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Text(stringResource(Res.string.smart_weather_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                Text(smart.primary, style = MaterialTheme.typography.headlineSmall)
+                                Text(smart.primary, style = FreetimeDesign.typography.titleLarge)
                                 smart.secondary?.let { Text(it, color = FreetimeDesign.palette.contentMuted) }
                                 HorizontalDivider(color = FreetimeDesign.palette.outline.copy(alpha = .12f))
                                 Text(stringResource(Res.string.nowcast_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
