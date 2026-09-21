@@ -1,5 +1,6 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeScaffold
 import com.freetime.design.FreetimeDesign
 import com.freetime.design.freetimeGlass
 import com.freetime.design.FreetimeGlassTopBar
@@ -417,19 +418,16 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             stringResource(Res.string.changelog_remove_coin)
         )
     )
-    Scaffold(
-        containerColor = Color.Transparent,
+    FreetimeScaffold(
         topBar = {
             FreetimeGlassTopBar(
                 title = stringResource(Res.string.whats_new_title),
                 navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
             )
         }
-    ) { innerPadding ->
+    ) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -458,7 +456,7 @@ fun ReleaseCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             details.forEach { line ->
-                Text(
+                FreetimeText(
                     text = "• $line",
                     style = FreetimeDesign.typography.bodyMedium
                 )
