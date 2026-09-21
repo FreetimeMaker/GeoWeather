@@ -18,7 +18,7 @@ import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.data.onCreateDocumentResult
 import com.freetime.geoweather.data.onOpenDocumentResult
 import com.freetime.geoweather.data.registerFilePickers
-import me.free_time.design.FreetimeGlassRoot
+import com.freetime.design.FreetimeGlassRoot
 
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
