@@ -53,10 +53,10 @@ import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
 import com.freetime.geoweather.isNetworkAvailable
 import com.freetime.geoweather.R as Res
-import com.freetime.geoweather.ui.glass.freetimeGlass
-import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
-import com.freetime.geoweather.ui.glass.FreetimeGlassPanel
-import com.freetime.geoweather.ui.glass.FreetimeGlassAction
+import me.free_time.design.freetimeGlass
+import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeGlassPanel
+import me.free_time.design.FreetimeGlassAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
 import kotlin.math.cos
 import kotlin.math.roundToInt
