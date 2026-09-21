@@ -1,5 +1,6 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeText
 import com.freetime.design.FreetimeScaffold
 import com.freetime.design.FreetimeFloatingActionButton
 import com.freetime.design.FreetimeExtendedFloatingActionButton
@@ -196,12 +197,12 @@ fun MainWeatherScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Column(Modifier.weight(1f)) {
-                                        Text(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
-                                        Text(
+                                        FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
+                                        FreetimeText(
                                             text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
                                             style = MaterialTheme.typography.headlineSmall
                                         )
-                                        Text(
+                                        FreetimeText(
                                             text = loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--",
                                             style = FreetimeDesign.typography.labelSmall
                                         )
@@ -235,18 +236,18 @@ fun MainWeatherScreen(
                                     .padding(20.dp)
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    Text(loc.name, style = MaterialTheme.typography.headlineSmall)
-                                    Text(
+                                    FreetimeText(loc.name, style = MaterialTheme.typography.headlineSmall)
+                                    FreetimeText(
                                         text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
                                         style = MaterialTheme.typography.displaySmall
                                     )
-                                    Text(
+                                    FreetimeText(
                                         text = loc.currentWeatherCode?.let { code -> stringResource(com.freetime.geoweather.WeatherCodes.getStringResource(code)) }.orEmpty(),
                                         style = FreetimeDesign.typography.bodyLarge
                                     )
                                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                        Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--")
-                                        Text(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--")
+                                        FreetimeText(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--")
+                                        FreetimeText(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--")
                                     }
                                 }
                             }
@@ -255,7 +256,7 @@ fun MainWeatherScreen(
                             onClick = onDonateClick,
                             modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(24.dp))
                         ) {
-                            Text(stringResource(Res.string.main_donation_hint))
+                            FreetimeText(stringResource(Res.string.main_donation_hint))
                         }
                     }
                 }
@@ -281,19 +282,19 @@ fun MainWeatherScreen(
                                     .freetimeGlass(RoundedCornerShape(28.dp), interactive = false)
                             ) {
                                 Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Text(stringResource(Res.string.compare_summary_title), style = FreetimeDesign.typography.titleMedium)
+                                    FreetimeText(stringResource(Res.string.compare_summary_title), style = FreetimeDesign.typography.titleMedium)
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                         Column(Modifier.weight(1f)) {
-                                            Text(stringResource(Res.string.compare_temperature_spread), style = FreetimeDesign.typography.labelSmall)
-                                            Text(minTemp.toInt().toString() + "–" + maxTemp.toInt() + "°C", style = FreetimeDesign.typography.titleMedium)
+                                            FreetimeText(stringResource(Res.string.compare_temperature_spread), style = FreetimeDesign.typography.labelSmall)
+                                            FreetimeText(minTemp.toInt().toString() + "–" + maxTemp.toInt() + "°C", style = FreetimeDesign.typography.titleMedium)
                                         }
                                         Column(Modifier.weight(1f)) {
-                                            Text(stringResource(Res.string.compare_windiest), style = FreetimeDesign.typography.labelSmall)
-                                            Text(windiest?.name ?: "--", style = MaterialTheme.typography.titleSmall, maxLines = 1)
+                                            FreetimeText(stringResource(Res.string.compare_windiest), style = FreetimeDesign.typography.labelSmall)
+                                            FreetimeText(windiest?.name ?: "--", style = MaterialTheme.typography.titleSmall, maxLines = 1)
                                         }
                                         Column(Modifier.weight(1f)) {
-                                            Text(stringResource(Res.string.compare_most_humid), style = FreetimeDesign.typography.labelSmall)
-                                            Text(humid?.name ?: "--", style = MaterialTheme.typography.titleSmall, maxLines = 1)
+                                            FreetimeText(stringResource(Res.string.compare_most_humid), style = FreetimeDesign.typography.labelSmall)
+                                            FreetimeText(humid?.name ?: "--", style = MaterialTheme.typography.titleSmall, maxLines = 1)
                                         }
                                     }
                                 }
@@ -321,7 +322,7 @@ fun MainWeatherScreen(
                                 ) {
                                     Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                            Text(loc.name, style = MaterialTheme.typography.titleSmall, maxLines = 1, modifier = Modifier.weight(1f))
+                                            FreetimeText(loc.name, style = MaterialTheme.typography.titleSmall, maxLines = 1, modifier = Modifier.weight(1f))
                                             if (loc.isDefault) Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.favorite_location), modifier = Modifier.size(16.dp))
                                         }
                                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -332,13 +333,13 @@ fun MainWeatherScreen(
                                                     modifier = Modifier.size(40.dp)
                                                 )
                                             }
-                                            Text(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.headlineSmall)
+                                            FreetimeText(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.headlineSmall)
                                         }
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                            Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = FreetimeDesign.typography.labelSmall)
-                                            Text(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--", style = FreetimeDesign.typography.labelSmall)
+                                            FreetimeText(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = FreetimeDesign.typography.labelSmall)
+                                            FreetimeText(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--", style = FreetimeDesign.typography.labelSmall)
                                         }
-                                        if (loc.lastUpdated > 0L) Text(stringResource(Res.string.updated_age_short, ageMinutes), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
+                                        if (loc.lastUpdated > 0L) FreetimeText(stringResource(Res.string.updated_age_short, ageMinutes), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
                                     }
                                 }
                             }
@@ -346,7 +347,7 @@ fun MainWeatherScreen(
                     }
                 }
                 item(key = "saved-locations-title") {
-                    Text(
+                    FreetimeText(
                         text = stringResource(Res.string.compare_locations),
                         style = FreetimeDesign.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
@@ -373,8 +374,8 @@ fun MainWeatherScreen(
                             )
                         }
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(loc.name, style = FreetimeDesign.typography.titleMedium)
-                            Text(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.bodyMedium)
+                            FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium)
+                            FreetimeText(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.bodyMedium)
                         }
                         FreetimeIconButton(
                             icon = Icons.Default.MoreVert,
@@ -391,7 +392,7 @@ fun MainWeatherScreen(
                         onClick = onDonateClick,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
                     ) {
-                        Text(text = stringResource(Res.string.main_donation_hint), style = FreetimeDesign.typography.labelMedium)
+                        FreetimeText(text = stringResource(Res.string.main_donation_hint), style = FreetimeDesign.typography.labelMedium)
                     }
                 }
             }
@@ -483,7 +484,7 @@ fun MainWeatherScreen(
             title = stringResource(Res.string.search_title),
             actions = {
                 FreetimeGlassAction(onClick = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }) {
-                    Text(stringResource(Res.string.CancelTXT))
+                    FreetimeText(stringResource(Res.string.CancelTXT))
                 }
             }
         ) {
@@ -512,8 +513,8 @@ fun MainWeatherScreen(
                                 .clickable { viewModel.addLocation(city); showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }
                                 .padding(horizontal = 16.dp, vertical = 12.dp)
                         ) {
-                            Text(city.name, style = FreetimeDesign.typography.titleMedium)
-                            Text("${city.latitude}, ${city.longitude}", style = FreetimeDesign.typography.bodySmall, color = FreetimeDesign.palette.contentMuted)
+                            FreetimeText(city.name, style = FreetimeDesign.typography.titleMedium)
+                            FreetimeText("${city.latitude}, ${city.longitude}", style = FreetimeDesign.typography.bodySmall, color = FreetimeDesign.palette.contentMuted)
                         }
                     }
                 }
@@ -551,18 +552,18 @@ fun MainWeatherScreen(
                     FreetimeGlassAction(onClick = {
                         viewModel.setLocationNotifications(location, false, location.notificationTime)
                         notificationLocation = null
-                    }) { Text(stringResource(Res.string.notification_disable)) }
+                    }) { FreetimeText(stringResource(Res.string.notification_disable)) }
                     Spacer(Modifier.width(8.dp))
                 }
                 FreetimeGlassAction(onClick = { notificationLocation = null }) {
-                    Text(stringResource(Res.string.CancelTXT))
+                    FreetimeText(stringResource(Res.string.CancelTXT))
                 }
                 Spacer(Modifier.width(8.dp))
                 FreetimeGlassAction(onClick = {
                     val time = "%02d:%02d".format(selectedTime.hour, selectedTime.minute)
                     viewModel.setLocationNotifications(location, true, time)
                     notificationLocation = null
-                }) { Text(stringResource(Res.string.confirm)) }
+                }) { FreetimeText(stringResource(Res.string.confirm)) }
             }
         ) {
             FreetimeTimePicker(
