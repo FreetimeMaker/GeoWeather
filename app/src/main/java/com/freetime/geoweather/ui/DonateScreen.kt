@@ -1,10 +1,10 @@
 package com.freetime.geoweather.ui
-import me.free_time.design.FreetimeIconButton
-import me.free_time.design.FreetimeDesign
-import me.free_time.design.freetimeGlass
-import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeGlassAction
-import me.free_time.design.FreetimeGlassPanel
+import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeDesign
+import com.freetime.design.freetimeGlass
+import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeGlassAction
+import com.freetime.design.FreetimeGlassPanel
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -24,10 +24,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.copyToClipboard
-import me.free_time.design.freetimeGlass
-import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeGlassPanel
-import me.free_time.design.FreetimeGlassAction
+import com.freetime.design.freetimeGlass
+import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeGlassPanel
+import com.freetime.design.FreetimeGlassAction
 import me.free_time.donations.DonationTarget
 
 private data class ExternalDonation(@StringRes val labelKey: Int, val url: String)
