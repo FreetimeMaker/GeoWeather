@@ -58,6 +58,7 @@ import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 import me.free_time.design.FreetimeProgressIndicator
+import me.free_time.design.FreetimeDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -116,37 +117,21 @@ fun WeatherDetailScreen(
     if (showDetailSheet && loc?.weatherData != null) {
         val sheetHourly = remember(loc.weatherData) { viewModel.getHourlyForecasts(loc) }
         val sheetExtras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
-        ModalBottomSheet(
+        FreetimeDialog(
+            title = stringResource(Res.string.details_sheet_title),
             onDismissRequest = { showDetailSheet = false },
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = .90f),
-            tonalElevation = 0.dp
-        ) {
-            GeoWeatherGlassPanel(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                depth = GeoWeatherGlassDepth.Elevated
-            ) {
-                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(stringResource(Res.string.details_sheet_title), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                    val current = sheetHourly.firstOrNull()
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                        WeatherDetailItem(stringResource(Res.string.visibility_label), sheetExtras?.visibilityKm?.let { String.format(java.util.Locale.US, "%.1f km", it) } ?: "--", modifier = Modifier.weight(1f))
-                        WeatherDetailItem(stringResource(Res.string.gusts_label), current?.windGusts?.let { it.toInt().toString() + " km/h" } ?: "--", modifier = Modifier.weight(1f))
-                        WeatherDetailItem(stringResource(Res.string.uv_max_label), sheetExtras?.uvIndex?.let { String.format(java.util.Locale.US, "%.1f", it) } ?: "--", modifier = Modifier.weight(1f))
-                    }
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                        WeatherDetailItem(stringResource(Res.string.cloud_base_label), sheetExtras?.cloudBaseM?.let { it.roundToInt().toString() + " m" } ?: "--", modifier = Modifier.weight(1f))
-                        WeatherDetailItem(stringResource(Res.string.pressure_trend_label), when (sheetExtras?.pressureTrend ?: 0) {
-                            1 -> stringResource(Res.string.pressure_rising)
-                            -1 -> stringResource(Res.string.pressure_falling)
-                            else -> stringResource(Res.string.pressure_steady)
-                        }, modifier = Modifier.weight(1f))
-                        WeatherDetailItem(stringResource(Res.string.humidity_label), loc.currentHumidity?.let { it.toString() + "%" } ?: "--", modifier = Modifier.weight(1f))
-                    }
-                    Spacer(Modifier.height(12.dp))
-                }
+            confirmText = stringResource(android.R.string.ok),
+            onConfirm = { showDetailSheet = false },
+            text = buildString {
+                val current = sheetHourly.firstOrNull()
+                append(stringResource(Res.string.visibility_label) + ": " + (sheetExtras?.visibilityKm?.let { String.format(java.util.Locale.US, "%.1f km", it) } ?: "--"))
+                append("\n" + stringResource(Res.string.gusts_label) + ": " + (current?.windGusts?.let { it.toInt().toString() + " km/h" } ?: "--"))
+                append("\n" + stringResource(Res.string.uv_max_label) + ": " + (sheetExtras?.uvIndex?.let { String.format(java.util.Locale.US, "%.1f", it) } ?: "--"))
+                append("\n" + stringResource(Res.string.cloud_base_label) + ": " + (sheetExtras?.cloudBaseM?.let { it.roundToInt().toString() + " m" } ?: "--"))
+                append("\n" + stringResource(Res.string.humidity_label) + ": " + (loc.currentHumidity?.let { it.toString() + "%" } ?: "--"))
             }
-        }
-    }
+        )
+    }    }
 
     Scaffold(
         containerColor = Color.Transparent,
