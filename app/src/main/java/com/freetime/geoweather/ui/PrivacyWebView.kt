@@ -8,7 +8,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import me.free_time.browser.FreetimeBrowser
+import com.freetime.browser.FreetimeBrowser
 
 class PrivacyWebView(context: Context, attrs: AttributeSet? = null) : WebView(context, attrs) {
     var disablePrivateView: Boolean = false
