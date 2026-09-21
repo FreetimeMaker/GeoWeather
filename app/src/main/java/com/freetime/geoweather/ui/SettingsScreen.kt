@@ -3,6 +3,7 @@ import com.freetime.design.FreetimeIconButton
 import com.freetime.design.FreetimeText
 import com.freetime.design.FreetimeScaffold
 import com.freetime.design.FreetimeSnackbar
+import com.freetime.design.rememberFreetimeMessageHostState
 import com.freetime.design.FreetimeDesign
 import com.freetime.design.FreetimeChoiceSetting
 import com.freetime.design.FreetimeOptionGroup
@@ -24,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +49,6 @@ import com.freetime.design.FreetimeTextField
 import com.freetime.design.freetimeGlassCapsule
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     viewModel: WeatherViewModel,
@@ -71,7 +70,7 @@ fun SettingsScreen(
     val notificationProfile by appSettings.notificationProfile.collectAsState()
     val quietHours by appSettings.quietHours.collectAsState()
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarHostState = rememberFreetimeMessageHostState()
     val scope = rememberCoroutineScope()
     val exportSuccess = stringResource(Res.string.export_success)
     val exportFailed = stringResource(Res.string.export_failed)
@@ -190,7 +189,7 @@ fun SettingsScreen(
                         scope.launch {
                             val json = viewModel.buildBackupJson()
                             val ok = json != null && saveTextFile(BACKUP_FILE_NAME, BACKUP_MIME_TYPE, json)
-                            snackbarHostState.showSnackbar(if (ok) exportSuccess else exportFailed)
+                            snackbarHostState.show(if (ok) exportSuccess else exportFailed)
                         }
                     },
                     modifier = Modifier.weight(1f).freetimeGlass(RoundedCornerShape(20.dp))
@@ -203,7 +202,7 @@ fun SettingsScreen(
                             val content = loadTextFile(arrayOf(BACKUP_MIME_TYPE))
                             if (content == null) return@launch
                             val ok = viewModel.importBackupJson(content)
-                            snackbarHostState.showSnackbar(if (ok) importSuccess else importFailed)
+                            snackbarHostState.show(if (ok) importSuccess else importFailed)
                         }
                     },
                     modifier = Modifier.weight(1f).freetimeGlass(RoundedCornerShape(20.dp))
