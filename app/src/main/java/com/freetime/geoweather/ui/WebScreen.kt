@@ -1,6 +1,7 @@
 package com.freetime.geoweather.ui
 import me.free_time.design.freetimeGlass
 import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeIconButton
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +29,7 @@ fun WebScreen(
         topBar = {
             FreetimeGlassTopBar(
                 title = title,
-                onBack = onBack
+                navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
             )
         }
     ) { padding ->
