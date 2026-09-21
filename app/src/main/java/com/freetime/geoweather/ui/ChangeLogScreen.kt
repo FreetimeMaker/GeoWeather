@@ -4,6 +4,8 @@ import com.freetime.design.FreetimeDesign
 import com.freetime.design.freetimeGlass
 import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeGlassPanel
+import com.freetime.design.FreetimeGlassTitle
+import com.freetime.design.FreetimeText
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -452,11 +454,7 @@ fun ReleaseCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.Start
         ) {
-            Text(
-                text = version,
-                style = FreetimeDesign.typography.titleLarge,
-                color = FreetimeDesign.palette.primary
-            )
+            FreetimeGlassTitle(text = version)
             Spacer(modifier = Modifier.height(8.dp))
 
             details.forEach { line ->
