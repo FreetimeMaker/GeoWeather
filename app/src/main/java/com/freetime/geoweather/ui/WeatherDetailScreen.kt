@@ -225,7 +225,7 @@ fun WeatherDetailScreen(
                 Box(
                     Modifier
                         .fillMaxSize()
-                        .background(if (oledBlack && isNight) Brush.verticalGradient(listOf(Color.Black, Color.Black, Color(0xFF07162E).copy(alpha = .18f))) else weatherBackdropBrush(code, isNight, twilight))
+                        .background(if (oledBlack && isNight) Brush.verticalGradient(listOf(Color.Black, Color.Black)) else weatherBackdropBrush(code, isNight, twilight))
                 ) {
                     if (animationsEnabled && code != null) {
                         FullScreenWeatherBackground(
@@ -908,7 +908,7 @@ fun WeatherDetailScreen(
 
 private fun weatherBackdropBrush(code: Int?, isNight: Boolean, twilight: Float): Brush {
     val colors = when {
-        isNight -> listOf(Color(0xFF07162E).copy(alpha = .58f), Color(0xFF18345C).copy(alpha = .34f), Color.Transparent)
+        isNight -> listOf(Color.Black.copy(alpha = .22f), Color(0xFF151515).copy(alpha = .14f), Color.Transparent)
         code in 95..99 -> listOf(Color(0xFF252A3D).copy(alpha = .48f), Color(0xFF48536C).copy(alpha = .30f), Color.Transparent)
         code in 51..67 || code in 80..82 -> listOf(Color(0xFF355B78).copy(alpha = .38f), Color(0xFF7AA6C2).copy(alpha = .22f), Color.Transparent)
         code in 71..77 || code in 85..86 -> listOf(Color(0xFFB8C9D8).copy(alpha = .30f), Color(0xFFE4EDF4).copy(alpha = .18f), Color.Transparent)
