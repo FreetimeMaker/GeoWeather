@@ -1,5 +1,7 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeInfoCard
+import com.freetime.design.FreetimeText
 import com.freetime.design.freetimeGlass
 import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeGlassAction
@@ -62,8 +64,11 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
         )
     }) { padding ->
         Column(Modifier.padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            FreetimeGlassPanel(Modifier.fillMaxWidth()) {
-                Text(report)
+            FreetimeInfoCard(
+                title = stringResource(Res.string.diagnostics_title),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                FreetimeText(report)
             }
             FreetimeGlassAction(onClick = {
                 val intent = Intent(Intent.ACTION_SEND).apply { type = "text/plain"; putExtra(Intent.EXTRA_SUBJECT, "GeoWeather diagnostics"); putExtra(Intent.EXTRA_TEXT, report) }
