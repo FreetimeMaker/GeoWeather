@@ -69,6 +69,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 import com.freetime.design.FreetimeProgressIndicator
 import com.freetime.design.FreetimeDialog
+import com.freetime.design.FreetimeTabRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -247,6 +248,25 @@ fun WeatherDetailScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    item(key = "detail-tabs") {
+                        FreetimeTabRow(
+                            tabs = listOf(
+                                stringResource(Res.string.location_overview_title),
+                                stringResource(Res.string.weather_timeline_title),
+                                stringResource(Res.string.forecast_3day_label)
+                            ),
+                            selectedIndex = 0,
+                            onTabSelected = { index ->
+                                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                when (index) {
+                                    1 -> if (hourly.isNotEmpty()) onHourlyClick(loc.name, hourly, 0)
+                                    2 -> if (daily.isNotEmpty()) onDailyClick(loc.name, daily, 0)
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
                     item {
                         val minutesAgo = ((System.currentTimeMillis() - loc.lastUpdated).coerceAtLeast(0L) / 60_000L).toInt()
                         if (!isNetworkAvailable() && loc.weatherData != null) {
