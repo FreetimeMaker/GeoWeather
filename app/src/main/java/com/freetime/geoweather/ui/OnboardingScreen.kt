@@ -1,4 +1,5 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeDesign
 import me.free_time.design.FreetimeGlassAction
 
 import androidx.compose.foundation.layout.*
@@ -23,8 +24,8 @@ fun OnboardingScreen(onDone: () -> Unit) {
     val texts = listOf(Res.string.onboarding_weather_desc, Res.string.onboarding_alerts_desc, Res.string.onboarding_account_desc)
     Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
         FreetimeCard(modifier = Modifier.fillMaxWidth()) {\n            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(stringResource(titles[page]), style = MaterialTheme.typography.headlineMedium)
-            Text(stringResource(texts[page]), style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(titles[page]), style = FreetimeDesign.typography.headlineMedium)
+            Text(stringResource(texts[page]), style = FreetimeDesign.typography.bodyLarge)
             FreetimeProgressIndicator(progress = (page + 1) / 3f, modifier = Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 FreetimeButton(text = stringResource(Res.string.skip), onClick = onDone)
