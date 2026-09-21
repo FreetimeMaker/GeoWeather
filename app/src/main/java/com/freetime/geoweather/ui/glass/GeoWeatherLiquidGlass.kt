@@ -9,11 +9,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Shape
-import me.free_time.design.LocalFreetimeBackdrop
-import me.free_time.design.freetimeBackdropSource
-import me.free_time.design.freetimeGlass
-import me.free_time.design.freetimeGlassCapsule
-import me.free_time.design.rememberFreetimeBackdrop
+import com.freetime.design.LocalFreetimeBackdrop
+import com.freetime.design.freetimeBackdropSource
+import com.freetime.design.freetimeGlass
+import com.freetime.design.freetimeGlassCapsule
+import com.freetime.design.rememberFreetimeBackdrop
 
 /**
  * GeoWeather Liquid Glass root.
