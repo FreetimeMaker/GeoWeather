@@ -1,9 +1,9 @@
 package com.freetime.geoweather.ui
-import me.free_time.design.FreetimeIconButton
-import me.free_time.design.FreetimeDesign
-import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeGlassSearchField
-import me.free_time.design.freetimeGlass
+import com.freetime.design.FreetimeIconButton
+import com.freetime.design.FreetimeDesign
+import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeGlassSearchField
+import com.freetime.design.freetimeGlass
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,13 +23,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
-import me.free_time.design.freetimeGlass
-import me.free_time.design.FreetimeGlassTopBar
-import me.free_time.design.FreetimeTextField
+import com.freetime.design.freetimeGlass
+import com.freetime.design.FreetimeGlassTopBar
+import com.freetime.design.FreetimeTextField
 import kotlinx.coroutines.launch
-import me.free_time.design.FreetimeChip
-import me.free_time.design.FreetimeCard
-import me.free_time.design.FreetimeProgressIndicator
+import com.freetime.design.FreetimeChip
+import com.freetime.design.FreetimeCard
+import com.freetime.design.FreetimeProgressIndicator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
