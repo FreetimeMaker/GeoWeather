@@ -1,4 +1,9 @@
 package com.freetime.geoweather.ui
+import me.free_time.design.FreetimeGlassTopBar
+import me.free_time.design.FreetimeGlassAction
+import me.free_time.design.FreetimeTextField
+import me.free_time.design.freetimeGlassCapsule
+import me.free_time.design.freetimeGlass
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
@@ -34,11 +39,11 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import com.freetime.geoweather.ui.glass.geoWeatherGlass
-import com.freetime.geoweather.ui.glass.geoWeatherGlassCapsule
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassTopBar
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassTextField
-import com.freetime.geoweather.ui.glass.GeoWeatherGlassAction
+import com.freetime.geoweather.ui.glass.freetimeGlass
+import com.freetime.geoweather.ui.glass.freetimeGlassCapsule
+import com.freetime.geoweather.ui.glass.FreetimeGlassTopBar
+import com.freetime.geoweather.ui.glass.FreetimeTextField
+import com.freetime.geoweather.ui.glass.FreetimeGlassAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassIconAction
 import com.freetime.geoweather.ui.glass.GeoWeatherGlassDialog
 import com.freetime.geoweather.data.LocationEntity
@@ -114,7 +119,7 @@ fun MainWeatherScreen(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            GeoWeatherGlassTopBar(
+            FreetimeGlassTopBar(
                 title = stringResource(Res.string.app_name),
                 compact = navigationCompact,
                 compactSubtitle = if (navigationCompact) locations.firstOrNull()?.currentTemp?.let { "${it.toInt()}°" } else null
@@ -135,7 +140,7 @@ fun MainWeatherScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .padding(24.dp)
-                        .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = false)
+                        .freetimeGlass(RoundedCornerShape(24.dp), interactive = false)
                         .padding(horizontal = 24.dp, vertical = 18.dp)
                 )
             }
@@ -153,7 +158,7 @@ fun MainWeatherScreen(
                             text = stringResource(Res.string.compare_locations),
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier
-                                .geoWeatherGlass(RoundedCornerShape(18.dp), interactive = false)
+                                .freetimeGlass(RoundedCornerShape(18.dp), interactive = false)
                                 .padding(horizontal = 14.dp, vertical = 8.dp)
                         )
                         LazyColumn(
@@ -165,7 +170,7 @@ fun MainWeatherScreen(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = true)
+                                        .freetimeGlass(RoundedCornerShape(24.dp), interactive = true)
                                         .clickable {
                                             viewModel.selectLocation(loc)
                                             onLocationClick(loc)
@@ -208,7 +213,7 @@ fun MainWeatherScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .geoWeatherGlass(RoundedCornerShape(30.dp), interactive = true)
+                                    .freetimeGlass(RoundedCornerShape(30.dp), interactive = true)
                                     .clickable {
                                         viewModel.selectLocation(loc)
                                         onLocationClick(loc)
@@ -232,9 +237,9 @@ fun MainWeatherScreen(
                                 }
                             }
                         }
-                        GeoWeatherGlassAction(
+                        FreetimeGlassAction(
                             onClick = onDonateClick,
-                            modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(24.dp))
+                            modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(24.dp))
                         ) {
                             Text(stringResource(Res.string.main_donation_hint))
                         }
@@ -259,7 +264,7 @@ fun MainWeatherScreen(
                                 modifier = Modifier
                                     .padding(horizontal = 12.dp)
                                     .fillMaxWidth()
-                                    .geoWeatherGlass(RoundedCornerShape(28.dp), interactive = false)
+                                    .freetimeGlass(RoundedCornerShape(28.dp), interactive = false)
                             ) {
                                 Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                     Text(stringResource(Res.string.compare_summary_title), style = MaterialTheme.typography.titleMedium)
@@ -298,7 +303,7 @@ fun MainWeatherScreen(
                                 Box(
                                     modifier = Modifier
                                         .width(184.dp)
-                                        .geoWeatherGlass(RoundedCornerShape(24.dp), interactive = true)
+                                        .freetimeGlass(RoundedCornerShape(24.dp), interactive = true)
                                         .clickable { viewModel.selectLocation(loc); onLocationClick(loc) }
                                 ) {
                                     Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -339,7 +344,7 @@ fun MainWeatherScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 12.dp)
-                            .geoWeatherGlass(RoundedCornerShape(26.dp), interactive = true)
+                            .freetimeGlass(RoundedCornerShape(26.dp), interactive = true)
                             .clickable {
                                 viewModel.selectLocation(loc)
                                 onLocationClick(loc)
@@ -370,7 +375,7 @@ fun MainWeatherScreen(
                     }
                 }
                 item(key = "donate") {
-                    GeoWeatherGlassAction(
+                    FreetimeGlassAction(
                         onClick = onDonateClick,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
                     ) {
@@ -390,7 +395,7 @@ fun MainWeatherScreen(
             ) {
                 Row(
                     modifier = Modifier
-                        .geoWeatherGlassCapsule(interactive = false)
+                        .freetimeGlassCapsule(interactive = false)
                         .padding(horizontal = 6.dp, vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(2.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -458,12 +463,12 @@ fun MainWeatherScreen(
             onDismissRequest = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() },
             title = stringResource(Res.string.search_title),
             actions = {
-                GeoWeatherGlassAction(onClick = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }) {
+                FreetimeGlassAction(onClick = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }) {
                     Text(stringResource(Res.string.CancelTXT))
                 }
             }
         ) {
-            GeoWeatherGlassTextField(
+            FreetimeTextField(
                 value = addLocationQuery,
                 onValueChange = { addLocationQuery = it; viewModel.searchCity(it.trim()) },
                 modifier = Modifier.fillMaxWidth(),
@@ -475,7 +480,7 @@ fun MainWeatherScreen(
                 LazyColumn(modifier = Modifier.heightIn(max = 320.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(searchResults, key = { "add-${it.latitude},${it.longitude}" }) { city ->
                         Column(
-                            modifier = Modifier.fillMaxWidth().geoWeatherGlass(RoundedCornerShape(22.dp), interactive = true)
+                            modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp), interactive = true)
                                 .clickable { viewModel.addLocation(city); showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }
                                 .padding(horizontal = 16.dp, vertical = 12.dp)
                         ) {
@@ -493,11 +498,11 @@ fun MainWeatherScreen(
             onDismissRequest = { locationToDelete = null },
             title = stringResource(Res.string.DelLoc),
             actions = {
-                GeoWeatherGlassAction(onClick = { locationToDelete = null }) {
+                FreetimeGlassAction(onClick = { locationToDelete = null }) {
                     Text(stringResource(Res.string.CancelTXT))
                 }
                 Spacer(Modifier.width(8.dp))
-                GeoWeatherGlassAction(onClick = {
+                FreetimeGlassAction(onClick = {
                     viewModel.deleteLocation(location)
                     locationToDelete = null
                 }) {
@@ -521,17 +526,17 @@ fun MainWeatherScreen(
             title = stringResource(Res.string.notification_time_title),
             actions = {
                 if (location.notificationsEnabled) {
-                    GeoWeatherGlassAction(onClick = {
+                    FreetimeGlassAction(onClick = {
                         viewModel.setLocationNotifications(location, false, location.notificationTime)
                         notificationLocation = null
                     }) { Text(stringResource(Res.string.notification_disable)) }
                     Spacer(Modifier.width(8.dp))
                 }
-                GeoWeatherGlassAction(onClick = { notificationLocation = null }) {
+                FreetimeGlassAction(onClick = { notificationLocation = null }) {
                     Text(stringResource(Res.string.CancelTXT))
                 }
                 Spacer(Modifier.width(8.dp))
-                GeoWeatherGlassAction(onClick = {
+                FreetimeGlassAction(onClick = {
                     val time = "%02d:%02d".format(selectedHour, selectedMinute)
                     viewModel.setLocationNotifications(location, true, time)
                     notificationLocation = null
@@ -566,18 +571,18 @@ private fun GlassTimePart(
     onIncrease: () -> Unit
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        GeoWeatherGlassAction(onClick = onIncrease) {
+        FreetimeGlassAction(onClick = onIncrease) {
             Text("+", style = MaterialTheme.typography.titleLarge)
         }
         Box(
             modifier = Modifier
-                .geoWeatherGlass(RoundedCornerShape(22.dp), interactive = false)
+                .freetimeGlass(RoundedCornerShape(22.dp), interactive = false)
                 .padding(horizontal = 18.dp, vertical = 14.dp),
             contentAlignment = Alignment.Center
         ) {
             Text("%02d".format(value), style = MaterialTheme.typography.headlineMedium)
         }
-        GeoWeatherGlassAction(onClick = onDecrease) {
+        FreetimeGlassAction(onClick = onDecrease) {
             Text("−", style = MaterialTheme.typography.titleLarge)
         }
     }
