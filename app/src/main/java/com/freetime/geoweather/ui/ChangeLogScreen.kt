@@ -28,6 +28,12 @@ import com.freetime.design.FreetimeGlassPanel
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v4.6.5" to listOf(
+            stringResource(Res.string.cl_465_theme),
+            stringResource(Res.string.cl_465_forecast_night),
+            stringResource(Res.string.cl_465_forecast_16day),
+            stringResource(Res.string.cl_465_fixes)
+        ),
         "v4.6.4" to listOf(
             stringResource(Res.string.cl_464_core),
             stringResource(Res.string.cl_464_design),
