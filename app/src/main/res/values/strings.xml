@@ -668,6 +668,11 @@
     <string name="cl_462_forecast_icons">Forecast weather icons now automatically switch between day and night using the forecast time and sunrise/sunset.</string>
     <string name="cl_462_dark_mode">Fixed dark mode so the complete app background is covered by the dark theme.</string>
     <string name="cl_462_fixes">Fixed additional weather detail, resource and UI issues.</string>
+    <!-- v4.6.5 -->
+    <string name="cl_465_theme">Fixed automatic light and dark mode so GeoWeather correctly follows daylight and falls back to the system theme when sun data is unavailable.</string>
+    <string name="cl_465_forecast_night">Improved forecast weather icons so nighttime forecasts use the matching night icons after sunset.</string>
+    <string name="cl_465_forecast_16day">Improved the 16-day forecast foundation with hourly forecast data available across the full forecast range.</string>
+    <string name="cl_465_fixes">Fixed additional weather detail, theme and forecast UI issues.</string>
     <!-- v4.6.4 -->
     <string name="cl_464_core">Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.9.1.</string>
     <string name="cl_464_design">Migrated GeoWeather’s main screens and shared UI to Freetime Design components.</string>
