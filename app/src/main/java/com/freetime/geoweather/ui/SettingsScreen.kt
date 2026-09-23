@@ -77,6 +77,8 @@ fun SettingsScreen(
     val smartUvAlert by appSettings.smartUvAlert.collectAsState()
     val dataSaver by appSettings.dataSaver.collectAsState()
     val offlinePacks by appSettings.offlinePacks.collectAsState()
+    val savedLocations by viewModel.locations.collectAsState()
+    var refreshingOfflinePacks by remember { mutableStateOf(false) }
 
     val snackbarHostState = rememberFreetimeMessageHostState()
     val scope = rememberCoroutineScope()
@@ -236,6 +238,56 @@ fun SettingsScreen(
                     style = FreetimeDesign.typography.bodySmall,
                     color = FreetimeDesign.palette.contentMuted
                 )
+                if (offlinePacks) {
+                    FreetimeText(
+                        stringResource(Res.string.offline_saved_locations),
+                        style = FreetimeDesign.typography.titleMedium
+                    )
+                    if (savedLocations.isEmpty()) {
+                        FreetimeText(
+                            stringResource(Res.string.offline_no_saved_locations),
+                            style = FreetimeDesign.typography.bodySmall,
+                            color = FreetimeDesign.palette.contentMuted
+                        )
+                    } else {
+                        savedLocations.forEach { location ->
+                            val ageMs = (System.currentTimeMillis() - location.lastUpdated).coerceAtLeast(0L)
+                            val ageText = when {
+                                location.lastUpdated <= 0L -> stringResource(Res.string.offline_never_updated)
+                                ageMs < 60L * 60L * 1000L -> stringResource(Res.string.offline_updated_minutes, ageMs / 60000L)
+                                ageMs < 24L * 60L * 60L * 1000L -> stringResource(Res.string.offline_updated_hours, ageMs / 3600000L)
+                                else -> stringResource(Res.string.offline_updated_days, ageMs / 86400000L)
+                            }
+                            FreetimeText(
+                                location.name + " · " +
+                                    stringResource(if (location.weatherData != null) Res.string.offline_cached else Res.string.offline_not_cached) +
+                                    " · " + ageText,
+                                style = FreetimeDesign.typography.bodySmall,
+                                color = FreetimeDesign.palette.contentMuted
+                            )
+                        }
+                    }
+                    FreetimeGlassAction(
+                        onClick = {
+                            if (!refreshingOfflinePacks) {
+                                scope.launch {
+                                    refreshingOfflinePacks = true
+                                    viewModel.refreshAllLocations()
+                                    refreshingOfflinePacks = false
+                                    snackbarHostState.show(context.getString(Res.string.offline_refresh_complete))
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
+                    ) {
+                        FreetimeText(
+                            stringResource(
+                                if (refreshingOfflinePacks) Res.string.offline_refreshing
+                                else Res.string.offline_refresh_all
+                            )
+                        )
+                    }
+                }
             }
 
             FreetimeSettingsGroup(stringResource(Res.string.data_sources_privacy_title)) {
