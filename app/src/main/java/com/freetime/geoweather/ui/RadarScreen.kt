@@ -42,8 +42,8 @@ import java.net.URL
 private data class RadarFrames(val host: String, val paths: List<String>)
 
 @Composable
-fun WeatherMapPreview(lat: Double, lon: Double, modifier: Modifier = Modifier) {
-    NativeWeatherMap(lat = lat, lon = lon, frameIndex = 11, radarVisible = true, modifier = modifier)
+fun WeatherMapPreview(lat: Double, lon: Double, modifier: Modifier = Modifier, dataSaver: Boolean = false) {
+    NativeWeatherMap(lat = lat, lon = lon, frameIndex = 11, radarVisible = !dataSaver, modifier = modifier)
 }
 
 @Composable
