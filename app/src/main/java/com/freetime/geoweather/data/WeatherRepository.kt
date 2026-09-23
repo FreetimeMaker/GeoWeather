@@ -133,7 +133,8 @@ class WeatherRepository(
                         changeAlertInterval = loc.changeAlertInterval,
                         selected = loc.selected,
                         isDefault = loc.isDefault,
-                        sortOrder = loc.sortOrder
+                        sortOrder = loc.sortOrder,
+                        offlinePackEnabled = loc.offlinePackEnabled
                     )
                 )
             }
@@ -171,6 +172,10 @@ class WeatherRepository(
     suspend fun deleteLocation(location: LocationEntity) {
         locationDao.deleteLocation(location)
         deletedLocations += location.latitude to location.longitude
+    }
+
+    suspend fun setOfflinePackEnabled(location: LocationEntity, enabled: Boolean) {
+        locationDao.updateLocation(location.copy(offlinePackEnabled = enabled))
     }
 
     suspend fun toggleLocationNotifications(location: LocationEntity) {
