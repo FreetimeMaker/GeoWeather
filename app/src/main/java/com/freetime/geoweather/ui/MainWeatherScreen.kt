@@ -362,12 +362,16 @@ fun MainWeatherScreen(
                                 val low = days.minOfOrNull { it.minTemp }
                                 val high = days.maxOfOrNull { it.maxTemp }
                                 val rain = days.maxOfOrNull { it.precipProbMax } ?: 0
-                                val packHint = when {
-                                    (low ?: 20) <= 5 -> "Pack warm layers"
-                                    rain >= 60 -> "Pack rain protection"
-                                    (high ?: 0) >= 28 -> "Pack sun protection"
-                                    else -> "Mild conditions"
+                                val packItems = buildList {
+                                    if ((low ?: 20) <= 8) add("warm layers")
+                                    if (rain >= 45) add("rain jacket")
+                                    if ((high ?: 0) >= 24) add("sun protection")
+                                    if ((days.maxOfOrNull { it.uvMax ?: 0.0 } ?: 0.0) >= 6.0) add("SPF")
+                                    if ((days.maxOfOrNull { it.windGustMax ?: it.windMax } ?: 0.0) >= 45.0) add("windproof layer")
+                                    if ((days.maxOfOrNull { it.snowfallSum ?: 0.0 } ?: 0.0) > 0.0) add("winter shoes")
+                                    if (isEmpty()) add("normal everyday clothing")
                                 }
+                                val packHint = "Pack: " + packItems.joinToString(", ")
                                 FreetimeCard(
                                     modifier = Modifier.width(210.dp).clickable { onLocationClick(loc) }
                                 ) {
@@ -379,6 +383,29 @@ fun MainWeatherScreen(
                                         )
                                         FreetimeText("Rain risk up to " + rain + "%", style = FreetimeDesign.typography.labelMedium)
                                         FreetimeText(packHint, style = FreetimeDesign.typography.labelLarge)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (orderedLocations.size >= 2) {
+                        item(key = "travel-compare") {
+                            val compared = orderedLocations.take(4).map { loc ->
+                                val days = viewModel.getDailyForecasts(loc).take(7)
+                                Triple(loc, days.minOfOrNull { it.minTemp }, days.maxOfOrNull { it.maxTemp })
+                            }
+                            FreetimeGlassPanel(modifier = Modifier.padding(horizontal = 12.dp).fillMaxWidth()) {
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    FreetimeText("Trip compare", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    compared.forEach { (loc, low, high) ->
+                                        val days = viewModel.getDailyForecasts(loc).take(7)
+                                        val rain = days.maxOfOrNull { it.precipProbMax } ?: 0
+                                        FreetimeText(
+                                            loc.name + " · " +
+                                                (if (low != null && high != null) low.toString() + "–" + high + "°C" else "--") +
+                                                " · rain " + rain + "%",
+                                            style = FreetimeDesign.typography.bodyMedium
+                                        )
                                     }
                                 }
                             }
