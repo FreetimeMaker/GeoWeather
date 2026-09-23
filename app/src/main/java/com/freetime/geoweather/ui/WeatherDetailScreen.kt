@@ -493,12 +493,10 @@ fun WeatherDetailScreen(
                         }
                     }
 
-                    val accuracy = remember(weatherHistory, hourly) {
-                        com.freetime.geoweather.WeatherIntelligence.forecastAccuracy(
-                            weatherHistory.drop(1),
-                            hourly.firstOrNull()?.temp?.toDouble()
-                        )
-                    }
+                    val accuracy = com.freetime.geoweather.WeatherIntelligence.forecastAccuracy(
+                        weatherHistory.drop(1),
+                        hourly.firstOrNull()?.temp?.toDouble()
+                    )
                     accuracy?.let { score ->
                         item {
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
