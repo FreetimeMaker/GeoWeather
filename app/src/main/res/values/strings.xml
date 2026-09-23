@@ -763,4 +763,7 @@
     <string name="offline_cached">Available offline</string>
     <string name="offline_not_cached">Not cached</string>
 
+    <string name="offline_city_pack">Keep this city available offline</string>
+    <string name="offline_city_pack_desc">Refresh this city in the background when offline packs are enabled.</string>
+
 </resources>
