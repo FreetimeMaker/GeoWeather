@@ -47,10 +47,10 @@ fun WeatherMapPreview(lat: Double, lon: Double, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit) {
-    var playing by remember { mutableStateOf(true) }
+fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean = false) {
+    var playing by remember { mutableStateOf(!dataSaver) }
     var frameIndex by remember { mutableIntStateOf(0) }
-    var radarVisible by remember { mutableStateOf(true) }
+    var radarVisible by remember { mutableStateOf(!dataSaver) }
 
     LaunchedEffect(playing) {
         while (playing) {
@@ -75,6 +75,11 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit) {
     ) {
         Box(Modifier.fillMaxSize()) {
             NativeWeatherMap(lat, lon, frameIndex, radarVisible, Modifier.fillMaxSize())
+            if (dataSaver && !radarVisible) {
+                FreetimeCard(modifier = Modifier.align(Alignment.Center).padding(24.dp).clickable { radarVisible = true }) {
+                    FreetimeText("Data Saver · tap Radar to load weather imagery", modifier = Modifier.padding(14.dp))
+                }
+            }
             Row(
                 modifier = Modifier.align(Alignment.TopCenter).padding(12.dp).horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
