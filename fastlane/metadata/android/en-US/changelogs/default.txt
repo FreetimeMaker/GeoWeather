@@ -1,3 +1,4 @@
+• Updated to Freetime Core 1.10.0 with the new Liquid Glass renderer, backdrop luminance, live appearance preferences, accessibility controls and safe drawing insets
 • Fixed automatic light and dark mode so GeoWeather correctly follows daylight and falls back to the system theme when sun data is unavailable
 • Improved forecast weather icons so nighttime forecasts use matching night icons after sunset
 • Improved the 16-day forecast foundation with hourly forecast data available across the full forecast range
