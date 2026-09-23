@@ -93,6 +93,7 @@ fun WeatherDetailScreen(
     val pressureUnit by appSettings.pressureUnit.collectAsState()
     val animationMode by appSettings.weatherAnimations.collectAsState()
     val oledBlack by appSettings.oledBlack.collectAsState()
+    val dataSaver by appSettings.dataSaver.collectAsState()
     val haptics = LocalHapticFeedback.current
     val detailListState = rememberLazyListState()
     val detailTopBarCompact by remember { derivedStateOf { detailListState.firstVisibleItemIndex > 0 || detailListState.firstVisibleItemScrollOffset > 140 } }
@@ -202,9 +203,14 @@ fun WeatherDetailScreen(
                 LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }
                 var forecastConfidence by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.ForecastConfidence?>(null) }
                 var dailyModelAgreement by remember(loc.id, loc.weatherData) { mutableStateOf<List<com.freetime.geoweather.data.DailyModelAgreement>>(emptyList()) }
-                LaunchedEffect(loc.id, loc.weatherData) {
-                    forecastConfidence = viewModel.getForecastConfidence(loc)
-                    dailyModelAgreement = viewModel.getDailyModelAgreement(loc)
+                LaunchedEffect(loc.id, loc.weatherData, dataSaver) {
+                    if (dataSaver) {
+                        forecastConfidence = null
+                        dailyModelAgreement = emptyList()
+                    } else {
+                        forecastConfidence = viewModel.getForecastConfidence(loc)
+                        dailyModelAgreement = viewModel.getDailyModelAgreement(loc)
+                    }
                 }
                 var forecastChanges by remember(loc.id) { mutableStateOf<List<com.freetime.geoweather.ForecastChange>>(emptyList()) }
                 LaunchedEffect(loc.id, loc.weatherData) {
@@ -1004,7 +1010,8 @@ fun WeatherDetailScreen(
                                         WeatherMapPreview(
                                             lat = loc.latitude,
                                             lon = loc.longitude,
-                                            modifier = Modifier.fillMaxWidth().height(240.dp)
+                                            modifier = Modifier.fillMaxWidth().height(240.dp),
+                                            dataSaver = dataSaver
                                         )
                                         FreetimeGlassAction(
                                             onClick = {
