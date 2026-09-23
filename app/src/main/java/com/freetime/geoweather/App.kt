@@ -288,10 +288,12 @@ private fun ScreenContent(
             )
         }
         is Radar -> {
+            val dataSaver by appSettings.dataSaver.collectAsState()
             RadarScreen(
                 lat = screen.lat,
                 lon = screen.lon,
-                onBack = { onGoBack() }
+                onBack = { onGoBack() },
+                dataSaver = dataSaver
             )
         }
         is Web -> {
