@@ -1222,6 +1222,16 @@ fun WeatherAlertsSection(
                     alerts.forEach { alert ->
                         FreetimeText("• " + stringResource(alert), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                     }
+                    val nextSix = hourly.take(6)
+                    val peakGust = nextSix.maxOfOrNull { it.windGusts ?: it.windSpeed ?: 0.0 } ?: 0.0
+                    val peakRain = nextSix.maxOfOrNull { it.precipitation ?: 0.0 } ?: 0.0
+                    val peakProbability = nextSix.maxOfOrNull { it.precipProbability } ?: 0
+                    FreetimeText(
+                        "Next 6h · rain " + peakProbability + "% / " +
+                            String.format(java.util.Locale.US, "%.1f mm", peakRain) +
+                            " · gusts " + peakGust.toInt() + " km/h",
+                        style = FreetimeDesign.typography.bodySmall
+                    )
                     FreetimeText(stringResource(Res.string.data_based_alert_note), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
                 }
             }
