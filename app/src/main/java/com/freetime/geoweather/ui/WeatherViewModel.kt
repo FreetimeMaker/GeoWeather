@@ -161,12 +161,14 @@ class WeatherViewModel(
         }
     }
 
-    suspend fun refreshAllLocations() {
-        locations.value.map { location ->
-            viewModelScope.async {
-                runCatching { repository.refreshLocationWeather(location.id) }
-            }
-        }.awaitAll()
+    suspend fun refreshAllLocations(offlinePacksOnly: Boolean = false) {
+        locations.value
+            .filter { !offlinePacksOnly || it.offlinePackEnabled }
+            .map { location ->
+                viewModelScope.async {
+                    runCatching { repository.refreshLocationWeather(location.id) }
+                }
+            }.awaitAll()
     }
 
     fun refreshWeather() {
