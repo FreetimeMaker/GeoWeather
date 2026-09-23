@@ -1,5 +1,8 @@
-• Updated to Freetime Core 1.11.0 with FreetimeWarn with the new Liquid Glass renderer, backdrop luminance, live appearance preferences, accessibility controls and safe drawing insets
-• Fixed automatic light and dark mode so GeoWeather correctly follows daylight and falls back to the system theme when sun data is unavailable
-• Improved forecast weather icons so nighttime forecasts use matching night icons after sunset
-• Improved the 16-day forecast foundation with hourly forecast data available across the full forecast range
-• Fixed additional weather detail, theme and forecast UI issues
+• Added richer weather intelligence with activity planning, photography conditions, precipitation timelines and a severe weather dashboard
+• Added forecast confidence and daily weather-model agreement
+• Rebuilt radar and weather maps as a native map experience with radar controls and weather-map previews
+• Added Data Saver and Offline Forecast Packs with per-city selection, cache status and manual refresh
+• Expanded the travel planner with weather comparisons and packing hints
+• Improved city search with saved-place shortcuts and clearer region information
+• Added smarter rain, wind, frost and UV alerts and improved persistent notification reliability
+• Improved performance and fixed additional forecast, notification and UI issues
