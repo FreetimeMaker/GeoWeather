@@ -31,7 +31,12 @@ sealed class Screen {
         val transientLon: Double = 0.0
     ) : Screen()
     data class HourlyDetail(val locationName: String, val forecasts: List<HourlyForecast>, val index: Int) : Screen()
-    data class DailyDetail(val locationName: String, val forecasts: List<DailyForecast>, val index: Int) : Screen()
+    data class DailyDetail(
+        val locationName: String,
+        val dailyForecasts: List<DailyForecast>,
+        val hourlyForecasts: List<HourlyForecast>,
+        val index: Int
+    ) : Screen()
     data class Radar(val lat: Double, val lon: Double) : Screen()
     data class Web(val url: String, val title: String = "") : Screen()
     data object Settings : Screen()
@@ -224,7 +229,9 @@ private fun ScreenContent(
                 onBack = { onGoBack() },
                 onRadarClick = { lat, lon -> onNavigate(Radar(lat, lon)) },
                 onHourlyClick = { locationName, forecasts, index -> onNavigate(HourlyDetail(locationName, forecasts, index)) },
-                onDailyClick = { locationName, forecasts, index -> onNavigate(DailyDetail(locationName, forecasts, index)) }
+                onDailyClick = { locationName, dailyForecasts, hourlyForecasts, index ->
+                    onNavigate(DailyDetail(locationName, dailyForecasts, hourlyForecasts, index))
+                }
             )
         }
         is HourlyDetail -> {
@@ -240,8 +247,8 @@ private fun ScreenContent(
         is DailyDetail -> {
             ForecastDetailScreen(
                 locationName = screen.locationName,
-                hourlyForecasts = emptyList(),
-                dailyForecasts = screen.forecasts,
+                hourlyForecasts = screen.hourlyForecasts,
+                dailyForecasts = screen.dailyForecasts,
                 initialIndex = screen.index,
                 appSettings = appSettings,
                 onBack = { onGoBack() }
