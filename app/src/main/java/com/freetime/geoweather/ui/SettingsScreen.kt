@@ -1,6 +1,7 @@
 package com.freetime.geoweather.ui
 import com.freetime.design.FreetimeIconButton
 import com.freetime.design.FreetimeText
+import com.freetime.design.LocalFreetimePreferencesController
 import com.freetime.design.FreetimeScaffold
 import com.freetime.design.FreetimeSnackbar
 import com.freetime.design.rememberFreetimeMessageHostState
@@ -123,6 +124,44 @@ fun SettingsScreen(
             )
 
             }
+            LocalFreetimePreferencesController.current?.let { controller ->
+                val appearance = controller.state
+                FreetimeSettingsGroup("Liquid Glass & accessibility") {
+                    FreetimeSwitchSetting(
+                        title = "Liquid Glass",
+                        description = "Uses the Freetime Core 1.10 live backdrop, luminance, refraction and interactive glass renderer.",
+                        checked = appearance.liquidGlassEnabled,
+                        onCheckedChange = { enabled ->
+                            controller.update { it.copy(liquidGlassEnabled = enabled) }
+                        }
+                    )
+                    FreetimeSwitchSetting(
+                        title = "Reduce motion",
+                        description = "Reduces decorative motion and Liquid Glass interaction animations.",
+                        checked = appearance.reduceMotion,
+                        onCheckedChange = { enabled ->
+                            controller.update { it.copy(reduceMotion = enabled) }
+                        }
+                    )
+                    FreetimeSwitchSetting(
+                        title = "Reduce transparency",
+                        description = "Uses more opaque surfaces and disables glass refraction.",
+                        checked = appearance.reduceTransparency,
+                        onCheckedChange = { enabled ->
+                            controller.update { it.copy(reduceTransparency = enabled) }
+                        }
+                    )
+                    FreetimeSwitchSetting(
+                        title = "High contrast",
+                        description = "Strengthens glass edges, scrims and content separation.",
+                        checked = appearance.highContrast,
+                        onCheckedChange = { enabled ->
+                            controller.update { it.copy(highContrast = enabled) }
+                        }
+                    )
+                }
+            }
+
             FreetimeSettingsGroup(stringResource(Res.string.weather_animations_title)) {
             FreetimeText(stringResource(Res.string.animation_intensity), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
