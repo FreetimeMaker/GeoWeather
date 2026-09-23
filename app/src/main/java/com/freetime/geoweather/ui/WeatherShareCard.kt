@@ -12,7 +12,8 @@ fun createWeatherShareCard(
     title: String,
     temperature: String,
     description: String,
-    subtitle: String
+    subtitle: String,
+    details: List<String> = emptyList()
 ): Bitmap {
     val width = 1080
     val height = 1080
@@ -41,11 +42,16 @@ fun createWeatherShareCard(
     paint.typeface = android.graphics.Typeface.DEFAULT
     paint.textSize = 38f
     paint.color = android.graphics.Color.argb(220, 255, 255, 255)
-    if (subtitle.isNotBlank()) canvas.drawText(subtitle.take(42), width / 2f, 770f, paint)
+    if (subtitle.isNotBlank()) canvas.drawText(subtitle.take(42), width / 2f, 760f, paint)
+
+    paint.textSize = 30f
+    details.take(3).forEachIndexed { index, detail ->
+        canvas.drawText(detail.take(52), width / 2f, 820f + index * 38f, paint)
+    }
 
     paint.textSize = 34f
     paint.typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
-    canvas.drawText("GeoWeather", width / 2f, 915f, paint)
+    canvas.drawText("GeoWeather", width / 2f, 960f, paint)
     return bitmap
 }
 
