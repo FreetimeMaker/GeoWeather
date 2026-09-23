@@ -316,7 +316,6 @@ fun MainWeatherScreen(
                                 Box(
                                     modifier = Modifier
                                         .width(184.dp)
-                                        .freetimeGlass(RoundedCornerShape(24.dp), interactive = true)
                                         .clickable { viewModel.selectLocation(loc); onLocationClick(loc) }
                                 ) {
                                     Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -357,7 +356,6 @@ fun MainWeatherScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 12.dp)
-                            .freetimeGlass(RoundedCornerShape(26.dp), interactive = true)
                             .clickable {
                                 viewModel.selectLocation(loc)
                                 onLocationClick(loc)
