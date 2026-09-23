@@ -8,7 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import com.freetime.geoweather.Screen.*
+import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
 import com.freetime.design.FreetimeApp
@@ -61,7 +63,11 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     val freetimeWarning = rememberFreetimeWarnState(
         context = context,
         appName = "GeoWeather",
-        versionCode = BuildConfig.VERSION_CODE.toLong(),
+        versionCode = runCatching {
+            val info = context.packageManager.getPackageInfo(context.packageName, 0)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) info.longVersionCode
+            else @Suppress("DEPRECATION") info.versionCode.toLong()
+        }.getOrDefault(0L),
         warningId = "android-distribution-notice",
         frequency = FreetimeWarnFrequency.ONCE_PER_VERSION
     )
