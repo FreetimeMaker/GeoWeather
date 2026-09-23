@@ -346,6 +346,44 @@ fun MainWeatherScreen(
                             }
                         }
                     }
+                    item(key = "travel-mode-title") {
+                        FreetimeGlassTitle(
+                            text = "Travel planner",
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                        )
+                    }
+                    item(key = "travel-mode") {
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            items(orderedLocations, key = { "travel-" + it.id }) { loc ->
+                                val days = remember(loc.weatherData) { viewModel.getDailyForecasts(loc).take(7) }
+                                val low = days.minOfOrNull { it.minTemp }
+                                val high = days.maxOfOrNull { it.maxTemp }
+                                val rain = days.maxOfOrNull { it.precipProbMax } ?: 0
+                                val packHint = when {
+                                    (low ?: 20) <= 5 -> "Pack warm layers"
+                                    rain >= 60 -> "Pack rain protection"
+                                    (high ?: 0) >= 28 -> "Pack sun protection"
+                                    else -> "Mild conditions"
+                                }
+                                FreetimeCard(
+                                    modifier = Modifier.width(210.dp).clickable { onLocationClick(loc) }
+                                ) {
+                                    Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                                        FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
+                                        FreetimeText(
+                                            if (low != null && high != null) low.toString() + "–" + high + "°C · next 7 days" else "Forecast unavailable",
+                                            style = FreetimeDesign.typography.bodyMedium
+                                        )
+                                        FreetimeText("Rain risk up to " + rain + "%", style = FreetimeDesign.typography.labelMedium)
+                                        FreetimeText(packHint, style = FreetimeDesign.typography.labelLarge)
+                                    }
+                                }
+                            }
+                        }
+                    }
                     item(key = "location-overview-title") {
                         FreetimeGlassTitle(
                             text = stringResource(Res.string.location_overview_title),
