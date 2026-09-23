@@ -583,11 +583,12 @@ fun WeatherDetailScreen(
                                     FreetimeText(stringResource(Res.string.next_rain_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     FreetimeText(nextRainText, style = FreetimeDesign.typography.bodyLarge)
                                     FreetimeText(stringResource(Res.string.timeline_24h), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                                    LazyRow(
+                                        modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        hourly.forEachIndexed { index, hour ->
+                                        items(hourly.size, key = { hourly[it].time }) { index ->
+                                            val hour = hourly[index]
                                             val previous = hourly.getOrNull(index - 1)
                                             val marksSunset = previous != null &&
                                                 previous.time.takeLast(5) < sunsetTime.toString().take(5) &&
