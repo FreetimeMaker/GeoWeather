@@ -44,6 +44,7 @@ fun SearchScreen(
     var query by remember { mutableStateOf("") }
     val context = LocalContext.current
     val prefs = remember { context.getSharedPreferences("search_history", android.content.Context.MODE_PRIVATE) }
+    val savedLocations by viewModel.locations.collectAsState()
     var recentSearches by remember {
         mutableStateOf(prefs.getStringSet("queries", emptySet()).orEmpty().toList().take(5))
     }
@@ -95,6 +96,16 @@ fun SearchScreen(
                 }
                 Spacer(modifier = Modifier.height(12.dp))
             }
+            if (query.isBlank() && savedLocations.isNotEmpty()) {
+                FreetimeSectionHeader(title = "Saved places")
+                Spacer(modifier = Modifier.height(8.dp))
+                androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(savedLocations.take(8), key = { "saved-search-" + it.id }) { loc ->
+                        FreetimeChip(text = loc.name, onClick = { query = loc.name; viewModel.searchCity(loc.name) })
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
             if (recentSearches.isNotEmpty() && query.isBlank()) {
                 FreetimeSectionHeader(title = stringResource(Res.string.recent_searches))
                 Spacer(modifier = Modifier.height(8.dp))
@@ -114,7 +125,7 @@ fun SearchScreen(
                         items(results, key = { "${it.latitude},${it.longitude}" }) { city ->
                             FreetimeListItem(
                                 title = city.name,
-                                subtitle = "${city.latitude}, ${city.longitude}",
+                                subtitle = listOfNotNull(city.admin1, city.country).filter { it.isNotBlank() }.joinToString(" · ").ifBlank { "${city.latitude}, ${city.longitude}" },
                                 modifier = Modifier.padding(vertical = 4.dp),
                                 onClick = {
                                     rememberQuery(city.name)
