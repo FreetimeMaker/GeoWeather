@@ -493,6 +493,28 @@ fun WeatherDetailScreen(
                         }
                     }
 
+                    val accuracy = remember(weatherHistory, hourly) {
+                        com.freetime.geoweather.WeatherIntelligence.forecastAccuracy(
+                            weatherHistory.drop(1),
+                            hourly.firstOrNull()?.temp?.toDouble()
+                        )
+                    }
+                    accuracy?.let { score ->
+                        item {
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    FreetimeText("Forecast accuracy", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(score.toString() + "/100", style = FreetimeDesign.typography.titleLarge)
+                                    FreetimeText(
+                                        "Local estimate based on the difference between a recent forecast temperature and stored observations.",
+                                        style = FreetimeDesign.typography.labelSmall,
+                                        color = FreetimeDesign.palette.contentMuted
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                     if (forecastChanges.isNotEmpty()) {
                         item {
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
