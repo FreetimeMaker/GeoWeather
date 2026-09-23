@@ -830,30 +830,32 @@ fun WeatherDetailScreen(
                                         modifier = Modifier.weight(2f)
                                     )
                                 }
-                                FreetimeGlassPanel(
-                                    modifier = Modifier.fillMaxWidth().clickable {
-                                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                        onRadarClick(loc.latitude, loc.longitude)
-                                    },
-                                    interactive = true
-                                ) {
-                                    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                                        FreetimeText("🌧️  ·  📡", style = FreetimeDesign.typography.headlineMedium)
-                                        FreetimeText(stringResource(Res.string.open_weather_radar), style = FreetimeDesign.typography.labelLarge)
+                                FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                                    Column(
+                                        Modifier.fillMaxWidth(),
+                                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        FreetimeText(
+                                            stringResource(Res.string.radar_title),
+                                            style = FreetimeDesign.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        WeatherMapPreview(
+                                            lat = loc.latitude,
+                                            lon = loc.longitude,
+                                            modifier = Modifier.fillMaxWidth().height(240.dp)
+                                        )
+                                        FreetimeGlassAction(
+                                            onClick = {
+                                                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                onRadarClick(loc.latitude, loc.longitude)
+                                            },
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            FreetimeText(stringResource(Res.string.open_weather_radar))
+                                        }
                                     }
                                 }
-                                /*
-                                FreetimeGlassAction(
-                                    onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); onRadarClick(loc.latitude, loc.longitude) },
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    FreetimeText(
-                                        stringResource(Res.string.open_weather_radar),
-                                        style = FreetimeDesign.typography.labelLarge,
-                                        color = FreetimeDesign.palette.contentStrong
-                                    )
-                                }
-                                */
                             }
                         }
                     }
