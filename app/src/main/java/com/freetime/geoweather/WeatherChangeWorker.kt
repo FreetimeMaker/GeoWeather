@@ -16,7 +16,7 @@ class WeatherChangeWorker(
         val appSettings = DependencyManager.getAppSettings()
         val allLocations = repository.getAllLocationsSync()
         val locations = if (appSettings.offlinePacks.value) {
-            allLocations
+            allLocations.filter { it.offlinePackEnabled || it.changeAlertsEnabled || it.notificationsEnabled }
         } else {
             allLocations.filter { it.changeAlertsEnabled || it.notificationsEnabled }
         }
