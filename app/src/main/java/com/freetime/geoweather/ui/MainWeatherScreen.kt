@@ -274,6 +274,9 @@ fun MainWeatherScreen(
                         val maxTemp = comparable.maxOf { it.currentTemp!! }
                         val windiest = comparable.maxByOrNull { it.currentWindSpeed ?: 0.0 }
                         val humid = comparable.maxByOrNull { it.currentHumidity ?: 0 }
+                        val warmest = comparable.maxByOrNull { it.currentTemp ?: Double.NEGATIVE_INFINITY }
+                        val coolest = comparable.minByOrNull { it.currentTemp ?: Double.POSITIVE_INFINITY }
+                        val calmest = comparable.minByOrNull { it.currentWindSpeed ?: Double.POSITIVE_INFINITY }
                         item(key = "comparison-summary") {
                             Box(
                                 modifier = Modifier
@@ -296,6 +299,48 @@ fun MainWeatherScreen(
                                             FreetimeText(stringResource(Res.string.compare_most_humid), style = FreetimeDesign.typography.labelSmall)
                                             FreetimeText(humid?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
                                         }
+                                    }
+                                }
+                            }
+                        }
+                        item(key = "comparison-details") {
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = 12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                items(comparable, key = { "compare-" + it.id }) { loc ->
+                                    FreetimeCard(modifier = Modifier.width(180.dp)) {
+                                        Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                                            FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
+                                            FreetimeText(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.headlineMedium)
+                                            FreetimeText(loc.currentHumidity?.let { stringResource(Res.string.humidity_value, it) } ?: "--", style = FreetimeDesign.typography.labelMedium)
+                                            FreetimeText(loc.currentWindSpeed?.let { stringResource(Res.string.wind_value, it.toInt()) } ?: "--", style = FreetimeDesign.typography.labelMedium)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        item(key = "comparison-highlights") {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                FreetimeCard(modifier = Modifier.weight(1f)) {
+                                    Column {
+                                        FreetimeText("Warmest", style = FreetimeDesign.typography.labelSmall)
+                                        FreetimeText(warmest?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
+                                    }
+                                }
+                                FreetimeCard(modifier = Modifier.weight(1f)) {
+                                    Column {
+                                        FreetimeText("Coolest", style = FreetimeDesign.typography.labelSmall)
+                                        FreetimeText(coolest?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
+                                    }
+                                }
+                                FreetimeCard(modifier = Modifier.weight(1f)) {
+                                    Column {
+                                        FreetimeText("Calmest", style = FreetimeDesign.typography.labelSmall)
+                                        FreetimeText(calmest?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
                                     }
                                 }
                             }
