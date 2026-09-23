@@ -750,4 +750,17 @@
     <string name="widget_rain_gusts">Rain %1$d%% · Gusts %2$d km/h</string>
     <string name="widget_rain_gusts_time">Rain %1$d%% · Gusts %2$d km/h · %3$s</string>
 
+
+    <string name="offline_refresh_all">Refresh offline data</string>
+    <string name="offline_refreshing">Refreshing offline forecasts…</string>
+    <string name="offline_refresh_complete">Offline forecasts updated.</string>
+    <string name="offline_saved_locations">Saved offline forecasts</string>
+    <string name="offline_no_saved_locations">No saved locations yet.</string>
+    <string name="offline_never_updated">Not downloaded yet</string>
+    <string name="offline_updated_minutes">%1$d min ago</string>
+    <string name="offline_updated_hours">%1$d h ago</string>
+    <string name="offline_updated_days">%1$d d ago</string>
+    <string name="offline_cached">Available offline</string>
+    <string name="offline_not_cached">Not cached</string>
+
 </resources>
