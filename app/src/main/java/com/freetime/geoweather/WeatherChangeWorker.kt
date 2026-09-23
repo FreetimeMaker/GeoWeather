@@ -14,8 +14,12 @@ class WeatherChangeWorker(
     override suspend fun doWork(): Result {
         val repository = DependencyManager.getRepository()
         val appSettings = DependencyManager.getAppSettings()
-        val locations = repository.getAllLocationsSync()
-            .filter { it.changeAlertsEnabled || it.notificationsEnabled }
+        val allLocations = repository.getAllLocationsSync()
+        val locations = if (appSettings.offlinePacks.value) {
+            allLocations
+        } else {
+            allLocations.filter { it.changeAlertsEnabled || it.notificationsEnabled }
+        }
         if (locations.isEmpty()) return Result.success()
 
         var retry = false
