@@ -14,6 +14,8 @@ import com.freetime.geoweather.ui.*
 import com.freetime.design.FreetimeApp
 import com.freetime.design.FreetimeAppConfig
 import com.freetime.design.FreetimeThemeMode
+import com.freetime.core.FreetimePreferences
+import com.freetime.design.rememberFreetimePreferencesController
 
 sealed class Screen {
     data object Main : Screen()
@@ -45,6 +47,8 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     }
     val viewModel = remember { WeatherViewModel(repository) }
     val context = LocalContext.current
+    val freetimePreferences = remember { FreetimePreferences.from(context, "geoweather_freetime_preferences") }
+    val freetimePreferencesController = rememberFreetimePreferencesController(freetimePreferences)
     val launchPrefs = remember { context.getSharedPreferences("launch_state", android.content.Context.MODE_PRIVATE) }
     val appVersion = remember {
         runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: "unknown"
@@ -108,10 +112,13 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     }
 
     FreetimeApp(
-        config = FreetimeAppConfig(
-            themeMode = if (darkTheme) FreetimeThemeMode.DARK else FreetimeThemeMode.LIGHT,
-            backdropColors = glassBackdropColors
-        )
+        controller = freetimePreferencesController,
+        modifierConfig = { config ->
+            config.copy(
+                themeMode = if (darkTheme) FreetimeThemeMode.DARK else FreetimeThemeMode.LIGHT,
+                backdropColors = glassBackdropColors
+            )
+        }
     ) {
         if (onboarding) {
             OnboardingScreen(onDone = {
