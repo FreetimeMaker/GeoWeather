@@ -29,6 +29,7 @@ import com.freetime.design.FreetimeTextField
 import com.freetime.design.freetimeGlassCapsule
 import com.freetime.design.FreetimeGlassNavigationBar
 import com.freetime.design.FreetimeGlassTitle
+import com.freetime.design.FreetimeGlassPanel
 import com.freetime.design.freetimeWideGlass
 import com.freetime.design.freetimeGlass
 
@@ -64,6 +65,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.freetime.design.freetimeGlass
