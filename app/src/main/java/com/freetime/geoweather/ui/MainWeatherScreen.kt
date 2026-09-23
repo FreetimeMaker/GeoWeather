@@ -9,6 +9,7 @@ import com.freetime.design.rememberFreetimeMessageHostState
 import com.freetime.design.FreetimeTimePicker
 import com.freetime.design.FreetimeSearchBar
 import com.freetime.design.FreetimeNavigationRail
+import com.freetime.design.FreetimeBottomBar
 import com.freetime.design.FreetimeNavigationDestination
 import com.freetime.design.FreetimeBottomSheet
 import com.freetime.design.FreetimeButton
@@ -411,40 +412,14 @@ fun MainWeatherScreen(
                     modifier = Modifier.align(Alignment.CenterStart)
                 )
             } else {
-                Row(
+                FreetimeBottomBar(
+                    destinations = adaptiveDestinations,
+                    selectedIndex = 0,
+                    onDestinationSelected = onNavigationSelected,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .navigationBarsPadding()
-                        .padding(horizontal = 18.dp, vertical = 12.dp)
-                        .freetimeGlassCapsule(interactive = false)
-                        .padding(horizontal = 6.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    adaptiveDestinations.forEachIndexed { index, destination ->
-                        val selected = index == 0
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clickable { onNavigationSelected(index) }
-                                .padding(horizontal = 10.dp, vertical = 7.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            FreetimeIconButton(
-                                icon = destination.icon,
-                                contentDescription = destination.label,
-                                onClick = { onNavigationSelected(index) },
-                                tint = if (selected) FreetimeDesign.palette.primary else Color.Unspecified
-                            )
-                            FreetimeText(
-                                text = destination.label,
-                                style = FreetimeDesign.typography.labelSmall,
-                                color = if (selected) FreetimeDesign.palette.primary else FreetimeDesign.colors.contentMuted,
-                                maxLines = 1
-                            )
-                        }
-                    }
-                }
+                )
             }
 
             val addLocationAction = {
