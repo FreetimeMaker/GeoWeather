@@ -136,7 +136,7 @@ fun SettingsScreen(
                 FreetimeSettingsGroup("Liquid Glass & accessibility") {
                     FreetimeSwitchSetting(
                         title = "Liquid Glass",
-                        description = "Uses the Freetime Core 1.10 live backdrop, luminance, refraction and interactive glass renderer.",
+                        description = "Uses the Freetime Core 1.11 live backdrop, luminance, refraction and interactive glass renderer.",
                         checked = appearance.liquidGlassEnabled,
                         onCheckedChange = { enabled ->
                             controller.update { it.copy(liquidGlassEnabled = enabled) }
@@ -220,30 +220,30 @@ fun SettingsScreen(
             SettingsToggle("High UV alerts", "Notify when the UV index reaches a high level.", smartUvAlert) { appSettings.setSmartUvAlert(it) }
 
             }
-            FreetimeSettingsGroup("Data & offline") {
+            FreetimeSettingsGroup(stringResource(Res.string.data_offline_title)) {
                 SettingsToggle(
-                    "Data saver",
-                    "Reduces optional network-heavy features such as automatic radar and model refreshes.",
+                    stringResource(Res.string.data_saver_title),
+                    stringResource(Res.string.data_saver_desc),
                     dataSaver
                 ) { appSettings.setDataSaver(it) }
                 SettingsToggle(
-                    "Offline forecast packs",
-                    "Keep the latest full forecast for saved locations available when the device is offline.",
+                    stringResource(Res.string.offline_packs_title),
+                    stringResource(Res.string.offline_packs_desc),
                     offlinePacks
                 ) { appSettings.setOfflinePacks(it) }
                 FreetimeText(
-                    "Saved weather forecasts remain on this device. Radar map tiles are loaded from the map providers when needed.",
+                    stringResource(Res.string.offline_packs_note),
                     style = FreetimeDesign.typography.bodySmall,
                     color = FreetimeDesign.palette.contentMuted
                 )
             }
 
-            FreetimeSettingsGroup("Data sources & privacy") {
-                FreetimeText("Forecasts, hourly weather and model comparison · Open-Meteo", style = FreetimeDesign.typography.bodyMedium)
-                FreetimeText("Base map · OpenStreetMap", style = FreetimeDesign.typography.bodyMedium)
-                FreetimeText("Radar imagery · RainViewer", style = FreetimeDesign.typography.bodyMedium)
+            FreetimeSettingsGroup(stringResource(Res.string.data_sources_privacy_title)) {
+                FreetimeText(stringResource(Res.string.data_source_forecast), style = FreetimeDesign.typography.bodyMedium)
+                FreetimeText(stringResource(Res.string.data_source_map), style = FreetimeDesign.typography.bodyMedium)
+                FreetimeText(stringResource(Res.string.data_source_radar), style = FreetimeDesign.typography.bodyMedium)
                 FreetimeText(
-                    "Locations, forecast snapshots, alert history and app preferences are stored locally by GeoWeather. Network requests send the coordinates required to retrieve weather or map data.",
+                    stringResource(Res.string.privacy_local_note),
                     style = FreetimeDesign.typography.bodySmall,
                     color = FreetimeDesign.palette.contentMuted
                 )
