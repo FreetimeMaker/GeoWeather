@@ -103,6 +103,13 @@ class WeatherViewModel(
         }
     }
 
+    fun setOfflinePackEnabled(location: LocationEntity, enabled: Boolean) {
+        viewModelScope.launch {
+            runCatching { repository.setOfflinePackEnabled(location, enabled) }
+                .onFailure { it.printStackTrace() }
+        }
+    }
+
     fun toggleLocationNotifications(location: LocationEntity) {
         viewModelScope.launch {
             try {
