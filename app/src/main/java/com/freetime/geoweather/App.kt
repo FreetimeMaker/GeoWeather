@@ -17,6 +17,8 @@ import com.freetime.design.FreetimeThemeMode
 import com.freetime.core.FreetimePreferences
 import com.freetime.design.rememberFreetimePreferencesController
 import com.freetime.warn.FreetimeWarn
+import com.freetime.warn.FreetimeWarnContent
+import com.freetime.warn.FreetimeWarnFrequency
 import com.freetime.warn.rememberFreetimeWarnState
 
 sealed class Screen {
@@ -54,7 +56,9 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     val freetimeWarning = rememberFreetimeWarnState(
         context = context,
         appName = "GeoWeather",
-        versionCode = BuildConfig.VERSION_CODE.toLong()
+        versionCode = BuildConfig.VERSION_CODE.toLong(),
+        warningId = "android-distribution-notice",
+        frequency = FreetimeWarnFrequency.ONCE_PER_VERSION
     )
     val launchPrefs = remember { context.getSharedPreferences("launch_state", android.content.Context.MODE_PRIVATE) }
     val appVersion = remember {
@@ -162,7 +166,23 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                     }
                 }
             }
-        FreetimeWarn(state = freetimeWarning)
+        val warnTitle = stringResource(Res.string.freetime_warn_title)
+        val warnMessage = stringResource(Res.string.freetime_warn_message, "GeoWeather")
+        val warnLearnMore = stringResource(Res.string.freetime_warn_learn_more)
+        val warnAcknowledge = stringResource(Res.string.freetime_warn_acknowledge)
+        FreetimeWarn(
+            state = freetimeWarning,
+            onLearnMore = {
+                freetimeWarning.dismiss()
+                navigate(Web("https://docs.free-time.me/projects/geoweather", warnLearnMore))
+            },
+            content = FreetimeWarnContent(
+                title = warnTitle,
+                message = { warnMessage },
+                detailsLabel = warnLearnMore,
+                acknowledgeLabel = warnAcknowledge
+            )
+        )
     }
 }
 
