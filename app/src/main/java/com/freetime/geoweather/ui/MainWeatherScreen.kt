@@ -327,19 +327,19 @@ fun MainWeatherScreen(
                             ) {
                                 FreetimeCard(modifier = Modifier.weight(1f)) {
                                     Column {
-                                        FreetimeText("Warmest", style = FreetimeDesign.typography.labelSmall)
+                                        FreetimeText(stringResource(Res.string.warmest_label), style = FreetimeDesign.typography.labelSmall)
                                         FreetimeText(warmest?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
                                     }
                                 }
                                 FreetimeCard(modifier = Modifier.weight(1f)) {
                                     Column {
-                                        FreetimeText("Coolest", style = FreetimeDesign.typography.labelSmall)
+                                        FreetimeText(stringResource(Res.string.coolest_label), style = FreetimeDesign.typography.labelSmall)
                                         FreetimeText(coolest?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
                                     }
                                 }
                                 FreetimeCard(modifier = Modifier.weight(1f)) {
                                     Column {
-                                        FreetimeText("Calmest", style = FreetimeDesign.typography.labelSmall)
+                                        FreetimeText(stringResource(Res.string.calmest_label), style = FreetimeDesign.typography.labelSmall)
                                         FreetimeText(calmest?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
                                     }
                                 }
@@ -348,7 +348,7 @@ fun MainWeatherScreen(
                     }
                     item(key = "travel-mode-title") {
                         FreetimeGlassTitle(
-                            text = "Travel planner",
+                            text = stringResource(Res.string.travel_planner_title),
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         )
                     }
@@ -363,25 +363,25 @@ fun MainWeatherScreen(
                                 val high = days.maxOfOrNull { it.maxTemp }
                                 val rain = days.maxOfOrNull { it.precipProbMax } ?: 0
                                 val packItems = buildList {
-                                    if ((low ?: 20) <= 8) add("warm layers")
-                                    if (rain >= 45) add("rain jacket")
-                                    if ((high ?: 0) >= 24) add("sun protection")
-                                    if ((days.maxOfOrNull { it.uvMax ?: 0.0 } ?: 0.0) >= 6.0) add("SPF")
-                                    if ((days.maxOfOrNull { it.windGustMax ?: it.windMax } ?: 0.0) >= 45.0) add("windproof layer")
-                                    if ((days.maxOfOrNull { it.snowfallSum ?: 0.0 } ?: 0.0) > 0.0) add("winter shoes")
-                                    if (isEmpty()) add("normal everyday clothing")
+                                    if ((low ?: 20) <= 8) add(context.getString(Res.string.pack_warm_layers))
+                                    if (rain >= 45) add(context.getString(Res.string.pack_rain_jacket))
+                                    if ((high ?: 0) >= 24) add(context.getString(Res.string.pack_sun_protection))
+                                    if ((days.maxOfOrNull { it.uvMax ?: 0.0 } ?: 0.0) >= 6.0) add(context.getString(Res.string.pack_spf))
+                                    if ((days.maxOfOrNull { it.windGustMax ?: it.windMax } ?: 0.0) >= 45.0) add(context.getString(Res.string.pack_windproof))
+                                    if ((days.maxOfOrNull { it.snowfallSum ?: 0.0 } ?: 0.0) > 0.0) add(context.getString(Res.string.pack_winter_shoes))
+                                    if (isEmpty()) add(context.getString(Res.string.pack_everyday))
                                 }
-                                val packHint = "Pack: " + packItems.joinToString(", ")
+                                val packHint = context.getString(Res.string.pack_prefix, packItems.joinToString(", "))
                                 FreetimeCard(
                                     modifier = Modifier.width(210.dp).clickable { onLocationClick(loc) }
                                 ) {
                                     Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                         FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
                                         FreetimeText(
-                                            if (low != null && high != null) low.toString() + "–" + high + "°C · next 7 days" else "Forecast unavailable",
+                                            if (low != null && high != null) context.getString(Res.string.next_7_days_range, low, high) else context.getString(Res.string.forecast_unavailable),
                                             style = FreetimeDesign.typography.bodyMedium
                                         )
-                                        FreetimeText("Rain risk up to " + rain + "%", style = FreetimeDesign.typography.labelMedium)
+                                        FreetimeText(context.getString(Res.string.rain_risk_up_to, rain), style = FreetimeDesign.typography.labelMedium)
                                         FreetimeText(packHint, style = FreetimeDesign.typography.labelLarge)
                                     }
                                 }
@@ -396,7 +396,7 @@ fun MainWeatherScreen(
                             }
                             FreetimeGlassPanel(modifier = Modifier.padding(horizontal = 12.dp).fillMaxWidth()) {
                                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    FreetimeText("Trip compare", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.trip_compare_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     compared.forEach { (loc, low, high) ->
                                         val days = viewModel.getDailyForecasts(loc).take(7)
                                         val rain = days.maxOfOrNull { it.precipProbMax } ?: 0
