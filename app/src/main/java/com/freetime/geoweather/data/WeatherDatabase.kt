@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [LocationEntity::class, WeatherHistoryEntity::class], version = 8, exportSchema = false)
+@Database(entities = [LocationEntity::class, WeatherHistoryEntity::class], version = 9, exportSchema = false)
 abstract class WeatherDatabase : RoomDatabase() {
     abstract fun locationDao(): LocationDao
     abstract fun weatherHistoryDao(): WeatherHistoryDao
@@ -28,5 +28,11 @@ private val MIGRATION_7_8 = object : Migration(7, 8) {
     }
 }
 
+private val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE locations ADD COLUMN offlinePackEnabled INTEGER NOT NULL DEFAULT 0")
+    }
+}
+
 fun getRoomDatabase(builder: RoomDatabase.Builder<WeatherDatabase>): WeatherDatabase =
-    builder.addMigrations(MIGRATION_7_8).fallbackToDestructiveMigration(true).build()
+    builder.addMigrations(MIGRATION_7_8, MIGRATION_8_9).fallbackToDestructiveMigration(true).build()
