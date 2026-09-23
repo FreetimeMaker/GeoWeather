@@ -736,4 +736,18 @@
     <string name="radar_minutes_ago">%1$d min ago</string>
     <string name="radar_attribution">Past 2 hours · 10 minute frames · Weather data by RainViewer</string>
 
+
+    <string name="warmest_label">Warmest</string>
+    <string name="coolest_label">Coolest</string>
+    <string name="calmest_label">Calmest</string>
+    <string name="next_7_days_range">%1$d–%2$d°C · next 7 days</string>
+    <string name="forecast_unavailable">Forecast unavailable</string>
+    <string name="rain_risk_up_to">Rain risk up to %1$d%%</string>
+    <string name="trip_compare_row">%1$s · %2$s · rain %3$d%%</string>
+    <string name="widget_cached">Cached · %1$s</string>
+    <string name="widget_data_saver_saved">Data Saver · saved forecast</string>
+    <string name="widget_offline_saved">Offline · last saved forecast</string>
+    <string name="widget_rain_gusts">Rain %1$d%% · Gusts %2$d km/h</string>
+    <string name="widget_rain_gusts_time">Rain %1$d%% · Gusts %2$d km/h · %3$s</string>
+
 </resources>
