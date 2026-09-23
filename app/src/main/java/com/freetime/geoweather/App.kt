@@ -16,6 +16,8 @@ import com.freetime.design.FreetimeAppConfig
 import com.freetime.design.FreetimeThemeMode
 import com.freetime.core.FreetimePreferences
 import com.freetime.design.rememberFreetimePreferencesController
+import com.freetime.warn.FreetimeWarn
+import com.freetime.warn.rememberFreetimeWarnState
 
 sealed class Screen {
     data object Main : Screen()
@@ -49,6 +51,11 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     val context = LocalContext.current
     val freetimePreferences = remember { FreetimePreferences.from(context, "geoweather_freetime_preferences") }
     val freetimePreferencesController = rememberFreetimePreferencesController(freetimePreferences)
+    val freetimeWarning = rememberFreetimeWarnState(
+        context = context,
+        appName = "GeoWeather",
+        versionCode = BuildConfig.VERSION_CODE.toLong()
+    )
     val launchPrefs = remember { context.getSharedPreferences("launch_state", android.content.Context.MODE_PRIVATE) }
     val appVersion = remember {
         runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: "unknown"
@@ -155,6 +162,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                     }
                 }
             }
+        FreetimeWarn(state = freetimeWarning)
     }
 }
 
