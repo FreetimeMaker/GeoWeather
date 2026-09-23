@@ -450,6 +450,36 @@ fun WeatherDetailScreen(
                         }
                     }
 
+                    if (hourly.isNotEmpty()) {
+                        item {
+                            val activityWindows = com.freetime.geoweather.WeatherIntelligence.activityWindows(hourly.take(24))
+                            val bestWindow = activityWindows.maxByOrNull { it.score }
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    FreetimeText("Outdoor planner", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    bestWindow?.takeIf { it.hours.isNotEmpty() }?.let { best ->
+                                        FreetimeText(best.activity + " · " + best.score + "/100", style = FreetimeDesign.typography.titleLarge)
+                                        FreetimeText(best.hours.joinToString(" · ") { it.takeLast(5) }, color = FreetimeDesign.palette.contentMuted)
+                                    }
+                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        items(activityWindows, key = { it.activity }) { activity ->
+                                            FreetimeCard(modifier = Modifier.width(150.dp)) {
+                                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                    FreetimeText(activity.activity, style = FreetimeDesign.typography.labelLarge)
+                                                    FreetimeText(activity.score.toString() + "/100", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                                    FreetimeText(
+                                                        if (activity.hours.isEmpty()) "No good window" else activity.hours.joinToString(" · ") { it.takeLast(5) },
+                                                        style = FreetimeDesign.typography.labelSmall
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     item {
                         val smart = com.freetime.geoweather.WeatherIntelligence.smartHero(hourly, daily.firstOrNull())
                         val nowcast = com.freetime.geoweather.WeatherIntelligence.nowcast(hourly)
