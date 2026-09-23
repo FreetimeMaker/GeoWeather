@@ -11,7 +11,6 @@ import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeGlassAction
 import com.freetime.design.FreetimeGlassPanel
 import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassDepth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.Canvas
@@ -300,8 +299,7 @@ fun WeatherDetailScreen(
 
                     item {
                         FreetimeGlassPanel(
-                            modifier = Modifier.fillMaxWidth(),
-                            depth = FreetimeGlassDepth.ELEVATED
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
@@ -362,7 +360,7 @@ fun WeatherDetailScreen(
                             ageMinutes <= 60 -> stringResource(Res.string.freshness_recent)
                             else -> stringResource(Res.string.freshness_stale)
                         }
-                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.SUBTLE) {
+                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                                 FreetimeText(freshness, style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 FreetimeText(stringResource(Res.string.updated_age_short, ageMinutes), style = FreetimeDesign.typography.labelMedium, color = FreetimeDesign.palette.contentMuted)
@@ -371,7 +369,7 @@ fun WeatherDetailScreen(
                     }
 
                     item {
-                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
+                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                 FreetimeText(stringResource(Res.string.weather_history_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 if (weatherHistory.isEmpty()) {
@@ -418,7 +416,7 @@ fun WeatherDetailScreen(
                             -1 -> stringResource(Res.string.pressure_falling)
                             else -> stringResource(Res.string.pressure_steady)
                         }
-                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
+                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                 FreetimeText(stringResource(Res.string.conditions_insights_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -444,8 +442,7 @@ fun WeatherDetailScreen(
                         val smart = com.freetime.geoweather.WeatherIntelligence.smartHero(hourly, daily.firstOrNull())
                         val nowcast = com.freetime.geoweather.WeatherIntelligence.nowcast(hourly)
                         FreetimeGlassPanel(
-                            modifier = Modifier.fillMaxWidth(),
-                            depth = FreetimeGlassDepth.ELEVATED
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
@@ -475,14 +472,13 @@ fun WeatherDetailScreen(
 
                     if (hourly.isNotEmpty()) {
                         item {
-                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     FreetimeText(stringResource(Res.string.weather_timeline_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                         items(hourly.take(12)) { hour ->
                                             FreetimeGlassPanel(
                                                 modifier = Modifier.width(94.dp),
-                                                depth = FreetimeGlassDepth.SUBTLE,
                                                 interactive = false
                                             ) {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -516,7 +512,7 @@ fun WeatherDetailScreen(
                             val eveningGoldenStart = sunset.minusHours(1)
                             val morningBlueStart = sunrise.minusMinutes(40)
                             val eveningBlueEnd = sunset.plusMinutes(40)
-                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.STANDARD) {
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     FreetimeText(stringResource(Res.string.sun_path_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -535,7 +531,7 @@ fun WeatherDetailScreen(
 
                     item {
                         val moon = moonPhaseDetails(java.time.LocalDate.now())
-                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.SUBTLE) {
+                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                                 FreetimeText(moon.icon, style = FreetimeDesign.typography.displayMedium)
                                 Column(horizontalAlignment = Alignment.End) {
@@ -762,8 +758,7 @@ fun WeatherDetailScreen(
                                         haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                         onRadarClick(loc.latitude, loc.longitude)
                                     },
-                                    interactive = true,
-                                    depth = FreetimeGlassDepth.SUBTLE
+                                    interactive = true
                                 ) {
                                     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                                         FreetimeText("🌧️  ·  📡", style = FreetimeDesign.typography.headlineMedium)
@@ -804,8 +799,7 @@ fun WeatherDetailScreen(
                                     val hour = hourly[hourIndex]
                                     FreetimeGlassPanel(
                                         modifier = Modifier.clickable { onHourlyClick(loc.name, hourly, hourIndex) },
-                                        interactive = true,
-                                        depth = FreetimeGlassDepth.SUBTLE
+                                        interactive = true
                                         ) {
                                         Column(
                                             modifier = Modifier,
@@ -840,8 +834,7 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth()
                                     .animateContentSize(animationSpec = spring())
                                     .clickable { onDailyClick(loc.name, daily, daily.indexOf(day)) },
-                                interactive = true,
-                                depth = FreetimeGlassDepth.SUBTLE
+                                interactive = true
                                 ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     Row(
@@ -872,7 +865,6 @@ fun WeatherDetailScreen(
                                                 val hourIsDay = isForecastDaytime(hour.time)
                                                 FreetimeGlassPanel(
                                                     modifier = Modifier.width(78.dp),
-                                                    depth = FreetimeGlassDepth.SUBTLE,
                                                     interactive = false
                                                 ) {
                                                     Column(
@@ -1081,7 +1073,7 @@ fun WeatherAlertsSection(
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
     if (alerts.isNotEmpty()) {
-        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.ELEVATED) {
+        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.Top) {
                 FreetimeText("⚠️", fontSize = 24.sp)
                 Spacer(Modifier.width(12.dp))
@@ -1096,7 +1088,7 @@ fun WeatherAlertsSection(
         }
     }
     if (history.isNotEmpty()) {
-        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth(), depth = FreetimeGlassDepth.SUBTLE) {
+        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 FreetimeText(stringResource(Res.string.alert_history_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                 history.take(5).forEach { record ->
