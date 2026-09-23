@@ -383,6 +383,18 @@ fun WeatherDetailScreen(
                                         stringResource(Res.string.history_range, formatTemp(low, tempUnit), formatTemp(high, tempUnit)),
                                         style = FreetimeDesign.typography.bodyLarge
                                     )
+                                    val newest = recent.firstOrNull()
+                                    val oldest = recent.lastOrNull()
+                                    val tempChange = if (newest != null && oldest != null) newest.temperature - oldest.temperature else 0.0
+                                    val avgHumidity = recent.mapNotNull { it.humidity }.takeIf { it.isNotEmpty() }?.average()
+                                    val avgPressure = recent.mapNotNull { it.pressure }.takeIf { it.isNotEmpty() }?.average()
+                                    val maxWind = recent.mapNotNull { it.windSpeed }.maxOrNull()
+                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                        WeatherDetailItem("Δ temp", (if (tempChange >= 0) "+" else "") + String.format(java.util.Locale.US, "%.1f°", tempChange), modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.humidity_label), avgHumidity?.let { String.format(java.util.Locale.US, "%.0f%%", it) } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.pressure_label), avgPressure?.let { String.format(java.util.Locale.US, "%.0f hPa", it) } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.wind_label), maxWind?.let { String.format(java.util.Locale.US, "%.0f km/h", it) } ?: "--", modifier = Modifier.weight(1f))
+                                    }
                                     Row(
                                         modifier = Modifier.fillMaxWidth().height(72.dp),
                                         horizontalArrangement = Arrangement.spacedBy(3.dp),
