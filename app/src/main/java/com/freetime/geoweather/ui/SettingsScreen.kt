@@ -57,7 +57,8 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onChangeLogClick: () -> Unit,
     onWebViewClick: (String, String) -> Unit,
-    onDiagnosticsClick: () -> Unit
+    onDiagnosticsClick: () -> Unit,
+    onShowDistributionNotice: () -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
@@ -259,6 +260,22 @@ fun SettingsScreen(
                 }
             }
 
+            }
+            Spacer(Modifier.height(FreetimeDesign.spacing.lg))
+            FreetimeSettingsGroup("Open Android") {
+                FreetimeText(
+                    "Review GeoWeather's Android distribution notice and learn more about keeping Android open.",
+                    style = FreetimeDesign.typography.bodyMedium,
+                    color = FreetimeDesign.palette.contentMuted
+                )
+                FreetimeGlassAction(
+                    onClick = onShowDistributionNotice,
+                    modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
+                ) { FreetimeText("Show distribution notice") }
+                FreetimeGlassAction(
+                    onClick = { onWebViewClick("https://keepandroidopen.org", "Keep Android Open") },
+                    modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
+                ) { FreetimeText("Keep Android Open") }
             }
             Spacer(Modifier.height(FreetimeDesign.spacing.lg))
             FreetimeGlassAction(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))) { FreetimeText(stringResource(Res.string.diagnostics_title)) }
