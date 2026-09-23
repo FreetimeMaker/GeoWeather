@@ -201,8 +201,10 @@ fun WeatherDetailScreen(
                 var airExtras by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.CurrentHourExtras?>(null) }
                 LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }
                 var forecastConfidence by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.ForecastConfidence?>(null) }
+                var dailyModelAgreement by remember(loc.id, loc.weatherData) { mutableStateOf<List<com.freetime.geoweather.data.DailyModelAgreement>>(emptyList()) }
                 LaunchedEffect(loc.id, loc.weatherData) {
                     forecastConfidence = viewModel.getForecastConfidence(loc)
+                    dailyModelAgreement = viewModel.getDailyModelAgreement(loc)
                 }
                 var forecastExpanded by remember { mutableStateOf(false) }
                 val visibleDaily = if (forecastExpanded) daily else daily.take(7)
@@ -475,6 +477,38 @@ fun WeatherDetailScreen(
                                                     FreetimeText(String.format(java.util.Locale.US, "%.1f°C", model.temperature), style = FreetimeDesign.typography.titleMedium)
                                                     FreetimeText("Rain " + model.precipitationProbability + "%", style = FreetimeDesign.typography.labelSmall)
                                                     FreetimeText("Wind " + String.format(java.util.Locale.US, "%.1f km/h", model.windSpeed), style = FreetimeDesign.typography.labelSmall)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (dailyModelAgreement.isNotEmpty()) {
+                        item {
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    FreetimeText("16-day model agreement", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(
+                                        "Higher scores mean ECMWF, GFS and Best Match are closer together.",
+                                        style = FreetimeDesign.typography.bodySmall,
+                                        color = FreetimeDesign.palette.contentMuted
+                                    )
+                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        items(dailyModelAgreement, key = { it.date }) { day ->
+                                            FreetimeCard(modifier = Modifier.width(170.dp)) {
+                                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                    FreetimeText(day.date, style = FreetimeDesign.typography.labelLarge, fontWeight = FontWeight.Bold)
+                                                    FreetimeText(day.score.toString() + "/100", style = FreetimeDesign.typography.titleLarge)
+                                                    day.models.forEach { model ->
+                                                        FreetimeText(
+                                                            model.model + " " + String.format(java.util.Locale.US, "%.1f°C", model.temperature) +
+                                                                " · " + model.precipitationProbability + "%",
+                                                            style = FreetimeDesign.typography.labelSmall
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }
