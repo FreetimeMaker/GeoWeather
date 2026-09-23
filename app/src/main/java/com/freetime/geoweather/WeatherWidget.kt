@@ -83,7 +83,7 @@ class WeatherWidget : GlanceAppWidget() {
                 // Keep the widget useful without connectivity by rendering the last Room cache.
                 offlineCache = location.weatherData != null || dataSaver
                 tempString = repository.getDisplayTemp(location, tempUnit)
-                weatherInfo = if (offlineCache) "Cached · " + WeatherCodes.getDescription(location.currentWeatherCode ?: 0)
+                weatherInfo = if (offlineCache) context.getString(SharedRes.string.widget_cached, WeatherCodes.getDescription(location.currentWeatherCode ?: 0))
                     else context.getString(SharedRes.string.error_connection)
                 hourlyList = repository.getHourlyForecasts(location).take(5)
                 dailyList = repository.getDailyForecasts(location).take(3)
@@ -94,12 +94,13 @@ class WeatherWidget : GlanceAppWidget() {
 
         provideContent {
             val size = LocalSize.current
-            WeatherWidgetContent(locationName, tempString, weatherInfo, hourlyList, dailyList, offlineCache, dataSaver, size, refreshDesc)
+            WeatherWidgetContent(context, locationName, tempString, weatherInfo, hourlyList, dailyList, offlineCache, dataSaver, size, refreshDesc)
         }
     }
 
     @Composable
     private fun WeatherWidgetContent(
+        context: Context,
         name: String,
         temp: String,
         info: String,
@@ -169,7 +170,7 @@ class WeatherWidget : GlanceAppWidget() {
 
             if (offlineCache) {
                 Text(
-                    text = if (dataSaver) "Data Saver · saved forecast" else "Offline · last saved forecast",
+                    text = if (dataSaver) context.getString(SharedRes.string.widget_data_saver_saved) else context.getString(SharedRes.string.widget_offline_saved),
                     style = TextStyle(color = ColorProvider(Color(0xFF486581)), fontSize = 10.sp)
                 )
             }
@@ -193,7 +194,8 @@ class WeatherWidget : GlanceAppWidget() {
                 val gustPeak = hourly.maxOfOrNull { it.windGusts ?: it.windSpeed ?: 0.0 } ?: 0.0
                 Spacer(GlanceModifier.height(6.dp))
                 Text(
-                    text = "Rain " + rainPeak + "% · Gusts " + gustPeak.toInt() + " km/h" + (nextRain?.let { " · " + it.time.takeLast(5) } ?: ""),
+                    text = nextRain?.let { context.getString(SharedRes.string.widget_rain_gusts_time, rainPeak, gustPeak.toInt(), it.time.takeLast(5)) }
+                        ?: context.getString(SharedRes.string.widget_rain_gusts, rainPeak, gustPeak.toInt()),
                     style = TextStyle(color = ColorProvider(Color(0xFF334E68)), fontSize = 11.sp)
                 )
             }
