@@ -49,7 +49,7 @@ GeoWeather is a modern Android weather application that allows you to monitor we
 - 📅 **16-Day Weather Forecast**: Detailed weather predictions for more than two weeks
 - ⏰ **Hourly Forecast**: Precise weather data on an hourly basis
 - 🎨 **Material YOU**: Dynamic colors based on your wallpaper (Android 12+)
-- 🌍 **Localization**: Full support for English, German, **Russian**, and many more with a dedicated language selector
+- 🌍 **Localization**: Full support for English, German, **Russian**, and many more
 - 🎨 **Weather Icons**: Visual representation of weather conditions
 - 🔔 **Notifications**: Receive weather alerts and updates
 - 📝 **Integrated Change Log**: Track version updates directly in the app
