@@ -36,6 +36,7 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.data.HourlyForecast
+import com.freetime.geoweather.data.DailyForecast
 import com.freetime.geoweather.R as SharedRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -67,6 +68,8 @@ class WeatherWidget : GlanceAppWidget() {
         var tempString = ""
         val locationName = location?.name ?: context.getString(SharedRes.string.no_location_selected)
         var hourlyList = emptyList<HourlyForecast>()
+        var dailyList = emptyList<DailyForecast>()
+        var offlineCache = false
 
         if (location != null) {
             try {
@@ -74,8 +77,15 @@ class WeatherWidget : GlanceAppWidget() {
                 tempString = repository.getDisplayTemp(updatedLocation, tempUnit)
                 weatherInfo = WeatherCodes.getDescription(updatedLocation.currentWeatherCode ?: 0)
                 hourlyList = repository.getHourlyForecasts(updatedLocation).take(5)
+                dailyList = repository.getDailyForecasts(updatedLocation).take(3)
             } catch (_: Exception) {
-                weatherInfo = context.getString(SharedRes.string.error_connection)
+                // Keep the widget useful without connectivity by rendering the last Room cache.
+                offlineCache = location.weatherData != null
+                tempString = repository.getDisplayTemp(location, tempUnit)
+                weatherInfo = if (offlineCache) "Cached · " + WeatherCodes.getDescription(location.currentWeatherCode ?: 0)
+                    else context.getString(SharedRes.string.error_connection)
+                hourlyList = repository.getHourlyForecasts(location).take(5)
+                dailyList = repository.getDailyForecasts(location).take(3)
             }
         }
 
@@ -83,7 +93,7 @@ class WeatherWidget : GlanceAppWidget() {
 
         provideContent {
             val size = LocalSize.current
-            WeatherWidgetContent(locationName, tempString, weatherInfo, hourlyList, size, refreshDesc)
+            WeatherWidgetContent(locationName, tempString, weatherInfo, hourlyList, dailyList, offlineCache, size, refreshDesc)
         }
     }
 
@@ -93,6 +103,8 @@ class WeatherWidget : GlanceAppWidget() {
         temp: String,
         info: String,
         hourly: List<HourlyForecast>,
+        daily: List<DailyForecast>,
+        offlineCache: Boolean,
         size: DpSize,
         refreshDesc: String
     ) {
@@ -151,6 +163,26 @@ class WeatherWidget : GlanceAppWidget() {
                         .size(24.dp)
                         .clickable(actionRunCallback<RefreshActionCallback>())
                 )
+            }
+
+            if (offlineCache) {
+                Text(
+                    text = "Offline · last saved forecast",
+                    style = TextStyle(color = ColorProvider(Color(0xFF486581)), fontSize = 10.sp)
+                )
+            }
+
+            if (isDetailed && daily.isNotEmpty()) {
+                Spacer(GlanceModifier.height(5.dp))
+                Row(modifier = GlanceModifier.fillMaxWidth()) {
+                    daily.forEach { day ->
+                        Text(
+                            text = day.date.takeLast(5) + "  " + day.minTemp + "°/" + day.maxTemp + "°",
+                            style = TextStyle(color = ColorProvider(Color(0xFF334E68)), fontSize = 10.sp),
+                            modifier = GlanceModifier.defaultWeight()
+                        )
+                    }
+                }
             }
 
             if (isDetailed && hourly.isNotEmpty()) {
