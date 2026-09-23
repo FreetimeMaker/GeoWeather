@@ -63,6 +63,7 @@ class WeatherWidget : GlanceAppWidget() {
         }
 
         val tempUnit = appSettings.tempUnit.value
+        val dataSaver = appSettings.dataSaver.value
 
         var weatherInfo = context.getString(SharedRes.string.widget_loading)
         var tempString = ""
@@ -73,14 +74,14 @@ class WeatherWidget : GlanceAppWidget() {
 
         if (location != null) {
             try {
-                val updatedLocation = repository.refreshSelectedLocationWeather(includeHourly = true) ?: location
+                val updatedLocation = if (dataSaver && location.weatherData != null) location else repository.refreshSelectedLocationWeather(includeHourly = true) ?: location
                 tempString = repository.getDisplayTemp(updatedLocation, tempUnit)
                 weatherInfo = WeatherCodes.getDescription(updatedLocation.currentWeatherCode ?: 0)
                 hourlyList = repository.getHourlyForecasts(updatedLocation).take(5)
                 dailyList = repository.getDailyForecasts(updatedLocation).take(3)
             } catch (_: Exception) {
                 // Keep the widget useful without connectivity by rendering the last Room cache.
-                offlineCache = location.weatherData != null
+                offlineCache = location.weatherData != null || dataSaver
                 tempString = repository.getDisplayTemp(location, tempUnit)
                 weatherInfo = if (offlineCache) "Cached · " + WeatherCodes.getDescription(location.currentWeatherCode ?: 0)
                     else context.getString(SharedRes.string.error_connection)
@@ -93,7 +94,7 @@ class WeatherWidget : GlanceAppWidget() {
 
         provideContent {
             val size = LocalSize.current
-            WeatherWidgetContent(locationName, tempString, weatherInfo, hourlyList, dailyList, offlineCache, size, refreshDesc)
+            WeatherWidgetContent(locationName, tempString, weatherInfo, hourlyList, dailyList, offlineCache, dataSaver, size, refreshDesc)
         }
     }
 
@@ -105,6 +106,7 @@ class WeatherWidget : GlanceAppWidget() {
         hourly: List<HourlyForecast>,
         daily: List<DailyForecast>,
         offlineCache: Boolean,
+        dataSaver: Boolean,
         size: DpSize,
         refreshDesc: String
     ) {
@@ -167,7 +169,7 @@ class WeatherWidget : GlanceAppWidget() {
 
             if (offlineCache) {
                 Text(
-                    text = "Offline · last saved forecast",
+                    text = if (dataSaver) "Data Saver · saved forecast" else "Offline · last saved forecast",
                     style = TextStyle(color = ColorProvider(Color(0xFF486581)), fontSize = 10.sp)
                 )
             }
@@ -187,10 +189,11 @@ class WeatherWidget : GlanceAppWidget() {
 
             if (isDetailed && hourly.isNotEmpty()) {
                 val rainPeak = hourly.maxOfOrNull { it.precipProbability } ?: 0
+                val nextRain = hourly.firstOrNull { it.precipProbability >= 40 }
                 val gustPeak = hourly.maxOfOrNull { it.windGusts ?: it.windSpeed ?: 0.0 } ?: 0.0
                 Spacer(GlanceModifier.height(6.dp))
                 Text(
-                    text = "Rain " + rainPeak + "% · Gusts " + gustPeak.toInt() + " km/h",
+                    text = "Rain " + rainPeak + "% · Gusts " + gustPeak.toInt() + " km/h" + (nextRain?.let { " · " + it.time.takeLast(5) } ?: ""),
                     style = TextStyle(color = ColorProvider(Color(0xFF334E68)), fontSize = 11.sp)
                 )
             }
