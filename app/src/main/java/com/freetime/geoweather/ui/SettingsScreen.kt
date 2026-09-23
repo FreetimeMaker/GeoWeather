@@ -280,7 +280,7 @@ fun SettingsScreen(
                             if (!refreshingOfflinePacks) {
                                 scope.launch {
                                     refreshingOfflinePacks = true
-                                    viewModel.refreshAllLocations()
+                                    viewModel.refreshAllLocations(offlinePacksOnly = true)
                                     refreshingOfflinePacks = false
                                     snackbarHostState.show(context.getString(Res.string.offline_refresh_complete))
                                 }
