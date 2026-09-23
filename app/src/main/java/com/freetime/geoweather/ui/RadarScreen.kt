@@ -1,6 +1,9 @@
 package com.freetime.geoweather.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Pause
@@ -40,13 +43,14 @@ private data class RadarFrames(val host: String, val paths: List<String>)
 
 @Composable
 fun WeatherMapPreview(lat: Double, lon: Double, modifier: Modifier = Modifier) {
-    NativeWeatherMap(lat = lat, lon = lon, frameIndex = 11, modifier = modifier)
+    NativeWeatherMap(lat = lat, lon = lon, frameIndex = 11, radarVisible = true, modifier = modifier)
 }
 
 @Composable
 fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit) {
     var playing by remember { mutableStateOf(true) }
     var frameIndex by remember { mutableIntStateOf(0) }
+    var radarVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(playing) {
         while (playing) {
@@ -70,7 +74,21 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit) {
         }
     ) {
         Box(Modifier.fillMaxSize()) {
-            NativeWeatherMap(lat, lon, frameIndex, Modifier.fillMaxSize())
+            NativeWeatherMap(lat, lon, frameIndex, radarVisible, Modifier.fillMaxSize())
+            Row(
+                modifier = Modifier.align(Alignment.TopCenter).padding(12.dp).horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                FreetimeCard(modifier = Modifier.clickable { radarVisible = !radarVisible }) {
+                    FreetimeText(if (radarVisible) "Radar ✓" else "Radar", modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                }
+                FreetimeCard {
+                    FreetimeText("OpenStreetMap ✓", modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                }
+                FreetimeCard {
+                    FreetimeText("Location ✓", modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                }
+            }
             FreetimeCard(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -110,6 +128,7 @@ private fun NativeWeatherMap(
     lat: Double,
     lon: Double,
     frameIndex: Int,
+    radarVisible: Boolean,
     modifier: Modifier
 ) {
     val context = LocalContext.current
@@ -148,7 +167,7 @@ private fun NativeWeatherMap(
             map.controller.setCenter(GeoPoint(lat, lon))
             map.overlays.removeAll { it is TilesOverlay }
             val data = frames
-            if (data != null && data.paths.isNotEmpty()) {
+            if (radarVisible && data != null && data.paths.isNotEmpty()) {
                 val path = data.paths[frameIndex.coerceIn(0, data.paths.lastIndex)]
                 val source = object : OnlineTileSourceBase(
                     "RainViewer",
