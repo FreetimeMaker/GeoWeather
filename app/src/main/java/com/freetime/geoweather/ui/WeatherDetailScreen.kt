@@ -543,6 +543,32 @@ fun WeatherDetailScreen(
                         }
                     }
 
+                    if (daily.isNotEmpty()) {
+                        item {
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    FreetimeText("Weather calendar", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    daily.chunked(4).forEach { rowDays ->
+                                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                            rowDays.forEach { day ->
+                                                FreetimeCard(modifier = Modifier.weight(1f)) {
+                                                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                                        FreetimeText(day.date.takeLast(5), style = FreetimeDesign.typography.labelSmall)
+                                                        FreetimeText(day.maxTemp.toString() + "°", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                                        FreetimeText(day.minTemp.toString() + "°", style = FreetimeDesign.typography.labelSmall)
+                                                        FreetimeText("☔ " + day.precipProbMax + "%", style = FreetimeDesign.typography.labelSmall)
+                                                        if ((day.snowfallSum ?: 0.0) > 0.0) FreetimeText("❄ " + String.format(java.util.Locale.US, "%.1f", day.snowfallSum) + " cm", style = FreetimeDesign.typography.labelSmall)
+                                                    }
+                                                }
+                                            }
+                                            repeat(4 - rowDays.size) { Spacer(Modifier.weight(1f)) }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if (dailyModelAgreement.isNotEmpty()) {
                         item {
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
@@ -567,6 +593,30 @@ fun WeatherDetailScreen(
                                                         )
                                                     }
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (hourly.isNotEmpty()) {
+                        item {
+                            val activityDetails = com.freetime.geoweather.WeatherIntelligence.activityDetails(hourly)
+                            val photo = com.freetime.geoweather.WeatherIntelligence.photographyWindows(hourly, daily.firstOrNull())
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    FreetimeText("Outdoor & photography", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    (activityDetails + photo).forEach { detail ->
+                                        FreetimeCard(modifier = Modifier.fillMaxWidth()) {
+                                            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                                FreetimeText(detail.activity + " · " + detail.score + "/100", style = FreetimeDesign.typography.labelLarge, fontWeight = FontWeight.Bold)
+                                                FreetimeText(
+                                                    if (detail.bestHours.isEmpty()) "No recommended window" else detail.bestHours.joinToString(" · ") { it.takeLast(5) },
+                                                    style = FreetimeDesign.typography.bodyMedium
+                                                )
+                                                if (detail.reasons.isNotEmpty()) FreetimeText(detail.reasons.joinToString(" · "), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
                                             }
                                         }
                                     }
