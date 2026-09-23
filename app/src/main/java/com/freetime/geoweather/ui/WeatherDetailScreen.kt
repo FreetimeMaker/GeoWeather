@@ -598,7 +598,7 @@ fun WeatherDetailScreen(
                                                     FreetimeText(sunsetTime.toString().take(5), style = FreetimeDesign.typography.labelSmall)
                                                 }
                                             }
-                                            FreetimeGlassPanel() {
+                                            FreetimeCard {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                                     FreetimeText(hour.time.takeLast(5), style = FreetimeDesign.typography.labelSmall)
                                                     Image(painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code, isForecastDaytime(hour.time))), contentDescription = null, modifier = Modifier.size(32.dp))
