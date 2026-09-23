@@ -200,6 +200,10 @@ fun WeatherDetailScreen(
                 val weatherHistory by viewModel.getWeatherHistory(loc.name).collectAsState(initial = emptyList())
                 var airExtras by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.CurrentHourExtras?>(null) }
                 LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }
+                var forecastConfidence by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.ForecastConfidence?>(null) }
+                LaunchedEffect(loc.id, loc.weatherData) {
+                    forecastConfidence = viewModel.getForecastConfidence(loc)
+                }
                 var forecastExpanded by remember { mutableStateOf(false) }
                 val visibleDaily = if (forecastExpanded) daily else daily.take(7)
                 val code = loc.currentWeatherCode
@@ -446,6 +450,36 @@ fun WeatherDetailScreen(
                                 }
                                 FreetimeText(stringResource(Res.string.feels_like_reason_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 FreetimeText(feelsReason, color = FreetimeDesign.palette.contentMuted)
+                            }
+                        }
+                    }
+
+                    forecastConfidence?.let { confidence ->
+                        item {
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    FreetimeText("Forecast confidence", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(confidence.score.toString() + "/100", style = FreetimeDesign.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(
+                                        "Model spread · temperature " + String.format(java.util.Locale.US, "%.1f°C", confidence.temperatureSpread) +
+                                            " · rain " + confidence.precipitationSpread + "% · wind " +
+                                            String.format(java.util.Locale.US, "%.1f km/h", confidence.windSpread),
+                                        style = FreetimeDesign.typography.bodyMedium,
+                                        color = FreetimeDesign.palette.contentMuted
+                                    )
+                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        items(confidence.models, key = { it.model }) { model ->
+                                            FreetimeCard(modifier = Modifier.width(150.dp)) {
+                                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                    FreetimeText(model.model, style = FreetimeDesign.typography.labelLarge, fontWeight = FontWeight.Bold)
+                                                    FreetimeText(String.format(java.util.Locale.US, "%.1f°C", model.temperature), style = FreetimeDesign.typography.titleMedium)
+                                                    FreetimeText("Rain " + model.precipitationProbability + "%", style = FreetimeDesign.typography.labelSmall)
+                                                    FreetimeText("Wind " + String.format(java.util.Locale.US, "%.1f km/h", model.windSpeed), style = FreetimeDesign.typography.labelSmall)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
