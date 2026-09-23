@@ -16,6 +16,7 @@ androidx-activity = "1.13.0"
 androidx-work = "2.11.2"
 androidx-core-ktx = "1.19.0"
 freetime = "1.11.0"
+osmdroid = "6.1.20"
 
 [libraries]
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
@@ -43,6 +44,7 @@ androidx-activity = { module = "androidx.activity:activity", version.ref = "andr
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
+osmdroid = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroid" }
 
 freetime-core = { module = "com.github.FreetimeMaker.Freetime-Core:Core", version.ref = "freetime" }
 freetime-design = { module = "com.github.FreetimeMaker.Freetime-Core:Design", version.ref = "freetime" }
