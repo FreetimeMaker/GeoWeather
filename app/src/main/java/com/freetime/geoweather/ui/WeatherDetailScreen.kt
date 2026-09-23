@@ -86,7 +86,7 @@ fun WeatherDetailScreen(
     onBack: () -> Unit,
     onRadarClick: (Double, Double) -> Unit,
     onHourlyClick: (String, List<HourlyForecast>, Int) -> Unit,
-    onDailyClick: (String, List<DailyForecast>, Int) -> Unit
+    onDailyClick: (String, List<DailyForecast>, List<HourlyForecast>, Int) -> Unit
 ) {
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
@@ -277,7 +277,7 @@ fun WeatherDetailScreen(
                                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 when (index) {
                                     1 -> if (hourly.isNotEmpty()) onHourlyClick(loc.name, hourly, 0)
-                                    2 -> if (daily.isNotEmpty()) onDailyClick(loc.name, daily, 0)
+                                    2 -> if (daily.isNotEmpty()) onDailyClick(loc.name, daily, hourly, 0)
                                 }
                             },
                             modifier = Modifier.fillMaxWidth()
@@ -834,7 +834,7 @@ fun WeatherDetailScreen(
                             FreetimeGlassPanel(
                                 modifier = Modifier.fillMaxWidth()
                                     .animateContentSize(animationSpec = spring())
-                                    .clickable { onDailyClick(loc.name, daily, daily.indexOf(day)) },
+                                    .clickable { onDailyClick(loc.name, daily, hourly, daily.indexOf(day)) },
                                 interactive = true
                                 ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
