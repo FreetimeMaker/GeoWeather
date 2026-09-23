@@ -70,6 +70,10 @@ fun SettingsScreen(
     val weatherAnimations by appSettings.weatherAnimations.collectAsState()
     val notificationProfile by appSettings.notificationProfile.collectAsState()
     val quietHours by appSettings.quietHours.collectAsState()
+    val smartRainAlert by appSettings.smartRainAlert.collectAsState()
+    val smartWindAlert by appSettings.smartWindAlert.collectAsState()
+    val smartFrostAlert by appSettings.smartFrostAlert.collectAsState()
+    val smartUvAlert by appSettings.smartUvAlert.collectAsState()
 
     val snackbarHostState = rememberFreetimeMessageHostState()
     val scope = rememberCoroutineScope()
@@ -206,6 +210,11 @@ fun SettingsScreen(
                 value = windThreshold,
                 onValueChange = { appSettings.setWindThreshold(it) }
             )
+            FreetimeText("Smart alerts", style = FreetimeDesign.typography.titleMedium)
+            SettingsToggle("Rain alerts", "Notify when rain is likely in the next few hours.", smartRainAlert) { appSettings.setSmartRainAlert(it) }
+            SettingsToggle("Strong wind alerts", "Notify when forecast gusts become strong.", smartWindAlert) { appSettings.setSmartWindAlert(it) }
+            SettingsToggle("Frost alerts", "Notify when forecast temperature reaches freezing.", smartFrostAlert) { appSettings.setSmartFrostAlert(it) }
+            SettingsToggle("High UV alerts", "Notify when the UV index reaches a high level.", smartUvAlert) { appSettings.setSmartUvAlert(it) }
 
             }
             FreetimeSettingsGroup(stringResource(Res.string.webview_settings_title)) {
