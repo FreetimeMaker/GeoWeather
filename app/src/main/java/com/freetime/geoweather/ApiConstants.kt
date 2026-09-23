@@ -34,6 +34,12 @@ object ApiConstants {
      * Modern Open-Meteo forecast URL (`current=` instead of the deprecated
      * `current_weather=true`). Keys match what [LocationEntity] parses.
      */
+    fun getModelComparisonUrl(lat: Double, lon: Double, model: String): String {
+        return "$OPEN_METEO_FORECAST?latitude=$lat&longitude=$lon" +
+            "&hourly=temperature_2m,precipitation_probability,wind_speed_10m" +
+            "&forecast_days=3&timezone=auto&models=$model"
+    }
+
     fun getForecastUrl(lat: Double, lon: Double): String {
         return "$OPEN_METEO_FORECAST?latitude=$lat&longitude=$lon" +
             "&current=temperature_2m,weather_code,relative_humidity_2m,apparent_temperature,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m" +
