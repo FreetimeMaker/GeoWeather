@@ -251,6 +251,14 @@ fun SettingsScreen(
                         )
                     } else {
                         savedLocations.forEach { location ->
+                            FreetimeSwitchSetting(
+                                title = location.name,
+                                description = stringResource(Res.string.offline_city_pack_desc),
+                                checked = location.offlinePackEnabled,
+                                onCheckedChange = { enabled ->
+                                    viewModel.setOfflinePackEnabled(location, enabled)
+                                }
+                            )
                             val ageMs = (System.currentTimeMillis() - location.lastUpdated).coerceAtLeast(0L)
                             val ageText = when {
                                 location.lastUpdated <= 0L -> stringResource(Res.string.offline_never_updated)
