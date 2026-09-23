@@ -97,7 +97,7 @@ fun SearchScreen(
                 Spacer(modifier = Modifier.height(12.dp))
             }
             if (query.isBlank() && savedLocations.isNotEmpty()) {
-                FreetimeSectionHeader(title = "Saved places")
+                FreetimeSectionHeader(title = stringResource(Res.string.saved_places))
                 Spacer(modifier = Modifier.height(8.dp))
                 androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(savedLocations.take(8), key = { "saved-search-" + it.id }) { loc ->
