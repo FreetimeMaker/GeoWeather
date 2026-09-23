@@ -206,6 +206,16 @@ fun WeatherDetailScreen(
                     forecastConfidence = viewModel.getForecastConfidence(loc)
                     dailyModelAgreement = viewModel.getDailyModelAgreement(loc)
                 }
+                var forecastChanges by remember(loc.id) { mutableStateOf<List<com.freetime.geoweather.ForecastChange>>(emptyList()) }
+                LaunchedEffect(loc.id, loc.weatherData) {
+                    if (daily.isNotEmpty()) {
+                        forecastChanges = com.freetime.geoweather.ForecastChangeHistory.compareAndStore(
+                            context,
+                            "location_" + loc.id,
+                            daily
+                        )
+                    }
+                }
                 var forecastExpanded by remember { mutableStateOf(false) }
                 val visibleDaily = if (forecastExpanded) daily else daily.take(7)
                 val code = loc.currentWeatherCode
@@ -479,6 +489,26 @@ fun WeatherDetailScreen(
                                 }
                                 FreetimeText(stringResource(Res.string.feels_like_reason_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 FreetimeText(feelsReason, color = FreetimeDesign.palette.contentMuted)
+                            }
+                        }
+                    }
+
+                    if (forecastChanges.isNotEmpty()) {
+                        item {
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    FreetimeText("Forecast changes", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    forecastChanges.take(6).forEach { change ->
+                                        val max = if (change.maxTempDelta >= 0) "+" + change.maxTempDelta else change.maxTempDelta.toString()
+                                        val rain = if (change.rainProbabilityDelta >= 0) "+" + change.rainProbabilityDelta else change.rainProbabilityDelta.toString()
+                                        val wind = String.format(java.util.Locale.US, "%+.0f", change.windDelta)
+                                        FreetimeText(
+                                            change.date + " · max " + max + "°C · rain " + rain + "% · wind " + wind + " km/h",
+                                            style = FreetimeDesign.typography.bodyMedium
+                                        )
+                                    }
+                                    FreetimeText("Compared with the previously saved forecast.", style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
+                                }
                             }
                         }
                     }
