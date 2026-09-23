@@ -174,7 +174,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
             state = freetimeWarning,
             onLearnMore = {
                 freetimeWarning.dismiss()
-                navigate(Web("https://docs.free-time.me/projects/geoweather", warnLearnMore))
+                navigate(Web("https://keepandroidopen.org", warnLearnMore))
             },
             content = FreetimeWarnContent(
                 title = warnTitle,
