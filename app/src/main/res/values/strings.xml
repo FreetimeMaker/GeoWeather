@@ -766,4 +766,13 @@
     <string name="offline_city_pack">Keep this city available offline</string>
     <string name="offline_city_pack_desc">Refresh this city in the background when offline packs are enabled.</string>
 
+    <string name="cl_470_intelligence">Added richer weather intelligence with activity planning, photography conditions, precipitation timelines and a severe weather dashboard.</string>
+    <string name="cl_470_models">Added forecast confidence and daily weather-model agreement to make forecast uncertainty easier to understand.</string>
+    <string name="cl_470_radar">Rebuilt the weather radar and map as a native map experience with radar controls and an embedded weather-map preview.</string>
+    <string name="cl_470_offline">Added Data Saver and Offline Forecast Packs with per-city selection, cache status, last-updated information and manual offline refresh.</string>
+    <string name="cl_470_travel">Expanded the travel planner with weather comparisons, packing hints and improved saved-location insights.</string>
+    <string name="cl_470_search">Improved city search with saved-place shortcuts and clearer region and country information.</string>
+    <string name="cl_470_notifications">Added smarter rain, wind, frost and UV alerts and improved persistent weather notification reliability.</string>
+    <string name="cl_470_performance">Improved performance across weather details and saved locations and fixed additional forecast, notification and UI issues.</string>
+
 </resources>
