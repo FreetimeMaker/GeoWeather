@@ -1,6 +1,5 @@
 package com.freetime.geoweather.ui
 
-import android.graphics.drawable.Drawable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -28,6 +27,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -146,7 +146,7 @@ private fun NativeWeatherMap(
         },
         update = { map ->
             map.controller.setCenter(GeoPoint(lat, lon))
-            map.overlays.removeAll { it is TilesOverlay && it !is Marker }
+            map.overlays.removeAll { it is TilesOverlay }
             val data = frames
             if (data != null && data.paths.isNotEmpty()) {
                 val path = data.paths[frameIndex.coerceIn(0, data.paths.lastIndex)]
@@ -162,7 +162,8 @@ private fun NativeWeatherMap(
                         return baseUrl + path + "/256/" + z + "/" + x + "/" + y + "/2/1_1.png"
                     }
                 }
-                map.overlays.add(TilesOverlay(map.tileProvider.apply { tileSource = source }, context))
+                val provider = MapTileProviderBasic(context, source)
+                map.overlays.add(TilesOverlay(provider, context))
             }
             map.invalidate()
         }
