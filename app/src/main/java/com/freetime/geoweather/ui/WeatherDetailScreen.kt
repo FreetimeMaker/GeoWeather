@@ -354,6 +354,33 @@ fun WeatherDetailScreen(
                         }
                     }
 
+                    if (hourly.isNotEmpty()) {
+                        item {
+                            val next = hourly.take(12)
+                            val wet = next.filter { it.precipProbability > 0 || (it.precipitation ?: 0.0) > 0.0 }
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    FreetimeText("Precipitation timeline", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    if (wet.isEmpty()) {
+                                        FreetimeText("No precipitation indicated in the next 12 hours.", color = FreetimeDesign.palette.contentMuted)
+                                    } else {
+                                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                            items(next, key = { "rain-" + it.time }) { hour ->
+                                                FreetimeCard(modifier = Modifier.width(105.dp)) {
+                                                    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                                        FreetimeText(hour.time.takeLast(5), style = FreetimeDesign.typography.labelLarge)
+                                                        FreetimeText(hour.precipProbability.toString() + "%", style = FreetimeDesign.typography.titleMedium)
+                                                        FreetimeText(String.format(java.util.Locale.US, "%.1f mm", hour.precipitation ?: 0.0), style = FreetimeDesign.typography.labelSmall)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if (code != null) {
                         item { WeatherAlertsSection(loc.name, code, hourly, extras) }
                     }
