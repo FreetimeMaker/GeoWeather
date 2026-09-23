@@ -20,6 +20,16 @@ import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.delay
 
 @Composable
+fun WeatherMapPreview(lat: Double, lon: Double, modifier: Modifier = Modifier) {
+    val html = remember(lat, lon) { rainViewerHtml(lat, lon, 11) }
+    PlatformWebView(
+        url = "about:blank",
+        html = html,
+        modifier = modifier
+    )
+}
+
+@Composable
 fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit) {
     var playing by remember { mutableStateOf(true) }
     var frameIndex by remember { mutableIntStateOf(0) }
