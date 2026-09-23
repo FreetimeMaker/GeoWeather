@@ -52,8 +52,8 @@ class WeatherChangeWorker(
                     val hourly = repository.getHourlyForecasts(updated)
                     val severe = hourly.take(6).firstOrNull {
                         it.code in 95..99 || it.code in 71..86 ||
-                            (it.windGusts ?: 0.0) >= 70.0 ||
-                            (it.precipitation ?: 0.0) >= 10.0
+                            (appSettings.smartWindAlert.value && (it.windGusts ?: 0.0) >= 70.0) ||
+                            (appSettings.smartRainAlert.value && (it.precipitation ?: 0.0) >= 10.0)
                     }
                     if (severe != null) {
                         val prefs = applicationContext.getSharedPreferences("weather_alert_dedupe", Context.MODE_PRIVATE)
@@ -82,9 +82,9 @@ class WeatherChangeWorker(
                         }
                     }
 
-                    val rain = hourly.drop(1).take(3).firstOrNull {
+                    val rain = if (appSettings.smartRainAlert.value) hourly.drop(1).take(3).firstOrNull {
                         it.precipProbability >= 60 && (it.rain ?: it.precipitation ?: 0.0) > 0.0
-                    }
+                    } else null
                     if (rain != null) {
                         val prefs = applicationContext.getSharedPreferences("weather_alert_dedupe", Context.MODE_PRIVATE)
                         val alertKey = "rain_${location.id}"
@@ -106,7 +106,38 @@ class WeatherChangeWorker(
                             prefs.edit().putString(alertKey, signature).apply()
                         }
                     }
-                }
+
+                    val smartPrefs = applicationContext.getSharedPreferences("weather_alert_dedupe", Context.MODE_PRIVATE)
+                    val frost = if (appSettings.smartFrostAlert.value) hourly.take(12).firstOrNull { it.temp <= 0.0 } else null
+                    if (frost != null) {
+                        val key = "frost_${location.id}"
+                        val signature = frost.time + ":" + frost.temp
+                        if (smartPrefs.getString(key, null) != signature) {
+                            WeatherNotifications.show(
+                                applicationContext,
+                                500000 + (location.id % 100000).toInt(),
+                                updated.name,
+                                "Frost expected around " + frost.time + " (" + frost.temp + "°C)",
+                                alert = true
+                            )
+                            smartPrefs.edit().putString(key, signature).apply()
+                        }
+                    }
+                    val highUv = if (appSettings.smartUvAlert.value) hourly.take(12).firstOrNull { (it.uvIndex ?: 0.0) >= 6.0 } else null
+                    if (highUv != null) {
+                        val key = "uv_${location.id}"
+                        val signature = highUv.time + ":" + highUv.uvIndex
+                        if (smartPrefs.getString(key, null) != signature) {
+                            WeatherNotifications.show(
+                                applicationContext,
+                                600000 + (location.id % 100000).toInt(),
+                                updated.name,
+                                "High UV expected around " + highUv.time + " (UV " + highUv.uvIndex + ")",
+                                alert = true
+                            )
+                            smartPrefs.edit().putString(key, signature).apply()
+                        }
+                    }                }
             } catch (_: Exception) {
                 retry = true
             }
