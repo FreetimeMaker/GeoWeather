@@ -77,7 +77,7 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
             NativeWeatherMap(lat, lon, frameIndex, radarVisible, Modifier.fillMaxSize())
             if (dataSaver && !radarVisible) {
                 FreetimeCard(modifier = Modifier.align(Alignment.Center).padding(24.dp).clickable { radarVisible = true }) {
-                    FreetimeText("Data Saver · tap Radar to load weather imagery", modifier = Modifier.padding(14.dp))
+                    FreetimeText(stringResource(Res.string.radar_data_saver_hint), modifier = Modifier.padding(14.dp))
                 }
             }
             Row(
@@ -85,13 +85,13 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FreetimeCard(modifier = Modifier.clickable { radarVisible = !radarVisible }) {
-                    FreetimeText(if (radarVisible) "Radar ✓" else "Radar", modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                    FreetimeText(if (radarVisible) stringResource(Res.string.radar_layer_on) else stringResource(Res.string.radar_layer_off), modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
                 }
                 FreetimeCard {
-                    FreetimeText("OpenStreetMap ✓", modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                    FreetimeText(stringResource(Res.string.map_layer_osm), modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
                 }
                 FreetimeCard {
-                    FreetimeText("Location ✓", modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                    FreetimeText(stringResource(Res.string.map_layer_location), modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
                 }
             }
             FreetimeCard(
@@ -108,16 +108,16 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
                 ) {
                     FreetimeIconButton(
                         icon = if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = if (playing) "Pause radar" else "Play radar",
+                        contentDescription = if (playing) stringResource(Res.string.pause_radar) else stringResource(Res.string.play_radar),
                         onClick = { playing = !playing }
                     )
                     Column(Modifier.weight(1f)) {
                         FreetimeText(
-                            if (frameIndex == 11) "Latest radar" else ((11 - frameIndex) * 10).toString() + " min ago",
+                            if (frameIndex == 11) stringResource(Res.string.latest_radar) else stringResource(Res.string.radar_minutes_ago, (11 - frameIndex) * 10),
                             style = FreetimeDesign.typography.labelLarge
                         )
                         FreetimeText(
-                            "Past 2 hours · 10 minute frames · Weather data by RainViewer",
+                            stringResource(Res.string.radar_attribution),
                             style = FreetimeDesign.typography.labelSmall,
                             color = FreetimeDesign.palette.contentMuted
                         )
