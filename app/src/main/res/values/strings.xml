@@ -714,4 +714,26 @@
     <string name="model_agreement_title">16-day model agreement</string>
     <string name="model_agreement_note">Higher scores mean ECMWF, GFS and Best Match are closer together.</string>
 
+
+    <string name="travel_planner_title">Travel planner</string>
+    <string name="trip_compare_title">Trip compare</string>
+    <string name="pack_prefix">Pack: %1$s</string>
+    <string name="pack_warm_layers">warm layers</string>
+    <string name="pack_rain_jacket">rain jacket</string>
+    <string name="pack_sun_protection">sun protection</string>
+    <string name="pack_spf">SPF</string>
+    <string name="pack_windproof">windproof layer</string>
+    <string name="pack_winter_shoes">winter shoes</string>
+    <string name="pack_everyday">normal everyday clothing</string>
+    <string name="radar_data_saver_hint">Data Saver · tap Radar to load weather imagery</string>
+    <string name="radar_layer_on">Radar ✓</string>
+    <string name="radar_layer_off">Radar</string>
+    <string name="map_layer_osm">OpenStreetMap ✓</string>
+    <string name="map_layer_location">Location ✓</string>
+    <string name="pause_radar">Pause radar</string>
+    <string name="play_radar">Play radar</string>
+    <string name="latest_radar">Latest radar</string>
+    <string name="radar_minutes_ago">%1$d min ago</string>
+    <string name="radar_attribution">Past 2 hours · 10 minute frames · Weather data by RainViewer</string>
+
 </resources>
