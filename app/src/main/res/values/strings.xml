@@ -669,7 +669,7 @@
     <string name="cl_462_dark_mode">Fixed dark mode so the complete app background is covered by the dark theme.</string>
     <string name="cl_462_fixes">Fixed additional weather detail, resource and UI issues.</string>
     <!-- v4.6.5 -->
-    <string name="cl_465_core_110">Updated to Freetime Core 1.10.0 with the new Liquid Glass renderer, backdrop luminance, live appearance preferences, accessibility controls and safe drawing insets.</string>
+    <string name="cl_465_core_110">Updated to Freetime Core 1.11.0 with the new Liquid Glass renderer, FreetimeWarn, backdrop luminance, live appearance preferences, accessibility controls and safe drawing insets.</string>
 
     <string name="cl_465_theme">Fixed automatic light and dark mode so GeoWeather correctly follows daylight and falls back to the system theme when sun data is unavailable.</string>
     <string name="cl_465_forecast_night">Improved forecast weather icons so nighttime forecasts use the matching night icons after sunset.</string>
