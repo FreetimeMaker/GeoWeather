@@ -689,4 +689,29 @@
     <string name="freetime_warn_message">Android platform and distribution requirements can change how %1$s is installed or updated. GeoWeather remains open source and available through supported distribution channels.</string>
     <string name="freetime_warn_learn_more">Learn more</string>
     <string name="freetime_warn_acknowledge">I understand</string>
+
+    <!-- Weather intelligence, offline and privacy -->
+    <string name="data_offline_title">Data &amp; offline</string>
+    <string name="data_saver_title">Data saver</string>
+    <string name="data_saver_desc">Reduces optional network-heavy features such as automatic radar and model refreshes.</string>
+    <string name="offline_packs_title">Offline forecast packs</string>
+    <string name="offline_packs_desc">Keep the latest full forecast for saved locations available when the device is offline.</string>
+    <string name="offline_packs_note">Saved weather forecasts remain on this device. Radar map tiles are loaded from the map providers when needed.</string>
+    <string name="data_sources_privacy_title">Data sources &amp; privacy</string>
+    <string name="data_source_forecast">Forecasts, hourly weather and model comparison · Open-Meteo</string>
+    <string name="data_source_map">Base map · OpenStreetMap</string>
+    <string name="data_source_radar">Radar imagery · RainViewer</string>
+    <string name="privacy_local_note">Locations, forecast snapshots, alert history and app preferences are stored locally by GeoWeather. Network requests send the coordinates required to retrieve weather or map data.</string>
+    <string name="saved_places">Saved places</string>
+    <string name="forecast_changes_title">Forecast changes</string>
+    <string name="forecast_changes_note">Compared with the previously saved forecast.</string>
+    <string name="forecast_accuracy_title">Forecast accuracy</string>
+    <string name="forecast_accuracy_note">Local estimate based on the difference between a recent forecast temperature and stored observations.</string>
+    <string name="weather_calendar_title">Weather calendar</string>
+    <string name="outdoor_photography_title">Outdoor &amp; photography</string>
+    <string name="precipitation_timeline_title">Precipitation timeline</string>
+    <string name="no_precipitation_12h">No precipitation indicated in the next 12 hours.</string>
+    <string name="model_agreement_title">16-day model agreement</string>
+    <string name="model_agreement_note">Higher scores mean ECMWF, GFS and Best Match are closer together.</string>
+
 </resources>
