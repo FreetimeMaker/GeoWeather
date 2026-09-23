@@ -16,11 +16,12 @@ class WeatherForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
-        serviceScope.launch {
-            val loadingMsg = getString(R.string.widget_loading)
-            startForeground(NOTIFICATION_ID, createNotification(loadingMsg))
-            startUpdateLoop()
-        }
+        // Foreground services must publish their notification immediately after startup.
+        startForeground(
+            NOTIFICATION_ID,
+            createNotification(getString(R.string.widget_loading))
+        )
+        startUpdateLoop()
 
         return START_STICKY
     }
@@ -49,7 +50,8 @@ class WeatherForegroundService : Service() {
                 val content = base + " · Rain " + rain + "% · Gusts " + gust.toInt() + " km/h"
                 val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.notify(NOTIFICATION_ID, createNotification(content))
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                android.util.Log.e(TAG, "Failed to update persistent weather notification", e)
             }
         }
     }
@@ -93,5 +95,6 @@ class WeatherForegroundService : Service() {
     companion object {
         private const val CHANNEL_ID = "persistent_weather"
         private const val NOTIFICATION_ID = 1001
+        private const val TAG = "WeatherForegroundSvc"
     }
 }
