@@ -1185,11 +1185,17 @@ fun ForecastDetailScreen(
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
     var index by remember { mutableIntStateOf(initialIndex) }
-    val isHourly = hourlyForecasts.isNotEmpty()
-    val maxIndex = (if (isHourly) hourlyForecasts.lastIndex else dailyForecasts.lastIndex).coerceAtLeast(0)
+    val isDailyDetail = dailyForecasts.isNotEmpty()
+    val isHourly = !isDailyDetail && hourlyForecasts.isNotEmpty()
+    val maxIndex = (if (isDailyDetail) dailyForecasts.lastIndex else hourlyForecasts.lastIndex).coerceAtLeast(0)
     index = index.coerceIn(0, maxIndex)
-    val hourly = hourlyForecasts.getOrNull(index)
-    val daily = dailyForecasts.getOrNull(index)
+    val daily = if (isDailyDetail) dailyForecasts.getOrNull(index) else null
+    val selectedDayHours = remember(daily?.date, hourlyForecasts) {
+        daily?.let { selectedDay ->
+            hourlyForecasts.filter { it.time.substringBefore("T", missingDelimiterValue = "") == selectedDay.date }
+        }.orEmpty()
+    }
+    val hourly = if (isHourly) hourlyForecasts.getOrNull(index) else null
     val forecastCode = hourly?.code ?: daily?.code ?: 0
     val forecastIsDay = hourly?.let { hour ->
         val forecastDateTime = runCatching { java.time.LocalDateTime.parse(hour.time) }.getOrNull()
@@ -1253,6 +1259,35 @@ fun ForecastDetailScreen(
                             DetailRow(stringResource(Res.string.wind_label) to formatWind(hour.windSpeed, null, windUnit), stringResource(Res.string.gusts_label) to formatWind(hour.windGusts, null, windUnit))
                         }
                         daily?.let { day ->
+                            if (selectedDayHours.isNotEmpty()) {
+                                FreetimeText(
+                                    text = stringResource(Res.string.hourly_label),
+                                    style = FreetimeDesign.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    items(selectedDayHours, key = { it.time }) { hour ->
+                                        val time = runCatching { java.time.LocalTime.parse(hour.time.takeLast(5)) }.getOrNull()
+                                        val sunrise = runCatching { java.time.LocalTime.parse(day.sunrise.takeLast(5)) }.getOrDefault(java.time.LocalTime.of(7, 0))
+                                        val sunset = runCatching { java.time.LocalTime.parse(day.sunset.takeLast(5)) }.getOrDefault(java.time.LocalTime.of(19, 0))
+                                        val hourIsDay = time?.let { !it.isBefore(sunrise) && it.isBefore(sunset) } ?: true
+                                        FreetimeCard {
+                                            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                FreetimeText(hour.time.takeLast(5), style = FreetimeDesign.typography.labelSmall)
+                                                Image(
+                                                    painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code, hourIsDay)),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(32.dp)
+                                                )
+                                                FreetimeText(formatTemp(hour.temp.toDouble(), tempUnit), style = FreetimeDesign.typography.labelMedium, fontWeight = FontWeight.Bold)
+                                                if (hour.precipProbability > 0) {
+                                                    FreetimeText("${hour.precipProbability}%", style = FreetimeDesign.typography.labelSmall)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             DetailRow("High" to formatTemp(day.maxTemp.toDouble(), tempUnit), "Low" to formatTemp(day.minTemp.toDouble(), tempUnit), stringResource(Res.string.rain_chance_label) to "${day.precipProbMax}%")
                             DetailRow(stringResource(Res.string.feels_high_label) to (day.feelsLikeMax?.let { formatTemp(it, tempUnit) } ?: "--"), stringResource(Res.string.feels_low_label) to (day.feelsLikeMin?.let { formatTemp(it, tempUnit) } ?: "--"), stringResource(Res.string.uv_max_label) to (day.uvMax?.let { "${(it * 10).roundToInt() / 10.0}" } ?: "--"))
                             DetailRow(stringResource(Res.string.sunrise_label) to day.sunrise.takeLast(5), stringResource(Res.string.sunset_label) to day.sunset.takeLast(5), stringResource(Res.string.sunshine_label) to (day.sunshineDuration?.let { "${(it / 3600.0 * 10).roundToInt() / 10.0} h" } ?: "--"))
