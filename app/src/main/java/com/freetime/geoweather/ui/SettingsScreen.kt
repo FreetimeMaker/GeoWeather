@@ -75,6 +75,8 @@ fun SettingsScreen(
     val smartWindAlert by appSettings.smartWindAlert.collectAsState()
     val smartFrostAlert by appSettings.smartFrostAlert.collectAsState()
     val smartUvAlert by appSettings.smartUvAlert.collectAsState()
+    val dataSaver by appSettings.dataSaver.collectAsState()
+    val offlinePacks by appSettings.offlinePacks.collectAsState()
 
     val snackbarHostState = rememberFreetimeMessageHostState()
     val scope = rememberCoroutineScope()
@@ -218,6 +220,35 @@ fun SettingsScreen(
             SettingsToggle("High UV alerts", "Notify when the UV index reaches a high level.", smartUvAlert) { appSettings.setSmartUvAlert(it) }
 
             }
+            FreetimeSettingsGroup("Data & offline") {
+                SettingsToggle(
+                    "Data saver",
+                    "Reduces optional network-heavy features such as automatic radar and model refreshes.",
+                    dataSaver
+                ) { appSettings.setDataSaver(it) }
+                SettingsToggle(
+                    "Offline forecast packs",
+                    "Keep the latest full forecast for saved locations available when the device is offline.",
+                    offlinePacks
+                ) { appSettings.setOfflinePacks(it) }
+                FreetimeText(
+                    "Saved weather forecasts remain on this device. Radar map tiles are loaded from the map providers when needed.",
+                    style = FreetimeDesign.typography.bodySmall,
+                    color = FreetimeDesign.palette.contentMuted
+                )
+            }
+
+            FreetimeSettingsGroup("Data sources & privacy") {
+                FreetimeText("Forecasts, hourly weather and model comparison · Open-Meteo", style = FreetimeDesign.typography.bodyMedium)
+                FreetimeText("Base map · OpenStreetMap", style = FreetimeDesign.typography.bodyMedium)
+                FreetimeText("Radar imagery · RainViewer", style = FreetimeDesign.typography.bodyMedium)
+                FreetimeText(
+                    "Locations, forecast snapshots, alert history and app preferences are stored locally by GeoWeather. Network requests send the coordinates required to retrieve weather or map data.",
+                    style = FreetimeDesign.typography.bodySmall,
+                    color = FreetimeDesign.palette.contentMuted
+                )
+            }
+
             FreetimeSettingsGroup(stringResource(Res.string.webview_settings_title)) {
             SettingsToggle(
                 stringResource(Res.string.disable_private_view),
