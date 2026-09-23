@@ -24,6 +24,10 @@ class AppSettings(private val settings: Settings) {
         const val KEY_WEATHER_ANIMATIONS = "weather_animations"
         const val KEY_NOTIFICATION_PROFILE = "notification_profile"
         const val KEY_QUIET_HOURS = "quiet_hours"
+        const val KEY_SMART_RAIN_ALERT = "smart_rain_alert"
+        const val KEY_SMART_WIND_ALERT = "smart_wind_alert"
+        const val KEY_SMART_FROST_ALERT = "smart_frost_alert"
+        const val KEY_SMART_UV_ALERT = "smart_uv_alert"
     }
 
     private val _persistentNotif = MutableStateFlow(settings.getBoolean(KEY_PERSISTENT_NOTIF, false))
@@ -134,6 +138,22 @@ class AppSettings(private val settings: Settings) {
         settings[KEY_QUIET_HOURS] = value
         _quietHours.value = value
     }
+
+    private val _smartRainAlert = MutableStateFlow(settings.getBoolean(KEY_SMART_RAIN_ALERT, true))
+    val smartRainAlert: StateFlow<Boolean> = _smartRainAlert.asStateFlow()
+    fun setSmartRainAlert(value: Boolean) { settings[KEY_SMART_RAIN_ALERT] = value; _smartRainAlert.value = value }
+
+    private val _smartWindAlert = MutableStateFlow(settings.getBoolean(KEY_SMART_WIND_ALERT, true))
+    val smartWindAlert: StateFlow<Boolean> = _smartWindAlert.asStateFlow()
+    fun setSmartWindAlert(value: Boolean) { settings[KEY_SMART_WIND_ALERT] = value; _smartWindAlert.value = value }
+
+    private val _smartFrostAlert = MutableStateFlow(settings.getBoolean(KEY_SMART_FROST_ALERT, false))
+    val smartFrostAlert: StateFlow<Boolean> = _smartFrostAlert.asStateFlow()
+    fun setSmartFrostAlert(value: Boolean) { settings[KEY_SMART_FROST_ALERT] = value; _smartFrostAlert.value = value }
+
+    private val _smartUvAlert = MutableStateFlow(settings.getBoolean(KEY_SMART_UV_ALERT, false))
+    val smartUvAlert: StateFlow<Boolean> = _smartUvAlert.asStateFlow()
+    fun setSmartUvAlert(value: Boolean) { settings[KEY_SMART_UV_ALERT] = value; _smartUvAlert.value = value }
 
     private val _weatherAnimations = MutableStateFlow(settings.getString(KEY_WEATHER_ANIMATIONS, "full"))
     val weatherAnimations: StateFlow<String> = _weatherAnimations.asStateFlow()
