@@ -16,11 +16,12 @@ class WeatherForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
-        serviceScope.launch {
-            val loadingMsg = getString(R.string.widget_loading)
-            startForeground(NOTIFICATION_ID, createNotification(loadingMsg))
-            startUpdateLoop()
-        }
+        // startForeground() must complete within a few seconds of onStartCommand
+        // returning. Calling it from a coroutine races that deadline (the launch can
+        // be delayed by a busy Dispatchers.IO), which risks
+        // ForegroundServiceDidNotStartInTimeException on Android 12+.
+        startForeground(NOTIFICATION_ID, createNotification(getString(R.string.widget_loading)))
+        startUpdateLoop()
 
         return START_STICKY
     }
