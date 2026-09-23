@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.freetime.design)
     implementation(libs.freetime.browser)
     implementation(libs.freetime.donations)
+    implementation(libs.freetime.warn)
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.content.negotiation)
