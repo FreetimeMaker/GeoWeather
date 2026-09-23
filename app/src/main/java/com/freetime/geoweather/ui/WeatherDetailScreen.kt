@@ -291,7 +291,7 @@ fun WeatherDetailScreen(
                     item {
                         val minutesAgo = ((System.currentTimeMillis() - loc.lastUpdated).coerceAtLeast(0L) / 60_000L).toInt()
                         if (!isNetworkAvailable() && loc.weatherData != null) {
-                            FreetimeStatusBanner(message = stringResource(Res.string.offline_cached_weather), modifier = Modifier.fillMaxWidth())
+                            FreetimeStatusBanner(message = stringResource(Res.string.offline_cached_weather) + " · " + minutesAgo + " min old · " + daily.size + " forecast days cached", modifier = Modifier.fillMaxWidth())
                         } else if (loc.lastUpdated > 0L) {
                             FreetimeText(
                                 stringResource(Res.string.last_updated_minutes, minutesAgo),
