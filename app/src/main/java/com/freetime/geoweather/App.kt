@@ -171,7 +171,8 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                                 viewModel = viewModel,
                                 appSettings = appSettings,
                                 onNavigate = ::navigate,
-                                onGoBack = ::goBack
+                                onGoBack = ::goBack,
+                                onShowDistributionNotice = { freetimeWarning.show() }
                             )
                         }
                     }
@@ -203,7 +204,8 @@ private fun ScreenContent(
     viewModel: WeatherViewModel,
     appSettings: AppSettings,
     onNavigate: (Screen) -> Unit,
-    onGoBack: () -> Unit
+    onGoBack: () -> Unit,
+    onShowDistributionNotice: () -> Unit
 ) {
     when (screen) {
         is Main -> {
@@ -267,7 +269,8 @@ private fun ScreenContent(
                 onBack = { onGoBack() },
                 onChangeLogClick = { onNavigate(ChangeLog) },
                 onWebViewClick = { url, title -> onNavigate(Web(url, title)) },
-                onDiagnosticsClick = { onNavigate(Diagnostics) }
+                onDiagnosticsClick = { onNavigate(Diagnostics) },
+                onShowDistributionNotice = onShowDistributionNotice
             )
         }
         is Diagnostics -> {
