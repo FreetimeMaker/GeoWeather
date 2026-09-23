@@ -370,9 +370,9 @@ fun WeatherDetailScreen(
                             val wet = next.filter { it.precipProbability > 0 || (it.precipitation ?: 0.0) > 0.0 }
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    FreetimeText("Precipitation timeline", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.precipitation_timeline_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     if (wet.isEmpty()) {
-                                        FreetimeText("No precipitation indicated in the next 12 hours.", color = FreetimeDesign.palette.contentMuted)
+                                        FreetimeText(stringResource(Res.string.no_precipitation_12h), color = FreetimeDesign.palette.contentMuted)
                                     } else {
                                         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                             items(next, key = { "rain-" + it.time }) { hour ->
@@ -503,10 +503,10 @@ fun WeatherDetailScreen(
                         item {
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    FreetimeText("Forecast accuracy", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.forecast_accuracy_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     FreetimeText(score.toString() + "/100", style = FreetimeDesign.typography.titleLarge)
                                     FreetimeText(
-                                        "Local estimate based on the difference between a recent forecast temperature and stored observations.",
+                                        stringResource(Res.string.forecast_accuracy_note),
                                         style = FreetimeDesign.typography.labelSmall,
                                         color = FreetimeDesign.palette.contentMuted
                                     )
@@ -519,7 +519,7 @@ fun WeatherDetailScreen(
                         item {
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    FreetimeText("Forecast changes", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.forecast_changes_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     forecastChanges.take(6).forEach { change ->
                                         val max = if (change.maxTempDelta >= 0) "+" + change.maxTempDelta else change.maxTempDelta.toString()
                                         val rain = if (change.rainProbabilityDelta >= 0) "+" + change.rainProbabilityDelta else change.rainProbabilityDelta.toString()
@@ -529,7 +529,7 @@ fun WeatherDetailScreen(
                                             style = FreetimeDesign.typography.bodyMedium
                                         )
                                     }
-                                    FreetimeText("Compared with the previously saved forecast.", style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
+                                    FreetimeText(stringResource(Res.string.forecast_changes_note), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
                                 }
                             }
                         }
@@ -569,7 +569,7 @@ fun WeatherDetailScreen(
                         item {
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    FreetimeText("Weather calendar", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.weather_calendar_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     daily.chunked(4).forEach { rowDays ->
                                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                                             rowDays.forEach { day ->
@@ -595,9 +595,9 @@ fun WeatherDetailScreen(
                         item {
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    FreetimeText("16-day model agreement", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.model_agreement_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     FreetimeText(
-                                        "Higher scores mean ECMWF, GFS and Best Match are closer together.",
+                                        stringResource(Res.string.model_agreement_note),
                                         style = FreetimeDesign.typography.bodySmall,
                                         color = FreetimeDesign.palette.contentMuted
                                     )
@@ -629,7 +629,7 @@ fun WeatherDetailScreen(
                             val photo = com.freetime.geoweather.WeatherIntelligence.photographyWindows(hourly, daily.firstOrNull())
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    FreetimeText("Outdoor & photography", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.outdoor_photography_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     (activityDetails + photo).forEach { detail ->
                                         FreetimeCard(modifier = Modifier.fillMaxWidth()) {
                                             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
