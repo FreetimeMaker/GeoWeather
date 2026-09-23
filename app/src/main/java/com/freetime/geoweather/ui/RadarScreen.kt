@@ -1,5 +1,6 @@
 package com.freetime.geoweather.ui
 
+import android.graphics.drawable.Drawable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -8,8 +9,10 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.freetime.design.FreetimeCard
 import com.freetime.design.FreetimeDesign
 import com.freetime.design.FreetimeGlassTopBar
@@ -17,16 +20,27 @@ import com.freetime.design.FreetimeIconButton
 import com.freetime.design.FreetimeScaffold
 import com.freetime.design.FreetimeText
 import com.freetime.geoweather.R as Res
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.TilesOverlay
+import java.net.URL
+
+private data class RadarFrames(val host: String, val paths: List<String>)
 
 @Composable
 fun WeatherMapPreview(lat: Double, lon: Double, modifier: Modifier = Modifier) {
-    val html = remember(lat, lon) { rainViewerHtml(lat, lon, 11) }
-    PlatformWebView(
-        url = "about:blank",
-        html = html,
-        modifier = modifier
-    )
+    NativeWeatherMap(lat = lat, lon = lon, frameIndex = 11, modifier = modifier)
 }
 
 @Composable
@@ -41,20 +55,28 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit) {
         }
     }
 
-    val html = remember(lat, lon, frameIndex) { rainViewerHtml(lat, lon, frameIndex) }
-
     FreetimeScaffold(
         topBar = {
             FreetimeGlassTopBar(
                 title = stringResource(Res.string.radar_title),
-                navigation = { FreetimeIconButton(Icons.AutoMirrored.Filled.ArrowBack, null, onClick = onBack) }
+                navigation = {
+                    FreetimeIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null,
+                        onClick = onBack
+                    )
+                }
             )
         }
     ) {
         Box(Modifier.fillMaxSize()) {
-            PlatformWebView("about:blank", Modifier.fillMaxSize(), html = html)
+            NativeWeatherMap(lat, lon, frameIndex, Modifier.fillMaxSize())
             FreetimeCard(
-                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(16.dp).fillMaxWidth()
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
+                    .padding(16.dp)
+                    .fillMaxWidth()
             ) {
                 Row(
                     Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
@@ -83,31 +105,66 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit) {
     }
 }
 
-private fun rainViewerHtml(lat: Double, lon: Double, frameIndex: Int): String {
-    val safeIndex = frameIndex.coerceIn(0, 11)
-    return """
-<!doctype html>
-<html><head>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<style>html,body,#map{height:100%;margin:0;background:#111}.leaflet-control-attribution{font-size:10px}</style>
-</head><body><div id="map"></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-const map=L.map('map').setView([LAT,LON],7);
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
-L.marker([LAT,LON]).addTo(map);
-fetch('https://api.rainviewer.com/public/weather-maps.json').then(r=>r.json()).then(data=>{
- const frames=(data.radar&&data.radar.past)||[];
- if(!frames.length)return;
- const frame=frames[Math.min(INDEX,frames.length-1)];
- L.tileLayer(data.host+frame.path+'/256/{z}/{x}/{y}/2/1_1.png',{
-   tileSize:256,opacity:.72,maxZoom:7,attribution:'Weather data © RainViewer'
- }).addTo(map);
-});
-</script></body></html>
-""".trimIndent()
-        .replace("LAT", lat.toString())
-        .replace("LON", lon.toString())
-        .replace("INDEX", safeIndex.toString())
+@Composable
+private fun NativeWeatherMap(
+    lat: Double,
+    lon: Double,
+    frameIndex: Int,
+    modifier: Modifier
+) {
+    val context = LocalContext.current
+    var frames by remember { mutableStateOf<RadarFrames?>(null) }
+
+    LaunchedEffect(Unit) {
+        frames = withContext(Dispatchers.IO) {
+            runCatching {
+                val raw = URL("https://api.rainviewer.com/public/weather-maps.json").readText()
+                val root = Json.parseToJsonElement(raw).jsonObject
+                val host = root["host"]?.jsonPrimitive?.content ?: return@runCatching null
+                val paths = root["radar"]?.jsonObject?.get("past")?.jsonArray
+                    ?.mapNotNull { it.jsonObject["path"]?.jsonPrimitive?.content }
+                    .orEmpty()
+                RadarFrames(host, paths)
+            }.getOrNull()
+        }
+    }
+
+    AndroidView(
+        modifier = modifier,
+        factory = {
+            Configuration.getInstance().userAgentValue = context.packageName
+            MapView(context).apply {
+                setTileSource(TileSourceFactory.MAPNIK)
+                setMultiTouchControls(true)
+                controller.setZoom(7.0)
+                controller.setCenter(GeoPoint(lat, lon))
+                overlays.add(Marker(this).apply {
+                    position = GeoPoint(lat, lon)
+                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                })
+            }
+        },
+        update = { map ->
+            map.controller.setCenter(GeoPoint(lat, lon))
+            map.overlays.removeAll { it is TilesOverlay && it !is Marker }
+            val data = frames
+            if (data != null && data.paths.isNotEmpty()) {
+                val path = data.paths[frameIndex.coerceIn(0, data.paths.lastIndex)]
+                val source = object : OnlineTileSourceBase(
+                    "RainViewer",
+                    0, 7, 256, ".png",
+                    arrayOf(data.host)
+                ) {
+                    override fun getTileURLString(pMapTileIndex: Long): String {
+                        val z = org.osmdroid.util.MapTileIndex.getZoom(pMapTileIndex)
+                        val x = org.osmdroid.util.MapTileIndex.getX(pMapTileIndex)
+                        val y = org.osmdroid.util.MapTileIndex.getY(pMapTileIndex)
+                        return baseUrl + path + "/256/" + z + "/" + x + "/" + y + "/2/1_1.png"
+                    }
+                }
+                map.overlays.add(TilesOverlay(map.tileProvider.apply { tileSource = source }, context))
+            }
+            map.invalidate()
+        }
+    )
 }
