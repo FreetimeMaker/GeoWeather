@@ -788,4 +788,10 @@
     <string name="trip_temperature_range">%1$d–%2$d°C · selected trip</string>
     <string name="radar_loading">Loading radar…</string>
     <string name="radar_load_failed">Radar unavailable</string>
-    <string name="forecast_change_values">High %1$s°C · low %2$s°C · rain %3$s%% · wind %4$s km/h</string>\n</resources>
+    <string name="forecast_change_values">High %1$s°C · low %2$s°C · rain %3$s%% · wind %4$s km/h</string>\n    <string name="offline_status_fresh">Fresh</string>
+    <string name="offline_status_aging">Aging</string>
+    <string name="offline_status_stale">Stale</string>
+    <string name="offline_status_missing">Not cached</string>
+    <string name="offline_pack_status">%1$s · %2$s · %3$s</string>
+    <string name="offline_clear_cache">Clear cached forecast</string>
+</resources>
