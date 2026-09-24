@@ -37,12 +37,18 @@ class WeatherChangeWorker(
                 val updated = repository.refreshLocationWeather(location.id) ?: location
                 val newTemp = updated.currentTemp
                 val newWind = updated.currentWindSpeed
+                val tempThreshold = LocationAlertPreferences.tempThreshold(applicationContext, location.id, appSettings.tempThreshold.value)
+                val windThreshold = LocationAlertPreferences.windThreshold(applicationContext, location.id, appSettings.windThreshold.value)
+                val rainProbabilityThreshold = LocationAlertPreferences.rainProbability(applicationContext, location.id)
+                val windGustThreshold = LocationAlertPreferences.windGustThreshold(applicationContext, location.id)
+                val uvThreshold = LocationAlertPreferences.uvThreshold(applicationContext, location.id)
+                val frostThreshold = LocationAlertPreferences.frostThreshold(applicationContext, location.id)
 
                 if (location.changeAlertsEnabled) {
                     val tempChanged = oldTemp != null && newTemp != null &&
-                        kotlin.math.abs(newTemp - oldTemp) >= appSettings.tempThreshold.value
+                        kotlin.math.abs(newTemp - oldTemp) >= tempThreshold
                     val windChanged = oldWind != null && newWind != null &&
-                        kotlin.math.abs(newWind - oldWind) >= appSettings.windThreshold.value
+                        kotlin.math.abs(newWind - oldWind) >= windThreshold
                     if (tempChanged || windChanged) {
                         val message = applicationContext.getString(
                             SharedRes.string.temperature_change_msg,
@@ -63,7 +69,7 @@ class WeatherChangeWorker(
                     val hourly = repository.getHourlyForecasts(updated)
                     val severe = hourly.take(6).firstOrNull {
                         it.code in 95..99 || it.code in 71..86 ||
-                            (appSettings.smartWindAlert.value && (it.windGusts ?: 0.0) >= 70.0) ||
+                            (appSettings.smartWindAlert.value && (it.windGusts ?: 0.0) >= windGustThreshold) ||
                             (appSettings.smartRainAlert.value && (it.precipitation ?: 0.0) >= 10.0)
                     }
                     if (severe != null) {
@@ -74,7 +80,7 @@ class WeatherChangeWorker(
                             val reason = when {
                                 severe.code in 95..99 -> WeatherCodes.getDescription(severe.code)
                                 severe.code in 71..86 -> WeatherCodes.getDescription(severe.code)
-                                appSettings.smartWindAlert.value && (severe.windGusts ?: 0.0) >= 70.0 -> applicationContext.getString(SharedRes.string.strong_wind_gusts)
+                                appSettings.smartWindAlert.value && (severe.windGusts ?: 0.0) >= windGustThreshold -> applicationContext.getString(SharedRes.string.strong_wind_gusts)
                                 else -> applicationContext.getString(SharedRes.string.heavy_precipitation)
                             }
                             val message = applicationContext.getString(
@@ -94,7 +100,7 @@ class WeatherChangeWorker(
                     }
 
                     val rain = if (appSettings.smartRainAlert.value) hourly.drop(1).take(3).firstOrNull {
-                        it.precipProbability >= 60 && (it.rain ?: it.precipitation ?: 0.0) > 0.0
+                        it.precipProbability >= rainProbabilityThreshold && (it.rain ?: it.precipitation ?: 0.0) > 0.0
                     } else null
                     if (rain != null) {
                         val prefs = applicationContext.getSharedPreferences("weather_alert_dedupe", Context.MODE_PRIVATE)
@@ -119,7 +125,7 @@ class WeatherChangeWorker(
                     }
 
                     val smartPrefs = applicationContext.getSharedPreferences("weather_alert_dedupe", Context.MODE_PRIVATE)
-                    val frost = if (appSettings.smartFrostAlert.value) hourly.take(12).firstOrNull { it.temp <= 0.0 } else null
+                    val frost = if (appSettings.smartFrostAlert.value) hourly.take(12).firstOrNull { it.temp <= frostThreshold } else null
                     if (frost != null) {
                         val key = "frost_${location.id}"
                         val signature = frost.time + ":" + frost.temp
@@ -139,7 +145,7 @@ class WeatherChangeWorker(
                             smartPrefs.edit().putString(key, signature).apply()
                         }
                     }
-                    val highUv = if (appSettings.smartUvAlert.value) hourly.take(12).firstOrNull { (it.uvIndex ?: 0.0) >= 6.0 } else null
+                    val highUv = if (appSettings.smartUvAlert.value) hourly.take(12).firstOrNull { (it.uvIndex ?: 0.0) >= uvThreshold } else null
                     if (highUv != null) {
                         val key = "uv_${location.id}"
                         val signature = highUv.time + ":" + highUv.uvIndex
