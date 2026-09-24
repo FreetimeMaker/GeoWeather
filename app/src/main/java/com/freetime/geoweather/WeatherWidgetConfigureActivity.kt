@@ -1,17 +1,17 @@
 package com.freetime.geoweather
 
-import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.freetime.geoweather.data.DependencyManager
 import kotlinx.coroutines.launch
 
-class WeatherWidgetConfigureActivity : Activity() {
+class WeatherWidgetConfigureActivity : ComponentActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
     override fun onCreate(savedInstanceState: Bundle?) {
