@@ -779,4 +779,6 @@
     <string name="map_layer_osm_off">Map: off</string>
     <string name="map_layer_location_on">Location: on</string>
     <string name="map_layer_location_off">Location: off</string>
+    <string name="offline_wifi_only">Refresh offline packs on Wi-Fi only</string>
+    <string name="offline_wifi_only_desc">Background offline-pack downloads wait for Wi-Fi. Weather alerts and notifications can still refresh when needed.</string>
 </resources>
