@@ -95,9 +95,7 @@ fun SettingsScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            item { Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-
-            FreetimeSettingsGroup(stringResource(Res.string.unit_settings_title)) {
+            item(key = "units") { FreetimeSettingsGroup(stringResource(Res.string.unit_settings_title)) {
             FreetimeText(stringResource(Res.string.temperature_unit), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
@@ -127,8 +125,8 @@ fun SettingsScreen(
                 onSelect = { appSettings.setPressureUnit(it) }
             )
 
-            }
-            LocalFreetimePreferencesController.current?.let { controller ->
+            } }
+            item(key = "appearance") { LocalFreetimePreferencesController.current?.let { controller ->
                 val appearance = controller.state
                 FreetimeSettingsGroup("Liquid Glass & accessibility") {
                     FreetimeSwitchSetting(
@@ -164,9 +162,8 @@ fun SettingsScreen(
                         }
                     )
                 }
-            }
-
-            FreetimeSettingsGroup(stringResource(Res.string.weather_animations_title)) {
+            } }
+            item(key = "animations") { FreetimeSettingsGroup(stringResource(Res.string.weather_animations_title)) {
             FreetimeText(stringResource(Res.string.animation_intensity), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
@@ -178,8 +175,8 @@ fun SettingsScreen(
                 onSelect = { appSettings.setWeatherAnimations(it) }
             )
 
-}
-            FreetimeSettingsGroup(stringResource(Res.string.notification_settings_title)) {
+} }
+            item(key = "notifications") { FreetimeSettingsGroup(stringResource(Res.string.notification_settings_title)) {
             FreetimeText(stringResource(Res.string.notification_profile), style = FreetimeDesign.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
@@ -216,8 +213,8 @@ fun SettingsScreen(
             SettingsToggle("Frost alerts", "Notify when forecast temperature reaches freezing.", smartFrostAlert) { appSettings.setSmartFrostAlert(it) }
             SettingsToggle("High UV alerts", "Notify when the UV index reaches a high level.", smartUvAlert) { appSettings.setSmartUvAlert(it) }
 
-            }
-            FreetimeSettingsGroup(stringResource(Res.string.data_offline_title)) {
+            } }
+            item(key = "offline") { FreetimeSettingsGroup(stringResource(Res.string.data_offline_title)) {
                 SettingsToggle(
                     stringResource(Res.string.data_saver_title),
                     stringResource(Res.string.data_saver_desc),
@@ -296,9 +293,8 @@ fun SettingsScreen(
                         )
                     }
                 }
-            }
-
-            FreetimeSettingsGroup(stringResource(Res.string.data_sources_privacy_title)) {
+            } }
+            item(key = "sources") { FreetimeSettingsGroup(stringResource(Res.string.data_sources_privacy_title)) {
                 FreetimeText(stringResource(Res.string.data_source_forecast), style = FreetimeDesign.typography.bodyMedium)
                 FreetimeText(stringResource(Res.string.data_source_map), style = FreetimeDesign.typography.bodyMedium)
                 FreetimeText(stringResource(Res.string.data_source_radar), style = FreetimeDesign.typography.bodyMedium)
@@ -307,9 +303,8 @@ fun SettingsScreen(
                     style = FreetimeDesign.typography.bodySmall,
                     color = FreetimeDesign.palette.contentMuted
                 )
-            }
-
-            FreetimeSettingsGroup(stringResource(Res.string.webview_settings_title)) {
+            } }
+            item(key = "webview") { FreetimeSettingsGroup(stringResource(Res.string.webview_settings_title)) {
             SettingsToggle(
                 stringResource(Res.string.disable_private_view),
                 stringResource(Res.string.disable_private_view_subtitle),
@@ -321,8 +316,8 @@ fun SettingsScreen(
                 openExternalBrowser
             ) { appSettings.setOpenExternalBrowser(it) }
 
-            }
-            FreetimeSettingsGroup(stringResource(Res.string.backup_restore_title)) {
+            } }
+            item(key = "backup") { FreetimeSettingsGroup(stringResource(Res.string.backup_restore_title)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FreetimeGlassAction(
                     onClick = {
@@ -351,8 +346,8 @@ fun SettingsScreen(
                 }
             }
 
-            }
-            Spacer(Modifier.height(FreetimeDesign.spacing.lg))
+            } }
+            item(key = "open-android") {
             FreetimeSettingsGroup("Open Android") {
                 FreetimeText(
                     "Review GeoWeather's Android distribution notice and learn more about keeping Android open.",
@@ -367,7 +362,8 @@ fun SettingsScreen(
                     onClick = { onWebViewClick("https://keepandroidopen.org", "Keep Android Open") },
                     modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
                 ) { FreetimeText("Keep Android Open") }
-            }
+            } }
+            item(key = "actions") { Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Spacer(Modifier.height(FreetimeDesign.spacing.lg))
             FreetimeGlassAction(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))) { FreetimeText(stringResource(Res.string.diagnostics_title)) }
             Spacer(Modifier.height(8.dp))
