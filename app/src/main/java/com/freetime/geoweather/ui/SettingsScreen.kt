@@ -283,8 +283,8 @@ fun SettingsScreen(
                             val bytes = location.weatherData?.toByteArray(Charsets.UTF_8)?.size ?: 0
                             val sizeText = when {
                                 bytes == 0 -> "0 KB"
-                                bytes < 1024 * 1024 -> String.format(java.util.Locale.US, "%.1f KB", bytes / 1024.0)
-                                else -> String.format(java.util.Locale.US, "%.1f MB", bytes / (1024.0 * 1024.0))
+                                bytes < 1024 * 1024 -> String.format(java.util.Locale.getDefault(), "%.1f KB", bytes / 1024.0)
+                                else -> String.format(java.util.Locale.getDefault(), "%.1f MB", bytes / (1024.0 * 1024.0))
                             }
                             FreetimeText(
                                 stringResource(Res.string.offline_pack_status, freshness, ageText, sizeText),
