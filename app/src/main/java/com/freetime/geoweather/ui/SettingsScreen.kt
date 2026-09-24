@@ -263,13 +263,31 @@ fun SettingsScreen(
                                 ageMs < 24L * 60L * 60L * 1000L -> stringResource(Res.string.offline_updated_hours, ageMs / 3600000L)
                                 else -> stringResource(Res.string.offline_updated_days, ageMs / 86400000L)
                             }
+                            val freshness = when {
+                                location.weatherData == null -> stringResource(Res.string.offline_status_missing)
+                                ageMs <= 3L * 60L * 60L * 1000L -> stringResource(Res.string.offline_status_fresh)
+                                ageMs <= 12L * 60L * 60L * 1000L -> stringResource(Res.string.offline_status_aging)
+                                else -> stringResource(Res.string.offline_status_stale)
+                            }
+                            val bytes = location.weatherData?.toByteArray(Charsets.UTF_8)?.size ?: 0
+                            val sizeText = when {
+                                bytes == 0 -> "0 KB"
+                                bytes < 1024 * 1024 -> String.format(java.util.Locale.US, "%.1f KB", bytes / 1024.0)
+                                else -> String.format(java.util.Locale.US, "%.1f MB", bytes / (1024.0 * 1024.0))
+                            }
                             FreetimeText(
-                                location.name + " · " +
-                                    stringResource(if (location.weatherData != null) Res.string.offline_cached else Res.string.offline_not_cached) +
-                                    " · " + ageText,
+                                stringResource(Res.string.offline_pack_status, freshness, ageText, sizeText),
                                 style = FreetimeDesign.typography.bodySmall,
                                 color = FreetimeDesign.palette.contentMuted
                             )
+                            if (location.weatherData != null) {
+                                FreetimeGlassAction(
+                                    onClick = { viewModel.clearOfflinePackCache(location) },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    FreetimeText(stringResource(Res.string.offline_clear_cache))
+                                }
+                            }
                         }
                     }
                     FreetimeGlassAction(
