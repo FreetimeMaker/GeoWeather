@@ -71,6 +71,7 @@ fun SettingsScreen(
     val smartUvAlert by appSettings.smartUvAlert.collectAsState()
     val dataSaver by appSettings.dataSaver.collectAsState()
     val offlinePacks by appSettings.offlinePacks.collectAsState()
+    val offlinePacksWifiOnly by appSettings.offlinePacksWifiOnly.collectAsState()
     val savedLocations by viewModel.locations.collectAsState()
     var refreshingOfflinePacks by remember { mutableStateOf(false) }
 
@@ -227,6 +228,11 @@ fun SettingsScreen(
                     stringResource(Res.string.offline_packs_desc),
                     offlinePacks
                 ) { appSettings.setOfflinePacks(it) }
+                SettingsToggle(
+                    stringResource(Res.string.offline_wifi_only),
+                    stringResource(Res.string.offline_wifi_only_desc),
+                    offlinePacksWifiOnly
+                ) { appSettings.setOfflinePacksWifiOnly(it) }
                 FreetimeText(
                     stringResource(Res.string.offline_packs_note),
                     style = FreetimeDesign.typography.bodySmall,
