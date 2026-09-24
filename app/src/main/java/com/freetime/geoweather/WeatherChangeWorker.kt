@@ -1,6 +1,8 @@
 package com.freetime.geoweather
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.freetime.geoweather.data.DependencyManager
@@ -15,10 +17,15 @@ class WeatherChangeWorker(
         val repository = DependencyManager.getRepository()
         val appSettings = DependencyManager.getAppSettings()
         val allLocations = repository.getAllLocationsSync()
-        val locations = if (appSettings.offlinePacks.value) {
-            allLocations.filter { it.offlinePackEnabled || it.changeAlertsEnabled || it.notificationsEnabled }
-        } else {
-            allLocations.filter { it.changeAlertsEnabled || it.notificationsEnabled }
+        val connectivity = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = connectivity.activeNetwork
+        val capabilities = activeNetwork?.let(connectivity::getNetworkCapabilities)
+        val onWifi = capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+        val refreshOfflinePacks = appSettings.offlinePacks.value &&
+            !appSettings.dataSaver.value &&
+            (!appSettings.offlinePacksWifiOnly.value || onWifi)
+        val locations = allLocations.filter {
+            it.changeAlertsEnabled || it.notificationsEnabled || (refreshOfflinePacks && it.offlinePackEnabled)
         }
         if (locations.isEmpty()) return Result.success()
 
