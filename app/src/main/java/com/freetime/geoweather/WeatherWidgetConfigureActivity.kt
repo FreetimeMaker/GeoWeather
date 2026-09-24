@@ -46,7 +46,7 @@ class WeatherWidgetConfigureActivity : ComponentActivity() {
                 locations.map { it.name }
             )
             list.setOnItemClickListener { _, _, position, _ ->
-                WidgetPreferences.saveLocationId(
+                WidgetLocationPreferences.saveLocationId(
                     this@WeatherWidgetConfigureActivity,
                     appWidgetId,
                     locations[position].id
