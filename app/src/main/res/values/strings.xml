@@ -754,6 +754,11 @@
     <string name="forecast_confidence_spread">Model spread · temperature %1$s°C · rain %2$d%% · wind %3$s km/h</string>
     <string name="forecast_model_rain">Rain %1$d%%</string>
     <string name="forecast_model_wind">Wind %1$s km/h</string>
+    <string name="forecast_model_wind_value">Wind %1$s</string>
+    <string name="forecast_confidence_spread_units">Model spread · temperature %1$s°C · rain %2$d%% · wind %3$s</string>
+    <string name="activity_wind_reason_value">Wind %1$s</string>
+    <string name="smart_wind_detail_value">%1$s</string>
+    <string name="alert_next_6h">Next 6h · rain %1$d%% / %2$s mm · gusts %3$s</string>
     <string name="intelligence_today">Today</string>
     <string name="intelligence_tonight">Tonight</string>
     <string name="intelligence_briefing">%1$s in %2$s: %3$d–%4$d°</string>
