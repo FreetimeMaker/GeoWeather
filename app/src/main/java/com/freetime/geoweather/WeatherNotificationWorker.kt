@@ -35,10 +35,19 @@ class WeatherNotificationWorker(
             val rainPeak = hourly.take(12).maxOfOrNull { it.precipProbability } ?: 0
             val windPeak = hourly.take(12).maxOfOrNull { it.windGusts ?: it.windSpeed ?: 0.0 } ?: 0.0
             val hour = java.time.LocalTime.now().hour
-            val period = if (hour < 12) "Morning" else "Evening"
+            val period = applicationContext.getString(
+                if (hour < 12) SharedRes.string.briefing_morning else SharedRes.string.briefing_evening
+            )
             val range = daily?.let { it.minTemp.toString() + "–" + it.maxTemp + "°" } ?: tempStr
-            val message = period + " · " + updatedLocation.name + ": " + range + ", " + description +
-                " · Rain " + rainPeak + "% · Gusts " + windPeak.toInt() + " km/h"
+            val message = applicationContext.getString(
+                SharedRes.string.daily_weather_notification,
+                period,
+                updatedLocation.name,
+                range,
+                description,
+                rainPeak,
+                windPeak.toInt()
+            )
             WeatherNotifications.show(
                 applicationContext,
                 2001 + (location.id % 100000).toInt(),
