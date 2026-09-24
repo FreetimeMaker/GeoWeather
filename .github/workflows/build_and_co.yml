@@ -116,7 +116,7 @@ jobs:
           retention-days: 90
 
       - name: Create and push tag
-        if: needs.prepare_android_app.outputs.create_tag == 'true'
+        if: steps.versioncheck.outputs.create_tag == 'true'
         env:
           VERSION: ${{ steps.versioncheck.outputs.version }}
         run: |
@@ -135,7 +135,7 @@ jobs:
           } > release-notes.md
 
       - name: Upload APK to Release
-        if: needs.prepare_android_app.outputs.create_tag == 'true'
+        if: steps.versioncheck.outputs.create_tag == 'true'
         uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ steps.versioncheck.outputs.version }}
