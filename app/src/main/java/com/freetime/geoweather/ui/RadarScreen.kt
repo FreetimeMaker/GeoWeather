@@ -40,7 +40,7 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.TilesOverlay
 import java.net.URL
 
-private data class RadarFrame(val path: String, val time: Long)\nprivate data class RadarFrames(val host: String, val frames: List<RadarFrame>)
+data class RadarFrame(val path: String, val time: Long)\nprivate data class RadarFrames(val host: String, val frames: List<RadarFrame>)
 
 @Composable
 fun WeatherMapPreview(lat: Double, lon: Double, modifier: Modifier = Modifier, dataSaver: Boolean = false) {
@@ -55,10 +55,10 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
     var baseMapVisible by remember { mutableStateOf(true) }
     var locationVisible by remember { mutableStateOf(true) }\n    var availableFrames by remember { mutableStateOf<List<RadarFrame>>(emptyList()) }\n    var radarLoadFailed by remember { mutableStateOf(false) }
 
-    LaunchedEffect(playing) {
-        while (playing) {
+    LaunchedEffect(playing, availableFrames.size) {
+        while (playing && availableFrames.isNotEmpty()) {
             delay(1200)
-            frameIndex = (frameIndex + 1) % 12
+            frameIndex = (frameIndex + 1) % availableFrames.size
         }
     }
 
@@ -121,8 +121,15 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
                         onClick = { playing = !playing }
                     )
                     Column(Modifier.weight(1f)) {
+                        val frame = availableFrames.getOrNull(frameIndex)
+                        val ageMinutes = frame?.let { ((System.currentTimeMillis() / 1000L - it.time).coerceAtLeast(0L) / 60L).toInt() }
                         FreetimeText(
-                            if (frameIndex == 11) stringResource(Res.string.latest_radar) else stringResource(Res.string.radar_minutes_ago, (11 - frameIndex) * 10),
+                            when {
+                                radarLoadFailed -> stringResource(Res.string.radar_load_failed)
+                                frame == null -> stringResource(Res.string.radar_loading)
+                                ageMinutes != null && ageMinutes < 5 -> stringResource(Res.string.latest_radar)
+                                else -> stringResource(Res.string.radar_minutes_ago, ageMinutes ?: 0)
+                            },
                             style = FreetimeDesign.typography.labelLarge
                         )
                         FreetimeText(
@@ -145,7 +152,8 @@ private fun NativeWeatherMap(
     radarVisible: Boolean,
     modifier: Modifier,
     baseMapVisible: Boolean = true,
-    locationVisible: Boolean = true
+    locationVisible: Boolean = true,
+    onFramesChanged: (List<RadarFrame>, Boolean) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
     var frames by remember { mutableStateOf<RadarFrames?>(null) }
@@ -159,12 +167,18 @@ private fun NativeWeatherMap(
                 val raw = URL("https://api.rainviewer.com/public/weather-maps.json").readText()
                 val root = Json.parseToJsonElement(raw).jsonObject
                 val host = root["host"]?.jsonPrimitive?.content ?: return@runCatching null
-                val paths = root["radar"]?.jsonObject?.get("past")?.jsonArray
-                    ?.mapNotNull { it.jsonObject["path"]?.jsonPrimitive?.content }
+                val radarFrames = root["radar"]?.jsonObject?.get("past")?.jsonArray
+                    ?.mapNotNull { item ->
+                        val obj = item.jsonObject
+                        val path = obj["path"]?.jsonPrimitive?.content ?: return@mapNotNull null
+                        val time = obj["time"]?.jsonPrimitive?.content?.toLongOrNull() ?: return@mapNotNull null
+                        RadarFrame(path, time)
+                    }
                     .orEmpty()
-                RadarFrames(host, paths)
+                RadarFrames(host, radarFrames)
             }.getOrNull()
         }
+        onFramesChanged(frames?.frames.orEmpty(), frames == null)
     }
 
     AndroidView(
@@ -201,8 +215,8 @@ private fun NativeWeatherMap(
             }
 
             val data = frames
-            val desiredPath = if (radarVisible && data != null && data.paths.isNotEmpty()) {
-                data.paths[frameIndex.coerceIn(0, data.paths.lastIndex)]
+            val desiredPath = if (radarVisible && data != null && data.frames.map { it.path }.isNotEmpty()) {
+                data.frames.map { it.path }[frameIndex.coerceIn(0, data.frames.map { it.path }.lastIndex)]
             } else null
 
             if (desiredPath != radarPath.value) {
