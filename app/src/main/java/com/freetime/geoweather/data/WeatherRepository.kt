@@ -181,6 +181,15 @@ class WeatherRepository(
         locationDao.updateLocation(location.copy(offlinePackEnabled = enabled))
     }
 
+    suspend fun clearOfflinePackCache(location: LocationEntity) {
+        locationDao.updateLocation(
+            location.copy(
+                weatherData = null,
+                lastUpdated = 0L
+            )
+        )
+    }
+
     suspend fun toggleLocationNotifications(location: LocationEntity) {
         locationDao.updateLocation(location.copy(notificationsEnabled = !location.notificationsEnabled))
     }
