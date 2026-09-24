@@ -637,6 +637,12 @@
     <string name="feels_like_wind">Wind is making it feel cooler.</string>
     <string name="feels_like_humidity">Humidity is making the temperature feel warmer.</string>
     <string name="feels_like_neutral">Current humidity and wind have little effect on the perceived temperature.</string>
+    <string name="feels_like_sun">Sun and UV exposure can make it feel warmer.</string>
+    <string name="feels_like_difference_warmer">It feels %1$s warmer than the measured air temperature.</string>
+    <string name="feels_like_difference_cooler">It feels %1$s cooler than the measured air temperature.</string>
+    <string name="share_humidity">Humidity %1$d%%</string>
+    <string name="share_today_forecast">Today %1$s / %2$s · %3$d%% rain</string>
+    <string name="share_tomorrow_forecast">Tomorrow %1$s / %2$s · %3$d%% rain</string>
 
     <string name="pressure_steady">Steady</string>
     <string name="offline_cached_summary">Cached weather · %1$d min old · %2$d forecast days cached</string>
