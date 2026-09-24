@@ -110,6 +110,13 @@ class WeatherViewModel(
         }
     }
 
+    fun clearOfflinePackCache(location: LocationEntity) {
+        viewModelScope.launch {
+            runCatching { repository.clearOfflinePackCache(location) }
+                .onFailure { it.printStackTrace() }
+        }
+    }
+
     fun toggleLocationNotifications(location: LocationEntity) {
         viewModelScope.launch {
             try {
