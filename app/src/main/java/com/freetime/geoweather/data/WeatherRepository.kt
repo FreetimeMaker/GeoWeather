@@ -121,6 +121,8 @@ class WeatherRepository(
 
     suspend fun getSelectedLocation(): LocationEntity? = locationDao.getSelectedLocation()
 
+    suspend fun getLocationById(id: Long): LocationEntity? = locationDao.findById(id)
+
     suspend fun importBackupLocations(locations: List<LocationEntity>) {
         for (loc in locations) {
             val existing = locationDao.findByCoordinates(loc.latitude, loc.longitude)
