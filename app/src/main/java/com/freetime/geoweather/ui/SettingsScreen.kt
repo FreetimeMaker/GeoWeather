@@ -386,7 +386,7 @@ fun SettingsScreen(
                 FreetimeGlassAction(
                     onClick = onShowDistributionNotice,
                     modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
-                ) { FreetimeText("Show distribution notice") }
+                ) { FreetimeText(stringResource(Res.string.distribution_notice_show)) }
                 FreetimeGlassAction(
                     onClick = { onWebViewClick("https://keepandroidopen.org", "Keep Android Open") },
                     modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
