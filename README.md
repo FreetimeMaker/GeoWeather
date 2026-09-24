@@ -86,13 +86,6 @@ You can download the latest version of GeoWeather from the following platforms:
 [<img src="media-resources/badge_github_store.png" alt="Get it on GitHub Store" height="70">](https://github-store.org/app?repo=FreetimeMaker/GeoWeather)
 </div>
 
-## 🚀 Upcoming Features
-
-Planned:
-
-- 📸 **App Demonstration**: Screenshots and video tutorials on YouTube and other platforms
-- 📊 **Weather History**: Historical weather data and trends
-
 ## 📄 License
 
 This project is licensed under the [Apache-2.0 License](LICENSE).
