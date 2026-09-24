@@ -41,14 +41,15 @@ private val MIGRATION_9_10 = object : Migration(9, 10) {
             CREATE TABLE IF NOT EXISTS forecast_snapshots (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 locationId INTEGER NOT NULL,
-                targetTime TEXT NOT NULL,
-                createdAt INTEGER NOT NULL,
+                issuedAt INTEGER NOT NULL,
+                targetEpochMillis INTEGER NOT NULL,
+                horizonHours INTEGER NOT NULL,
                 forecastTemperature REAL NOT NULL,
                 actualTemperature REAL,
                 evaluatedAt INTEGER
             )
         """.trimIndent())
-        db.execSQL("CREATE INDEX IF NOT EXISTS index_forecast_snapshots_location_target ON forecast_snapshots(locationId, targetTime)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS index_forecast_snapshots_locationId_targetEpochMillis_horizonHours ON forecast_snapshots(locationId, targetEpochMillis, horizonHours)")
     }
 }
 
