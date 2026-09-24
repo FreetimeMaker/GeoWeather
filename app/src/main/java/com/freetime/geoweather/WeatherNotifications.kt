@@ -19,8 +19,8 @@ object WeatherNotifications {
     fun ensureChannels(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val manager = context.getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(NotificationChannel(CHANNEL_UPDATES, "Weather updates", NotificationManager.IMPORTANCE_DEFAULT))
-            manager.createNotificationChannel(NotificationChannel(CHANNEL_ALERTS, "Weather alerts", NotificationManager.IMPORTANCE_HIGH))
+            manager.createNotificationChannel(NotificationChannel(CHANNEL_UPDATES, context.getString(R.string.notification_channel_updates), NotificationManager.IMPORTANCE_DEFAULT))
+            manager.createNotificationChannel(NotificationChannel(CHANNEL_ALERTS, context.getString(R.string.notification_channel_alerts), NotificationManager.IMPORTANCE_HIGH))
         }
     }
 
