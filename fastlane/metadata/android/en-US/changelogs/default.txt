@@ -1,8 +1,6 @@
-• Added richer weather intelligence with activity planning, photography conditions, precipitation timelines and a severe weather dashboard
-• Added forecast confidence and daily weather-model agreement
-• Rebuilt radar and weather maps as a native map experience with radar controls and weather-map previews
-• Added Data Saver and Offline Forecast Packs with per-city selection, cache status and manual refresh
-• Expanded the travel planner with weather comparisons and packing hints
-• Improved city search with saved-place shortcuts and clearer region information
-• Added smarter rain, wind, frost and UV alerts and improved persistent notification reliability
-• Improved performance and fixed additional forecast, notification and UI issues
+• Expanded widgets with compact, forecast and detailed variants, per-widget location selection and dynamic weather-aware styling
+• Improved forecast insights with Today vs tomorrow comparisons, confidence levels, daylight duration and better day/night icons
+• Upgraded weather sharing and improved feels-like explanations
+• Added per-location smart alert thresholds for temperature, wind, rain, gusts, UV and frost
+• Improved persistent notifications and smart weather alerts
+• Improved Liquid Glass performance and fixed additional widget, forecast and UI issues
