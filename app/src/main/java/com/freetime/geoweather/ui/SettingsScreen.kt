@@ -20,10 +20,10 @@ import com.freetime.design.freetimeGlass
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.item
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.*
@@ -95,12 +95,12 @@ fun SettingsScreen(
             )
         }
     ) {
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
+            item { Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
 
             FreetimeSettingsGroup(stringResource(Res.string.unit_settings_title)) {
             FreetimeText(stringResource(Res.string.temperature_unit), style = FreetimeDesign.typography.bodyLarge)
@@ -395,6 +395,7 @@ fun SettingsScreen(
             ) {
                 FreetimeText(stringResource(Res.string.feedback_github_btn))
             }
+            } }
         }
     }
 }
