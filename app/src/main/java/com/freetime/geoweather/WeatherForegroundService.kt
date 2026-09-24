@@ -48,7 +48,17 @@ class WeatherForegroundService : Service() {
                 val hourly = repository.getHourlyForecasts(updatedLocation)
                 val rain = hourly.take(6).maxOfOrNull { it.precipProbability } ?: 0
                 val gust = hourly.take(6).maxOfOrNull { it.windGusts ?: it.windSpeed ?: 0.0 } ?: 0.0
-                val content = base + " · Rain " + rain + "% · Gusts " + gust.toInt() + " km/h"
+                val windUnit = appSettings.windUnit.value
+                val gustText = formatNotificationWind(gust, windUnit)
+                val summary = getString(R.string.persistent_weather_summary, base, rain, gustText)
+                val nextHour = hourly.firstOrNull()
+                val content = if (nextHour != null) {
+                    summary + "\n" + getString(
+                        R.string.persistent_next_hour,
+                        repository.getDisplayTemp(nextHour, appSettings.tempUnit.value),
+                        nextHour.precipProbability
+                    )
+                } else summary
                 val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.notify(NOTIFICATION_ID, createNotification(content))
             } catch (e: Exception) {
@@ -91,6 +101,12 @@ class WeatherForegroundService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
+    }
+
+    private fun formatNotificationWind(kmh: Double, unit: String): String = when (unit) {
+        "mph" -> ((kmh * 0.621371).toInt()).toString() + " mph"
+        "ms" -> String.format(java.util.Locale.getDefault(), "%.1f m/s", kmh / 3.6)
+        else -> kmh.toInt().toString() + " km/h"
     }
 
     companion object {
