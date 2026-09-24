@@ -694,7 +694,7 @@ fun WeatherDetailScreen(
                                     (activityDetails + photo).forEach { detail ->
                                         FreetimeCard(modifier = Modifier.fillMaxWidth()) {
                                             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                                                FreetimeText(localizedActivityName(detail.activity) + " · " + detail.score + "/100", style = FreetimeDesign.typography.labelLarge, fontWeight = FontWeight.Bold)
+                                                FreetimeText(stringResource(Res.string.activity_score, localizedActivityName(detail.activity), detail.score), style = FreetimeDesign.typography.labelLarge, fontWeight = FontWeight.Bold)
                                                 FreetimeText(
                                                     if (detail.bestHours.isEmpty()) stringResource(Res.string.no_recommended_window) else detail.bestHours.joinToString(" · ") { it.takeLast(5) },
                                                     style = FreetimeDesign.typography.bodyMedium
@@ -716,7 +716,7 @@ fun WeatherDetailScreen(
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     FreetimeText(stringResource(Res.string.outdoor_planner_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     bestWindow?.takeIf { it.hours.isNotEmpty() }?.let { best ->
-                                        FreetimeText(localizedActivityName(best.activity) + " · " + best.score + "/100", style = FreetimeDesign.typography.titleLarge)
+                                        FreetimeText(stringResource(Res.string.activity_score, localizedActivityName(best.activity), best.score), style = FreetimeDesign.typography.titleLarge)
                                         FreetimeText(best.hours.joinToString(" · ") { it.takeLast(5) }, color = FreetimeDesign.palette.contentMuted)
                                     }
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -749,8 +749,30 @@ fun WeatherDetailScreen(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 FreetimeText(stringResource(Res.string.smart_weather_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                FreetimeText(smart.primary, style = FreetimeDesign.typography.titleLarge)
-                                smart.secondary?.let { FreetimeText(it, color = FreetimeDesign.palette.contentMuted) }
+                                FreetimeText(
+                                    when {
+                                        smart.primary.startsWith("Rain likely around ") -> stringResource(Res.string.smart_rain_likely, smart.primary.removePrefix("Rain likely around "))
+                                        smart.primary.startsWith("Strong gusts around ") -> stringResource(Res.string.smart_strong_gusts, smart.primary.removePrefix("Strong gusts around "))
+                                        smart.primary == "High UV today" -> stringResource(Res.string.smart_high_uv_today)
+                                        smart.primary.startsWith("Next hour ") -> stringResource(Res.string.smart_next_hour, smart.primary.removePrefix("Next hour ").removeSuffix("°").toIntOrNull() ?: 0)
+                                        else -> stringResource(Res.string.smart_weather_overview)
+                                    },
+                                    style = FreetimeDesign.typography.titleLarge
+                                )
+                                smart.secondary?.let { secondary ->
+                                    val localized = when {
+                                        secondary.contains(" mm") && secondary.contains("% · ") -> stringResource(
+                                            Res.string.smart_rain_detail,
+                                            secondary.substringBefore("%").toIntOrNull() ?: 0,
+                                            secondary.substringAfter("· ").substringBefore(" mm")
+                                        )
+                                        secondary.endsWith(" km/h") -> stringResource(Res.string.smart_wind_detail, secondary.substringBefore(" km/h").toIntOrNull() ?: 0)
+                                        secondary.startsWith("UV max ") -> stringResource(Res.string.smart_uv_max, secondary.removePrefix("UV max "))
+                                        secondary.endsWith("% precipitation") -> stringResource(Res.string.smart_precipitation_probability, secondary.substringBefore("%").toIntOrNull() ?: 0)
+                                        else -> secondary
+                                    }
+                                    FreetimeText(localized, color = FreetimeDesign.palette.contentMuted)
+                                }
                                 FreetimeDivider()
                                 FreetimeText(stringResource(Res.string.nowcast_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 if (nowcast?.startsAt != null && nowcast.endsAt != null) {
