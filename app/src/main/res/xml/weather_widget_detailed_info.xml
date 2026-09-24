@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:initialLayout="@layout/glance_default_loading_layout"
+    android:configure="com.freetime.geoweather.WeatherWidgetConfigureActivity"\n    android:widgetFeatures="configuration_optional|reconfigurable"\n    android:initialLayout="@layout/glance_default_loading_layout"
     android:minWidth="240dp"
     android:minHeight="150dp"
     android:targetCellWidth="4"
