@@ -14,6 +14,7 @@ object DependencyManager {
         this.repository = WeatherRepository(
             locationDao = database.locationDao(),
             historyDao = database.weatherHistoryDao(),
+            forecastSnapshotDao = database.forecastSnapshotDao(),
             apiClient = WeatherApiClient()
         )
         this.appSettings = AppSettings(settings)
