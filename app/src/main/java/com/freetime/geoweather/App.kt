@@ -1,5 +1,6 @@
 package com.freetime.geoweather
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -118,11 +119,11 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
             kotlinx.coroutines.delay(30_000)
         }
     }
+    val systemDarkTheme = isSystemInDarkTheme()
     val darkTheme = if (sunrise != null && sunset != null) {
         currentTime.isBefore(sunrise) || !currentTime.isBefore(sunset)
     } else {
-        currentTime.isBefore(java.time.LocalTime.of(7, 0)) ||
-            !currentTime.isBefore(java.time.LocalTime.of(19, 0))
+        systemDarkTheme
     }
 
     val glassBackdropColors = remember(darkTheme) {
