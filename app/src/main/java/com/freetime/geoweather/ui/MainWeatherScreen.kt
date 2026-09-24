@@ -11,8 +11,6 @@ import com.freetime.design.FreetimeSearchBar
 import com.freetime.design.FreetimeNavigationRail
 import com.freetime.design.FreetimeBottomBar
 import com.freetime.design.FreetimeNavigationDestination
-import com.freetime.design.FreetimeBottomSheet
-import com.freetime.design.FreetimeButton
 import com.freetime.design.FreetimeEmptyState
 import com.freetime.design.FreetimeInfoCard
 import com.freetime.design.FreetimeSectionHeader
@@ -52,7 +50,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MyLocation
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Settings
@@ -95,7 +92,6 @@ fun MainWeatherScreen(
     val haptics = LocalHapticFeedback.current
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
     var notificationLocation by remember { mutableStateOf<LocationEntity?>(null) }
-    var actionLocation by remember { mutableStateOf<LocationEntity?>(null) }
     var showAddLocationDialog by remember { mutableStateOf(false) }
     var addLocationQuery by remember { mutableStateOf("") }
     val searchResults by viewModel.searchResults.collectAsState()
@@ -488,11 +484,27 @@ fun MainWeatherScreen(
                             FreetimeText(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.bodyMedium)
                         }
                         FreetimeIconButton(
-                            icon = Icons.Default.MoreVert,
-                            contentDescription = null,
+                            icon = if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
+                            contentDescription = stringResource(Res.string.notification_time_title),
                             onClick = {
                                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                actionLocation = loc
+                                notificationLocation = loc
+                            }
+                        )
+                        FreetimeIconButton(
+                            icon = if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = stringResource(Res.string.favorite_location),
+                            onClick = {
+                                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                viewModel.toggleDefaultLocation(loc)
+                            }
+                        )
+                        FreetimeIconButton(
+                            icon = Icons.Default.Delete,
+                            contentDescription = stringResource(Res.string.DelLoc),
+                            onClick = {
+                                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                locationToDelete = loc
                             }
                         )
                     }
