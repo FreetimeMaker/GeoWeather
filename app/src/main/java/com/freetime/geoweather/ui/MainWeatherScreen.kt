@@ -398,10 +398,9 @@ fun MainWeatherScreen(
                                     compared.forEach { (loc, low, high) ->
                                         val days = viewModel.getDailyForecasts(loc).take(7)
                                         val rain = days.maxOfOrNull { it.precipProbMax } ?: 0
+                                        val range = if (low != null && high != null) low.toString() + "–" + high + "°C" else "--"
                                         FreetimeText(
-                                            loc.name + " · " +
-                                                (if (low != null && high != null) low.toString() + "–" + high + "°C" else "--") +
-                                                " · rain " + rain + "%",
+                                            stringResource(Res.string.trip_compare_row, loc.name, range, rain),
                                             style = FreetimeDesign.typography.bodyMedium
                                         )
                                     }
