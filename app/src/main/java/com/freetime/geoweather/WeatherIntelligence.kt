@@ -51,10 +51,10 @@ object WeatherIntelligence {
         )
     }
 
-    fun pressureTrendLabel(trend: Int): String = when {
-        trend > 0 -> "Rising"
-        trend < 0 -> "Falling"
-        else -> "Steady"
+    fun pressureTrendKey(trend: Int): String = when {
+        trend > 0 -> "rising"
+        trend < 0 -> "falling"
+        else -> "steady"
     }
 
     fun smartHero(hourly: List<HourlyForecast>, daily: DailyForecast?): SmartHeroInsight {
