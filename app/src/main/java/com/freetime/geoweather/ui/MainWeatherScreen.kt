@@ -21,6 +21,7 @@ import com.freetime.design.FreetimeDesign
 import com.freetime.design.FreetimeGlassPullRefreshIndicator
 import com.freetime.design.FreetimeGlassSkeleton
 import com.freetime.design.FreetimeGlassPanel
+import com.freetime.design.FreetimeGlassTitle
 import com.freetime.design.freetimeWideGlass
 
 import androidx.compose.foundation.clickable
@@ -690,10 +691,13 @@ private fun GeoWeatherBottomNavigation(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(3.dp)
             ) {
-                androidx.compose.material3.Icon(
+                Image(
                     imageVector = destination.icon,
                     contentDescription = destination.label,
-                    tint = if (selected) FreetimeDesign.palette.primary else FreetimeDesign.palette.contentMuted
+                    modifier = Modifier.size(24.dp),
+                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
+                        if (selected) FreetimeDesign.palette.primary else FreetimeDesign.palette.contentMuted
+                    )
                 )
                 FreetimeText(
                     text = destination.label,
