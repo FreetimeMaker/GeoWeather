@@ -6,7 +6,23 @@ import com.freetime.geoweather.data.HourlyForecast
 data class ActivityWindow(val activity: String, val hours: List<String>, val score: Int)
 data class ProviderSnapshot(val provider: String, val temperature: Double?, val weatherCode: Int?)
 data class NowcastSummary(val startsAt: String?, val endsAt: String?, val peakProbability: Int, val peakAmountMm: Double)
-data class SmartHeroInsight(val primary: String, val secondary: String?)
+data class SmartHeroInsight(
+    val kind: String,
+    val time: String? = null,
+    val value: Double? = null,
+    val probability: Int? = null,
+    val temperature: Int? = null
+)
+data class WeatherBriefing(
+    val location: String,
+    val minTemp: Int,
+    val maxTemp: Int,
+    val evening: Boolean,
+    val rainTime: String?,
+    val rainProbability: Int?,
+    val strongWind: Boolean,
+    val highUv: Boolean
+)
 data class ActivityDetail(val activity: String, val score: Int, val bestHours: List<String>, val reasons: List<String>)
 
 object WeatherIntelligence {
@@ -51,36 +67,44 @@ object WeatherIntelligence {
         }
         return when {
             severeRain != null -> SmartHeroInsight(
-                primary = "Rain likely around " + severeRain.time,
-                secondary = severeRain.precipProbability.toString() + "% · " +
-                    formatOneDecimal(severeRain.precipitation ?: 0.0) + " mm"
+                kind = "rain",
+                time = severeRain.time,
+                value = severeRain.precipitation ?: 0.0,
+                probability = severeRain.precipProbability
             )
             strongWind != null -> SmartHeroInsight(
-                primary = "Strong gusts around " + strongWind.time,
-                secondary = ((strongWind.windGusts ?: strongWind.windSpeed ?: 0.0).toInt()).toString() + " km/h"
+                kind = "wind",
+                time = strongWind.time,
+                value = strongWind.windGusts ?: strongWind.windSpeed ?: 0.0
             )
-            (daily?.uvMax ?: 0.0) >= 6.0 -> SmartHeroInsight(
-                primary = "High UV today",
-                secondary = "UV max " + formatOneDecimal(daily?.uvMax ?: 0.0)
-            )
+            (daily?.uvMax ?: 0.0) >= 6.0 -> SmartHeroInsight(kind = "uv", value = daily?.uvMax)
             next != null -> SmartHeroInsight(
-                primary = "Next hour " + next.temp + "°",
-                secondary = next.precipProbability.toString() + "% precipitation"
+                kind = "next_hour",
+                temperature = next.temp,
+                probability = next.precipProbability
             )
-            else -> SmartHeroInsight("Weather overview", null)
+            else -> SmartHeroInsight(kind = "overview")
         }
     }
 
-    fun briefing(location: String, daily: DailyForecast?, hourly: List<HourlyForecast>, evening: Boolean = false): String {
-        if (daily == null) return location
+    fun briefing(
+        location: String,
+        daily: DailyForecast?,
+        hourly: List<HourlyForecast>,
+        evening: Boolean = false
+    ): WeatherBriefing? {
+        if (daily == null) return null
         val rain = hourly.firstOrNull { it.precipProbability >= 40 }
-        val period = if (evening) "Tonight" else "Today"
-        return buildString {
-            append("$period in $location: ${daily.minTemp}–${daily.maxTemp}°")
-            if (rain != null) append(", rain possible around ${rain.time} (${rain.precipProbability}%)")
-            if (daily.windMax >= 35) append(", strong wind possible")
-            if ((daily.uvMax ?: 0.0) >= 6) append(", high UV")
-        }
+        return WeatherBriefing(
+            location = location,
+            minTemp = daily.minTemp,
+            maxTemp = daily.maxTemp,
+            evening = evening,
+            rainTime = rain?.time,
+            rainProbability = rain?.precipProbability,
+            strongWind = daily.windMax >= 35,
+            highUv = (daily.uvMax ?: 0.0) >= 6
+        )
     }
 
     fun activityWindows(hourly: List<HourlyForecast>): List<ActivityWindow> {
