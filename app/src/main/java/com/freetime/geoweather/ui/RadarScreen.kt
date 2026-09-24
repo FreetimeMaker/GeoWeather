@@ -51,6 +51,8 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
     var playing by remember { mutableStateOf(!dataSaver) }
     var frameIndex by remember { mutableIntStateOf(0) }
     var radarVisible by remember { mutableStateOf(!dataSaver) }
+    var baseMapVisible by remember { mutableStateOf(true) }
+    var locationVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(playing) {
         while (playing) {
@@ -74,7 +76,7 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
         }
     ) {
         Box(Modifier.fillMaxSize()) {
-            NativeWeatherMap(lat, lon, frameIndex, radarVisible, Modifier.fillMaxSize())
+            NativeWeatherMap(lat, lon, frameIndex, radarVisible, Modifier.fillMaxSize(), baseMapVisible, locationVisible)
             if (dataSaver && !radarVisible) {
                 FreetimeCard(modifier = Modifier.align(Alignment.Center).padding(24.dp).clickable { radarVisible = true }) {
                     FreetimeText(stringResource(Res.string.radar_data_saver_hint), modifier = Modifier.padding(14.dp))
@@ -87,11 +89,17 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
                 FreetimeCard(modifier = Modifier.clickable { radarVisible = !radarVisible }) {
                     FreetimeText(if (radarVisible) stringResource(Res.string.radar_layer_on) else stringResource(Res.string.radar_layer_off), modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
                 }
-                FreetimeCard {
-                    FreetimeText(stringResource(Res.string.map_layer_osm), modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                FreetimeCard(modifier = Modifier.clickable { baseMapVisible = !baseMapVisible }) {
+                    FreetimeText(
+                        stringResource(if (baseMapVisible) Res.string.map_layer_osm_on else Res.string.map_layer_osm_off),
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                    )
                 }
-                FreetimeCard {
-                    FreetimeText(stringResource(Res.string.map_layer_location), modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                FreetimeCard(modifier = Modifier.clickable { locationVisible = !locationVisible }) {
+                    FreetimeText(
+                        stringResource(if (locationVisible) Res.string.map_layer_location_on else Res.string.map_layer_location_off),
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                    )
                 }
             }
             FreetimeCard(
@@ -134,7 +142,9 @@ private fun NativeWeatherMap(
     lon: Double,
     frameIndex: Int,
     radarVisible: Boolean,
-    modifier: Modifier
+    modifier: Modifier,
+    baseMapVisible: Boolean = true,
+    locationVisible: Boolean = true
 ) {
     val context = LocalContext.current
     var frames by remember { mutableStateOf<RadarFrames?>(null) }
@@ -170,7 +180,18 @@ private fun NativeWeatherMap(
         },
         update = { map ->
             map.controller.setCenter(GeoPoint(lat, lon))
-            map.overlays.removeAll { it is TilesOverlay }
+            if (baseMapVisible) {
+                map.setTileSource(TileSourceFactory.MAPNIK)
+            } else {
+                map.setTileSource(null)
+            }
+            map.overlays.removeAll { it is TilesOverlay || it is Marker }
+            if (locationVisible) {
+                map.overlays.add(Marker(map).apply {
+                    position = GeoPoint(lat, lon)
+                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                })
+            }
             val data = frames
             if (radarVisible && data != null && data.paths.isNotEmpty()) {
                 val path = data.paths[frameIndex.coerceIn(0, data.paths.lastIndex)]
