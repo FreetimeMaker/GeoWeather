@@ -8,6 +8,8 @@ import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.*
@@ -535,28 +537,42 @@ class WeatherRepository(
 
     private suspend fun recordForecastAccuracy(location: LocationEntity) {
         val nowMs = Clock.System.now().toEpochMilliseconds()
+        val data = location.weatherData ?: return
+        val json = runCatching { Json.parseToJsonElement(data).jsonObject }.getOrNull() ?: return
+        val zone = getLocationTimeZone(json)
         val hourly = getHourlyForecasts(location)
         val horizons = listOf(1, 6, 24, 72, 168)
+
+        fun epochMillis(time: String): Long? = runCatching {
+            LocalDateTime.parse(time).toInstant(zone).toEpochMilliseconds()
+        }.getOrNull()
+
         horizons.forEach { hours ->
-            hourly.getOrNull(hours)?.let { forecast ->
-                if (forecastSnapshotDao.findNearbySnapshot(location.id, forecast.time, nowMs) == null) {
-                    forecastSnapshotDao.insert(
-                        ForecastSnapshotEntity(
-                            locationId = location.id,
-                            targetTime = forecast.time,
-                            createdAt = nowMs,
-                            forecastTemperature = forecast.temp.toDouble()
-                        )
+            val desired = nowMs + hours * 60L * 60L * 1000L
+            val forecast = hourly.minByOrNull { item ->
+                kotlin.math.abs((epochMillis(item.time) ?: Long.MAX_VALUE / 2) - desired)
+            } ?: return@forEach
+            val target = epochMillis(forecast.time) ?: return@forEach
+            if (kotlin.math.abs(target - desired) > 90L * 60L * 1000L) return@forEach
+
+            if (forecastSnapshotDao.findNearbySnapshot(location.id, target, hours, nowMs) == null) {
+                forecastSnapshotDao.insert(
+                    ForecastSnapshotEntity(
+                        locationId = location.id,
+                        issuedAt = nowMs,
+                        targetEpochMillis = target,
+                        horizonHours = hours,
+                        forecastTemperature = forecast.temp.toDouble()
                     )
-                }
+                )
             }
         }
 
-        val currentHour = hourly.firstOrNull()?.time
-        val actual = location.currentTemp
-        if (currentHour != null && actual != null) {
+        location.currentTemp?.let { actual ->
+            // Only compare a forecast with an observation close to its intended
+            // target time. Old targets are never evaluated with today's value.
             forecastSnapshotDao.getPending(location.id)
-                .filter { it.targetTime <= currentHour }
+                .filter { kotlin.math.abs(it.targetEpochMillis - nowMs) <= 90L * 60L * 1000L }
                 .forEach { forecastSnapshotDao.evaluate(it.id, actual, nowMs) }
         }
         forecastSnapshotDao.deleteOlderThan(nowMs - 90L * 24L * 60L * 60L * 1000L)
@@ -564,22 +580,15 @@ class WeatherRepository(
 
     suspend fun getForecastAccuracy(locationId: Long): List<ForecastAccuracyBucket> {
         val rows = forecastSnapshotDao.getEvaluated(locationId)
-        val targets = listOf(1, 6, 24, 72, 168)
-        return targets.mapNotNull { target ->
-            val selected = rows.filter { row ->
-                val created = java.time.Instant.ofEpochMilli(row.createdAt)
-                val targetInstant = runCatching {
-                    java.time.LocalDateTime.parse(row.targetTime)
-                        .atZone(java.time.ZoneId.systemDefault()).toInstant()
-                }.getOrNull() ?: return@filter false
-                val hours = java.time.Duration.between(created, targetInstant).toHours().toInt()
-                kotlin.math.abs(hours - target) <= if (target >= 72) 6 else 2
-            }
+        return listOf(1, 6, 24, 72, 168).mapNotNull { target ->
+            val selected = rows.filter { it.horizonHours == target }
             if (selected.isEmpty()) return@mapNotNull null
             ForecastAccuracyBucket(
                 horizonHours = target,
                 samples = selected.size,
-                meanAbsoluteError = selected.map { kotlin.math.abs((it.actualTemperature ?: it.forecastTemperature) - it.forecastTemperature) }.average()
+                meanAbsoluteError = selected.mapNotNull { row ->
+                    row.actualTemperature?.let { kotlin.math.abs(it - row.forecastTemperature) }
+                }.average()
             )
         }
     }
