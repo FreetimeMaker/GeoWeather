@@ -699,7 +699,10 @@ fun WeatherDetailScreen(
                                                     if (detail.bestHours.isEmpty()) stringResource(Res.string.no_recommended_window) else detail.bestHours.joinToString(" · ") { it.takeLast(5) },
                                                     style = FreetimeDesign.typography.bodyMedium
                                                 )
-                                                if (detail.reasons.isNotEmpty()) FreetimeText(detail.reasons.joinToString(" · ") { localizedActivityReason(it, windUnit) }, style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
+                                                if (detail.reasons.isNotEmpty()) {
+                                                    val localizedReasons = detail.reasons.map { localizedActivityReason(it, windUnit) }
+                                                    FreetimeText(localizedReasons.joinToString(" · "), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
+                                                }
                                             }
                                         }
                                     }
@@ -749,29 +752,13 @@ fun WeatherDetailScreen(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 FreetimeText(stringResource(Res.string.smart_weather_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                val smartTexts = localizedSmartInsight(smart, windUnit)
                                 FreetimeText(
-                                    when {
-                                        smart.primary.startsWith("Rain likely around ") -> stringResource(Res.string.smart_rain_likely, smart.primary.removePrefix("Rain likely around "))
-                                        smart.primary.startsWith("Strong gusts around ") -> stringResource(Res.string.smart_strong_gusts, smart.primary.removePrefix("Strong gusts around "))
-                                        smart.primary == "High UV today" -> stringResource(Res.string.smart_high_uv_today)
-                                        smart.primary.startsWith("Next hour ") -> stringResource(Res.string.smart_next_hour, smart.primary.removePrefix("Next hour ").removeSuffix("°").toIntOrNull() ?: 0)
-                                        else -> stringResource(Res.string.smart_weather_overview)
-                                    },
+                                    smartTexts.first,
                                     style = FreetimeDesign.typography.titleLarge
                                 )
-                                smart.secondary?.let { secondary ->
-                                    val localized = when {
-                                        secondary.contains(" mm") && secondary.contains("% · ") -> stringResource(
-                                            Res.string.smart_rain_detail,
-                                            secondary.substringBefore("%").toIntOrNull() ?: 0,
-                                            secondary.substringAfter("· ").substringBefore(" mm")
-                                        )
-                                        secondary.endsWith(" km/h") -> stringResource(Res.string.smart_wind_detail, secondary.substringBefore(" km/h").toIntOrNull() ?: 0)
-                                        secondary.startsWith("UV max ") -> stringResource(Res.string.smart_uv_max, secondary.removePrefix("UV max "))
-                                        secondary.endsWith("% precipitation") -> stringResource(Res.string.smart_precipitation_probability, secondary.substringBefore("%").toIntOrNull() ?: 0)
-                                        else -> secondary
-                                    }
-                                    FreetimeText(localized, color = FreetimeDesign.palette.contentMuted)
+                                smartTexts.second?.let { secondary ->
+                                    FreetimeText(secondary, color = FreetimeDesign.palette.contentMuted)
                                 }
                                 FreetimeDivider()
                                 FreetimeText(stringResource(Res.string.nowcast_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
