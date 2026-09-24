@@ -107,6 +107,8 @@
     <string name="wind_threshold_label">Wind Increase Threshold: %1$d</string>
     <string name="persistent_notif_title">Persistent Weather Notification</string>
     <string name="persistent_notif_subtitle">Show current temperature in the status bar</string>
+    <string name="persistent_weather_summary">%1$s · Rain %2$d%% · Gusts %3$s</string>
+    <string name="persistent_next_hour">Next hour: %1$s · %2$d%% rain</string>
     <string name="appearance_accessibility_title">Liquid Glass &amp; accessibility</string>
     <string name="liquid_glass_title">Liquid Glass</string>
     <string name="liquid_glass_desc">Uses the Freetime Core live backdrop, luminance, refraction and interactive glass renderer.</string>
