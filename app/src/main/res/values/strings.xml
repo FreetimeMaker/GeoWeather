@@ -794,4 +794,7 @@
     <string name="offline_status_missing">Not cached</string>
     <string name="offline_pack_status">%1$s · %2$s · %3$s</string>
     <string name="offline_clear_cache">Clear cached forecast</string>
+    <string name="forecast_accuracy_collecting">Collecting enough forecast observations to estimate local accuracy.</string>
+    <string name="forecast_accuracy_horizon">%1$d-hour forecast</string>
+    <string name="forecast_accuracy_error">Mean error %1$s · %2$d samples</string>
 </resources>
