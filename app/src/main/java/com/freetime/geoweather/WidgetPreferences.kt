@@ -2,7 +2,7 @@ package com.freetime.geoweather
 
 import android.content.Context
 
-object WidgetPreferences {
+object WidgetLocationPreferences {
     private const val PREFS = "weather_widget_preferences"
     private const val LOCATION_PREFIX = "location_"
 
