@@ -200,7 +200,9 @@ fun WeatherDetailScreen(
                 val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
                 val weatherHistory by viewModel.getWeatherHistory(loc.name).collectAsState(initial = emptyList())
                 var airExtras by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.CurrentHourExtras?>(null) }
-                LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }
+                LaunchedEffect(loc.id, loc.weatherData, dataSaver) {
+                    airExtras = if (dataSaver) null else viewModel.getAirQualityExtras(loc)
+                }
                 var forecastConfidence by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.ForecastConfidence?>(null) }
                 var dailyModelAgreement by remember(loc.id, loc.weatherData) { mutableStateOf<List<com.freetime.geoweather.data.DailyModelAgreement>>(emptyList()) }
                 var forecastAccuracy by remember(loc.id) { mutableStateOf<List<com.freetime.geoweather.data.ForecastAccuracyBucket>>(emptyList()) }
