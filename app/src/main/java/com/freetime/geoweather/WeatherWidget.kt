@@ -116,10 +116,12 @@ open class WeatherWidget(
             (variant == WidgetVariant.RESPONSIVE && size.width >= 200.dp)
         val detailed = variant == WidgetVariant.DETAILED ||
             (variant == WidgetVariant.RESPONSIVE && size.height >= 140.dp)
+        val isDay = widgetCurrentIsDay(daily)
+        val palette = widgetPalette(code, isDay)
 
         Column(
             modifier = GlanceModifier.fillMaxSize()
-                .background(ColorProvider(Color(0xFFE3F2FD))).padding(10.dp),
+                .background(ColorProvider(palette.background)).padding(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -130,13 +132,13 @@ open class WeatherWidget(
                 )
                 Spacer(GlanceModifier.width(8.dp))
                 Column(modifier = GlanceModifier.width(if (detailed) 220.dp else 150.dp)) {
-                    Text(name, maxLines = 1, style = TextStyle(ColorProvider(Color(0xFF102A43)), 14.sp, FontWeight.Bold))
+                    Text(name, maxLines = 1, style = TextStyle(ColorProvider(palette.primary), 14.sp, FontWeight.Bold))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (temp.isNotEmpty()) {
                             Text(temp, style = TextStyle(ColorProvider(Color(0xFF102A43)), 18.sp, FontWeight.Bold))
                             Spacer(GlanceModifier.width(5.dp))
                         }
-                        Text(info, maxLines = 1, style = TextStyle(ColorProvider(Color(0xFF334E68)), 11.sp))
+                        Text(info, maxLines = 1, style = TextStyle(ColorProvider(palette.secondary), 11.sp))
                     }
                 }
                 Image(
@@ -150,7 +152,7 @@ open class WeatherWidget(
                 Text(
                     if (dataSaver) context.getString(Res.string.widget_data_saver_saved)
                     else context.getString(Res.string.widget_offline_saved),
-                    style = TextStyle(ColorProvider(Color(0xFF486581)), 10.sp)
+                    style = TextStyle(ColorProvider(palette.muted), 10.sp)
                 )
             }
 
@@ -207,6 +209,39 @@ open class WeatherWidget(
 class CompactWeatherWidget : WeatherWidget(WidgetVariant.COMPACT)
 class ForecastWeatherWidget : WeatherWidget(WidgetVariant.FORECAST)
 class DetailedWeatherWidget : WeatherWidget(WidgetVariant.DETAILED)
+
+private data class WidgetPalette(
+    val background: Color,
+    val primary: Color,
+    val secondary: Color,
+    val muted: Color
+)
+
+private fun widgetPalette(code: Int, isDay: Boolean): WidgetPalette {
+    val background = when {
+        !isDay -> Color(0xFF17233A)
+        code in 95..99 -> Color(0xFF394552)
+        code in 71..77 || code in 85..86 -> Color(0xFFE8F1F5)
+        code in 51..67 || code in 80..82 -> Color(0xFFD9E7EE)
+        code in 1..3 || code == 45 || code == 48 -> Color(0xFFE3E8ED)
+        else -> Color(0xFFE3F2FD)
+    }
+    return if (isDay) {
+        WidgetPalette(background, Color(0xFF102A43), Color(0xFF334E68), Color(0xFF486581))
+    } else {
+        WidgetPalette(background, Color(0xFFF5F8FC), Color(0xFFD9E2EC), Color(0xFFBCCCDC))
+    }
+}
+
+private fun widgetCurrentIsDay(daily: List<DailyForecast>): Boolean {
+    val today = daily.firstOrNull() ?: return true
+    val now = java.time.LocalTime.now()
+    val sunrise = runCatching { java.time.LocalTime.parse(today.sunrise.takeLast(5)) }
+        .getOrDefault(java.time.LocalTime.of(7, 0))
+    val sunset = runCatching { java.time.LocalTime.parse(today.sunset.takeLast(5)) }
+        .getOrDefault(java.time.LocalTime.of(19, 0))
+    return !now.isBefore(sunrise) && now.isBefore(sunset)
+}
 
 private fun widgetForecastIsDay(time: String, daily: List<DailyForecast>): Boolean {
     val dateTime = runCatching { java.time.LocalDateTime.parse(time) }.getOrNull()
