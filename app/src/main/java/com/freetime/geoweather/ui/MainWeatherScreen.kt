@@ -98,6 +98,8 @@ fun MainWeatherScreen(
     val configuration = androidx.compose.ui.platform.LocalConfiguration.current
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
+    var travelStartOffset by remember { mutableIntStateOf(0) }
+    var travelEndOffset by remember { mutableIntStateOf(6) }
     val adaptiveDestinations = listOf(
         FreetimeNavigationDestination(currentLocationName, Icons.Default.MyLocation),
         FreetimeNavigationDestination(stringResource(Res.string.donate_nav_desc), Icons.Default.Favorite),
@@ -342,13 +344,58 @@ fun MainWeatherScreen(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         )
                     }
+                    item(key = "travel-dates") {
+                        val availableDates = orderedLocations
+                            .map { viewModel.getDailyForecasts(it).map { day -> day.date } }
+                            .filter { it.isNotEmpty() }
+                            .maxByOrNull { it.size }
+                            .orEmpty()
+                        if (availableDates.isNotEmpty()) {
+                            travelStartOffset = travelStartOffset.coerceIn(0, availableDates.lastIndex)
+                            travelEndOffset = travelEndOffset.coerceIn(travelStartOffset, availableDates.lastIndex)
+                            FreetimeGlassPanel(modifier = Modifier.padding(horizontal = 12.dp).fillMaxWidth()) {
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    FreetimeText(stringResource(Res.string.trip_dates_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(
+                                        stringResource(Res.string.trip_dates_range, availableDates[travelStartOffset], availableDates[travelEndOffset]),
+                                        style = FreetimeDesign.typography.bodyMedium
+                                    )
+                                    FreetimeText(stringResource(Res.string.trip_start), style = FreetimeDesign.typography.labelMedium)
+                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        items(availableDates.indices.toList(), key = { "trip-start-" + it }) { index ->
+                                            FreetimeCard(modifier = Modifier.clickable {
+                                                travelStartOffset = index
+                                                if (travelEndOffset < index) travelEndOffset = index
+                                            }) {
+                                                FreetimeText(
+                                                    availableDates[index].takeLast(5) + if (index == travelStartOffset) " ✓" else "",
+                                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+                                    FreetimeText(stringResource(Res.string.trip_end), style = FreetimeDesign.typography.labelMedium)
+                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        items((travelStartOffset..availableDates.lastIndex).toList(), key = { "trip-end-" + it }) { index ->
+                                            FreetimeCard(modifier = Modifier.clickable { travelEndOffset = index }) {
+                                                FreetimeText(
+                                                    availableDates[index].takeLast(5) + if (index == travelEndOffset) " ✓" else "",
+                                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     item(key = "travel-mode") {
                         LazyRow(
                             contentPadding = PaddingValues(horizontal = 12.dp),
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             items(orderedLocations, key = { "travel-" + it.id }) { loc ->
-                                val days = remember(loc.weatherData) { viewModel.getDailyForecasts(loc).take(7) }
+                                val days = remember(loc.weatherData) { viewModel.getDailyForecasts(loc).drop(travelStartOffset).take((travelEndOffset - travelStartOffset + 1).coerceAtLeast(1)) }
                                 val low = days.minOfOrNull { it.minTemp }
                                 val high = days.maxOfOrNull { it.maxTemp }
                                 val rain = days.maxOfOrNull { it.precipProbMax } ?: 0
@@ -368,7 +415,7 @@ fun MainWeatherScreen(
                                     Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                         FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
                                         FreetimeText(
-                                            if (low != null && high != null) context.getString(Res.string.next_7_days_range, low, high) else context.getString(Res.string.forecast_unavailable),
+                                            if (low != null && high != null) context.getString(Res.string.trip_temperature_range, low, high) else context.getString(Res.string.forecast_unavailable),
                                             style = FreetimeDesign.typography.bodyMedium
                                         )
                                         FreetimeText(context.getString(Res.string.rain_risk_up_to, rain), style = FreetimeDesign.typography.labelMedium)
