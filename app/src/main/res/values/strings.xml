@@ -861,6 +861,13 @@
     <string name="offline_city_pack">Keep this city available offline</string>
     <string name="offline_city_pack_desc">Refresh this city in the background when offline packs are enabled.</string>
 
+    <string name="cl_471_widgets">Expanded home-screen widgets with compact, forecast and detailed variants, per-widget location selection, weather icons and dynamic weather-aware styling.</string>
+    <string name="cl_471_forecast">Improved forecast insights with Today vs tomorrow comparisons, clearer confidence levels, daylight duration and better day/night forecast icons.</string>
+    <string name="cl_471_share">Upgraded weather sharing with richer forecast details and improved feels-like explanations for wind, humidity and sun exposure.</string>
+    <string name="cl_471_alerts">Added per-location smart alert thresholds for temperature changes, wind, rain probability, gusts, UV and frost.</string>
+    <string name="cl_471_notifications">Improved persistent weather notifications and smart weather alert handling.</string>
+    <string name="cl_471_performance">Improved Liquid Glass and weather-screen performance and fixed additional widget, forecast and UI issues.</string>
+
     <string name="cl_470_intelligence">Added richer weather intelligence with activity planning, photography conditions, precipitation timelines and a severe weather dashboard.</string>
     <string name="cl_470_models">Added forecast confidence and daily weather-model agreement to make forecast uncertainty easier to understand.</string>
     <string name="cl_470_radar">Rebuilt the weather radar and map as a native map experience with radar controls and an embedded weather-map preview.</string>
