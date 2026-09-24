@@ -198,6 +198,7 @@ class WeatherViewModel(
     suspend fun getModelComparison(location: LocationEntity) = repository.getModelComparison(location)
     suspend fun getForecastConfidence(location: LocationEntity) = repository.getForecastConfidence(location)
     suspend fun getDailyModelAgreement(location: LocationEntity) = repository.getDailyModelAgreement(location)
+    suspend fun getForecastAccuracy(locationId: Long) = repository.getForecastAccuracy(locationId)
 
     fun getHourlyForecasts(location: LocationEntity) = repository.getHourlyForecasts(location)
 
