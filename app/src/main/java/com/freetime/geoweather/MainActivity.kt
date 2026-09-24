@@ -18,6 +18,7 @@ import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.data.onCreateDocumentResult
 import com.freetime.geoweather.data.onOpenDocumentResult
 import com.freetime.geoweather.data.registerFilePickers
+import com.freetime.design.FreetimeGlassRoot
 
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
@@ -39,10 +40,12 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            WeatherApp(
-                database = DependencyManager.getDatabase(),
-                appSettings = DependencyManager.getAppSettings()
-            )
+            FreetimeGlassRoot {
+                WeatherApp(
+                    database = DependencyManager.getDatabase(),
+                    appSettings = DependencyManager.getAppSettings()
+                )
+            }
         }
     }
 
