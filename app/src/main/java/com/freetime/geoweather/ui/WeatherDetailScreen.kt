@@ -474,9 +474,15 @@ fun WeatherDetailScreen(
 
                     item {
                         val currentHour = hourly.firstOrNull()
+                        val feelsLike = loc.currentFeelsLike ?: currentHour?.feelsLike ?: loc.currentTemp
+                        val measuredTemp = loc.currentTemp
+                        val feelsDelta = if (feelsLike != null && measuredTemp != null) feelsLike - measuredTemp else 0.0
                         val feelsReason = when {
-                            (currentHour?.windSpeed ?: loc.currentWindSpeed ?: 0.0) >= 25.0 -> stringResource(Res.string.feels_like_wind)
-                            (loc.currentHumidity ?: 0) >= 75 -> stringResource(Res.string.feels_like_humidity)
+                            (currentHour?.windSpeed ?: loc.currentWindSpeed ?: 0.0) >= 25.0 && feelsDelta < -1.0 -> stringResource(Res.string.feels_like_wind)
+                            (loc.currentHumidity ?: currentHour?.humidity ?: 0) >= 75 && feelsDelta > 1.0 -> stringResource(Res.string.feels_like_humidity)
+                            (currentHour?.uvIndex ?: extras?.uvIndex ?: 0.0) >= 5.0 && feelsDelta > 0.5 -> stringResource(Res.string.feels_like_sun)
+                            feelsDelta >= 1.0 -> stringResource(Res.string.feels_like_difference_warmer, formatTemp(feelsDelta, tempUnit))
+                            feelsDelta <= -1.0 -> stringResource(Res.string.feels_like_difference_cooler, formatTemp(kotlin.math.abs(feelsDelta), tempUnit))
                             else -> stringResource(Res.string.feels_like_neutral)
                         }
                         val pressureTrend = when (extras?.pressureTrend ?: 0) {
