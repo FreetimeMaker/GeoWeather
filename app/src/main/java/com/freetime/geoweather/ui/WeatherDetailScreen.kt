@@ -203,6 +203,10 @@ fun WeatherDetailScreen(
                 LaunchedEffect(loc.id, loc.weatherData) { airExtras = viewModel.getAirQualityExtras(loc) }
                 var forecastConfidence by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.ForecastConfidence?>(null) }
                 var dailyModelAgreement by remember(loc.id, loc.weatherData) { mutableStateOf<List<com.freetime.geoweather.data.DailyModelAgreement>>(emptyList()) }
+                var forecastAccuracy by remember(loc.id) { mutableStateOf<List<com.freetime.geoweather.data.ForecastAccuracyBucket>>(emptyList()) }
+                LaunchedEffect(loc.id, loc.weatherData) {
+                    if (!isTransient && loc.id != 0L) forecastAccuracy = viewModel.getForecastAccuracy(loc.id)
+                }
                 LaunchedEffect(loc.id, loc.weatherData, dataSaver) {
                     if (dataSaver) {
                         forecastConfidence = null
@@ -515,6 +519,56 @@ fun WeatherDetailScreen(
                                         )
                                     }
                                     FreetimeText(stringResource(Res.string.forecast_changes_note), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
+                                }
+                            }
+                        }
+                    }
+
+                    item {
+                        FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                FreetimeText(
+                                    stringResource(Res.string.forecast_accuracy_title),
+                                    style = FreetimeDesign.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                val reliableAccuracy = forecastAccuracy.filter { it.samples >= 3 }
+                                if (reliableAccuracy.isEmpty()) {
+                                    FreetimeText(
+                                        stringResource(Res.string.forecast_accuracy_collecting),
+                                        style = FreetimeDesign.typography.bodyMedium,
+                                        color = FreetimeDesign.palette.contentMuted
+                                    )
+                                } else {
+                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        items(reliableAccuracy, key = { it.horizonHours }) { bucket ->
+                                            val error = if (tempUnit == "fahrenheit") bucket.meanAbsoluteError * 9.0 / 5.0 else bucket.meanAbsoluteError
+                                            val formattedError = String.format(
+                                                java.util.Locale.US,
+                                                "%.1f°%s",
+                                                error,
+                                                if (tempUnit == "fahrenheit") "F" else "C"
+                                            )
+                                            FreetimeCard(modifier = Modifier.width(180.dp)) {
+                                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                    FreetimeText(
+                                                        stringResource(Res.string.forecast_accuracy_horizon, bucket.horizonHours),
+                                                        style = FreetimeDesign.typography.labelLarge,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                    FreetimeText(
+                                                        stringResource(Res.string.forecast_accuracy_error, formattedError, bucket.samples),
+                                                        style = FreetimeDesign.typography.bodyMedium
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                    FreetimeText(
+                                        stringResource(Res.string.forecast_accuracy_note),
+                                        style = FreetimeDesign.typography.labelSmall,
+                                        color = FreetimeDesign.palette.contentMuted
+                                    )
                                 }
                             }
                         }
