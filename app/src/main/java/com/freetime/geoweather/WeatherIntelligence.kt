@@ -2,8 +2,6 @@ package com.freetime.geoweather
 
 import com.freetime.geoweather.data.DailyForecast
 import com.freetime.geoweather.data.HourlyForecast
-import com.freetime.geoweather.data.WeatherHistoryEntity
-import kotlin.math.abs
 
 data class ActivityWindow(val activity: String, val hours: List<String>, val score: Int)
 data class ProviderSnapshot(val provider: String, val temperature: Double?, val weatherCode: Int?)
@@ -166,12 +164,6 @@ object WeatherIntelligence {
     private fun timeToMinutes(value: String): Int {
         val parts = value.split(":")
         return (parts.getOrNull(0)?.toIntOrNull() ?: 0) * 60 + (parts.getOrNull(1)?.toIntOrNull() ?: 0)
-    }
-
-    fun forecastAccuracy(history: List<WeatherHistoryEntity>, forecastTemp: Double?): Int? {
-        val actual = history.firstOrNull()?.temperature ?: return null
-        forecastTemp ?: return null
-        return (100 - (abs(actual - forecastTemp) * 10).toInt()).coerceIn(0, 100)
     }
 
     fun providerComparison(primary: ProviderSnapshot, others: List<ProviderSnapshot>): List<ProviderSnapshot> =
