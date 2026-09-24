@@ -865,6 +865,12 @@ fun WeatherDetailScreen(
                                         WeatherDetailItem(stringResource(Res.string.sunset_label), sunset.toString(), modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.uv_max_label), day.uvMax?.let { String.format(java.util.Locale.getDefault(), "%.1f", it) } ?: "--", modifier = Modifier.weight(1f))
                                     }
+                                    val daylightMinutes = java.time.Duration.between(sunrise, sunset).toMinutes().coerceAtLeast(0)
+                                    FreetimeText(
+                                        stringResource(Res.string.daylight_duration, daylightMinutes / 60, daylightMinutes % 60),
+                                        style = FreetimeDesign.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                     FreetimeText(stringResource(Res.string.blue_hour_morning) + ": " + morningBlueStart + " – " + sunrise, style = FreetimeDesign.typography.bodySmall)
                                     FreetimeText(stringResource(Res.string.golden_hour_morning) + ": " + sunrise + " – " + morningGoldenEnd, style = FreetimeDesign.typography.bodySmall)
                                     FreetimeText(stringResource(Res.string.golden_hour_evening) + ": " + eveningGoldenStart + " – " + sunset, style = FreetimeDesign.typography.bodySmall)
