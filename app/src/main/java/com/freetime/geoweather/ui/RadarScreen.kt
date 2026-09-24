@@ -40,7 +40,8 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.TilesOverlay
 import java.net.URL
 
-data class RadarFrame(val path: String, val time: Long)\nprivate data class RadarFrames(val host: String, val frames: List<RadarFrame>)
+data class RadarFrame(val path: String, val time: Long)
+private data class RadarFrames(val host: String, val frames: List<RadarFrame>)
 
 @Composable
 fun WeatherMapPreview(lat: Double, lon: Double, modifier: Modifier = Modifier, dataSaver: Boolean = false) {
@@ -53,7 +54,9 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
     var frameIndex by remember { mutableIntStateOf(0) }
     var radarVisible by remember { mutableStateOf(!dataSaver) }
     var baseMapVisible by remember { mutableStateOf(true) }
-    var locationVisible by remember { mutableStateOf(true) }\n    var availableFrames by remember { mutableStateOf<List<RadarFrame>>(emptyList()) }\n    var radarLoadFailed by remember { mutableStateOf(false) }
+    var locationVisible by remember { mutableStateOf(true) }
+    var availableFrames by remember { mutableStateOf<List<RadarFrame>>(emptyList()) }
+    var radarLoadFailed by remember { mutableStateOf(false) }
 
     LaunchedEffect(playing, availableFrames.size) {
         while (playing && availableFrames.isNotEmpty()) {
@@ -77,7 +80,11 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
         }
     ) {
         Box(Modifier.fillMaxSize()) {
-            NativeWeatherMap(lat, lon, frameIndex, radarVisible, Modifier.fillMaxSize(), baseMapVisible, locationVisible) { frames, failed ->\n                availableFrames = frames\n                radarLoadFailed = failed\n                if (frames.isNotEmpty()) frameIndex = frameIndex.coerceIn(0, frames.lastIndex)\n            }
+            NativeWeatherMap(lat, lon, frameIndex, radarVisible, Modifier.fillMaxSize(), baseMapVisible, locationVisible) { frames, failed ->
+                availableFrames = frames
+                radarLoadFailed = failed
+                if (frames.isNotEmpty()) frameIndex = frameIndex.coerceIn(0, frames.lastIndex)
+            }
             if (dataSaver && !radarVisible) {
                 FreetimeCard(modifier = Modifier.align(Alignment.Center).padding(24.dp).clickable { radarVisible = true }) {
                     FreetimeText(stringResource(Res.string.radar_data_saver_hint), modifier = Modifier.padding(14.dp))
