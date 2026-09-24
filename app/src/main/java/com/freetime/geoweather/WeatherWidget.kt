@@ -24,7 +24,6 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
-import androidx.glance.layout.defaultWeight
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
@@ -188,19 +187,7 @@ class CompactWeatherWidget : WeatherWidget(WidgetVariant.COMPACT)
 class ForecastWeatherWidget : WeatherWidget(WidgetVariant.FORECAST)
 class DetailedWeatherWidget : WeatherWidget(WidgetVariant.DETAILED)
 
-private fun widgetWeatherIcon(code: Int): Int = when (code) {
-    0 -> Res.drawable.google_clear_day
-    1 -> Res.drawable.google_mostly_clear_day
-    2 -> Res.drawable.google_partly_cloudy_day
-    3 -> Res.drawable.google_cloudy
-    45, 48 -> Res.drawable.google_fog
-    51, 53, 55 -> Res.drawable.google_drizzle
-    56, 57, 66, 67 -> Res.drawable.google_sleet
-    61, 63, 65, 80, 81, 82 -> Res.drawable.google_rain
-    71, 73, 75, 77, 85, 86 -> Res.drawable.google_snow
-    95, 96, 99 -> Res.drawable.google_thunderstorm
-    else -> Res.drawable.google_cloudy
-}
+private fun widgetWeatherIcon(code: Int): Int = WeatherIconMapper.getWeatherIcon(code)
 
 class RefreshActionCallback : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
