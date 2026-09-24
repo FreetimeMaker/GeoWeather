@@ -885,4 +885,6 @@
     <string name="widget_forecast_desc">Current weather with the next hourly forecast.</string>
     <string name="widget_detailed_name">GeoWeather Detailed</string>
     <string name="widget_detailed_desc">Current weather, hourly forecast, daily forecast, rain and wind.</string>
+    <string name="widget_config_title">Choose widget location</string>
+    <string name="widget_config_empty">Add a location in GeoWeather before creating this widget.</string>
 </resources>
