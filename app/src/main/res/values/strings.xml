@@ -775,4 +775,8 @@
     <string name="cl_470_notifications">Added smarter rain, wind, frost and UV alerts and improved persistent weather notification reliability.</string>
     <string name="cl_470_performance">Improved performance across weather details and saved locations and fixed additional forecast, notification and UI issues.</string>
 
+    <string name="map_layer_osm_on">Map: on</string>
+    <string name="map_layer_osm_off">Map: off</string>
+    <string name="map_layer_location_on">Location: on</string>
+    <string name="map_layer_location_off">Location: off</string>
 </resources>
