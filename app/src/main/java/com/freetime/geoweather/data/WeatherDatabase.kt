@@ -7,10 +7,11 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [LocationEntity::class, WeatherHistoryEntity::class], version = 9, exportSchema = false)
+@Database(entities = [LocationEntity::class, WeatherHistoryEntity::class, ForecastSnapshotEntity::class], version = 10, exportSchema = false)
 abstract class WeatherDatabase : RoomDatabase() {
     abstract fun locationDao(): LocationDao
     abstract fun weatherHistoryDao(): WeatherHistoryDao
+    abstract fun forecastSnapshotDao(): ForecastSnapshotDao
 }
 
 fun getDatabaseBuilder(ctx: Context): RoomDatabase.Builder<WeatherDatabase> {
@@ -34,5 +35,22 @@ private val MIGRATION_8_9 = object : Migration(8, 9) {
     }
 }
 
+private val MIGRATION_9_10 = object : Migration(9, 10) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS forecast_snapshots (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                locationId INTEGER NOT NULL,
+                targetTime TEXT NOT NULL,
+                createdAt INTEGER NOT NULL,
+                forecastTemperature REAL NOT NULL,
+                actualTemperature REAL,
+                evaluatedAt INTEGER
+            )
+        """.trimIndent())
+        db.execSQL("CREATE INDEX IF NOT EXISTS index_forecast_snapshots_location_target ON forecast_snapshots(locationId, targetTime)")
+    }
+}
+
 fun getRoomDatabase(builder: RoomDatabase.Builder<WeatherDatabase>): WeatherDatabase =
-    builder.addMigrations(MIGRATION_7_8, MIGRATION_8_9).fallbackToDestructiveMigration(true).build()
+    builder.addMigrations(MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10).fallbackToDestructiveMigration(true).build()
