@@ -781,4 +781,9 @@
     <string name="map_layer_location_off">Location: off</string>
     <string name="offline_wifi_only">Refresh offline packs on Wi-Fi only</string>
     <string name="offline_wifi_only_desc">Background offline-pack downloads wait for Wi-Fi. Weather alerts and notifications can still refresh when needed.</string>
+    <string name="trip_dates_title">Travel dates</string>
+    <string name="trip_dates_range">%1$s – %2$s</string>
+    <string name="trip_start">Start</string>
+    <string name="trip_end">End</string>
+    <string name="trip_temperature_range">%1$d–%2$d°C · selected trip</string>
 </resources>
