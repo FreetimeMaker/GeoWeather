@@ -10,7 +10,8 @@ data class ForecastChange(
     val maxTempDelta: Int,
     val minTempDelta: Int,
     val rainProbabilityDelta: Int,
-    val windDelta: Double
+    val windDelta: Double,
+    val recordedAt: Long = System.currentTimeMillis()
 ) {
     val hasMeaningfulChange: Boolean
         get() = kotlin.math.abs(maxTempDelta) >= 1 ||
@@ -56,11 +57,14 @@ object ForecastChangeHistory {
             )
         }.filter { it.hasMeaningfulChange }
 
+        val history = (changes + parseChanges(prefs.getString(changesKey, null)))
+            .sortedByDescending { it.recordedAt }
+            .take(80)
         prefs.edit()
             .putString(snapshotKey, encodedCurrent)
-            .putString(changesKey, encodeChanges(changes))
+            .putString(changesKey, encodeChanges(history))
             .apply()
-        return changes
+        return history
     }
 
     private fun encodeSnapshot(days: List<ForecastSnapshotDay>): String = JSONArray().apply {
@@ -86,7 +90,7 @@ object ForecastChangeHistory {
     private fun encodeChanges(changes: List<ForecastChange>): String = JSONArray().apply {
         changes.forEach { change -> put(JSONObject().apply {
             put("date", change.date); put("max", change.maxTempDelta); put("min", change.minTempDelta)
-            put("rain", change.rainProbabilityDelta); put("wind", change.windDelta)
+            put("rain", change.rainProbabilityDelta); put("wind", change.windDelta); put("at", change.recordedAt)
         }) }
     }.toString()
 
@@ -97,7 +101,7 @@ object ForecastChangeHistory {
             buildList {
                 for (i in 0 until array.length()) {
                     val o = array.getJSONObject(i)
-                    add(ForecastChange(o.getString("date"), o.getInt("max"), o.getInt("min"), o.getInt("rain"), o.getDouble("wind")))
+                    add(ForecastChange(o.getString("date"), o.getInt("max"), o.getInt("min"), o.getInt("rain"), o.getDouble("wind"), o.optLong("at", 0L)))
                 }
             }
         }.getOrDefault(emptyList())
