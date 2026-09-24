@@ -195,6 +195,7 @@ class WeatherViewModel(
 
     fun observeLocation(id: Long): Flow<LocationEntity?> = repository.observeLocationById(id)
 
+    suspend fun getModelComparison(location: LocationEntity) = repository.getModelComparison(location)
     suspend fun getForecastConfidence(location: LocationEntity) = repository.getForecastConfidence(location)
     suspend fun getDailyModelAgreement(location: LocationEntity) = repository.getDailyModelAgreement(location)
 
