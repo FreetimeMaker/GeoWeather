@@ -81,7 +81,7 @@ class WeatherWidget : GlanceAppWidget() {
                 dailyList = repository.getDailyForecasts(updatedLocation).take(3)
             } catch (_: Exception) {
                 // Keep the widget useful without connectivity by rendering the last Room cache.
-                offlineCache = location.weatherData != null || dataSaver
+                offlineCache = location.weatherData != null
                 tempString = repository.getDisplayTemp(location, tempUnit)
                 weatherInfo = if (offlineCache) context.getString(SharedRes.string.widget_cached, WeatherCodes.getDescription(location.currentWeatherCode ?: 0))
                     else context.getString(SharedRes.string.error_connection)
