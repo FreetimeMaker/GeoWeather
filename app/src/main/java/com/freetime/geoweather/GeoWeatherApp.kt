@@ -1,6 +1,8 @@
 package com.freetime.geoweather
 
 import android.app.Application
+import android.content.Intent
+import androidx.core.content.ContextCompat
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
@@ -22,6 +24,7 @@ class GeoWeatherApp : Application() {
         super.onCreate()
         setAndroidContext(this)
         initDependencies()
+        restorePersistentWeatherNotification()
         scheduleWeatherWork()
     }
 
@@ -30,6 +33,15 @@ class GeoWeatherApp : Application() {
         val sharedPrefs = getSharedPreferences("geo_weather_prefs", MODE_PRIVATE)
         val settings = SharedPreferencesSettings(sharedPrefs)
         DependencyManager.initialize(database, settings)
+    }
+
+    private fun restorePersistentWeatherNotification() {
+        if (DependencyManager.getAppSettings().persistentNotif.value) {
+            ContextCompat.startForegroundService(
+                this,
+                Intent(this, WeatherForegroundService::class.java)
+            )
+        }
     }
 
     private fun scheduleWeatherWork() {
