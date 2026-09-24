@@ -93,10 +93,10 @@ object WeatherIntelligence {
             return value.coerceIn(0, 100)
         }
         return listOf(
-            Triple("Walking", 35.0, 45) to 7.0,
-            Triple("Running", 30.0, 35) to 6.0,
-            Triple("Cycling", 25.0, 30) to 6.0,
-            Triple("Photography", 40.0, 50) to 8.0
+            Triple("walking", 35.0, 45) to 7.0,
+            Triple("running", 30.0, 35) to 6.0,
+            Triple("cycling", 25.0, 30) to 6.0,
+            Triple("photography", 40.0, 50) to 8.0
         ).map { (base, uv) ->
             val (name, wind, rain) = base
             val ranked = hourly.map { it to score(it, wind, rain, uv) }.filter { it.second >= 60 }.take(4)
@@ -119,17 +119,17 @@ object WeatherIntelligence {
             val sample = best.firstOrNull()?.first
             val reasons = buildList {
                 sample?.let {
-                    add("Rain " + it.precipProbability + "%")
-                    add("Wind " + (it.windGusts ?: it.windSpeed ?: 0.0).toInt() + " km/h")
-                    it.uvIndex?.let { uv -> add("UV " + formatOneDecimal(uv)) }
-                    add("Feels like " + formatOneDecimal(it.feelsLike ?: it.temp.toDouble()) + "°")
+                    add("rain:" + it.precipProbability)
+                    add("wind:" + (it.windGusts ?: it.windSpeed ?: 0.0).toInt())
+                    it.uvIndex?.let { uv -> add("uv:" + formatOneDecimal(uv)) }
+                    add("feels:" + formatOneDecimal(it.feelsLike ?: it.temp.toDouble()))
                 }
             }
             return ActivityDetail(name, best.maxOfOrNull { it.second } ?: 0, best.map { it.first.time }, reasons)
         }
         return listOf(
-            build("Running", 35.0, 40, 7.0),
-            build("Cycling", 30.0, 35, 7.0)
+            build("running", 35.0, 40, 7.0),
+            build("cycling", 30.0, 35, 7.0)
         )
     }
 
@@ -150,13 +150,13 @@ object WeatherIntelligence {
             hour to score.coerceIn(0, 100)
         }.sortedByDescending { it.second }
         return ActivityDetail(
-            activity = "Photography",
+            activity = "photography",
             score = scored.firstOrNull()?.second ?: 0,
             bestHours = scored.take(4).map { it.first.time },
             reasons = listOfNotNull(
-                sunrise?.let { "Sunrise " + it },
-                sunset?.let { "Sunset " + it },
-                scored.firstOrNull()?.first?.precipProbability?.let { "Rain " + it + "%" }
+                sunrise?.let { "sunrise:" + it },
+                sunset?.let { "sunset:" + it },
+                scored.firstOrNull()?.first?.precipProbability?.let { "rain:" + it }
             )
         )
     }
