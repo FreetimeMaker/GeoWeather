@@ -30,6 +30,7 @@ class AppSettings(private val settings: Settings) {
         const val KEY_SMART_UV_ALERT = "smart_uv_alert"
         const val KEY_DATA_SAVER = "data_saver"
         const val KEY_OFFLINE_PACKS = "offline_packs"
+        const val KEY_OFFLINE_PACKS_WIFI_ONLY = "offline_packs_wifi_only"
     }
 
     private val _persistentNotif = MutableStateFlow(settings.getBoolean(KEY_PERSISTENT_NOTIF, false))
@@ -164,6 +165,13 @@ class AppSettings(private val settings: Settings) {
     private val _offlinePacks = MutableStateFlow(settings.getBoolean(KEY_OFFLINE_PACKS, true))
     val offlinePacks: StateFlow<Boolean> = _offlinePacks.asStateFlow()
     fun setOfflinePacks(value: Boolean) { settings[KEY_OFFLINE_PACKS] = value; _offlinePacks.value = value }
+
+    private val _offlinePacksWifiOnly = MutableStateFlow(settings.getBoolean(KEY_OFFLINE_PACKS_WIFI_ONLY, true))
+    val offlinePacksWifiOnly: StateFlow<Boolean> = _offlinePacksWifiOnly.asStateFlow()
+    fun setOfflinePacksWifiOnly(value: Boolean) {
+        settings[KEY_OFFLINE_PACKS_WIFI_ONLY] = value
+        _offlinePacksWifiOnly.value = value
+    }
 
     private val _weatherAnimations = MutableStateFlow(settings.getString(KEY_WEATHER_ANIMATIONS, "full"))
     val weatherAnimations: StateFlow<String> = _weatherAnimations.asStateFlow()
