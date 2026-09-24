@@ -87,7 +87,7 @@ open class WeatherWidget(
         val refreshDesc = context.getString(Res.string.refresh_nav_desc)
 
         provideContent {
-            WidgetContent(context, name, temp, code, info, hourly, daily, cached, dataSaver, LocalSize.current, refreshDesc)
+            WidgetContent(context, name, temp, code, info, hourly, daily, cached, dataSaver, LocalSize.current, refreshDesc, settings.tempUnit.value)
         }
     }
 
@@ -103,7 +103,8 @@ open class WeatherWidget(
         cached: Boolean,
         dataSaver: Boolean,
         size: DpSize,
-        refreshDesc: String
+        refreshDesc: String,
+        tempUnit: String
     ) {
         val expanded = variant == WidgetVariant.FORECAST || variant == WidgetVariant.DETAILED ||
             (variant == WidgetVariant.RESPONSIVE && size.width >= 200.dp)
@@ -158,7 +159,7 @@ open class WeatherWidget(
                                 null,
                                 GlanceModifier.size(24.dp)
                             )
-                            Text("${hour.temp}°", style = TextStyle(ColorProvider(Color(0xFF102A43)), 11.sp, FontWeight.Bold))
+                            Text(formatWidgetTemp(hour.temp, tempUnit), style = TextStyle(ColorProvider(Color(0xFF102A43)), 11.sp, FontWeight.Bold))
                         }
                     }
                 }
@@ -176,7 +177,7 @@ open class WeatherWidget(
                                 GlanceModifier.size(22.dp)
                             )
                             Text(
-                                day.minTemp.toString() + "°/" + day.maxTemp + "°",
+                                formatWidgetTemp(day.minTemp, tempUnit) + "/" + formatWidgetTemp(day.maxTemp, tempUnit),
                                 style = TextStyle(ColorProvider(Color(0xFF334E68)), 9.sp)
                             )
                             if (day.precipProbMax > 0) {
@@ -215,6 +216,14 @@ private fun widgetForecastIsDay(time: String, daily: List<DailyForecast>): Boole
     val sunset = runCatching { java.time.LocalTime.parse(day?.sunset?.takeLast(5) ?: "19:00") }
         .getOrDefault(java.time.LocalTime.of(19, 0))
     return !localTime.isBefore(sunrise) && localTime.isBefore(sunset)
+}
+
+private fun formatWidgetTemp(value: Int, unit: String): String {
+    return if (unit == "fahrenheit") {
+        ((value * 9.0 / 5.0) + 32.0).toInt().toString() + "°F"
+    } else {
+        value.toString() + "°C"
+    }
 }
 
 class RefreshActionCallback : ActionCallback {
