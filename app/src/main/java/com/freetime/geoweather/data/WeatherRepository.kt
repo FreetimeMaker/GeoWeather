@@ -453,13 +453,20 @@ class WeatherRepository(
         }
     }
 
-    suspend fun getDailyModelAgreement(location: LocationEntity): List<DailyModelAgreement> {
+    data class ModelComparisonResult(
+        val confidence: ForecastConfidence?,
+        val dailyAgreement: List<DailyModelAgreement>
+    )
+
+    suspend fun getModelComparison(location: LocationEntity): ModelComparisonResult {
         val modelIds = listOf(
             "best_match" to "Best match",
             "ecmwf_ifs025" to "ECMWF",
             "gfs_seamless" to "GFS"
         )
         val byDate = linkedMapOf<String, MutableList<ForecastModelPoint>>()
+        val currentPoints = mutableListOf<ForecastModelPoint>()
+
         modelIds.forEach { (id, label) ->
             runCatching {
                 val raw = apiClient.get(ApiConstants.getModelComparisonUrl(location.latitude, location.longitude, id))
@@ -469,78 +476,59 @@ class WeatherRepository(
                 val temps = hourly["temperature_2m"]?.jsonArray ?: return@runCatching
                 val rain = hourly["precipitation_probability"]?.jsonArray
                 val wind = hourly["wind_speed_10m"]?.jsonArray
+                val zone = getLocationTimeZone(json)
+                val hourPrefix = Clock.System.now().toLocalDateTime(zone).toString().take(13)
+                val currentIndex = times.indexOfFirst { it.jsonPrimitive.content.startsWith(hourPrefix) }
+                    .takeIf { it >= 0 } ?: 0
+
+                fun pointAt(index: Int): ForecastModelPoint? {
+                    val time = times.getOrNull(index)?.jsonPrimitive?.content ?: return null
+                    val temperature = temps.getOrNull(index)?.jsonPrimitive?.doubleOrNull ?: return null
+                    return ForecastModelPoint(
+                        model = label,
+                        time = time,
+                        temperature = temperature,
+                        precipitationProbability = rain?.getOrNull(index)?.jsonPrimitive?.intOrNull ?: 0,
+                        windSpeed = wind?.getOrNull(index)?.jsonPrimitive?.doubleOrNull ?: 0.0
+                    )
+                }
+
+                pointAt(currentIndex)?.let(currentPoints::add)
                 times.indices
                     .filter { times[it].jsonPrimitive.content.endsWith("T12:00") }
                     .take(16)
                     .forEach { index ->
-                        val time = times[index].jsonPrimitive.content
-                        val point = ForecastModelPoint(
-                            model = label,
-                            time = time,
-                            temperature = temps.getOrNull(index)?.jsonPrimitive?.doubleOrNull ?: return@forEach,
-                            precipitationProbability = rain?.getOrNull(index)?.jsonPrimitive?.intOrNull ?: 0,
-                            windSpeed = wind?.getOrNull(index)?.jsonPrimitive?.doubleOrNull ?: 0.0
-                        )
-                        byDate.getOrPut(time.take(10)) { mutableListOf() }.add(point)
+                        pointAt(index)?.let { point ->
+                            byDate.getOrPut(point.time.take(10)) { mutableListOf() }.add(point)
+                        }
                     }
             }
         }
-        return byDate.mapNotNull { (date, points) ->
-            if (points.size < 2) return@mapNotNull null
-            val tempSpread = points.maxOf { it.temperature } - points.minOf { it.temperature }
+
+        fun score(points: List<ForecastModelPoint>): Triple<Int, Triple<Double, Int, Double>, List<ForecastModelPoint>>? {
+            if (points.size < 2) return null
+            val tempSpread = (points.maxOf { it.temperature } - points.minOf { it.temperature }).coerceAtLeast(0.0)
             val rainSpread = points.maxOf { it.precipitationProbability } - points.minOf { it.precipitationProbability }
-            val windSpread = points.maxOf { it.windSpeed } - points.minOf { it.windSpeed }
+            val windSpread = (points.maxOf { it.windSpeed } - points.minOf { it.windSpeed }).coerceAtLeast(0.0)
             val penalty = (tempSpread * 12.0 + rainSpread * 0.35 + windSpread * 1.5).toInt()
-            DailyModelAgreement(
-                date = date,
-                score = (100 - penalty).coerceIn(0, 100),
-                temperatureSpread = tempSpread,
-                precipitationSpread = rainSpread,
-                windSpread = windSpread,
-                models = points
-            )
+            return Triple((100 - penalty).coerceIn(0, 100), Triple(tempSpread, rainSpread, windSpread), points)
         }
+
+        val confidence = score(currentPoints)?.let { (value, spreads, points) ->
+            ForecastConfidence(value, spreads.first, spreads.second, spreads.third, points)
+        }
+        val daily = byDate.mapNotNull { (date, points) ->
+            score(points)?.let { (value, spreads, models) ->
+                DailyModelAgreement(date, value, spreads.first, spreads.second, spreads.third, models)
+            }
+        }
+        return ModelComparisonResult(confidence, daily)
     }
 
-    suspend fun getForecastConfidence(location: LocationEntity): ForecastConfidence? {
-        val modelIds = listOf(
-            "best_match" to "Best match",
-            "ecmwf_ifs025" to "ECMWF",
-            "gfs_seamless" to "GFS"
-        )
-        val points = modelIds.mapNotNull { (id, label) ->
-            runCatching {
-                val raw = apiClient.get(ApiConstants.getModelComparisonUrl(location.latitude, location.longitude, id))
-                val json = Json.parseToJsonElement(raw).jsonObject
-                val hourly = json["hourly"]?.jsonObject ?: return@runCatching null
-                val times = hourly["time"]?.jsonArray ?: return@runCatching null
-                val temps = hourly["temperature_2m"]?.jsonArray ?: return@runCatching null
-                val rain = hourly["precipitation_probability"]?.jsonArray
-                val wind = hourly["wind_speed_10m"]?.jsonArray
-                val zone = getLocationTimeZone(json)
-                val prefix = Clock.System.now().toLocalDateTime(zone).toString().take(13)
-                val index = times.indexOfFirst { it.jsonPrimitive.content.startsWith(prefix) }.takeIf { it >= 0 } ?: 0
-                ForecastModelPoint(
-                    model = label,
-                    time = times.getOrNull(index)?.jsonPrimitive?.content ?: return@runCatching null,
-                    temperature = temps.getOrNull(index)?.jsonPrimitive?.doubleOrNull ?: return@runCatching null,
-                    precipitationProbability = rain?.getOrNull(index)?.jsonPrimitive?.intOrNull ?: 0,
-                    windSpeed = wind?.getOrNull(index)?.jsonPrimitive?.doubleOrNull ?: 0.0
-                )
-            }.getOrNull()
-        }
-        if (points.size < 2) return null
-        val tempSpread = (points.maxOf { it.temperature } - points.minOf { it.temperature }).coerceAtLeast(0.0)
-        val rainSpread = points.maxOf { it.precipitationProbability } - points.minOf { it.precipitationProbability }
-        val windSpread = (points.maxOf { it.windSpeed } - points.minOf { it.windSpeed }).coerceAtLeast(0.0)
-        val penalty = (tempSpread * 12.0 + rainSpread * 0.35 + windSpread * 1.5).toInt()
-        return ForecastConfidence(
-            score = (100 - penalty).coerceIn(0, 100),
-            temperatureSpread = tempSpread,
-            precipitationSpread = rainSpread,
-            windSpread = windSpread,
-            models = points
-        )
-    }
+    suspend fun getDailyModelAgreement(location: LocationEntity): List<DailyModelAgreement> =
+        getModelComparison(location).dailyAgreement
+
+    suspend fun getForecastConfidence(location: LocationEntity): ForecastConfidence? =
+        getModelComparison(location).confidence
 
 }
