@@ -745,6 +745,7 @@
     <string name="activity_running">Running</string>
     <string name="activity_cycling">Cycling</string>
     <string name="activity_photography">Photography</string>
+    <string name="activity_score">%1$s · %2$d/100</string>
     <string name="activity_rain_reason">Rain %1$d%%</string>
     <string name="activity_wind_reason">Wind %1$d km/h</string>
     <string name="activity_uv_reason">UV %1$s</string>
