@@ -472,6 +472,13 @@
     <string name="extreme_weather_notification">Severe weather expected in %1$s: %2$s</string>
     <string name="notification_time_title">Daily notification time</string>
     <string name="notification_disable">Disable notifications</string>
+    <string name="location_alert_thresholds">Alert thresholds for this location</string>
+    <string name="location_temp_threshold">Temperature change: %1$d°C</string>
+    <string name="location_wind_threshold">Wind change: %1$d km/h</string>
+    <string name="location_rain_threshold">Rain probability: %1$d%%</string>
+    <string name="location_gust_threshold">Wind gusts: %1$d km/h</string>
+    <string name="location_uv_threshold">UV index: %1$d</string>
+    <string name="location_frost_threshold">Frost temperature: %1$d°C</string>
     <string name="favorite_location">Favorite location</string>
     <string name="offline_cached_weather">Offline · showing last saved weather</string>
     <string name="last_updated_minutes">Updated %1$d min ago</string>
