@@ -208,8 +208,9 @@ fun WeatherDetailScreen(
                         forecastConfidence = null
                         dailyModelAgreement = emptyList()
                     } else {
-                        forecastConfidence = viewModel.getForecastConfidence(loc)
-                        dailyModelAgreement = viewModel.getDailyModelAgreement(loc)
+                        val comparison = viewModel.getModelComparison(loc)
+                        forecastConfidence = comparison.confidence
+                        dailyModelAgreement = comparison.dailyAgreement
                     }
                 }
                 var forecastChanges by remember(loc.id) { mutableStateOf<List<com.freetime.geoweather.ForecastChange>>(emptyList()) }
