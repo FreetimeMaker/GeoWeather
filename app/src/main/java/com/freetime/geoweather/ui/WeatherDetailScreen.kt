@@ -1692,3 +1692,22 @@ private fun localizedActivityReason(value: String): String {
         else -> value
     }
 }
+
+
+@Composable
+private fun localizedSmartInsight(insight: com.freetime.geoweather.SmartHeroInsight): Pair<String, String?> =
+    when (insight.kind) {
+        "rain" -> stringResource(Res.string.smart_rain_likely, insight.time?.takeLast(5).orEmpty()) to
+            stringResource(
+                Res.string.smart_rain_detail,
+                insight.probability ?: 0,
+                String.format(java.util.Locale.US, "%.1f", insight.value ?: 0.0)
+            )
+        "wind" -> stringResource(Res.string.smart_strong_gusts, insight.time?.takeLast(5).orEmpty()) to
+            stringResource(Res.string.smart_wind_detail, (insight.value ?: 0.0).toInt())
+        "uv" -> stringResource(Res.string.smart_high_uv_today) to
+            stringResource(Res.string.smart_uv_max, String.format(java.util.Locale.US, "%.1f", insight.value ?: 0.0))
+        "next_hour" -> stringResource(Res.string.smart_next_hour, insight.temperature ?: 0) to
+            stringResource(Res.string.smart_precipitation_detail, insight.probability ?: 0)
+        else -> stringResource(Res.string.smart_weather_overview) to null
+    }
