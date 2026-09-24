@@ -127,6 +127,11 @@
     <string name="smart_uv_alert_desc">Notify when the UV index reaches a high level.</string>
     <string name="frost_alert_notification">%1$s: Frost expected around %2$s (%3$d°C)</string>
     <string name="uv_alert_notification">%1$s: High UV expected around %2$s (UV %3$s)</string>
+    <string name="briefing_morning">Morning</string>
+    <string name="briefing_evening">Evening</string>
+    <string name="daily_weather_notification">%1$s · %2$s: %3$s, %4$s · Rain %5$d%% · Gusts %6$d km/h</string>
+    <string name="notification_channel_updates">Weather updates</string>
+    <string name="notification_channel_alerts">Weather alerts</string>
 
     <string name="webview_settings_title">WebView Settings</string>
     <string name="disable_private_view">Disable Private View</string>
