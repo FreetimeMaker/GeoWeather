@@ -117,7 +117,7 @@ open class WeatherWidget(
         ) {
             Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    provider = ImageProvider(widgetWeatherIcon(code)),
+                    provider = ImageProvider(WeatherIconMapper.getWeatherIcon(code)),
                     contentDescription = info,
                     modifier = GlanceModifier.size(if (detailed) 48.dp else 36.dp)
                 )
@@ -153,7 +153,11 @@ open class WeatherWidget(
                     hourly.forEach { hour ->
                         Column(modifier = GlanceModifier.defaultWeight(), horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(hour.time.takeLast(5), style = TextStyle(ColorProvider(Color(0xFF486581)), 9.sp))
-                            Image(ImageProvider(widgetWeatherIcon(hour.code)), null, GlanceModifier.size(24.dp))
+                            Image(
+                                ImageProvider(WeatherIconMapper.getWeatherIcon(hour.code, widgetForecastIsDay(hour.time, daily))),
+                                null,
+                                GlanceModifier.size(24.dp)
+                            )
                             Text("${hour.temp}°", style = TextStyle(ColorProvider(Color(0xFF102A43)), 11.sp, FontWeight.Bold))
                         }
                     }
@@ -164,11 +168,21 @@ open class WeatherWidget(
                 Spacer(GlanceModifier.height(7.dp))
                 Row(modifier = GlanceModifier.fillMaxWidth()) {
                     daily.forEach { day ->
-                        Text(
-                            day.date.takeLast(5) + "  " + day.minTemp + "°/" + day.maxTemp + "°",
-                            modifier = GlanceModifier.defaultWeight(),
-                            style = TextStyle(ColorProvider(Color(0xFF334E68)), 9.sp)
-                        )
+                        Column(modifier = GlanceModifier.defaultWeight(), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(day.date.takeLast(5), style = TextStyle(ColorProvider(Color(0xFF486581)), 9.sp))
+                            Image(
+                                ImageProvider(WeatherIconMapper.getWeatherIcon(day.code, true)),
+                                null,
+                                GlanceModifier.size(22.dp)
+                            )
+                            Text(
+                                day.minTemp.toString() + "°/" + day.maxTemp + "°",
+                                style = TextStyle(ColorProvider(Color(0xFF334E68)), 9.sp)
+                            )
+                            if (day.precipProbMax > 0) {
+                                Text(day.precipProbMax.toString() + "%", style = TextStyle(ColorProvider(Color(0xFF486581)), 8.sp))
+                            }
+                        }
                     }
                 }
             }
@@ -187,7 +201,21 @@ class CompactWeatherWidget : WeatherWidget(WidgetVariant.COMPACT)
 class ForecastWeatherWidget : WeatherWidget(WidgetVariant.FORECAST)
 class DetailedWeatherWidget : WeatherWidget(WidgetVariant.DETAILED)
 
-private fun widgetWeatherIcon(code: Int): Int = WeatherIconMapper.getWeatherIcon(code)
+private fun widgetForecastIsDay(time: String, daily: List<DailyForecast>): Boolean {
+    val dateTime = runCatching { java.time.LocalDateTime.parse(time) }.getOrNull()
+    val localTime = dateTime?.toLocalTime()
+        ?: runCatching { java.time.LocalTime.parse(time.takeLast(5)) }.getOrNull()
+        ?: return true
+    val date = dateTime?.toLocalDate()
+    val day = date?.let { target ->
+        daily.firstOrNull { runCatching { java.time.LocalDate.parse(it.date) }.getOrNull() == target }
+    } ?: daily.firstOrNull()
+    val sunrise = runCatching { java.time.LocalTime.parse(day?.sunrise?.takeLast(5) ?: "07:00") }
+        .getOrDefault(java.time.LocalTime.of(7, 0))
+    val sunset = runCatching { java.time.LocalTime.parse(day?.sunset?.takeLast(5) ?: "19:00") }
+        .getOrDefault(java.time.LocalTime.of(19, 0))
+    return !localTime.isBefore(sunrise) && localTime.isBefore(sunset)
+}
 
 class RefreshActionCallback : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
