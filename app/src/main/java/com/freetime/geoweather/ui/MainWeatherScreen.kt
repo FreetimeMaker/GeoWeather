@@ -9,7 +9,6 @@ import com.freetime.design.rememberFreetimeMessageHostState
 import com.freetime.design.FreetimeTimePicker
 import com.freetime.design.FreetimeSearchBar
 import com.freetime.design.FreetimeNavigationRail
-import com.freetime.design.FreetimeBottomBar
 import com.freetime.design.FreetimeNavigationDestination
 import com.freetime.design.FreetimeEmptyState
 import com.freetime.design.FreetimeInfoCard
@@ -21,15 +20,8 @@ import com.freetime.design.rememberFreetimeCompactNavigation
 import com.freetime.design.FreetimeDesign
 import com.freetime.design.FreetimeGlassPullRefreshIndicator
 import com.freetime.design.FreetimeGlassSkeleton
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeGlassAction
-import com.freetime.design.FreetimeTextField
-import com.freetime.design.freetimeGlassCapsule
-import com.freetime.design.FreetimeGlassNavigationBar
-import com.freetime.design.FreetimeGlassTitle
 import com.freetime.design.FreetimeGlassPanel
 import com.freetime.design.freetimeWideGlass
-import com.freetime.design.freetimeGlass
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
@@ -66,7 +58,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.freetime.design.freetimeGlass
-import com.freetime.design.freetimeGlassCapsule
 import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeTextField
 import com.freetime.design.FreetimeGlassAction
@@ -573,41 +564,6 @@ fun MainWeatherScreen(
         }
     }
 
-    FreetimeBottomSheet(
-        visible = actionLocation != null,
-        onDismissRequest = { actionLocation = null }
-    ) {
-        actionLocation?.let { loc ->
-            FreetimeGlassTitle(loc.name)
-            FreetimeButton(
-                text = if (loc.notificationsEnabled) stringResource(Res.string.notification_disable) else stringResource(Res.string.notification_time_title),
-                onClick = {
-                    actionLocation = null
-                    notificationLocation = loc
-                },
-                leadingIcon = if (loc.notificationsEnabled) Icons.Default.NotificationsOff else Icons.Default.Notifications
-            )
-            FreetimeButton(
-                text = stringResource(Res.string.favorite_location),
-                onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    viewModel.toggleDefaultLocation(loc)
-                    actionLocation = null
-                },
-                leadingIcon = if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder
-            )
-            FreetimeButton(
-                text = stringResource(Res.string.DelLoc),
-                onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                    actionLocation = null
-                    locationToDelete = loc
-                },
-                leadingIcon = Icons.Default.Delete
-            )
-        }
-    }
-
     if (showAddLocationDialog) {
         FreetimeDialog(
             onDismissRequest = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() },
@@ -734,8 +690,8 @@ private fun GeoWeatherBottomNavigation(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(3.dp)
             ) {
-                FreetimeIcon(
-                    icon = destination.icon,
+                androidx.compose.material3.Icon(
+                    imageVector = destination.icon,
                     contentDescription = destination.label,
                     tint = if (selected) FreetimeDesign.palette.primary else FreetimeDesign.palette.contentMuted
                 )
