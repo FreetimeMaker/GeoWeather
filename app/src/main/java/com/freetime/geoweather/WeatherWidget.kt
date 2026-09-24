@@ -61,14 +61,20 @@ open class WeatherWidget(
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val repository = DependencyManager.getRepository()
         val settings = DependencyManager.getAppSettings()
-        val location = withContext(Dispatchers.IO) { repository.getSelectedLocation() }
+        val appWidgetId = (id as? androidx.glance.appwidget.AppWidgetId)?.appWidgetId
+        val configuredLocationId = appWidgetId?.let { WidgetPreferences.getLocationId(context, it) }
+        val location = withContext(Dispatchers.IO) {
+            configuredLocationId?.let { repository.getLocationById(it) } ?: repository.getSelectedLocation()
+        }
         val dataSaver = settings.dataSaver.value
 
         var current = location
         var cached = false
         if (location != null && !(dataSaver && location.weatherData != null)) {
             try {
-                current = repository.refreshSelectedLocationWeather(includeHourly = true) ?: location
+                current = configuredLocationId?.let { repository.refreshLocationWeather(it) }
+                    ?: repository.refreshSelectedLocationWeather(includeHourly = true)
+                    ?: location
             } catch (_: Exception) {
                 cached = location.weatherData != null
             }
