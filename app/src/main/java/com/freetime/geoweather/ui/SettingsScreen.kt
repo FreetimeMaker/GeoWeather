@@ -131,34 +131,34 @@ fun SettingsScreen(
             } }
             item(key = "appearance") { LocalFreetimePreferencesController.current?.let { controller ->
                 val appearance = controller.state
-                FreetimeSettingsGroup("Liquid Glass & accessibility") {
+                FreetimeSettingsGroup(stringResource(Res.string.appearance_accessibility_title)) {
                     FreetimeSwitchSetting(
-                        title = "Liquid Glass",
-                        description = "Uses the Freetime Core 1.11 live backdrop, luminance, refraction and interactive glass renderer.",
+                        title = stringResource(Res.string.liquid_glass_title),
+                        description = stringResource(Res.string.liquid_glass_desc),
                         checked = appearance.liquidGlassEnabled,
                         onCheckedChange = { enabled ->
                             controller.update { it.copy(liquidGlassEnabled = enabled) }
                         }
                     )
                     FreetimeSwitchSetting(
-                        title = "Reduce motion",
-                        description = "Reduces decorative motion and Liquid Glass interaction animations.",
+                        title = stringResource(Res.string.reduce_motion_title),
+                        description = stringResource(Res.string.reduce_motion_desc),
                         checked = appearance.reduceMotion,
                         onCheckedChange = { enabled ->
                             controller.update { it.copy(reduceMotion = enabled) }
                         }
                     )
                     FreetimeSwitchSetting(
-                        title = "Reduce transparency",
-                        description = "Uses more opaque surfaces and disables glass refraction.",
+                        title = stringResource(Res.string.reduce_transparency_title),
+                        description = stringResource(Res.string.reduce_transparency_desc),
                         checked = appearance.reduceTransparency,
                         onCheckedChange = { enabled ->
                             controller.update { it.copy(reduceTransparency = enabled) }
                         }
                     )
                     FreetimeSwitchSetting(
-                        title = "High contrast",
-                        description = "Strengthens glass edges, scrims and content separation.",
+                        title = stringResource(Res.string.high_contrast_title),
+                        description = stringResource(Res.string.high_contrast_desc),
                         checked = appearance.highContrast,
                         onCheckedChange = { enabled ->
                             controller.update { it.copy(highContrast = enabled) }
@@ -218,11 +218,11 @@ fun SettingsScreen(
                 value = windThreshold,
                 onValueChange = { appSettings.setWindThreshold(it) }
             )
-            FreetimeText("Smart alerts", style = FreetimeDesign.typography.titleMedium)
-            SettingsToggle("Rain alerts", "Notify when rain is likely in the next few hours.", smartRainAlert) { appSettings.setSmartRainAlert(it) }
-            SettingsToggle("Strong wind alerts", "Notify when forecast gusts become strong.", smartWindAlert) { appSettings.setSmartWindAlert(it) }
-            SettingsToggle("Frost alerts", "Notify when forecast temperature reaches freezing.", smartFrostAlert) { appSettings.setSmartFrostAlert(it) }
-            SettingsToggle("High UV alerts", "Notify when the UV index reaches a high level.", smartUvAlert) { appSettings.setSmartUvAlert(it) }
+            FreetimeText(stringResource(Res.string.smart_alerts_title), style = FreetimeDesign.typography.titleMedium)
+            SettingsToggle(stringResource(Res.string.smart_rain_alert_title), stringResource(Res.string.smart_rain_alert_desc), smartRainAlert) { appSettings.setSmartRainAlert(it) }
+            SettingsToggle(stringResource(Res.string.smart_wind_alert_title), stringResource(Res.string.smart_wind_alert_desc), smartWindAlert) { appSettings.setSmartWindAlert(it) }
+            SettingsToggle(stringResource(Res.string.smart_frost_alert_title), stringResource(Res.string.smart_frost_alert_desc), smartFrostAlert) { appSettings.setSmartFrostAlert(it) }
+            SettingsToggle(stringResource(Res.string.smart_uv_alert_title), stringResource(Res.string.smart_uv_alert_desc), smartUvAlert) { appSettings.setSmartUvAlert(it) }
 
             } }
             item(key = "offline") { FreetimeSettingsGroup(stringResource(Res.string.data_offline_title)) {
