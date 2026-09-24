@@ -405,7 +405,7 @@ fun WeatherDetailScreen(
                     }
 
                     if (code != null) {
-                        item { WeatherAlertsSection(loc.name, code, hourly, extras) }
+                        item { WeatherAlertsSection(loc.name, code, hourly, extras, windUnit) }
                     }
 
                     item {
@@ -601,10 +601,10 @@ fun WeatherDetailScreen(
                                     FreetimeText(confidence.score.toString() + "/100", style = FreetimeDesign.typography.headlineMedium, fontWeight = FontWeight.Bold)
                                     FreetimeText(
                                         stringResource(
-                                            Res.string.forecast_confidence_spread,
-                                            String.format(java.util.Locale.US, "%.1f", confidence.temperatureSpread),
+                                            Res.string.forecast_confidence_spread_units,
+                                            String.format(java.util.Locale.getDefault(), "%.1f", confidence.temperatureSpread),
                                             confidence.precipitationSpread,
-                                            String.format(java.util.Locale.US, "%.1f", confidence.windSpread)
+                                            formatWind(confidence.windSpread, null, windUnit)
                                         ),
                                         style = FreetimeDesign.typography.bodyMedium,
                                         color = FreetimeDesign.palette.contentMuted
@@ -616,7 +616,7 @@ fun WeatherDetailScreen(
                                                     FreetimeText(model.model, style = FreetimeDesign.typography.labelLarge, fontWeight = FontWeight.Bold)
                                                     FreetimeText(String.format(java.util.Locale.US, "%.1f°C", model.temperature), style = FreetimeDesign.typography.titleMedium)
                                                     FreetimeText(stringResource(Res.string.forecast_model_rain, model.precipitationProbability), style = FreetimeDesign.typography.labelSmall)
-                                                    FreetimeText(stringResource(Res.string.forecast_model_wind, String.format(java.util.Locale.US, "%.1f", model.windSpeed)), style = FreetimeDesign.typography.labelSmall)
+                                                    FreetimeText(stringResource(Res.string.forecast_model_wind_value, formatWind(model.windSpeed, null, windUnit)), style = FreetimeDesign.typography.labelSmall)
                                                 }
                                             }
                                         }
@@ -699,7 +699,7 @@ fun WeatherDetailScreen(
                                                     if (detail.bestHours.isEmpty()) stringResource(Res.string.no_recommended_window) else detail.bestHours.joinToString(" · ") { it.takeLast(5) },
                                                     style = FreetimeDesign.typography.bodyMedium
                                                 )
-                                                if (detail.reasons.isNotEmpty()) FreetimeText(detail.reasons.joinToString(" · ") { localizedActivityReason(it) }, style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
+                                                if (detail.reasons.isNotEmpty()) FreetimeText(detail.reasons.joinToString(" · ") { localizedActivityReason(it, windUnit) }, style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
                                             }
                                         }
                                     }
@@ -1368,7 +1368,8 @@ fun WeatherAlertsSection(
     locationName: String,
     code: Int,
     hourly: List<HourlyForecast>,
-    extras: com.freetime.geoweather.data.CurrentHourExtras?
+    extras: com.freetime.geoweather.data.CurrentHourExtras?,
+    windUnit: String
 ) {
     val alerts = buildList {
         when (code) {
@@ -1413,9 +1414,12 @@ fun WeatherAlertsSection(
                     val peakRain = nextSix.maxOfOrNull { it.precipitation ?: 0.0 } ?: 0.0
                     val peakProbability = nextSix.maxOfOrNull { it.precipProbability } ?: 0
                     FreetimeText(
-                        "Next 6h · rain " + peakProbability + "% / " +
-                            String.format(java.util.Locale.US, "%.1f mm", peakRain) +
-                            " · gusts " + peakGust.toInt() + " km/h",
+                        stringResource(
+                            Res.string.alert_next_6h,
+                            peakProbability,
+                            String.format(java.util.Locale.getDefault(), "%.1f", peakRain),
+                            formatWind(peakGust, null, windUnit)
+                        ),
                         style = FreetimeDesign.typography.bodySmall
                     )
                     FreetimeText(stringResource(Res.string.data_based_alert_note), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
@@ -1679,12 +1683,12 @@ private fun localizedActivityName(key: String): String = when (key) {
 }
 
 @Composable
-private fun localizedActivityReason(value: String): String {
+private fun localizedActivityReason(value: String, windUnit: String): String {
     val parts = value.split(":", limit = 2)
     val payload = parts.getOrNull(1).orEmpty()
     return when (parts.firstOrNull()) {
         "rain" -> stringResource(Res.string.activity_rain_reason, payload.toIntOrNull() ?: 0)
-        "wind" -> stringResource(Res.string.activity_wind_reason, payload.toIntOrNull() ?: 0)
+        "wind" -> stringResource(Res.string.activity_wind_reason_value, formatWind(payload.toDoubleOrNull(), null, windUnit))
         "uv" -> stringResource(Res.string.activity_uv_reason, payload)
         "feels" -> stringResource(Res.string.activity_feels_like_reason, payload)
         "sunrise" -> stringResource(Res.string.activity_sunrise_reason, payload)
@@ -1695,7 +1699,7 @@ private fun localizedActivityReason(value: String): String {
 
 
 @Composable
-private fun localizedSmartInsight(insight: com.freetime.geoweather.SmartHeroInsight): Pair<String, String?> =
+private fun localizedSmartInsight(insight: com.freetime.geoweather.SmartHeroInsight, windUnit: String): Pair<String, String?> =
     when (insight.kind) {
         "rain" -> stringResource(Res.string.smart_rain_likely, insight.time?.takeLast(5).orEmpty()) to
             stringResource(
@@ -1704,7 +1708,7 @@ private fun localizedSmartInsight(insight: com.freetime.geoweather.SmartHeroInsi
                 String.format(java.util.Locale.US, "%.1f", insight.value ?: 0.0)
             )
         "wind" -> stringResource(Res.string.smart_strong_gusts, insight.time?.takeLast(5).orEmpty()) to
-            stringResource(Res.string.smart_wind_detail, (insight.value ?: 0.0).toInt())
+            stringResource(Res.string.smart_wind_detail_value, formatWind(insight.value, null, windUnit))
         "uv" -> stringResource(Res.string.smart_high_uv_today) to
             stringResource(Res.string.smart_uv_max, String.format(java.util.Locale.US, "%.1f", insight.value ?: 0.0))
         "next_hour" -> stringResource(Res.string.smart_next_hour, insight.temperature ?: 0) to
