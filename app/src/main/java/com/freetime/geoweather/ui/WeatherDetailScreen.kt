@@ -1507,7 +1507,7 @@ fun moonPhaseFor(date: java.time.LocalDate): Pair<String, String> {
         age < 20.30 -> "🌖" to "waning_gibbous"
         age < 23.99 -> "🌗" to "last_quarter"
         age < 27.68 -> "🌘" to "waning_crescent"
-        else -> "🌑" to "New Moon"
+        else -> "🌑" to "new"
     }
 }
 
@@ -1660,13 +1660,13 @@ private fun moonPhaseDetails(date: java.time.LocalDate): MoonPhaseDetails {
     val illumination = ((1 - kotlin.math.cos(2 * kotlin.math.PI * fraction)) / 2 * 100).roundToInt()
     val (icon, name) = when {
         fraction < .0625 || fraction >= .9375 -> "🌑" to "New Moon"
-        fraction < .1875 -> "🌒" to "Waxing Crescent"
-        fraction < .3125 -> "🌓" to "First Quarter"
-        fraction < .4375 -> "🌔" to "Waxing Gibbous"
-        fraction < .5625 -> "🌕" to "Full Moon"
-        fraction < .6875 -> "🌖" to "Waning Gibbous"
-        fraction < .8125 -> "🌗" to "Last Quarter"
-        else -> "🌘" to "Waning Crescent"
+        fraction < .1875 -> "🌒" to "waxing_crescent"
+        fraction < .3125 -> "🌓" to "first_quarter"
+        fraction < .4375 -> "🌔" to "waxing_gibbous"
+        fraction < .5625 -> "🌕" to "full"
+        fraction < .6875 -> "🌖" to "waning_gibbous"
+        fraction < .8125 -> "🌗" to "last_quarter"
+        else -> "🌘" to "waning_crescent"
     }
     val toFull = ((cycle / 2 - age + cycle) % cycle).roundToInt()
     val toNew = ((cycle - age) % cycle).roundToInt()
