@@ -63,6 +63,7 @@ import com.freetime.design.FreetimeGlassTopBar
 import com.freetime.design.FreetimeTextField
 import com.freetime.design.FreetimeGlassAction
 import com.freetime.geoweather.data.LocationEntity
+import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.getDetectedLocationName
 import com.freetime.geoweather.WeatherIconMapper
