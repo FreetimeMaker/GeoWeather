@@ -26,7 +26,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          VERSION=$(grep 'versionName' app/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\\1/')
+          VERSION=$(grep 'versionName' app/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
+          if [ -z "$VERSION" ] || [ "$VERSION" = "\\1" ]; then
+            echo "Could not determine versionName from app/build.gradle.kts" >&2
+            exit 1
+          fi
+          echo "Detected GeoWeather version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
           git fetch --tags
