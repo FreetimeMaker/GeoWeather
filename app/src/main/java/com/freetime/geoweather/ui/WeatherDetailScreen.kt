@@ -597,12 +597,15 @@ fun WeatherDetailScreen(
                         item {
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    FreetimeText("Forecast confidence", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.forecast_confidence_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     FreetimeText(confidence.score.toString() + "/100", style = FreetimeDesign.typography.headlineMedium, fontWeight = FontWeight.Bold)
                                     FreetimeText(
-                                        "Model spread · temperature " + String.format(java.util.Locale.US, "%.1f°C", confidence.temperatureSpread) +
-                                            " · rain " + confidence.precipitationSpread + "% · wind " +
-                                            String.format(java.util.Locale.US, "%.1f km/h", confidence.windSpread),
+                                        stringResource(
+                                            Res.string.forecast_confidence_spread,
+                                            String.format(java.util.Locale.US, "%.1f", confidence.temperatureSpread),
+                                            confidence.precipitationSpread,
+                                            String.format(java.util.Locale.US, "%.1f", confidence.windSpread)
+                                        ),
                                         style = FreetimeDesign.typography.bodyMedium,
                                         color = FreetimeDesign.palette.contentMuted
                                     )
@@ -612,8 +615,8 @@ fun WeatherDetailScreen(
                                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                                     FreetimeText(model.model, style = FreetimeDesign.typography.labelLarge, fontWeight = FontWeight.Bold)
                                                     FreetimeText(String.format(java.util.Locale.US, "%.1f°C", model.temperature), style = FreetimeDesign.typography.titleMedium)
-                                                    FreetimeText("Rain " + model.precipitationProbability + "%", style = FreetimeDesign.typography.labelSmall)
-                                                    FreetimeText("Wind " + String.format(java.util.Locale.US, "%.1f km/h", model.windSpeed), style = FreetimeDesign.typography.labelSmall)
+                                                    FreetimeText(stringResource(Res.string.forecast_model_rain, model.precipitationProbability), style = FreetimeDesign.typography.labelSmall)
+                                                    FreetimeText(stringResource(Res.string.forecast_model_wind, String.format(java.util.Locale.US, "%.1f", model.windSpeed)), style = FreetimeDesign.typography.labelSmall)
                                                 }
                                             }
                                         }
@@ -691,12 +694,12 @@ fun WeatherDetailScreen(
                                     (activityDetails + photo).forEach { detail ->
                                         FreetimeCard(modifier = Modifier.fillMaxWidth()) {
                                             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                                                FreetimeText(detail.activity + " · " + detail.score + "/100", style = FreetimeDesign.typography.labelLarge, fontWeight = FontWeight.Bold)
+                                                FreetimeText(localizedActivityName(detail.activity) + " · " + detail.score + "/100", style = FreetimeDesign.typography.labelLarge, fontWeight = FontWeight.Bold)
                                                 FreetimeText(
-                                                    if (detail.bestHours.isEmpty()) "No recommended window" else detail.bestHours.joinToString(" · ") { it.takeLast(5) },
+                                                    if (detail.bestHours.isEmpty()) stringResource(Res.string.no_recommended_window) else detail.bestHours.joinToString(" · ") { it.takeLast(5) },
                                                     style = FreetimeDesign.typography.bodyMedium
                                                 )
-                                                if (detail.reasons.isNotEmpty()) FreetimeText(detail.reasons.joinToString(" · "), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
+                                                if (detail.reasons.isNotEmpty()) FreetimeText(detail.reasons.joinToString(" · ") { localizedActivityReason(it) }, style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
                                             }
                                         }
                                     }
@@ -711,19 +714,19 @@ fun WeatherDetailScreen(
                             val bestWindow = activityWindows.maxByOrNull { it.score }
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    FreetimeText("Outdoor planner", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.outdoor_planner_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     bestWindow?.takeIf { it.hours.isNotEmpty() }?.let { best ->
-                                        FreetimeText(best.activity + " · " + best.score + "/100", style = FreetimeDesign.typography.titleLarge)
+                                        FreetimeText(localizedActivityName(best.activity) + " · " + best.score + "/100", style = FreetimeDesign.typography.titleLarge)
                                         FreetimeText(best.hours.joinToString(" · ") { it.takeLast(5) }, color = FreetimeDesign.palette.contentMuted)
                                     }
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                         items(activityWindows, key = { it.activity }) { activity ->
                                             FreetimeCard(modifier = Modifier.width(150.dp)) {
                                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                                    FreetimeText(activity.activity, style = FreetimeDesign.typography.labelLarge)
+                                                    FreetimeText(localizedActivityName(activity.activity), style = FreetimeDesign.typography.labelLarge)
                                                     FreetimeText(activity.score.toString() + "/100", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                                     FreetimeText(
-                                                        if (activity.hours.isEmpty()) "No good window" else activity.hours.joinToString(" · ") { it.takeLast(5) },
+                                                        if (activity.hours.isEmpty()) stringResource(Res.string.no_good_window) else activity.hours.joinToString(" · ") { it.takeLast(5) },
                                                         style = FreetimeDesign.typography.labelSmall
                                                     )
                                                 }
@@ -1642,4 +1645,28 @@ private fun moonPhaseDetails(date: java.time.LocalDate): MoonPhaseDetails {
     val toFull = ((cycle / 2 - age + cycle) % cycle).roundToInt()
     val toNew = ((cycle - age) % cycle).roundToInt()
     return MoonPhaseDetails(icon, name, illumination, toFull, toNew)
+}
+
+@Composable
+private fun localizedActivityName(key: String): String = when (key) {
+    "walking" -> stringResource(Res.string.activity_walking)
+    "running" -> stringResource(Res.string.activity_running)
+    "cycling" -> stringResource(Res.string.activity_cycling)
+    "photography" -> stringResource(Res.string.activity_photography)
+    else -> key
+}
+
+@Composable
+private fun localizedActivityReason(value: String): String {
+    val parts = value.split(":", limit = 2)
+    val payload = parts.getOrNull(1).orEmpty()
+    return when (parts.firstOrNull()) {
+        "rain" -> stringResource(Res.string.activity_rain_reason, payload.toIntOrNull() ?: 0)
+        "wind" -> stringResource(Res.string.activity_wind_reason, payload.toIntOrNull() ?: 0)
+        "uv" -> stringResource(Res.string.activity_uv_reason, payload)
+        "feels" -> stringResource(Res.string.activity_feels_like_reason, payload)
+        "sunrise" -> stringResource(Res.string.activity_sunrise_reason, payload)
+        "sunset" -> stringResource(Res.string.activity_sunset_reason, payload)
+        else -> value
+    }
 }
