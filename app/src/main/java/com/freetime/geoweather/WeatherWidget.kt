@@ -164,7 +164,7 @@ open class WeatherWidget(private val variant: WidgetVariant = WidgetVariant.RESP
                     contentDescription = refreshDesc,
                     modifier = GlanceModifier
                         .size(24.dp)
-                        .clickable(actionRunCallback<RefreshActionCallback>())
+.clickable(\n                            when (variant) {\n                                WidgetVariant.COMPACT -> actionRunCallback<RefreshCompactWidgetCallback>()\n                                WidgetVariant.FORECAST -> actionRunCallback<RefreshForecastWidgetCallback>()\n                                WidgetVariant.DETAILED -> actionRunCallback<RefreshDetailedWidgetCallback>()\n                                WidgetVariant.RESPONSIVE -> actionRunCallback<RefreshActionCallback>()\n                            }\n                        )
                 )
             }
 
@@ -240,7 +240,22 @@ class RefreshActionCallback : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
-        WeatherWidget().update(context, glanceId)\n        CompactWeatherWidget().update(context, glanceId)\n        ForecastWeatherWidget().update(context, glanceId)\n        DetailedWeatherWidget().update(context, glanceId)
+        WeatherWidget().update(context, glanceId)
     }
 }
 \n\nenum class WidgetVariant { RESPONSIVE, COMPACT, FORECAST, DETAILED }\n\nclass CompactWeatherWidget : WeatherWidget(WidgetVariant.COMPACT)\nclass ForecastWeatherWidget : WeatherWidget(WidgetVariant.FORECAST)\nclass DetailedWeatherWidget : WeatherWidget(WidgetVariant.DETAILED)\n
+class RefreshCompactWidgetCallback : ActionCallback {
+    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
+        CompactWeatherWidget().update(context, glanceId)
+    }
+}
+class RefreshForecastWidgetCallback : ActionCallback {
+    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
+        ForecastWeatherWidget().update(context, glanceId)
+    }
+}
+class RefreshDetailedWidgetCallback : ActionCallback {
+    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
+        DetailedWeatherWidget().update(context, glanceId)
+    }
+}
