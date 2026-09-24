@@ -601,6 +601,17 @@ fun WeatherDetailScreen(
                                     FreetimeText(confidence.score.toString() + "/100", style = FreetimeDesign.typography.headlineMedium, fontWeight = FontWeight.Bold)
                                     FreetimeText(
                                         stringResource(
+                                            when {
+                                                confidence.score >= 80 -> Res.string.forecast_confidence_high
+                                                confidence.score >= 55 -> Res.string.forecast_confidence_medium
+                                                else -> Res.string.forecast_confidence_low
+                                            }
+                                        ),
+                                        style = FreetimeDesign.typography.labelLarge,
+                                        color = FreetimeDesign.palette.contentMuted
+                                    )
+                                    FreetimeText(
+                                        stringResource(
                                             Res.string.forecast_confidence_spread_units,
                                             String.format(java.util.Locale.getDefault(), "%.1f", confidence.temperatureSpread),
                                             confidence.precipitationSpread,
@@ -621,6 +632,31 @@ fun WeatherDetailScreen(
                                             }
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+
+                    if (daily.size >= 2) {
+                        item {
+                            val today = daily[0]
+                            val tomorrow = daily[1]
+                            val todayMean = (today.minTemp + today.maxTemp) / 2.0
+                            val tomorrowMean = (tomorrow.minTemp + tomorrow.maxTemp) / 2.0
+                            val delta = tomorrowMean - todayMean
+                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
+                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    FreetimeText(stringResource(Res.string.tomorrow_comparison_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(
+                                        when {
+                                            delta >= 1.0 -> stringResource(Res.string.tomorrow_warmer, formatTemp(delta, tempUnit))
+                                            delta <= -1.0 -> stringResource(Res.string.tomorrow_cooler, formatTemp(kotlin.math.abs(delta), tempUnit))
+                                            else -> stringResource(Res.string.tomorrow_similar_temp)
+                                        },
+                                        style = FreetimeDesign.typography.bodyLarge
+                                    )
+                                    FreetimeText(stringResource(Res.string.tomorrow_rain_change, today.precipProbMax, tomorrow.precipProbMax), style = FreetimeDesign.typography.bodyMedium)
+                                    FreetimeText(stringResource(Res.string.tomorrow_wind_change, formatWind(today.windMax, null, windUnit), formatWind(tomorrow.windMax, null, windUnit)), style = FreetimeDesign.typography.bodyMedium)
                                 }
                             }
                         }
