@@ -74,7 +74,7 @@ class WeatherChangeWorker(
                             val reason = when {
                                 severe.code in 95..99 -> WeatherCodes.getDescription(severe.code)
                                 severe.code in 71..86 -> WeatherCodes.getDescription(severe.code)
-                                (severe.windGusts ?: 0.0) >= 70.0 -> applicationContext.getString(SharedRes.string.strong_wind_gusts)
+                                appSettings.smartWindAlert.value && (severe.windGusts ?: 0.0) >= 70.0 -> applicationContext.getString(SharedRes.string.strong_wind_gusts)
                                 else -> applicationContext.getString(SharedRes.string.heavy_precipitation)
                             }
                             val message = applicationContext.getString(
@@ -128,7 +128,12 @@ class WeatherChangeWorker(
                                 applicationContext,
                                 500000 + (location.id % 100000).toInt(),
                                 updated.name,
-                                "Frost expected around " + frost.time + " (" + frost.temp + "°C)",
+                                applicationContext.getString(
+                                    SharedRes.string.frost_alert_notification,
+                                    updated.name,
+                                    frost.time,
+                                    frost.temp
+                                ),
                                 alert = true
                             )
                             smartPrefs.edit().putString(key, signature).apply()
@@ -143,7 +148,12 @@ class WeatherChangeWorker(
                                 applicationContext,
                                 600000 + (location.id % 100000).toInt(),
                                 updated.name,
-                                "High UV expected around " + highUv.time + " (UV " + highUv.uvIndex + ")",
+                                applicationContext.getString(
+                                    SharedRes.string.uv_alert_notification,
+                                    updated.name,
+                                    highUv.time,
+                                    highUv.uvIndex?.toString() ?: "--"
+                                ),
                                 alert = true
                             )
                             smartPrefs.edit().putString(key, signature).apply()
