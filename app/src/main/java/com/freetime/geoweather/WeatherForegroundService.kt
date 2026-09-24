@@ -55,7 +55,7 @@ class WeatherForegroundService : Service() {
                 val content = if (nextHour != null) {
                     summary + "\n" + getString(
                         R.string.persistent_next_hour,
-                        repository.getDisplayTemp(nextHour, appSettings.tempUnit.value),
+                        formatNotificationTemp(nextHour.temp.toDouble(), appSettings.tempUnit.value),
                         nextHour.precipProbability
                     )
                 } else summary
@@ -102,6 +102,10 @@ class WeatherForegroundService : Service() {
         super.onDestroy()
         serviceScope.cancel()
     }
+
+    private fun formatNotificationTemp(celsius: Double, unit: String): String =
+        if (unit == "fahrenheit") ((celsius * 9.0 / 5.0) + 32.0).toInt().toString() + "°F"
+        else celsius.toInt().toString() + "°C"
 
     private fun formatNotificationWind(kmh: Double, unit: String): String = when (unit) {
         "mph" -> ((kmh * 0.621371).toInt()).toString() + " mph"
