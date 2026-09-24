@@ -591,6 +591,7 @@ fun WeatherDetailScreen(
                             }
                         }
                     }
+                    }
 
                     forecastConfidence?.let { confidence ->
                         item {
