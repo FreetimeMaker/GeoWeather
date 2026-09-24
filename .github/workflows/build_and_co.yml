@@ -35,8 +35,6 @@ jobs:
             echo "create_tag=false" >> "$GITHUB_OUTPUT"
           else
             git tag "v$VERSION"
-            git push origin "v$VERSION"
-            echo "create_tag=true" >> "$GITHUB_OUTPUT"
           fi
 
   build_sign_and_release_android_app:
@@ -123,6 +121,10 @@ jobs:
           path: GeoWeather-v${{ needs.prepare_android_app.outputs.version }}.apk
           if-no-files-found: error
           retention-days: 90
+
+      - name: Upload Tag
+        run: |
+            git push origin "v$VERSION"
 
       - name: Create release notes
         run: |
