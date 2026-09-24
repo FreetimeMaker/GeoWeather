@@ -786,4 +786,6 @@
     <string name="trip_start">Start</string>
     <string name="trip_end">End</string>
     <string name="trip_temperature_range">%1$d–%2$d°C · selected trip</string>
+    <string name="radar_loading">Loading radar…</string>
+    <string name="radar_load_failed">Radar unavailable</string>
 </resources>
