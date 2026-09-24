@@ -640,6 +640,10 @@
     <string name="offline_cached_summary">Cached weather · %1$d min old · %2$d forecast days cached</string>
     <string name="distribution_notice_show">Show distribution notice</string>
     <string name="temperature_delta">Δ temp</string>
+    <string name="high_label">High</string>
+    <string name="low_label">Low</string>
+    <string name="moon_illumination">%1$d%% illuminated</string>
+    <string name="moon_next_phases">Next full moon: %1$d d · new moon: %2$d d</string>
     <string name="alert_strong_wind">Strong wind / gusts</string>
     <string name="alert_extreme_uv">Very high UV</string>
     <string name="alert_low_visibility">Low visibility</string>
