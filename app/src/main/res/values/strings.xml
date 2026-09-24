@@ -107,6 +107,26 @@
     <string name="wind_threshold_label">Wind Increase Threshold: %1$d</string>
     <string name="persistent_notif_title">Persistent Weather Notification</string>
     <string name="persistent_notif_subtitle">Show current temperature in the status bar</string>
+    <string name="appearance_accessibility_title">Liquid Glass &amp; accessibility</string>
+    <string name="liquid_glass_title">Liquid Glass</string>
+    <string name="liquid_glass_desc">Uses the Freetime Core live backdrop, luminance, refraction and interactive glass renderer.</string>
+    <string name="reduce_motion_title">Reduce motion</string>
+    <string name="reduce_motion_desc">Reduces decorative motion and Liquid Glass interaction animations.</string>
+    <string name="reduce_transparency_title">Reduce transparency</string>
+    <string name="reduce_transparency_desc">Uses more opaque surfaces and disables glass refraction.</string>
+    <string name="high_contrast_title">High contrast</string>
+    <string name="high_contrast_desc">Strengthens glass edges, scrims and content separation.</string>
+    <string name="smart_alerts_title">Smart alerts</string>
+    <string name="smart_rain_alert_title">Rain alerts</string>
+    <string name="smart_rain_alert_desc">Notify when rain is likely in the next few hours.</string>
+    <string name="smart_wind_alert_title">Strong wind alerts</string>
+    <string name="smart_wind_alert_desc">Notify when forecast gusts become strong.</string>
+    <string name="smart_frost_alert_title">Frost alerts</string>
+    <string name="smart_frost_alert_desc">Notify when forecast temperature reaches freezing.</string>
+    <string name="smart_uv_alert_title">High UV alerts</string>
+    <string name="smart_uv_alert_desc">Notify when the UV index reaches a high level.</string>
+    <string name="frost_alert_notification">%1$s: Frost expected around %2$s (%3$d°C)</string>
+    <string name="uv_alert_notification">%1$s: High UV expected around %2$s (UV %3$s)</string>
 
     <string name="webview_settings_title">WebView Settings</string>
     <string name="disable_private_view">Disable Private View</string>
