@@ -50,9 +50,14 @@ open class WeatherWidget(private val variant: WidgetVariant = WidgetVariant.RESP
         private val EXTRA_LARGE_RECT = DpSize(320.dp, 180.dp)
     }
 
-    override val sizeMode = SizeMode.Responsive(
-        setOf(SMALL_RECT, MEDIUM_RECT, LARGE_RECT, EXTRA_LARGE_RECT)
-    )
+    override val sizeMode = when (variant) {
+        WidgetVariant.COMPACT,
+        WidgetVariant.FORECAST,
+        WidgetVariant.DETAILED -> SizeMode.Exact
+        WidgetVariant.RESPONSIVE -> SizeMode.Responsive(
+            setOf(SMALL_RECT, MEDIUM_RECT, LARGE_RECT, EXTRA_LARGE_RECT)
+        )
+    }
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val repository = DependencyManager.getRepository()
@@ -94,7 +99,7 @@ open class WeatherWidget(private val variant: WidgetVariant = WidgetVariant.RESP
 
         provideContent {
             val size = LocalSize.current
-            WeatherWidgetContent(context, locationName, tempString, weatherInfo, hourlyList, dailyList, offlineCache, dataSaver, size, refreshDesc)
+            WeatherWidgetContent(context, locationName, tempString, weatherInfo, hourlyList, dailyList, offlineCache, dataSaver, size, refreshDesc, variant)
         }
     }
 
@@ -109,10 +114,14 @@ open class WeatherWidget(private val variant: WidgetVariant = WidgetVariant.RESP
         offlineCache: Boolean,
         dataSaver: Boolean,
         size: DpSize,
-        refreshDesc: String
+        refreshDesc: String,
+        variant: WidgetVariant
     ) {
-        val isExpanded = size.width >= 200.dp
-        val isDetailed = size.height >= 140.dp
+        val isExpanded = variant == WidgetVariant.FORECAST ||
+            variant == WidgetVariant.DETAILED ||
+            (variant == WidgetVariant.RESPONSIVE && size.width >= 200.dp)
+        val isDetailed = variant == WidgetVariant.DETAILED ||
+            (variant == WidgetVariant.RESPONSIVE && size.height >= 140.dp)
 
         Column(
             modifier = GlanceModifier
