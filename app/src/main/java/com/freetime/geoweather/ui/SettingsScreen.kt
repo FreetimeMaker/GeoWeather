@@ -35,6 +35,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import android.content.Intent
+import androidx.core.content.ContextCompat
+import com.freetime.geoweather.WeatherForegroundService
 import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.BACKUP_FILE_NAME
 import com.freetime.geoweather.data.BACKUP_MIME_TYPE
@@ -196,7 +199,15 @@ fun SettingsScreen(
                 stringResource(Res.string.persistent_notif_title),
                 stringResource(Res.string.persistent_notif_subtitle),
                 persistentNotif
-            ) { appSettings.setPersistentNotif(it) }
+            ) { enabled ->
+                appSettings.setPersistentNotif(enabled)
+                val serviceIntent = Intent(context, WeatherForegroundService::class.java)
+                if (enabled) {
+                    ContextCompat.startForegroundService(context, serviceIntent)
+                } else {
+                    context.stopService(serviceIntent)
+                }
+            }
             ThresholdField(
                 label = stringResource(Res.string.temp_threshold_label, tempThreshold),
                 value = tempThreshold,
