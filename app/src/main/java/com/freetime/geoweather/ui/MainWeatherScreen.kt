@@ -680,8 +680,8 @@ fun MainWeatherScreen(
         var selectedTime by remember(location.id) {
             mutableStateOf(java.time.LocalTime.of(initialHour, initialMinute))
         }
-        val globalTempThreshold by viewModel.appSettings.tempThreshold.collectAsState()
-        val globalWindThreshold by viewModel.appSettings.windThreshold.collectAsState()
+        val globalTempThreshold by DependencyManager.getAppSettings().tempThreshold.collectAsState()
+        val globalWindThreshold by DependencyManager.getAppSettings().windThreshold.collectAsState()
         var locationTempThreshold by remember(location.id) { mutableIntStateOf(LocationAlertPreferences.tempThreshold(context, location.id, globalTempThreshold)) }
         var locationWindThreshold by remember(location.id) { mutableIntStateOf(LocationAlertPreferences.windThreshold(context, location.id, globalWindThreshold)) }
         var locationRainThreshold by remember(location.id) { mutableIntStateOf(LocationAlertPreferences.rainProbability(context, location.id)) }
