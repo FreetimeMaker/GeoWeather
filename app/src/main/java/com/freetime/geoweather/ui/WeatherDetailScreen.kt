@@ -500,26 +500,6 @@ fun WeatherDetailScreen(
                         }
                     }
 
-                    val accuracy = com.freetime.geoweather.WeatherIntelligence.forecastAccuracy(
-                        weatherHistory.drop(1),
-                        hourly.firstOrNull()?.temp?.toDouble()
-                    )
-                    accuracy?.let { score ->
-                        item {
-                            FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    FreetimeText(stringResource(Res.string.forecast_accuracy_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    FreetimeText(score.toString() + "/100", style = FreetimeDesign.typography.titleLarge)
-                                    FreetimeText(
-                                        stringResource(Res.string.forecast_accuracy_note),
-                                        style = FreetimeDesign.typography.labelSmall,
-                                        color = FreetimeDesign.palette.contentMuted
-                                    )
-                                }
-                            }
-                        }
-                    }
-
                     if (forecastChanges.isNotEmpty()) {
                         item {
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
