@@ -92,6 +92,7 @@ data class CurrentHourExtras(
 class WeatherRepository(
     private val locationDao: LocationDao,
     private val historyDao: WeatherHistoryDao,
+    private val forecastSnapshotDao: ForecastSnapshotDao,
     private val apiClient: WeatherApiClient
 ) {
     private val deletedLocations = linkedSetOf<Pair<Double, Double>>()
@@ -223,6 +224,7 @@ class WeatherRepository(
                 lastUpdated = Clock.System.now().toEpochMilliseconds()
             )
             locationDao.updateLocation(updated)
+            recordForecastAccuracy(updated)
 
             updated.currentTemp?.let { temp ->
                 historyDao.insertHistory(
@@ -530,5 +532,56 @@ class WeatherRepository(
 
     suspend fun getForecastConfidence(location: LocationEntity): ForecastConfidence? =
         getModelComparison(location).confidence
+
+    private suspend fun recordForecastAccuracy(location: LocationEntity) {
+        val nowMs = Clock.System.now().toEpochMilliseconds()
+        val hourly = getHourlyForecasts(location)
+        val horizons = listOf(1, 6, 24, 72, 168)
+        horizons.forEach { hours ->
+            hourly.getOrNull(hours)?.let { forecast ->
+                if (forecastSnapshotDao.findNearbySnapshot(location.id, forecast.time, nowMs) == null) {
+                    forecastSnapshotDao.insert(
+                        ForecastSnapshotEntity(
+                            locationId = location.id,
+                            targetTime = forecast.time,
+                            createdAt = nowMs,
+                            forecastTemperature = forecast.temp.toDouble()
+                        )
+                    )
+                }
+            }
+        }
+
+        val currentHour = hourly.firstOrNull()?.time
+        val actual = location.currentTemp
+        if (currentHour != null && actual != null) {
+            forecastSnapshotDao.getPending(location.id)
+                .filter { it.targetTime <= currentHour }
+                .forEach { forecastSnapshotDao.evaluate(it.id, actual, nowMs) }
+        }
+        forecastSnapshotDao.deleteOlderThan(nowMs - 90L * 24L * 60L * 60L * 1000L)
+    }
+
+    suspend fun getForecastAccuracy(locationId: Long): List<ForecastAccuracyBucket> {
+        val rows = forecastSnapshotDao.getEvaluated(locationId)
+        val targets = listOf(1, 6, 24, 72, 168)
+        return targets.mapNotNull { target ->
+            val selected = rows.filter { row ->
+                val created = java.time.Instant.ofEpochMilli(row.createdAt)
+                val targetInstant = runCatching {
+                    java.time.LocalDateTime.parse(row.targetTime)
+                        .atZone(java.time.ZoneId.systemDefault()).toInstant()
+                }.getOrNull() ?: return@filter false
+                val hours = java.time.Duration.between(created, targetInstant).toHours().toInt()
+                kotlin.math.abs(hours - target) <= if (target >= 72) 6 else 2
+            }
+            if (selected.isEmpty()) return@mapNotNull null
+            ForecastAccuracyBucket(
+                horizonHours = target,
+                samples = selected.size,
+                meanAbsoluteError = selected.map { kotlin.math.abs((it.actualTemperature ?: it.forecastTemperature) - it.forecastTemperature) }.average()
+            )
+        }
+    }
 
 }
