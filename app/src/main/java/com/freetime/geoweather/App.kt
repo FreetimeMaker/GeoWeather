@@ -54,6 +54,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         WeatherRepository(
             locationDao = database.locationDao(),
             historyDao = database.weatherHistoryDao(),
+            forecastSnapshotDao = database.forecastSnapshotDao(),
             apiClient = WeatherApiClient()
         )
     }
