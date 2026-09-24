@@ -154,7 +154,7 @@ open class WeatherWidget(
                     hourly.forEach { hour ->
                         Column(modifier = GlanceModifier.defaultWeight(), horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(hour.time.takeLast(5), style = TextStyle(ColorProvider(Color(0xFF486581)), 9.sp))
-                            Image(ImageProvider(widgetWeatherIcon(hour.weatherCode)), null, GlanceModifier.size(24.dp))
+                            Image(ImageProvider(widgetWeatherIcon(hour.code)), null, GlanceModifier.size(24.dp))
                             Text("${hour.temp}°", style = TextStyle(ColorProvider(Color(0xFF102A43)), 11.sp, FontWeight.Bold))
                         }
                     }
