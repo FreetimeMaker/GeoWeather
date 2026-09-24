@@ -316,7 +316,7 @@ fun WeatherDetailScreen(
                     item {
                         val minutesAgo = ((System.currentTimeMillis() - loc.lastUpdated).coerceAtLeast(0L) / 60_000L).toInt()
                         if (!isNetworkAvailable() && loc.weatherData != null) {
-                            FreetimeStatusBanner(message = stringResource(Res.string.offline_cached_weather) + " · " + minutesAgo + " min old · " + daily.size + " forecast days cached", modifier = Modifier.fillMaxWidth())
+                            FreetimeStatusBanner(message = stringResource(Res.string.offline_cached_summary, minutesAgo, daily.size), modifier = Modifier.fillMaxWidth())
                         } else if (loc.lastUpdated > 0L) {
                             FreetimeText(
                                 stringResource(Res.string.last_updated_minutes, minutesAgo),
@@ -446,7 +446,7 @@ fun WeatherDetailScreen(
                                     val avgPressure = recent.mapNotNull { it.pressure }.takeIf { it.isNotEmpty() }?.average()
                                     val maxWind = recent.mapNotNull { it.windSpeed }.maxOrNull()
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                        WeatherDetailItem("Δ temp", (if (tempChange >= 0) "+" else "") + String.format(java.util.Locale.US, "%.1f°", tempChange), modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.temperature_delta), (if (tempChange >= 0) "+" else "") + String.format(java.util.Locale.US, "%.1f°", tempChange), modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.humidity_label), avgHumidity?.let { String.format(java.util.Locale.US, "%.0f%%", it) } ?: "--", modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.pressure_label), avgPressure?.let { String.format(java.util.Locale.US, "%.0f hPa", it) } ?: "--", modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.wind_label), maxWind?.let { String.format(java.util.Locale.US, "%.0f km/h", it) } ?: "--", modifier = Modifier.weight(1f))
