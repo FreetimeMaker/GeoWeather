@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
           submodules: 'recursive'
 
-      - name: Detect version & create tag
+      - name: Detect version and tag status
         id: versioncheck
         run: |
           VERSION=$(grep 'versionName' app/build.gradle.kts | sed -E 's/.*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
@@ -34,7 +34,7 @@ jobs:
           if git rev-parse "v$VERSION" >/dev/null 2>&1; then
             echo "create_tag=false" >> "$GITHUB_OUTPUT"
           else
-            git tag "v$VERSION"
+            echo "create_tag=true" >> "$GITHUB_OUTPUT"
           fi
 
   build_sign_and_release_android_app:
@@ -122,9 +122,16 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload Tag
+      - name: Create and push tag
+        if: needs.prepare_android_app.outputs.create_tag == 'true'
+        env:
+          VERSION: ${{ needs.prepare_android_app.outputs.version }}
         run: |
-            git push origin "v$VERSION"
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "v$VERSION" -m "GeoWeather v$VERSION"
+          git push origin "v$VERSION"
 
       - name: Create release notes
         run: |
