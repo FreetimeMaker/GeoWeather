@@ -169,7 +169,7 @@ open class WeatherWidget(
                 Spacer(GlanceModifier.height(7.dp))
                 Row(modifier = GlanceModifier.fillMaxWidth()) {
                     daily.forEach { day ->
-                        Column(modifier = GlanceModifier.defaultWeight(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(modifier = GlanceModifier.width(92.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(day.date.takeLast(5), style = TextStyle(ColorProvider(Color(0xFF486581)), 9.sp))
                             Image(
                                 ImageProvider(WeatherIconMapper.getWeatherIcon(day.code, true)),
