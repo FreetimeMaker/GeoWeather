@@ -148,6 +148,8 @@ private fun NativeWeatherMap(
 ) {
     val context = LocalContext.current
     var frames by remember { mutableStateOf<RadarFrames?>(null) }
+    val radarOverlay = remember { mutableStateOf<TilesOverlay?>(null) }
+    val locationMarker = remember { mutableStateOf<Marker?>(null) }
 
     LaunchedEffect(Unit) {
         frames = withContext(Dispatchers.IO) {
@@ -172,31 +174,41 @@ private fun NativeWeatherMap(
                 setMultiTouchControls(true)
                 controller.setZoom(7.0)
                 controller.setCenter(GeoPoint(lat, lon))
-                overlays.add(Marker(this).apply {
+                val marker = Marker(this).apply {
                     position = GeoPoint(lat, lon)
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                })
+                }
+                overlays.add(marker)
+                locationMarker.value = marker
             }
         },
         update = { map ->
-            map.controller.setCenter(GeoPoint(lat, lon))
-            if (baseMapVisible) {
-                map.setTileSource(TileSourceFactory.MAPNIK)
-            } else {
-                map.setTileSource(null)
+            // Keep the MapView, viewport and base-map provider alive across
+            // radar animation frames. Only mutate state that actually changed.
+            map.overlayManager.tilesOverlay.isEnabled = baseMapVisible
+
+            val marker = locationMarker.value ?: Marker(map).also {
+                it.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                locationMarker.value = it
             }
-            map.overlays.removeAll { it is TilesOverlay || it is Marker }
+            marker.position = GeoPoint(lat, lon)
             if (locationVisible) {
-                map.overlays.add(Marker(map).apply {
-                    position = GeoPoint(lat, lon)
-                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                })
+                if (!map.overlays.contains(marker)) map.overlays.add(marker)
+            } else {
+                map.overlays.remove(marker)
             }
+
+            radarOverlay.value?.let { old ->
+                map.overlays.remove(old)
+                old.onDetach(map)
+                radarOverlay.value = null
+            }
+
             val data = frames
             if (radarVisible && data != null && data.paths.isNotEmpty()) {
                 val path = data.paths[frameIndex.coerceIn(0, data.paths.lastIndex)]
                 val source = object : OnlineTileSourceBase(
-                    "RainViewer",
+                    "RainViewer-" + path.hashCode(),
                     0, 7, 256, ".png",
                     arrayOf(data.host)
                 ) {
@@ -207,10 +219,12 @@ private fun NativeWeatherMap(
                         return baseUrl + path + "/256/" + z + "/" + x + "/" + y + "/2/1_1.png"
                     }
                 }
-                val provider = MapTileProviderBasic(context, source)
-                map.overlays.add(TilesOverlay(provider, context))
+                val overlay = TilesOverlay(MapTileProviderBasic(context, source), context)
+                radarOverlay.value = overlay
+                map.overlays.add(overlay)
             }
             map.invalidate()
         }
     )
 }
+
