@@ -704,7 +704,7 @@
     <string name="privacy_local_note">Locations, forecast snapshots, alert history and app preferences are stored locally by GeoWeather. Network requests send the coordinates required to retrieve weather or map data.</string>
     <string name="saved_places">Saved places</string>
     <string name="forecast_changes_title">Forecast changes</string>
-    <string name="forecast_changes_note">Compared with the previously saved forecast.</string>
+    <string name="forecast_changes_note">Timeline of meaningful changes recorded as newer forecasts replace earlier ones.</string>
     <string name="forecast_accuracy_title">Forecast accuracy</string>
     <string name="forecast_accuracy_note">Local estimate based on the difference between a recent forecast temperature and stored observations.</string>
     <string name="weather_calendar_title">Weather calendar</string>
@@ -788,4 +788,4 @@
     <string name="trip_temperature_range">%1$d–%2$d°C · selected trip</string>
     <string name="radar_loading">Loading radar…</string>
     <string name="radar_load_failed">Radar unavailable</string>
-</resources>
+    <string name="forecast_change_values">High %1$s°C · low %2$s°C · rain %3$s%% · wind %4$s km/h</string>\n</resources>
