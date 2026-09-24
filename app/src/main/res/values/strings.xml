@@ -756,6 +756,16 @@
     <string name="no_good_window">No good window</string>
     <string name="outdoor_planner_title">Outdoor planner</string>
     <string name="forecast_confidence_title">Forecast confidence</string>
+    <string name="forecast_confidence_high">High confidence</string>
+    <string name="forecast_confidence_medium">Medium confidence</string>
+    <string name="forecast_confidence_low">Low confidence</string>
+    <string name="tomorrow_comparison_title">Today vs tomorrow</string>
+    <string name="tomorrow_warmer">Tomorrow is %1$s warmer</string>
+    <string name="tomorrow_cooler">Tomorrow is %1$s cooler</string>
+    <string name="tomorrow_similar_temp">Tomorrow has a similar temperature</string>
+    <string name="tomorrow_rain_change">Rain chance: %1$d%% → %2$d%%</string>
+    <string name="tomorrow_wind_change">Max wind: %1$s → %2$s</string>
+    <string name="daylight_duration">Daylight: %1$d h %2$d min</string>
     <string name="forecast_confidence_spread">Model spread · temperature %1$s°C · rain %2$d%% · wind %3$s km/h</string>
     <string name="forecast_model_rain">Rain %1$d%%</string>
     <string name="forecast_model_wind">Wind %1$s km/h</string>
