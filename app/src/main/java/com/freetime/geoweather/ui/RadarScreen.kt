@@ -31,6 +31,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.MapTileProviderBasic
+import org.osmdroid.tileprovider.modules.SqlTileWriter
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -149,6 +150,7 @@ private fun NativeWeatherMap(
     val context = LocalContext.current
     var frames by remember { mutableStateOf<RadarFrames?>(null) }
     val radarOverlay = remember { mutableStateOf<TilesOverlay?>(null) }
+    val radarPath = remember { mutableStateOf<String?>(null) }
     val locationMarker = remember { mutableStateOf<Marker?>(null) }
 
     LaunchedEffect(Unit) {
@@ -198,15 +200,22 @@ private fun NativeWeatherMap(
                 map.overlays.remove(marker)
             }
 
-            radarOverlay.value?.let { old ->
-                map.overlays.remove(old)
-                old.onDetach(map)
+            val data = frames
+            val desiredPath = if (radarVisible && data != null && data.paths.isNotEmpty()) {
+                data.paths[frameIndex.coerceIn(0, data.paths.lastIndex)]
+            } else null
+
+            if (desiredPath != radarPath.value) {
+                radarOverlay.value?.let { old ->
+                    map.overlays.remove(old)
+                    old.onDetach(map)
+                }
                 radarOverlay.value = null
+                radarPath.value = desiredPath
             }
 
-            val data = frames
-            if (radarVisible && data != null && data.paths.isNotEmpty()) {
-                val path = data.paths[frameIndex.coerceIn(0, data.paths.lastIndex)]
+            if (desiredPath != null && radarOverlay.value == null && data != null) {
+                val path = desiredPath
                 val source = object : OnlineTileSourceBase(
                     "RainViewer-" + path.hashCode(),
                     0, 7, 256, ".png",
