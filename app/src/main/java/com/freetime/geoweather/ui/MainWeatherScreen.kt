@@ -535,7 +535,7 @@ fun MainWeatherScreen(
                     modifier = Modifier.align(Alignment.CenterStart)
                 )
             } else {
-                FreetimeBottomBar(
+                GeoWeatherBottomNavigation(
                     destinations = adaptiveDestinations,
                     selectedIndex = 0,
                     onDestinationSelected = onNavigationSelected,
@@ -707,3 +707,44 @@ fun MainWeatherScreen(
     }
 }
 
+
+
+@Composable
+private fun GeoWeatherBottomNavigation(
+    destinations: List<FreetimeNavigationDestination>,
+    selectedIndex: Int,
+    onDestinationSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .freetimeGlass(RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp))
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        destinations.forEachIndexed { index, destination ->
+            val selected = index == selectedIndex
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onDestinationSelected(index) }
+                    .padding(vertical = 7.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                FreetimeIcon(
+                    icon = destination.icon,
+                    contentDescription = destination.label,
+                    tint = if (selected) FreetimeDesign.palette.primary else FreetimeDesign.palette.contentMuted
+                )
+                FreetimeText(
+                    text = destination.label,
+                    style = FreetimeDesign.typography.labelMedium,
+                    color = if (selected) FreetimeDesign.palette.primary else FreetimeDesign.palette.contentMuted
+                )
+            }
+        }
+    }
+}
