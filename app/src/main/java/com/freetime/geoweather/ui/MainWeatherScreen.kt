@@ -66,6 +66,7 @@ import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.getDetectedLocationName
 import com.freetime.geoweather.WeatherIconMapper
+import com.freetime.geoweather.LocationAlertPreferences
 import kotlinx.coroutines.delay
 import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.launch
@@ -678,16 +679,33 @@ fun MainWeatherScreen(
         var selectedTime by remember(location.id) {
             mutableStateOf(java.time.LocalTime.of(initialHour, initialMinute))
         }
+        val globalTempThreshold by viewModel.appSettings.tempThreshold.collectAsState()
+        val globalWindThreshold by viewModel.appSettings.windThreshold.collectAsState()
+        var locationTempThreshold by remember(location.id) { mutableIntStateOf(LocationAlertPreferences.tempThreshold(context, location.id, globalTempThreshold)) }
+        var locationWindThreshold by remember(location.id) { mutableIntStateOf(LocationAlertPreferences.windThreshold(context, location.id, globalWindThreshold)) }
+        var locationRainThreshold by remember(location.id) { mutableIntStateOf(LocationAlertPreferences.rainProbability(context, location.id)) }
+        var locationGustThreshold by remember(location.id) { mutableIntStateOf(LocationAlertPreferences.windGustThreshold(context, location.id)) }
+        var locationUvThreshold by remember(location.id) { mutableIntStateOf(LocationAlertPreferences.uvThreshold(context, location.id)) }
+        var locationFrostThreshold by remember(location.id) { mutableIntStateOf(LocationAlertPreferences.frostThreshold(context, location.id)) }
 
         FreetimeDialog(
             onDismissRequest = { notificationLocation = null },
             title = stringResource(Res.string.notification_time_title),
             content = {
-                FreetimeTimePicker(
-                    value = selectedTime,
-                    onValueChange = { selectedTime = it },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    FreetimeTimePicker(
+                        value = selectedTime,
+                        onValueChange = { selectedTime = it },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    FreetimeText(stringResource(Res.string.location_alert_thresholds), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    AlertThresholdRow(stringResource(Res.string.location_temp_threshold, locationTempThreshold), { locationTempThreshold = (locationTempThreshold - 1).coerceAtLeast(1) }, { locationTempThreshold = (locationTempThreshold + 1).coerceAtMost(20) })
+                    AlertThresholdRow(stringResource(Res.string.location_wind_threshold, locationWindThreshold), { locationWindThreshold = (locationWindThreshold - 1).coerceAtLeast(1) }, { locationWindThreshold = (locationWindThreshold + 1).coerceAtMost(100) })
+                    AlertThresholdRow(stringResource(Res.string.location_rain_threshold, locationRainThreshold), { locationRainThreshold = (locationRainThreshold - 5).coerceAtLeast(10) }, { locationRainThreshold = (locationRainThreshold + 5).coerceAtMost(100) })
+                    AlertThresholdRow(stringResource(Res.string.location_gust_threshold, locationGustThreshold), { locationGustThreshold = (locationGustThreshold - 5).coerceAtLeast(10) }, { locationGustThreshold = (locationGustThreshold + 5).coerceAtMost(150) })
+                    AlertThresholdRow(stringResource(Res.string.location_uv_threshold, locationUvThreshold), { locationUvThreshold = (locationUvThreshold - 1).coerceAtLeast(1) }, { locationUvThreshold = (locationUvThreshold + 1).coerceAtMost(15) })
+                    AlertThresholdRow(stringResource(Res.string.location_frost_threshold, locationFrostThreshold), { locationFrostThreshold = (locationFrostThreshold - 1).coerceAtLeast(-20) }, { locationFrostThreshold = (locationFrostThreshold + 1).coerceAtMost(10) })
+                }
             },
             actions = {
                 if (location.notificationsEnabled) {
@@ -703,6 +721,12 @@ fun MainWeatherScreen(
                 Spacer(Modifier.width(8.dp))
                 FreetimeGlassAction(onClick = {
                     val time = "%02d:%02d".format(selectedTime.hour, selectedTime.minute)
+                    LocationAlertPreferences.setTempThreshold(context, location.id, locationTempThreshold)
+                    LocationAlertPreferences.setWindThreshold(context, location.id, locationWindThreshold)
+                    LocationAlertPreferences.setRainProbability(context, location.id, locationRainThreshold)
+                    LocationAlertPreferences.setWindGustThreshold(context, location.id, locationGustThreshold)
+                    LocationAlertPreferences.setUvThreshold(context, location.id, locationUvThreshold)
+                    LocationAlertPreferences.setFrostThreshold(context, location.id, locationFrostThreshold)
                     viewModel.setLocationNotifications(location, true, time)
                     notificationLocation = null
                 }) { FreetimeText(stringResource(Res.string.confirm)) }
@@ -712,6 +736,20 @@ fun MainWeatherScreen(
 }
 
 
+
+@Composable
+private fun AlertThresholdRow(label: String, onDecrease: () -> Unit, onIncrease: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        FreetimeText(label, modifier = Modifier.weight(1f), style = FreetimeDesign.typography.bodyMedium)
+        FreetimeGlassAction(onClick = onDecrease) { FreetimeText("−") }
+        Spacer(Modifier.width(6.dp))
+        FreetimeGlassAction(onClick = onIncrease) { FreetimeText("+") }
+    }
+}
 
 @Composable
 private fun GeoWeatherBottomNavigation(
