@@ -62,7 +62,7 @@ open class WeatherWidget(
         val repository = DependencyManager.getRepository()
         val settings = DependencyManager.getAppSettings()
         val appWidgetId = (id as? androidx.glance.appwidget.AppWidgetId)?.appWidgetId
-        val configuredLocationId = appWidgetId?.let { WidgetPreferences.getLocationId(context, it) }
+        val configuredLocationId = appWidgetId?.let { WidgetLocationPreferences.getLocationId(context, it) }
         val location = withContext(Dispatchers.IO) {
             configuredLocationId?.let { repository.getLocationById(it) } ?: repository.getSelectedLocation()
         }
