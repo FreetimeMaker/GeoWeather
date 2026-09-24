@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.item
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -43,11 +42,6 @@ import com.freetime.geoweather.data.loadTextFile
 import com.freetime.geoweather.data.saveTextFile
 import com.freetime.geoweather.openUrl
 import com.freetime.geoweather.R as Res
-import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassAction
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeTextField
-import com.freetime.design.freetimeGlassCapsule
 import kotlinx.coroutines.launch
 
 @Composable
