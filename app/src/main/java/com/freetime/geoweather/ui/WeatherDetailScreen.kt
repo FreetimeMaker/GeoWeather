@@ -163,11 +163,31 @@ fun WeatherDetailScreen(
                             onClick = {
                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             val description = loc.currentWeatherCode?.let { context.getString(WeatherCodes.getStringResource(it)) } ?: ""
+                            val shareDaily = viewModel.getDailyForecasts(loc)
+                            val shareDetails = buildList {
+                                shareDaily.getOrNull(0)?.let { day ->
+                                    add(context.getString(
+                                        Res.string.share_today_forecast,
+                                        formatTemp(day.minTemp.toDouble(), tempUnit),
+                                        formatTemp(day.maxTemp.toDouble(), tempUnit),
+                                        day.precipProbMax
+                                    ))
+                                }
+                                shareDaily.getOrNull(1)?.let { day ->
+                                    add(context.getString(
+                                        Res.string.share_tomorrow_forecast,
+                                        formatTemp(day.minTemp.toDouble(), tempUnit),
+                                        formatTemp(day.maxTemp.toDouble(), tempUnit),
+                                        day.precipProbMax
+                                    ))
+                                }
+                            }
                             val bitmap = createWeatherShareCard(
                                 title = loc.name,
                                 temperature = formatTemp(loc.currentTemp!!, tempUnit),
                                 description = description,
-                                subtitle = loc.currentHumidity?.let { "Humidity " + it + "%" } ?: ""
+                                subtitle = loc.currentHumidity?.let { context.getString(Res.string.share_humidity, it) } ?: "",
+                                details = shareDetails
                             )
                             shareWeatherCard(context, bitmap, loc.name)
                         }
