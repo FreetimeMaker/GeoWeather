@@ -511,14 +511,29 @@ fun WeatherDetailScreen(
                             FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                     FreetimeText(stringResource(Res.string.forecast_changes_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    forecastChanges.take(6).forEach { change ->
+                                    forecastChanges.take(12).forEach { change ->
                                         val max = if (change.maxTempDelta >= 0) "+" + change.maxTempDelta else change.maxTempDelta.toString()
+                                        val min = if (change.minTempDelta >= 0) "+" + change.minTempDelta else change.minTempDelta.toString()
                                         val rain = if (change.rainProbabilityDelta >= 0) "+" + change.rainProbabilityDelta else change.rainProbabilityDelta.toString()
                                         val wind = String.format(java.util.Locale.US, "%+.0f", change.windDelta)
-                                        FreetimeText(
-                                            change.date + " · max " + max + "°C · rain " + rain + "% · wind " + wind + " km/h",
-                                            style = FreetimeDesign.typography.bodyMedium
-                                        )
+                                        val recorded = if (change.recordedAt > 0L) {
+                                            java.time.Instant.ofEpochMilli(change.recordedAt)
+                                                .atZone(java.time.ZoneId.systemDefault())
+                                                .format(java.time.format.DateTimeFormatter.ofPattern("dd.MM · HH:mm"))
+                                        } else ""
+                                        FreetimeCard(modifier = Modifier.fillMaxWidth()) {
+                                            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                                FreetimeText(
+                                                    change.date + if (recorded.isNotEmpty()) " · " + recorded else "",
+                                                    style = FreetimeDesign.typography.labelLarge,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                                FreetimeText(
+                                                    stringResource(Res.string.forecast_change_values, max, min, rain, wind),
+                                                    style = FreetimeDesign.typography.bodyMedium
+                                                )
+                                            }
+                                        }
                                     }
                                     FreetimeText(stringResource(Res.string.forecast_changes_note), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
                                 }
@@ -526,6 +541,7 @@ fun WeatherDetailScreen(
                         }
                     }
 
+                    if (!isTransient && loc.id != 0L) {
                     item {
                         FreetimeGlassPanel(modifier = Modifier.fillMaxWidth()) {
                             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
