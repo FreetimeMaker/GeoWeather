@@ -637,6 +637,9 @@
     <string name="feels_like_neutral">Current humidity and wind have little effect on the perceived temperature.</string>
 
     <string name="pressure_steady">Steady</string>
+    <string name="offline_cached_summary">Cached weather · %1$d min old · %2$d forecast days cached</string>
+    <string name="distribution_notice_show">Show distribution notice</string>
+    <string name="temperature_delta">Δ temp</string>
     <string name="alert_strong_wind">Strong wind / gusts</string>
     <string name="alert_extreme_uv">Very high UV</string>
     <string name="alert_low_visibility">Low visibility</string>
