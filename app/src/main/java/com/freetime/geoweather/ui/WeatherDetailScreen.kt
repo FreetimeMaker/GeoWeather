@@ -139,9 +139,9 @@ fun WeatherDetailScreen(
             onConfirm = { showDetailSheet = false },
             text = buildString {
                 val current = sheetHourly.firstOrNull()
-                append(stringResource(Res.string.visibility_label) + ": " + (sheetExtras?.visibilityKm?.let { String.format(java.util.Locale.US, "%.1f km", it) } ?: "--"))
+                append(stringResource(Res.string.visibility_label) + ": " + (sheetExtras?.visibilityKm?.let { String.format(java.util.Locale.getDefault(), "%.1f km", it) } ?: "--"))
                 append("\n" + stringResource(Res.string.gusts_label) + ": " + (current?.windGusts?.let { it.toInt().toString() + " km/h" } ?: "--"))
-                append("\n" + stringResource(Res.string.uv_max_label) + ": " + (sheetExtras?.uvIndex?.let { String.format(java.util.Locale.US, "%.1f", it) } ?: "--"))
+                append("\n" + stringResource(Res.string.uv_max_label) + ": " + (sheetExtras?.uvIndex?.let { String.format(java.util.Locale.getDefault(), "%.1f", it) } ?: "--"))
                 append("\n" + stringResource(Res.string.cloud_base_label) + ": " + (sheetExtras?.cloudBaseM?.let { it.roundToInt().toString() + " m" } ?: "--"))
                 append("\n" + stringResource(Res.string.humidity_label) + ": " + (loc.currentHumidity?.let { it.toString() + "%" } ?: "--"))
             }
@@ -393,7 +393,7 @@ fun WeatherDetailScreen(
                                                     Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                                                         FreetimeText(hour.time.takeLast(5), style = FreetimeDesign.typography.labelLarge)
                                                         FreetimeText(hour.precipProbability.toString() + "%", style = FreetimeDesign.typography.titleMedium)
-                                                        FreetimeText(String.format(java.util.Locale.US, "%.1f mm", hour.precipitation ?: 0.0), style = FreetimeDesign.typography.labelSmall)
+                                                        FreetimeText(String.format(java.util.Locale.getDefault(), "%.1f mm", hour.precipitation ?: 0.0), style = FreetimeDesign.typography.labelSmall)
                                                     }
                                                 }
                                             }
@@ -446,10 +446,10 @@ fun WeatherDetailScreen(
                                     val avgPressure = recent.mapNotNull { it.pressure }.takeIf { it.isNotEmpty() }?.average()
                                     val maxWind = recent.mapNotNull { it.windSpeed }.maxOrNull()
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                        WeatherDetailItem(stringResource(Res.string.temperature_delta), (if (tempChange >= 0) "+" else "") + String.format(java.util.Locale.US, "%.1f°", tempChange), modifier = Modifier.weight(1f))
-                                        WeatherDetailItem(stringResource(Res.string.humidity_label), avgHumidity?.let { String.format(java.util.Locale.US, "%.0f%%", it) } ?: "--", modifier = Modifier.weight(1f))
-                                        WeatherDetailItem(stringResource(Res.string.pressure_label), avgPressure?.let { String.format(java.util.Locale.US, "%.0f hPa", it) } ?: "--", modifier = Modifier.weight(1f))
-                                        WeatherDetailItem(stringResource(Res.string.wind_label), maxWind?.let { String.format(java.util.Locale.US, "%.0f km/h", it) } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.temperature_delta), (if (tempChange >= 0) "+" else "") + String.format(java.util.Locale.getDefault(), "%.1f°", tempChange), modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.humidity_label), avgHumidity?.let { String.format(java.util.Locale.getDefault(), "%.0f%%", it) } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.pressure_label), avgPressure?.let { String.format(java.util.Locale.getDefault(), "%.0f hPa", it) } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.wind_label), maxWind?.let { String.format(java.util.Locale.getDefault(), "%.0f km/h", it) } ?: "--", modifier = Modifier.weight(1f))
                                     }
                                     Row(
                                         modifier = Modifier.fillMaxWidth().height(72.dp),
@@ -490,7 +490,7 @@ fun WeatherDetailScreen(
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                     WeatherDetailItem(
                                         stringResource(Res.string.visibility_label),
-                                        extras?.visibilityKm?.let { String.format(java.util.Locale.US, "%.1f km", it) } ?: "--",
+                                        extras?.visibilityKm?.let { String.format(java.util.Locale.getDefault(), "%.1f km", it) } ?: "--",
                                         modifier = Modifier.weight(1f)
                                     )
                                     WeatherDetailItem(
@@ -515,7 +515,7 @@ fun WeatherDetailScreen(
                                         val max = if (change.maxTempDelta >= 0) "+" + change.maxTempDelta else change.maxTempDelta.toString()
                                         val min = if (change.minTempDelta >= 0) "+" + change.minTempDelta else change.minTempDelta.toString()
                                         val rain = if (change.rainProbabilityDelta >= 0) "+" + change.rainProbabilityDelta else change.rainProbabilityDelta.toString()
-                                        val wind = String.format(java.util.Locale.US, "%+.0f", change.windDelta)
+                                        val wind = String.format(java.util.Locale.getDefault(), "%+.0f", change.windDelta)
                                         val recorded = if (change.recordedAt > 0L) {
                                             java.time.Instant.ofEpochMilli(change.recordedAt)
                                                 .atZone(java.time.ZoneId.systemDefault())
@@ -562,7 +562,7 @@ fun WeatherDetailScreen(
                                         items(reliableAccuracy, key = { it.horizonHours }) { bucket ->
                                             val error = if (tempUnit == "fahrenheit") bucket.meanAbsoluteError * 9.0 / 5.0 else bucket.meanAbsoluteError
                                             val formattedError = String.format(
-                                                java.util.Locale.US,
+                                                java.util.Locale.getDefault(),
                                                 "%.1f°%s",
                                                 error,
                                                 if (tempUnit == "fahrenheit") "F" else "C"
@@ -614,7 +614,7 @@ fun WeatherDetailScreen(
                                             FreetimeCard(modifier = Modifier.width(150.dp)) {
                                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                                     FreetimeText(model.model, style = FreetimeDesign.typography.labelLarge, fontWeight = FontWeight.Bold)
-                                                    FreetimeText(String.format(java.util.Locale.US, "%.1f°C", model.temperature), style = FreetimeDesign.typography.titleMedium)
+                                                    FreetimeText(String.format(java.util.Locale.getDefault(), "%.1f°C", model.temperature), style = FreetimeDesign.typography.titleMedium)
                                                     FreetimeText(stringResource(Res.string.forecast_model_rain, model.precipitationProbability), style = FreetimeDesign.typography.labelSmall)
                                                     FreetimeText(stringResource(Res.string.forecast_model_wind_value, formatWind(model.windSpeed, null, windUnit)), style = FreetimeDesign.typography.labelSmall)
                                                 }
@@ -640,7 +640,7 @@ fun WeatherDetailScreen(
                                                         FreetimeText(day.maxTemp.toString() + "°", style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
                                                         FreetimeText(day.minTemp.toString() + "°", style = FreetimeDesign.typography.labelSmall)
                                                         FreetimeText("☔ " + day.precipProbMax + "%", style = FreetimeDesign.typography.labelSmall)
-                                                        if ((day.snowfallSum ?: 0.0) > 0.0) FreetimeText("❄ " + String.format(java.util.Locale.US, "%.1f", day.snowfallSum) + " cm", style = FreetimeDesign.typography.labelSmall)
+                                                        if ((day.snowfallSum ?: 0.0) > 0.0) FreetimeText("❄ " + String.format(java.util.Locale.getDefault(), "%.1f", day.snowfallSum) + " cm", style = FreetimeDesign.typography.labelSmall)
                                                     }
                                                 }
                                             }
@@ -670,7 +670,7 @@ fun WeatherDetailScreen(
                                                     FreetimeText(day.score.toString() + "/100", style = FreetimeDesign.typography.titleLarge)
                                                     day.models.forEach { model ->
                                                         FreetimeText(
-                                                            model.model + " " + String.format(java.util.Locale.US, "%.1f°C", model.temperature) +
+                                                            model.model + " " + String.format(java.util.Locale.getDefault(), "%.1f°C", model.temperature) +
                                                                 " · " + model.precipitationProbability + "%",
                                                             style = FreetimeDesign.typography.labelSmall
                                                         )
@@ -782,7 +782,7 @@ fun WeatherDetailScreen(
                                             nowcast.startsAt,
                                             nowcast.endsAt,
                                             nowcast.peakProbability,
-                                            String.format(java.util.Locale.US, "%.1f", nowcast.peakAmountMm)
+                                            String.format(java.util.Locale.getDefault(), "%.1f", nowcast.peakAmountMm)
                                         )
                                     )
                                 } else {
@@ -810,7 +810,7 @@ fun WeatherDetailScreen(
                                                         stringResource(
                                                             Res.string.precipitation_short,
                                                             hour.precipProbability,
-                                                            String.format(java.util.Locale.US, "%.1f", hour.precipitation ?: 0.0)
+                                                            String.format(java.util.Locale.getDefault(), "%.1f", hour.precipitation ?: 0.0)
                                                         ),
                                                         style = FreetimeDesign.typography.labelSmall
                                                     )
@@ -840,7 +840,7 @@ fun WeatherDetailScreen(
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                         WeatherDetailItem(stringResource(Res.string.sunrise_label), sunrise.toString(), modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.sunset_label), sunset.toString(), modifier = Modifier.weight(1f))
-                                        WeatherDetailItem(stringResource(Res.string.uv_max_label), day.uvMax?.let { String.format(java.util.Locale.US, "%.1f", it) } ?: "--", modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.uv_max_label), day.uvMax?.let { String.format(java.util.Locale.getDefault(), "%.1f", it) } ?: "--", modifier = Modifier.weight(1f))
                                     }
                                     FreetimeText(stringResource(Res.string.blue_hour_morning) + ": " + morningBlueStart + " – " + sunrise, style = FreetimeDesign.typography.bodySmall)
                                     FreetimeText(stringResource(Res.string.golden_hour_morning) + ": " + sunrise + " – " + morningGoldenEnd, style = FreetimeDesign.typography.bodySmall)
@@ -857,9 +857,9 @@ fun WeatherDetailScreen(
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                                 FreetimeText(moon.icon, style = FreetimeDesign.typography.displayMedium)
                                 Column(horizontalAlignment = Alignment.End) {
-                                    FreetimeText(moon.name, style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    FreetimeText("${moon.illumination}% illuminated", style = FreetimeDesign.typography.bodyMedium)
-                                    FreetimeText("Next full moon: ${moon.daysToFull} d · new moon: ${moon.daysToNew} d", style = FreetimeDesign.typography.labelSmall)
+                                    FreetimeText(localizedMoonPhase(moon.nameKey), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    FreetimeText(stringResource(Res.string.moon_illumination, moon.illumination), style = FreetimeDesign.typography.bodyMedium)
+                                    FreetimeText(stringResource(Res.string.moon_next_phases, moon.daysToFull, moon.daysToNew), style = FreetimeDesign.typography.labelSmall)
                                 }
                             }
                         }
@@ -1499,14 +1499,14 @@ fun moonPhaseFor(date: java.time.LocalDate): Pair<String, String> {
     val days = java.time.temporal.ChronoUnit.DAYS.between(knownNewMoon, date).toDouble()
     val age = ((days % 29.53058867) + 29.53058867) % 29.53058867
     return when {
-        age < 1.85 -> "🌑" to "New Moon"
-        age < 5.54 -> "🌒" to "Waxing Crescent"
-        age < 9.23 -> "🌓" to "First Quarter"
-        age < 12.92 -> "🌔" to "Waxing Gibbous"
-        age < 16.61 -> "🌕" to "Full Moon"
-        age < 20.30 -> "🌖" to "Waning Gibbous"
-        age < 23.99 -> "🌗" to "Last Quarter"
-        age < 27.68 -> "🌘" to "Waning Crescent"
+        age < 1.85 -> "🌑" to "new"
+        age < 5.54 -> "🌒" to "waxing_crescent"
+        age < 9.23 -> "🌓" to "first_quarter"
+        age < 12.92 -> "🌔" to "waxing_gibbous"
+        age < 16.61 -> "🌕" to "full"
+        age < 20.30 -> "🌖" to "waning_gibbous"
+        age < 23.99 -> "🌗" to "last_quarter"
+        age < 27.68 -> "🌘" to "waning_crescent"
         else -> "🌑" to "New Moon"
     }
 }
@@ -1627,7 +1627,7 @@ fun ForecastDetailScreen(
                                     }
                                 }
                             }
-                            DetailRow("High" to formatTemp(day.maxTemp.toDouble(), tempUnit), "Low" to formatTemp(day.minTemp.toDouble(), tempUnit), stringResource(Res.string.rain_chance_label) to "${day.precipProbMax}%")
+                            DetailRow(stringResource(Res.string.high_label) to formatTemp(day.maxTemp.toDouble(), tempUnit), stringResource(Res.string.low_label) to formatTemp(day.minTemp.toDouble(), tempUnit), stringResource(Res.string.rain_chance_label) to "${day.precipProbMax}%")
                             DetailRow(stringResource(Res.string.feels_high_label) to (day.feelsLikeMax?.let { formatTemp(it, tempUnit) } ?: "--"), stringResource(Res.string.feels_low_label) to (day.feelsLikeMin?.let { formatTemp(it, tempUnit) } ?: "--"), stringResource(Res.string.uv_max_label) to (day.uvMax?.let { "${(it * 10).roundToInt() / 10.0}" } ?: "--"))
                             DetailRow(stringResource(Res.string.sunrise_label) to day.sunrise.takeLast(5), stringResource(Res.string.sunset_label) to day.sunset.takeLast(5), stringResource(Res.string.sunshine_label) to (day.sunshineDuration?.let { "${(it / 3600.0 * 10).roundToInt() / 10.0} h" } ?: "--"))
                             DetailRow(stringResource(Res.string.precipitation_label) to "${day.precipSum} mm", stringResource(Res.string.rain_label) to (day.rainSum?.let { "$it mm" } ?: "--"), stringResource(Res.string.snow_label) to (day.snowfallSum?.let { "$it cm" } ?: "--"))
@@ -1651,7 +1651,7 @@ private fun DetailRow(vararg values: Pair<String, String>) {
 }
 
 
-private data class MoonPhaseDetails(val icon: String, val name: String, val illumination: Int, val daysToFull: Int, val daysToNew: Int)
+private data class MoonPhaseDetails(val icon: String, val nameKey: String, val illumination: Int, val daysToFull: Int, val daysToNew: Int)
 private fun moonPhaseDetails(date: java.time.LocalDate): MoonPhaseDetails {
     val known = java.time.LocalDate.of(2000, 1, 6)
     val cycle = 29.53058867
@@ -1705,13 +1705,27 @@ private fun localizedSmartInsight(insight: com.freetime.geoweather.SmartHeroInsi
             stringResource(
                 Res.string.smart_rain_detail,
                 insight.probability ?: 0,
-                String.format(java.util.Locale.US, "%.1f", insight.value ?: 0.0)
+                String.format(java.util.Locale.getDefault(), "%.1f", insight.value ?: 0.0)
             )
         "wind" -> stringResource(Res.string.smart_strong_gusts, insight.time?.takeLast(5).orEmpty()) to
             stringResource(Res.string.smart_wind_detail_value, formatWind(insight.value, null, windUnit))
         "uv" -> stringResource(Res.string.smart_high_uv_today) to
-            stringResource(Res.string.smart_uv_max, String.format(java.util.Locale.US, "%.1f", insight.value ?: 0.0))
+            stringResource(Res.string.smart_uv_max, String.format(java.util.Locale.getDefault(), "%.1f", insight.value ?: 0.0))
         "next_hour" -> stringResource(Res.string.smart_next_hour, insight.temperature ?: 0) to
             stringResource(Res.string.smart_precipitation_detail, insight.probability ?: 0)
         else -> stringResource(Res.string.smart_weather_overview) to null
     }
+
+
+@Composable
+private fun localizedMoonPhase(key: String): String = when (key) {
+    "new" -> stringResource(Res.string.moon_new)
+    "waxing_crescent" -> stringResource(Res.string.moon_waxing_crescent)
+    "first_quarter" -> stringResource(Res.string.moon_first_quarter)
+    "waxing_gibbous" -> stringResource(Res.string.moon_waxing_gibbous)
+    "full" -> stringResource(Res.string.moon_full)
+    "waning_gibbous" -> stringResource(Res.string.moon_waning_gibbous)
+    "last_quarter" -> stringResource(Res.string.moon_last_quarter)
+    "waning_crescent" -> stringResource(Res.string.moon_waning_crescent)
+    else -> key
+}
