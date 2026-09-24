@@ -41,7 +41,7 @@ import com.freetime.geoweather.R as SharedRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class WeatherWidget : GlanceAppWidget() {
+open class WeatherWidget(private val variant: WidgetVariant = WidgetVariant.RESPONSIVE) : GlanceAppWidget() {
 
     companion object {
         private val SMALL_RECT = DpSize(120.dp, 60.dp)
@@ -240,6 +240,7 @@ class RefreshActionCallback : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
-        WeatherWidget().update(context, glanceId)
+        WeatherWidget().update(context, glanceId)\n        CompactWeatherWidget().update(context, glanceId)\n        ForecastWeatherWidget().update(context, glanceId)\n        DetailedWeatherWidget().update(context, glanceId)
     }
 }
+\n\nenum class WidgetVariant { RESPONSIVE, COMPACT, FORECAST, DETAILED }\n\nclass CompactWeatherWidget : WeatherWidget(WidgetVariant.COMPACT)\nclass ForecastWeatherWidget : WeatherWidget(WidgetVariant.FORECAST)\nclass DetailedWeatherWidget : WeatherWidget(WidgetVariant.DETAILED)\n
