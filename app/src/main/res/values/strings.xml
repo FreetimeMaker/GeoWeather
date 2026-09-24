@@ -757,6 +757,15 @@
     <string name="intelligence_rain_possible">rain possible around %1$s (%2$d%%)</string>
     <string name="intelligence_strong_wind">strong wind possible</string>
     <string name="intelligence_high_uv">high UV</string>
+    <string name="smart_rain_likely">Rain likely around %1$s</string>
+    <string name="smart_rain_detail">%1$d%% · %2$s mm</string>
+    <string name="smart_strong_gusts">Strong gusts around %1$s</string>
+    <string name="smart_wind_detail">%1$d km/h</string>
+    <string name="smart_high_uv_today">High UV today</string>
+    <string name="smart_uv_max">UV max %1$s</string>
+    <string name="smart_next_hour">Next hour %1$d°</string>
+    <string name="smart_precipitation_detail">%1$d%% precipitation</string>
+    <string name="smart_weather_overview">Weather overview</string>
     <string name="precipitation_timeline_title">Precipitation timeline</string>
     <string name="no_precipitation_12h">No precipitation indicated in the next 12 hours.</string>
     <string name="model_agreement_title">16-day model agreement</string>
