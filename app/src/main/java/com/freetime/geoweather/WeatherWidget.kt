@@ -123,7 +123,7 @@ open class WeatherWidget(
                     modifier = GlanceModifier.size(if (detailed) 48.dp else 36.dp)
                 )
                 Spacer(GlanceModifier.width(8.dp))
-                Column(modifier = GlanceModifier.defaultWeight()) {
+                Column(modifier = GlanceModifier.width(if (detailed) 220.dp else 150.dp)) {
                     Text(name, maxLines = 1, style = TextStyle(ColorProvider(Color(0xFF102A43)), 14.sp, FontWeight.Bold))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (temp.isNotEmpty()) {
@@ -152,7 +152,7 @@ open class WeatherWidget(
                 Spacer(GlanceModifier.height(8.dp))
                 Row(modifier = GlanceModifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     hourly.forEach { hour ->
-                        Column(modifier = GlanceModifier.defaultWeight(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(modifier = GlanceModifier.width(56.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(hour.time.takeLast(5), style = TextStyle(ColorProvider(Color(0xFF486581)), 9.sp))
                             Image(
                                 ImageProvider(WeatherIconMapper.getWeatherIcon(hour.code, widgetForecastIsDay(hour.time, daily))),
