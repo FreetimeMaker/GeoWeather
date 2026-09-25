@@ -90,7 +90,9 @@
 
         <receiver
             android:name=".WeatherWidgetReceiver"
-            android:exported="true">
+            android:enabled="true"
+            android:exported="true"
+            android:label="@string/widget_responsive_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -98,15 +100,15 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/weather_widget_info" />
         </receiver>
-        <receiver android:name=".CompactWeatherWidgetReceiver" android:label="@string/widget_compact_name" android:exported="true">
+        <receiver android:name=".CompactWeatherWidgetReceiver" android:enabled="true" android:label="@string/widget_compact_name" android:exported="true">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/weather_widget_compact_info" />
         </receiver>
-        <receiver android:name=".ForecastWeatherWidgetReceiver" android:label="@string/widget_forecast_name" android:exported="true">
+        <receiver android:name=".ForecastWeatherWidgetReceiver" android:enabled="true" android:label="@string/widget_forecast_name" android:exported="true">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/weather_widget_forecast_info" />
         </receiver>
-        <receiver android:name=".DetailedWeatherWidgetReceiver" android:label="@string/widget_detailed_name" android:exported="true">
+        <receiver android:name=".DetailedWeatherWidgetReceiver" android:enabled="true" android:label="@string/widget_detailed_name" android:exported="true">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/weather_widget_detailed_info" />
         </receiver>
