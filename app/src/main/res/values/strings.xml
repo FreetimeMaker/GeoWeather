@@ -899,6 +899,8 @@
     <string name="forecast_accuracy_collecting">Collecting enough forecast observations to estimate local accuracy.</string>
     <string name="forecast_accuracy_horizon">%1$d-hour forecast</string>
     <string name="forecast_accuracy_error">Mean error %1$s · %2$d samples</string>
+    <string name="widget_responsive_name">GeoWeather Responsive</string>
+    <string name="widget_responsive_desc">Responsive weather widget that adapts to the available size.</string>
     <string name="widget_compact_name">GeoWeather Compact</string>
     <string name="widget_compact_desc">Current temperature and weather for the selected location.</string>
     <string name="widget_forecast_name">GeoWeather Forecast</string>
