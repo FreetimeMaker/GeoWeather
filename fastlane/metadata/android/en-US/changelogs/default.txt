@@ -1,6 +1,7 @@
-• Expanded widgets with compact, forecast and detailed variants, per-widget location selection and dynamic weather-aware styling
-• Improved forecast insights with Today vs tomorrow comparisons, confidence levels, daylight duration and better day/night icons
-• Upgraded weather sharing and improved feels-like explanations
-• Added per-location smart alert thresholds for temperature, wind, rain, gusts, UV and frost
-• Improved persistent notifications and smart weather alerts
-• Improved Liquid Glass performance and fixed additional widget, forecast and UI issues
+• Expanded home-screen widgets with four variants, responsive layouts, per-widget locations and improved configuration
+• Reduced duplicate Open-Meteo requests with coordinated refreshes, freshness checks and more efficient background updates
+• Improved offline and Data Saver widget behavior with cached forecasts and network-aware refreshes
+• Improved day/night widget styling and forecast icons using each weather location's timezone and sunrise/sunset data
+• Removed obsolete weather-provider parsing and strengthened Open-Meteo hourly and 16-day forecast validation
+• Improved Android backup and restore for settings and saved locations while excluding rebuildable weather caches
+• Added forecast and backup tests and fixed widget lifecycle, reboot refresh, configuration and build issues
