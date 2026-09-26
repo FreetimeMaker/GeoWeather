@@ -1,34 +1,15 @@
 package com.freetime.geoweather.ui
-import com.freetime.design.FreetimeIconButton
-import com.freetime.design.FreetimeText
-import com.freetime.design.LocalFreetimePreferencesController
-import com.freetime.design.FreetimeScaffold
-import com.freetime.design.FreetimeSnackbar
-import com.freetime.design.rememberFreetimeMessageHostState
-import com.freetime.design.FreetimeDesign
-import com.freetime.design.FreetimeChoiceSetting
-import com.freetime.design.FreetimeOptionGroup
-import com.freetime.design.FreetimeGlassText
-import com.freetime.design.FreetimeSwitchSetting
-import com.freetime.design.FreetimeSettingsGroup
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeGlassAction
-import com.freetime.design.FreetimeTextField
-import com.freetime.design.freetimeGlassCapsule
-import com.freetime.design.freetimeGlass
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,8 +26,11 @@ import com.freetime.geoweather.data.loadTextFile
 import com.freetime.geoweather.data.saveTextFile
 import com.freetime.geoweather.openUrl
 import com.freetime.geoweather.R as Res
+import com.freetime.design.liquidGlass
+import com.freetime.design.liquidGlassCapsule
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     viewModel: WeatherViewModel,
@@ -75,31 +59,41 @@ fun SettingsScreen(
     val dataSaver by appSettings.dataSaver.collectAsState()
     val offlinePacks by appSettings.offlinePacks.collectAsState()
     val offlinePacksWifiOnly by appSettings.offlinePacksWifiOnly.collectAsState()
+    val liquidGlassEnabled by appSettings.liquidGlassEnabled.collectAsState()
+    val reduceMotion by appSettings.reduceMotion.collectAsState()
+    val reduceTransparency by appSettings.reduceTransparency.collectAsState()
+    val highContrast by appSettings.highContrast.collectAsState()
     val savedLocations by viewModel.locations.collectAsState()
     var refreshingOfflinePacks by remember { mutableStateOf(false) }
 
-    val snackbarHostState = rememberFreetimeMessageHostState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val exportSuccess = stringResource(Res.string.export_success)
     val exportFailed = stringResource(Res.string.export_failed)
     val importSuccess = stringResource(Res.string.import_success)
     val importFailed = stringResource(Res.string.import_failed)
     val context = LocalContext.current
-    FreetimeScaffold(
+    Scaffold(
         topBar = {
-            FreetimeGlassTopBar(
-                title = stringResource(Res.string.settings_title),
-                navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
+            TopAppBar(
+                title = { Text(stringResource(Res.string.settings_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    }
+                },
+                modifier = Modifier.liquidGlass(interactive = false)
             )
-        }
-    ) {
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { scaffoldPadding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(scaffoldPadding),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            item(key = "units") { FreetimeSettingsGroup(stringResource(Res.string.unit_settings_title)) {
-            FreetimeText(stringResource(Res.string.temperature_unit), style = FreetimeDesign.typography.bodyLarge)
+            item(key = "units") { SettingsGroup(stringResource(Res.string.unit_settings_title)) {
+            Text(stringResource(Res.string.temperature_unit), style = MaterialTheme.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "celsius" to stringResource(Res.string.unit_celsius),
@@ -108,7 +102,7 @@ fun SettingsScreen(
                 selected = tempUnit,
                 onSelect = { appSettings.setTempUnit(it) }
             )
-            FreetimeText(stringResource(Res.string.wind_speed_unit), style = FreetimeDesign.typography.bodyLarge)
+            Text(stringResource(Res.string.wind_speed_unit), style = MaterialTheme.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "kmh" to stringResource(Res.string.unit_kmh),
@@ -118,7 +112,7 @@ fun SettingsScreen(
                 selected = windUnit,
                 onSelect = { appSettings.setWindUnit(it) }
             )
-            FreetimeText(stringResource(Res.string.pressure_unit), style = FreetimeDesign.typography.bodyLarge)
+            Text(stringResource(Res.string.pressure_unit), style = MaterialTheme.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "hpa" to stringResource(Res.string.unit_hpa),
@@ -129,45 +123,30 @@ fun SettingsScreen(
             )
 
             } }
-            item(key = "appearance") { LocalFreetimePreferencesController.current?.let { controller ->
-                val appearance = controller.state
-                FreetimeSettingsGroup(stringResource(Res.string.appearance_accessibility_title)) {
-                    FreetimeSwitchSetting(
-                        title = stringResource(Res.string.liquid_glass_title),
-                        description = stringResource(Res.string.liquid_glass_desc),
-                        checked = appearance.liquidGlassEnabled,
-                        onCheckedChange = { enabled ->
-                            controller.update { it.copy(liquidGlassEnabled = enabled) }
-                        }
-                    )
-                    FreetimeSwitchSetting(
-                        title = stringResource(Res.string.reduce_motion_title),
-                        description = stringResource(Res.string.reduce_motion_desc),
-                        checked = appearance.reduceMotion,
-                        onCheckedChange = { enabled ->
-                            controller.update { it.copy(reduceMotion = enabled) }
-                        }
-                    )
-                    FreetimeSwitchSetting(
-                        title = stringResource(Res.string.reduce_transparency_title),
-                        description = stringResource(Res.string.reduce_transparency_desc),
-                        checked = appearance.reduceTransparency,
-                        onCheckedChange = { enabled ->
-                            controller.update { it.copy(reduceTransparency = enabled) }
-                        }
-                    )
-                    FreetimeSwitchSetting(
-                        title = stringResource(Res.string.high_contrast_title),
-                        description = stringResource(Res.string.high_contrast_desc),
-                        checked = appearance.highContrast,
-                        onCheckedChange = { enabled ->
-                            controller.update { it.copy(highContrast = enabled) }
-                        }
-                    )
-                }
+            item(key = "appearance") { SettingsGroup(stringResource(Res.string.appearance_accessibility_title)) {
+                SettingsToggle(
+                    stringResource(Res.string.liquid_glass_title),
+                    stringResource(Res.string.liquid_glass_desc),
+                    liquidGlassEnabled
+                ) { appSettings.setLiquidGlassEnabled(it) }
+                SettingsToggle(
+                    stringResource(Res.string.reduce_motion_title),
+                    stringResource(Res.string.reduce_motion_desc),
+                    reduceMotion
+                ) { appSettings.setReduceMotion(it) }
+                SettingsToggle(
+                    stringResource(Res.string.reduce_transparency_title),
+                    stringResource(Res.string.reduce_transparency_desc),
+                    reduceTransparency
+                ) { appSettings.setReduceTransparency(it) }
+                SettingsToggle(
+                    stringResource(Res.string.high_contrast_title),
+                    stringResource(Res.string.high_contrast_desc),
+                    highContrast
+                ) { appSettings.setHighContrast(it) }
             } }
-            item(key = "animations") { FreetimeSettingsGroup(stringResource(Res.string.weather_animations_title)) {
-            FreetimeText(stringResource(Res.string.animation_intensity), style = FreetimeDesign.typography.bodyLarge)
+            item(key = "animations") { SettingsGroup(stringResource(Res.string.weather_animations_title)) {
+            Text(stringResource(Res.string.animation_intensity), style = MaterialTheme.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "full" to stringResource(Res.string.animation_full),
@@ -179,8 +158,8 @@ fun SettingsScreen(
             )
 
 } }
-            item(key = "notifications") { FreetimeSettingsGroup(stringResource(Res.string.notification_settings_title)) {
-            FreetimeText(stringResource(Res.string.notification_profile), style = FreetimeDesign.typography.bodyLarge)
+            item(key = "notifications") { SettingsGroup(stringResource(Res.string.notification_settings_title)) {
+            Text(stringResource(Res.string.notification_profile), style = MaterialTheme.typography.bodyLarge)
             UnitRadioRow(
                 options = listOf(
                     "normal" to stringResource(Res.string.profile_normal),
@@ -218,14 +197,14 @@ fun SettingsScreen(
                 value = windThreshold,
                 onValueChange = { appSettings.setWindThreshold(it) }
             )
-            FreetimeText(stringResource(Res.string.smart_alerts_title), style = FreetimeDesign.typography.titleMedium)
+            Text(stringResource(Res.string.smart_alerts_title), style = MaterialTheme.typography.titleMedium)
             SettingsToggle(stringResource(Res.string.smart_rain_alert_title), stringResource(Res.string.smart_rain_alert_desc), smartRainAlert) { appSettings.setSmartRainAlert(it) }
             SettingsToggle(stringResource(Res.string.smart_wind_alert_title), stringResource(Res.string.smart_wind_alert_desc), smartWindAlert) { appSettings.setSmartWindAlert(it) }
             SettingsToggle(stringResource(Res.string.smart_frost_alert_title), stringResource(Res.string.smart_frost_alert_desc), smartFrostAlert) { appSettings.setSmartFrostAlert(it) }
             SettingsToggle(stringResource(Res.string.smart_uv_alert_title), stringResource(Res.string.smart_uv_alert_desc), smartUvAlert) { appSettings.setSmartUvAlert(it) }
 
             } }
-            item(key = "offline") { FreetimeSettingsGroup(stringResource(Res.string.data_offline_title)) {
+            item(key = "offline") { SettingsGroup(stringResource(Res.string.data_offline_title)) {
                 SettingsToggle(
                     stringResource(Res.string.data_saver_title),
                     stringResource(Res.string.data_saver_desc),
@@ -241,21 +220,21 @@ fun SettingsScreen(
                     stringResource(Res.string.offline_wifi_only_desc),
                     offlinePacksWifiOnly
                 ) { appSettings.setOfflinePacksWifiOnly(it) }
-                FreetimeText(
+                Text(
                     stringResource(Res.string.offline_packs_note),
-                    style = FreetimeDesign.typography.bodySmall,
-                    color = FreetimeDesign.palette.contentMuted
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 if (offlinePacks) {
-                    FreetimeText(
+                    Text(
                         stringResource(Res.string.offline_saved_locations),
-                        style = FreetimeDesign.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium
                     )
                     if (savedLocations.isEmpty()) {
-                        FreetimeText(
+                        Text(
                             stringResource(Res.string.offline_no_saved_locations),
-                            style = FreetimeDesign.typography.bodySmall,
-                            color = FreetimeDesign.palette.contentMuted
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     } else {
                         savedLocations.forEach { location ->
@@ -286,35 +265,35 @@ fun SettingsScreen(
                                 bytes < 1024 * 1024 -> String.format(java.util.Locale.getDefault(), "%.1f KB", bytes / 1024.0)
                                 else -> String.format(java.util.Locale.getDefault(), "%.1f MB", bytes / (1024.0 * 1024.0))
                             }
-                            FreetimeText(
+                            Text(
                                 stringResource(Res.string.offline_pack_status, freshness, ageText, sizeText),
-                                style = FreetimeDesign.typography.bodySmall,
-                                color = FreetimeDesign.palette.contentMuted
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             if (location.weatherData != null) {
-                                FreetimeGlassAction(
+                                Button(
                                     onClick = { viewModel.clearOfflinePackCache(location) },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    FreetimeText(stringResource(Res.string.offline_clear_cache))
+                                    Text(stringResource(Res.string.offline_clear_cache))
                                 }
                             }
                         }
                     }
-                    FreetimeGlassAction(
+                    Button(
                         onClick = {
                             if (!refreshingOfflinePacks) {
                                 scope.launch {
                                     refreshingOfflinePacks = true
                                     viewModel.refreshAllLocations(offlinePacksOnly = true)
                                     refreshingOfflinePacks = false
-                                    snackbarHostState.show(context.getString(Res.string.offline_refresh_complete))
+                                    snackbarHostState.showSnackbar(context.getString(Res.string.offline_refresh_complete))
                                 }
                             }
                         },
-                        modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
+                        modifier = Modifier.fillMaxWidth().liquidGlassCapsule()
                     ) {
-                        FreetimeText(
+                        Text(
                             stringResource(
                                 if (refreshingOfflinePacks) Res.string.offline_refreshing
                                 else Res.string.offline_refresh_all
@@ -323,17 +302,17 @@ fun SettingsScreen(
                     }
                 }
             } }
-            item(key = "sources") { FreetimeSettingsGroup(stringResource(Res.string.data_sources_privacy_title)) {
-                FreetimeText(stringResource(Res.string.data_source_forecast), style = FreetimeDesign.typography.bodyMedium)
-                FreetimeText(stringResource(Res.string.data_source_map), style = FreetimeDesign.typography.bodyMedium)
-                FreetimeText(stringResource(Res.string.data_source_radar), style = FreetimeDesign.typography.bodyMedium)
-                FreetimeText(
+            item(key = "sources") { SettingsGroup(stringResource(Res.string.data_sources_privacy_title)) {
+                Text(stringResource(Res.string.data_source_forecast), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(Res.string.data_source_map), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(Res.string.data_source_radar), style = MaterialTheme.typography.bodyMedium)
+                Text(
                     stringResource(Res.string.privacy_local_note),
-                    style = FreetimeDesign.typography.bodySmall,
-                    color = FreetimeDesign.palette.contentMuted
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             } }
-            item(key = "webview") { FreetimeSettingsGroup(stringResource(Res.string.webview_settings_title)) {
+            item(key = "webview") { SettingsGroup(stringResource(Res.string.webview_settings_title)) {
             SettingsToggle(
                 stringResource(Res.string.disable_private_view),
                 stringResource(Res.string.disable_private_view_subtitle),
@@ -346,79 +325,79 @@ fun SettingsScreen(
             ) { appSettings.setOpenExternalBrowser(it) }
 
             } }
-            item(key = "backup") { FreetimeSettingsGroup(stringResource(Res.string.backup_restore_title)) {
+            item(key = "backup") { SettingsGroup(stringResource(Res.string.backup_restore_title)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FreetimeGlassAction(
+                Button(
                     onClick = {
                         scope.launch {
                             val json = viewModel.buildBackupJson()
                             val ok = json != null && saveTextFile(BACKUP_FILE_NAME, BACKUP_MIME_TYPE, json)
-                            snackbarHostState.show(if (ok) exportSuccess else exportFailed)
+                            snackbarHostState.showSnackbar(if (ok) exportSuccess else exportFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f).freetimeGlass(RoundedCornerShape(20.dp))
+                    modifier = Modifier.weight(1f).liquidGlassCapsule()
                 ) {
-                    FreetimeText(stringResource(Res.string.export_locations))
+                    Text(stringResource(Res.string.export_locations))
                 }
-                FreetimeGlassAction(
+                Button(
                     onClick = {
                         scope.launch {
                             val content = loadTextFile(arrayOf(BACKUP_MIME_TYPE))
                             if (content == null) return@launch
                             val ok = viewModel.importBackupJson(content)
-                            snackbarHostState.show(if (ok) importSuccess else importFailed)
+                            snackbarHostState.showSnackbar(if (ok) importSuccess else importFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f).freetimeGlass(RoundedCornerShape(20.dp))
+                    modifier = Modifier.weight(1f).liquidGlassCapsule()
                 ) {
-                    FreetimeText(stringResource(Res.string.import_locations))
+                    Text(stringResource(Res.string.import_locations))
                 }
             }
 
             } }
             item(key = "open-android") {
-            FreetimeSettingsGroup("Open Android") {
-                FreetimeText(
+            SettingsGroup("Open Android") {
+                Text(
                     "Review GeoWeather's Android distribution notice and learn more about keeping Android open.",
-                    style = FreetimeDesign.typography.bodyMedium,
-                    color = FreetimeDesign.palette.contentMuted
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                FreetimeGlassAction(
+                Button(
                     onClick = onShowDistributionNotice,
-                    modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
-                ) { FreetimeText(stringResource(Res.string.distribution_notice_show)) }
-                FreetimeGlassAction(
+                    modifier = Modifier.fillMaxWidth().liquidGlassCapsule()
+                ) { Text(stringResource(Res.string.distribution_notice_show)) }
+                Button(
                     onClick = { onWebViewClick("https://keepandroidopen.org", "Keep Android Open") },
-                    modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
-                ) { FreetimeText("Keep Android Open") }
+                    modifier = Modifier.fillMaxWidth().liquidGlassCapsule()
+                ) { Text("Keep Android Open") }
             } }
             item(key = "actions") { Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Spacer(Modifier.height(FreetimeDesign.spacing.lg))
-            FreetimeGlassAction(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))) { FreetimeText(stringResource(Res.string.diagnostics_title)) }
+            Spacer(Modifier.height(24.dp))
+            Button(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth().liquidGlassCapsule()) { Text(stringResource(Res.string.diagnostics_title)) }
             Spacer(Modifier.height(8.dp))
-            FreetimeGlassAction(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
-                FreetimeText(stringResource(Res.string.open_change_log))
+            Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(Res.string.open_change_log))
             }
             Spacer(Modifier.height(8.dp))
-            FreetimeText(
+            Text(
                 text = stringResource(Res.string.feedback_alternative_hint),
-                style = FreetimeDesign.typography.bodySmall,
-                color = FreetimeDesign.palette.contentMuted,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            FreetimeGlassAction(
+            Button(
                 onClick = { openUrl("mailto:FreetimeMaker@proton.me?subject=GeoWeather Feedback") },
-                modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
+                modifier = Modifier.fillMaxWidth().liquidGlassCapsule()
             ) {
-                FreetimeText(stringResource(Res.string.feedback_btn))
+                Text(stringResource(Res.string.feedback_btn))
             }
             Spacer(Modifier.height(8.dp))
-            FreetimeGlassAction(
+            Button(
                 onClick = { onWebViewClick("https://github.com/FreetimeMaker/GeoWeather/issues", "GitHub Issues") },
-                modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp))
+                modifier = Modifier.fillMaxWidth().liquidGlassCapsule()
             ) {
-                FreetimeText(stringResource(Res.string.feedback_github_btn))
+                Text(stringResource(Res.string.feedback_github_btn))
             }
             } }
         }
@@ -426,38 +405,75 @@ fun SettingsScreen(
 }
 
 @Composable
+private fun SettingsGroup(title: String, content: @Composable ColumnScope.() -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).liquidGlass(interactive = false)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(title, style = MaterialTheme.typography.titleMedium)
+            content()
+        }
+    }
+}
+
+@Composable
 fun SettingsToggle(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    FreetimeSwitchSetting(title = label, checked = checked, onCheckedChange = onCheckedChange)
+    SettingsToggle(label, "", checked, onCheckedChange)
 }
 
 @Composable
 fun SettingsToggle(label: String, subtitle: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    FreetimeSwitchSetting(title = label, description = subtitle, checked = checked, onCheckedChange = onCheckedChange)
+    Row(
+        modifier = Modifier.fillMaxWidth().clickable { onCheckedChange(!checked) }.padding(vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(label, style = MaterialTheme.typography.bodyLarge)
+            if (subtitle.isNotBlank()) {
+                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
+    }
 }
 
 @Composable
 fun UnitRadioRow(options: List<Pair<String, String>>, selected: String, onSelect: (String) -> Unit) {
-    FreetimeOptionGroup(
-        options = options,
-        selected = selected,
-        onSelect = onSelect,
-        modifier = Modifier.fillMaxWidth()
-    )
+    Column(Modifier.fillMaxWidth()) {
+        options.forEach { (value, label) ->
+            Row(
+                modifier = Modifier.fillMaxWidth().selectable(
+                    selected = value == selected,
+                    onClick = { onSelect(value) },
+                    role = Role.RadioButton
+                ).padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(selected = value == selected, onClick = null)
+                Text(label, modifier = Modifier.padding(start = 8.dp))
+            }
+        }
+    }
 }
 
 @Composable
 fun ThresholdField(label: String, value: Int, onValueChange: (Int) -> Unit) {
     var text by remember(value) { mutableStateOf(value.toString()) }
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        FreetimeText(label, style = FreetimeDesign.typography.labelMedium, modifier = Modifier.padding(start = 8.dp, bottom = 6.dp))
-        FreetimeTextField(
+        Text(label, style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(start = 8.dp, bottom = 6.dp))
+        OutlinedTextField(
             value = text,
             onValueChange = {
                 text = it.filter(Char::isDigit)
                 text.toIntOrNull()?.let { parsed -> onValueChange(parsed) }
             },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = label
+            placeholder = { Text(label) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true
         )
     }
 }
