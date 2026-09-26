@@ -3,6 +3,7 @@
     android:configure="com.freetime.geoweather.WeatherWidgetConfigureActivity"
     android:widgetFeatures="configuration_optional|reconfigurable"
     android:initialLayout="@layout/glance_default_loading_layout"
+    android:previewLayout="@layout/widget_preview_detailed"
     android:minWidth="240dp"
     android:minHeight="150dp"
     android:targetCellWidth="4"
