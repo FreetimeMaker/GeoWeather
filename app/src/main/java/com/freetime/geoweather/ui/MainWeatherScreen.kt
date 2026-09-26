@@ -1,28 +1,4 @@
 package com.freetime.geoweather.ui
-import com.freetime.design.FreetimeIconButton
-import com.freetime.design.FreetimeText
-import com.freetime.design.FreetimeScaffold
-import com.freetime.design.FreetimeFloatingActionButton
-import com.freetime.design.FreetimeExtendedFloatingActionButton
-import com.freetime.design.FreetimeSnackbarHost
-import com.freetime.design.rememberFreetimeMessageHostState
-import com.freetime.design.FreetimeTimePicker
-import com.freetime.design.FreetimeSearchBar
-import com.freetime.design.FreetimeNavigationRail
-import com.freetime.design.FreetimeNavigationDestination
-import com.freetime.design.FreetimeEmptyState
-import com.freetime.design.FreetimeInfoCard
-import com.freetime.design.FreetimeSectionHeader
-import com.freetime.design.FreetimeDialog
-import com.freetime.design.FreetimeCard
-import com.freetime.design.FreetimeSnackbar
-import com.freetime.design.rememberFreetimeCompactNavigation
-import com.freetime.design.FreetimeDesign
-import com.freetime.design.FreetimeGlassPullRefreshIndicator
-import com.freetime.design.FreetimeGlassSkeleton
-import com.freetime.design.FreetimeGlassPanel
-import com.freetime.design.FreetimeGlassTitle
-import com.freetime.design.freetimeWideGlass
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
@@ -46,6 +22,8 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.*
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,11 +36,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeTextField
-import com.freetime.design.FreetimeGlassAction
 import com.freetime.geoweather.data.LocationEntity
+import com.freetime.design.liquidGlass
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.getDetectedLocationName
@@ -71,8 +46,10 @@ import com.freetime.geoweather.LocationAlertPreferences
 import kotlinx.coroutines.delay
 import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.launch
-import com.freetime.design.FreetimeProgressIndicator
 
+private data class WeatherNavigationDestination(val label: String, val icon: ImageVector)
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainWeatherScreen(
     viewModel: WeatherViewModel,
@@ -92,9 +69,9 @@ fun MainWeatherScreen(
     val isSearching by viewModel.isSearching.collectAsState()
     val orderedLocations = locations
     val listState = rememberLazyListState()
-    val navigationCompact = rememberFreetimeCompactNavigation(listState)
+    val navigationCompact by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     var isLocating by remember { mutableStateOf(false) }
-    val snackbarHostState = rememberFreetimeMessageHostState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val currentLocationName = stringResource(Res.string.current_location)
     val configuration = androidx.compose.ui.platform.LocalConfiguration.current
@@ -103,9 +80,9 @@ fun MainWeatherScreen(
     var travelStartOffset by remember { mutableIntStateOf(0) }
     var travelEndOffset by remember { mutableIntStateOf(6) }
     val adaptiveDestinations = listOf(
-        FreetimeNavigationDestination(currentLocationName, Icons.Default.MyLocation),
-        FreetimeNavigationDestination(stringResource(Res.string.donate_nav_desc), Icons.Default.Favorite),
-        FreetimeNavigationDestination(stringResource(Res.string.settings_nav_desc), Icons.Default.Settings)
+        WeatherNavigationDestination(currentLocationName, Icons.Default.MyLocation),
+        WeatherNavigationDestination(stringResource(Res.string.donate_nav_desc), Icons.Default.Favorite),
+        WeatherNavigationDestination(stringResource(Res.string.settings_nav_desc), Icons.Default.Settings)
     )
 
     fun openCurrentLocation() {
@@ -119,7 +96,7 @@ fun MainWeatherScreen(
                         ?: currentLocationName
                     onCurrentLocationClick(detectedLocationName, coords.first, coords.second)
                 } else {
-                    snackbarHostState.show(locationUnavailableMsg)
+                    snackbarHostState.showSnackbar(locationUnavailableMsg)
                 }
             } finally {
                 isLocating = false
@@ -140,28 +117,25 @@ fun MainWeatherScreen(
         }
     }
 
-    FreetimeScaffold(
+    Scaffold(
         topBar = {
-            FreetimeGlassTopBar(
-                title = stringResource(Res.string.app_name),
-                compact = navigationCompact,
-                subtitle = if (navigationCompact) locations.firstOrNull()?.currentTemp?.let { "${it.toInt()}°" } else null
+            TopAppBar(
+                title = {
+                    Column {
+                        Text(stringResource(Res.string.app_name))
+                        if (navigationCompact) locations.firstOrNull()?.currentTemp?.let { Text("${it.toInt()}°", style = MaterialTheme.typography.labelMedium) }
+                    }
+                },
+                modifier = Modifier.liquidGlass(interactive = false)
             )
-        }
-    ) {
-        Box(Modifier.fillMaxSize()) {
-            FreetimeSnackbarHost(
-                state = snackbarHostState,
-                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 96.dp)
-            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { scaffoldPadding ->
+        Box(Modifier.fillMaxSize().padding(scaffoldPadding)) {
             val padding = PaddingValues(0.dp)
 
         if (locations.isEmpty()) {
-            FreetimeEmptyState(
-                title = stringResource(Res.string.app_name),
-                message = stringResource(Res.string.no_locations_msg),
-                modifier = Modifier.fillMaxSize().padding(padding)
-            )
+            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { Column(horizontalAlignment = Alignment.CenterHorizontally) { Text(stringResource(Res.string.app_name), style = MaterialTheme.typography.headlineSmall); Text(stringResource(Res.string.no_locations_msg), textAlign = TextAlign.Center) } }
         } else {
             if (isLandscape) {
                 Row(
@@ -172,7 +146,7 @@ fun MainWeatherScreen(
                         modifier = Modifier.weight(0.42f).fillMaxHeight().padding(start = 12.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        FreetimeSectionHeader(title = stringResource(Res.string.compare_locations))
+                        Text(text = stringResource(Res.string.compare_locations))
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -182,7 +156,7 @@ fun MainWeatherScreen(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .freetimeGlass(RoundedCornerShape(24.dp), interactive = true)
+                                        .liquidGlass(RoundedCornerShape(24.dp), interactive = true)
                                         .clickable {
                                             viewModel.selectLocation(loc)
                                             onLocationClick(loc)
@@ -191,24 +165,20 @@ fun MainWeatherScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Column(Modifier.weight(1f)) {
-                                        FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
-                                        FreetimeText(
+                                        Text(loc.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                                        Text(
                                             text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
-                                            style = FreetimeDesign.typography.titleLarge
+                                            style = MaterialTheme.typography.titleLarge
                                         )
-                                        FreetimeText(
+                                        Text(
                                             text = loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--",
-                                            style = FreetimeDesign.typography.labelSmall
+                                            style = MaterialTheme.typography.labelSmall
                                         )
                                     }
-                                    FreetimeIconButton(
-                                        icon = if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                        contentDescription = stringResource(Res.string.favorite_location),
-                                        onClick = {
+                                    IconButton(onClick = {
                                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                             viewModel.toggleDefaultLocation(loc)
-                                        }
-                                    )
+                        }) { Icon(if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder, contentDescription = stringResource(Res.string.favorite_location)) }
                                 }
                             }
                         }
@@ -222,7 +192,7 @@ fun MainWeatherScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .freetimeGlass(RoundedCornerShape(30.dp), interactive = true)
+                                    .liquidGlass(RoundedCornerShape(30.dp), interactive = true)
                                     .clickable {
                                         viewModel.selectLocation(loc)
                                         onLocationClick(loc)
@@ -230,27 +200,27 @@ fun MainWeatherScreen(
                                     .padding(20.dp)
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    FreetimeText(loc.name, style = FreetimeDesign.typography.titleLarge)
-                                    FreetimeText(
+                                    Text(loc.name, style = MaterialTheme.typography.titleLarge)
+                                    Text(
                                         text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
-                                        style = FreetimeDesign.typography.headlineLarge
+                                        style = MaterialTheme.typography.headlineLarge
                                     )
-                                    FreetimeText(
+                                    Text(
                                         text = loc.currentWeatherCode?.let { code -> stringResource(com.freetime.geoweather.WeatherCodes.getStringResource(code)) }.orEmpty(),
-                                        style = FreetimeDesign.typography.bodyLarge
+                                        style = MaterialTheme.typography.bodyLarge
                                     )
                                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                        FreetimeText(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--")
-                                        FreetimeText(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--")
+                                        Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--")
+                                        Text(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--")
                                     }
                                 }
                             }
                         }
-                        FreetimeGlassAction(
+                        Button(
                             onClick = onDonateClick,
-                            modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(24.dp))
+                            modifier = Modifier.fillMaxWidth().liquidGlass(RoundedCornerShape(24.dp))
                         ) {
-                            FreetimeText(stringResource(Res.string.main_donation_hint))
+                            Text(stringResource(Res.string.main_donation_hint))
                         }
                     }
                 }
@@ -276,22 +246,22 @@ fun MainWeatherScreen(
                                 modifier = Modifier
                                     .padding(horizontal = 12.dp)
                                     .fillMaxWidth()
-                                    .freetimeGlass(RoundedCornerShape(28.dp), interactive = false)
+                                    .liquidGlass(RoundedCornerShape(28.dp), interactive = false)
                             ) {
                                 Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    FreetimeText(stringResource(Res.string.compare_summary_title), style = FreetimeDesign.typography.titleMedium)
+                                    Text(stringResource(Res.string.compare_summary_title), style = MaterialTheme.typography.titleMedium)
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                         Column(Modifier.weight(1f)) {
-                                            FreetimeText(stringResource(Res.string.compare_temperature_spread), style = FreetimeDesign.typography.labelSmall)
-                                            FreetimeText(minTemp.toInt().toString() + "–" + maxTemp.toInt() + "°C", style = FreetimeDesign.typography.titleMedium)
+                                            Text(stringResource(Res.string.compare_temperature_spread), style = MaterialTheme.typography.labelSmall)
+                                            Text(minTemp.toInt().toString() + "–" + maxTemp.toInt() + "°C", style = MaterialTheme.typography.titleMedium)
                                         }
                                         Column(Modifier.weight(1f)) {
-                                            FreetimeText(stringResource(Res.string.compare_windiest), style = FreetimeDesign.typography.labelSmall)
-                                            FreetimeText(windiest?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
+                                            Text(stringResource(Res.string.compare_windiest), style = MaterialTheme.typography.labelSmall)
+                                            Text(windiest?.name ?: "--", style = MaterialTheme.typography.labelLarge, maxLines = 1)
                                         }
                                         Column(Modifier.weight(1f)) {
-                                            FreetimeText(stringResource(Res.string.compare_most_humid), style = FreetimeDesign.typography.labelSmall)
-                                            FreetimeText(humid?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
+                                            Text(stringResource(Res.string.compare_most_humid), style = MaterialTheme.typography.labelSmall)
+                                            Text(humid?.name ?: "--", style = MaterialTheme.typography.labelLarge, maxLines = 1)
                                         }
                                     }
                                 }
@@ -303,12 +273,12 @@ fun MainWeatherScreen(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 items(comparable, key = { "compare-" + it.id }) { loc ->
-                                    FreetimeCard(modifier = Modifier.width(180.dp)) {
+                                    Card(modifier = Modifier.width(180.dp)) {
                                         Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                            FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
-                                            FreetimeText(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.headlineMedium)
-                                            FreetimeText(loc.currentHumidity?.let { stringResource(Res.string.humidity_value, it) } ?: "--", style = FreetimeDesign.typography.labelMedium)
-                                            FreetimeText(loc.currentWindSpeed?.let { stringResource(Res.string.wind_value, it.toInt()) } ?: "--", style = FreetimeDesign.typography.labelMedium)
+                                            Text(loc.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                                            Text(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.headlineMedium)
+                                            Text(loc.currentHumidity?.let { stringResource(Res.string.humidity_value, it) } ?: "--", style = MaterialTheme.typography.labelMedium)
+                                            Text(loc.currentWindSpeed?.let { stringResource(Res.string.wind_value, it.toInt()) } ?: "--", style = MaterialTheme.typography.labelMedium)
                                         }
                                     }
                                 }
@@ -319,29 +289,29 @@ fun MainWeatherScreen(
                                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                FreetimeCard(modifier = Modifier.weight(1f)) {
+                                Card(modifier = Modifier.weight(1f)) {
                                     Column {
-                                        FreetimeText(stringResource(Res.string.warmest_label), style = FreetimeDesign.typography.labelSmall)
-                                        FreetimeText(warmest?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
+                                        Text(stringResource(Res.string.warmest_label), style = MaterialTheme.typography.labelSmall)
+                                        Text(warmest?.name ?: "--", style = MaterialTheme.typography.labelLarge, maxLines = 1)
                                     }
                                 }
-                                FreetimeCard(modifier = Modifier.weight(1f)) {
+                                Card(modifier = Modifier.weight(1f)) {
                                     Column {
-                                        FreetimeText(stringResource(Res.string.coolest_label), style = FreetimeDesign.typography.labelSmall)
-                                        FreetimeText(coolest?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
+                                        Text(stringResource(Res.string.coolest_label), style = MaterialTheme.typography.labelSmall)
+                                        Text(coolest?.name ?: "--", style = MaterialTheme.typography.labelLarge, maxLines = 1)
                                     }
                                 }
-                                FreetimeCard(modifier = Modifier.weight(1f)) {
+                                Card(modifier = Modifier.weight(1f)) {
                                     Column {
-                                        FreetimeText(stringResource(Res.string.calmest_label), style = FreetimeDesign.typography.labelSmall)
-                                        FreetimeText(calmest?.name ?: "--", style = FreetimeDesign.typography.labelLarge, maxLines = 1)
+                                        Text(stringResource(Res.string.calmest_label), style = MaterialTheme.typography.labelSmall)
+                                        Text(calmest?.name ?: "--", style = MaterialTheme.typography.labelLarge, maxLines = 1)
                                     }
                                 }
                             }
                         }
                     }
                     item(key = "travel-mode-title") {
-                        FreetimeGlassTitle(
+                        Text(
                             text = stringResource(Res.string.travel_planner_title),
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         )
@@ -355,32 +325,32 @@ fun MainWeatherScreen(
                         if (availableDates.isNotEmpty()) {
                             travelStartOffset = travelStartOffset.coerceIn(0, availableDates.lastIndex)
                             travelEndOffset = travelEndOffset.coerceIn(travelStartOffset, availableDates.lastIndex)
-                            FreetimeGlassPanel(modifier = Modifier.padding(horizontal = 12.dp).fillMaxWidth()) {
+                            Card(modifier = Modifier.padding(horizontal = 12.dp).fillMaxWidth()) {
                                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    FreetimeText(stringResource(Res.string.trip_dates_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    FreetimeText(
+                                    Text(stringResource(Res.string.trip_dates_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text(
                                         stringResource(Res.string.trip_dates_range, availableDates[travelStartOffset], availableDates[travelEndOffset]),
-                                        style = FreetimeDesign.typography.bodyMedium
+                                        style = MaterialTheme.typography.bodyMedium
                                     )
-                                    FreetimeText(stringResource(Res.string.trip_start), style = FreetimeDesign.typography.labelMedium)
+                                    Text(stringResource(Res.string.trip_start), style = MaterialTheme.typography.labelMedium)
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                                         items(availableDates.indices.toList(), key = { "trip-start-" + it }) { index ->
-                                            FreetimeCard(modifier = Modifier.clickable {
+                                            Card(modifier = Modifier.clickable {
                                                 travelStartOffset = index
                                                 if (travelEndOffset < index) travelEndOffset = index
                                             }) {
-                                                FreetimeText(
+                                                Text(
                                                     availableDates[index].takeLast(5) + if (index == travelStartOffset) " ✓" else "",
                                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                                                 )
                                             }
                                         }
                                     }
-                                    FreetimeText(stringResource(Res.string.trip_end), style = FreetimeDesign.typography.labelMedium)
+                                    Text(stringResource(Res.string.trip_end), style = MaterialTheme.typography.labelMedium)
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                                         items((travelStartOffset..availableDates.lastIndex).toList(), key = { "trip-end-" + it }) { index ->
-                                            FreetimeCard(modifier = Modifier.clickable { travelEndOffset = index }) {
-                                                FreetimeText(
+                                            Card(modifier = Modifier.clickable { travelEndOffset = index }) {
+                                                Text(
                                                     availableDates[index].takeLast(5) + if (index == travelEndOffset) " ✓" else "",
                                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                                                 )
@@ -411,17 +381,17 @@ fun MainWeatherScreen(
                                     if (isEmpty()) add(context.getString(Res.string.pack_everyday))
                                 }
                                 val packHint = context.getString(Res.string.pack_prefix, packItems.joinToString(", "))
-                                FreetimeCard(
+                                Card(
                                     modifier = Modifier.width(210.dp).clickable { onLocationClick(loc) }
                                 ) {
                                     Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                        FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium, maxLines = 1)
-                                        FreetimeText(
+                                        Text(loc.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                                        Text(
                                             if (low != null && high != null) context.getString(Res.string.trip_temperature_range, low, high) else context.getString(Res.string.forecast_unavailable),
-                                            style = FreetimeDesign.typography.bodyMedium
+                                            style = MaterialTheme.typography.bodyMedium
                                         )
-                                        FreetimeText(context.getString(Res.string.rain_risk_up_to, rain), style = FreetimeDesign.typography.labelMedium)
-                                        FreetimeText(packHint, style = FreetimeDesign.typography.labelLarge)
+                                        Text(context.getString(Res.string.rain_risk_up_to, rain), style = MaterialTheme.typography.labelMedium)
+                                        Text(packHint, style = MaterialTheme.typography.labelLarge)
                                     }
                                 }
                             }
@@ -433,16 +403,16 @@ fun MainWeatherScreen(
                                 val days = viewModel.getDailyForecasts(loc).take(7)
                                 Triple(loc, days.minOfOrNull { it.minTemp }, days.maxOfOrNull { it.maxTemp })
                             }
-                            FreetimeGlassPanel(modifier = Modifier.padding(horizontal = 12.dp).fillMaxWidth()) {
+                            Card(modifier = Modifier.padding(horizontal = 12.dp).fillMaxWidth()) {
                                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    FreetimeText(stringResource(Res.string.trip_compare_title), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(Res.string.trip_compare_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     compared.forEach { (loc, low, high) ->
                                         val days = viewModel.getDailyForecasts(loc).take(7)
                                         val rain = days.maxOfOrNull { it.precipProbMax } ?: 0
                                         val range = if (low != null && high != null) low.toString() + "–" + high + "°C" else "--"
-                                        FreetimeText(
+                                        Text(
                                             stringResource(Res.string.trip_compare_row, loc.name, range, rain),
-                                            style = FreetimeDesign.typography.bodyMedium
+                                            style = MaterialTheme.typography.bodyMedium
                                         )
                                     }
                                 }
@@ -450,7 +420,7 @@ fun MainWeatherScreen(
                         }
                     }
                     item(key = "location-overview-title") {
-                        FreetimeGlassTitle(
+                        Text(
                             text = stringResource(Res.string.location_overview_title),
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         )
@@ -469,7 +439,7 @@ fun MainWeatherScreen(
                                 ) {
                                     Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                            FreetimeText(loc.name, style = FreetimeDesign.typography.labelLarge, maxLines = 1, modifier = Modifier.weight(1f))
+                                            Text(loc.name, style = MaterialTheme.typography.labelLarge, maxLines = 1, modifier = Modifier.weight(1f))
                                             if (loc.isDefault) Image(imageVector = Icons.Default.Favorite, contentDescription = stringResource(Res.string.favorite_location), modifier = Modifier.size(16.dp))
                                         }
                                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -480,13 +450,13 @@ fun MainWeatherScreen(
                                                     modifier = Modifier.size(40.dp)
                                                 )
                                             }
-                                            FreetimeText(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.titleLarge)
+                                            Text(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.titleLarge)
                                         }
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                            FreetimeText(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = FreetimeDesign.typography.labelSmall)
-                                            FreetimeText(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--", style = FreetimeDesign.typography.labelSmall)
+                                            Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = MaterialTheme.typography.labelSmall)
+                                            Text(loc.currentHumidity?.let { humidity -> stringResource(Res.string.humidity_value, humidity) } ?: "--", style = MaterialTheme.typography.labelSmall)
                                         }
-                                        if (loc.lastUpdated > 0L) FreetimeText(stringResource(Res.string.updated_age_short, ageMinutes), style = FreetimeDesign.typography.labelSmall, color = FreetimeDesign.palette.contentMuted)
+                                        if (loc.lastUpdated > 0L) Text(stringResource(Res.string.updated_age_short, ageMinutes), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                 }
                             }
@@ -494,9 +464,9 @@ fun MainWeatherScreen(
                     }
                 }
                 item(key = "saved-locations-title") {
-                    FreetimeText(
+                    Text(
                         text = stringResource(Res.string.compare_locations),
-                        style = FreetimeDesign.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
                     )
                 }
@@ -520,41 +490,29 @@ fun MainWeatherScreen(
                             )
                         }
                         Column(modifier = Modifier.weight(1f)) {
-                            FreetimeText(loc.name, style = FreetimeDesign.typography.titleMedium)
-                            FreetimeText(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = FreetimeDesign.typography.bodyMedium)
+                            Text(loc.name, style = MaterialTheme.typography.titleMedium)
+                            Text(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.bodyMedium)
                         }
-                        FreetimeIconButton(
-                            icon = if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
-                            contentDescription = stringResource(Res.string.notification_time_title),
-                            onClick = {
+                        IconButton(onClick = {
                                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 notificationLocation = loc
-                            }
-                        )
-                        FreetimeIconButton(
-                            icon = if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = stringResource(Res.string.favorite_location),
-                            onClick = {
+                        }) { Icon(if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff, contentDescription = stringResource(Res.string.notification_time_title)) }
+                        IconButton(onClick = {
                                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 viewModel.toggleDefaultLocation(loc)
-                            }
-                        )
-                        FreetimeIconButton(
-                            icon = Icons.Default.Delete,
-                            contentDescription = stringResource(Res.string.DelLoc),
-                            onClick = {
+                        }) { Icon(if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder, contentDescription = stringResource(Res.string.favorite_location)) }
+                        IconButton(onClick = {
                                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                                 locationToDelete = loc
-                            }
-                        )
+                        }) { Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.DelLoc)) }
                     }
                 }
                 item(key = "donate") {
-                    FreetimeGlassAction(
+                    Button(
                         onClick = onDonateClick,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
                     ) {
-                        FreetimeText(text = stringResource(Res.string.main_donation_hint), style = FreetimeDesign.typography.labelMedium)
+                        Text(text = stringResource(Res.string.main_donation_hint), style = MaterialTheme.typography.labelMedium)
                     }
                 }
             }
@@ -569,12 +527,16 @@ fun MainWeatherScreen(
                 }
             }
             if (configuration.screenWidthDp >= 720) {
-                FreetimeNavigationRail(
-                    destinations = adaptiveDestinations,
-                    selectedIndex = 0,
-                    onDestinationSelected = onNavigationSelected,
-                    modifier = Modifier.align(Alignment.CenterStart)
-                )
+                NavigationRail(modifier = Modifier.align(Alignment.CenterStart).liquidGlass(interactive = false)) {
+                    adaptiveDestinations.forEachIndexed { index, destination ->
+                        NavigationRailItem(
+                            selected = index == 0,
+                            onClick = { onNavigationSelected(index) },
+                            icon = { Icon(destination.icon, contentDescription = destination.label) },
+                            label = { Text(destination.label) }
+                        )
+                    }
+                }
             } else {
                 GeoWeatherBottomNavigation(
                     destinations = adaptiveDestinations,
@@ -596,80 +558,68 @@ fun MainWeatherScreen(
                 .padding(end = 20.dp, bottom = 92.dp)
 
             if (isLandscape) {
-                FreetimeExtendedFloatingActionButton(
-                    text = stringResource(Res.string.SearchBTNTXT),
-                    icon = Icons.Default.Add,
-                    onClick = addLocationAction,
-                    modifier = addLocationFabModifier
-                )
+                ExtendedFloatingActionButton(text = { Text(stringResource(Res.string.SearchBTNTXT)) }, icon = { Icon(Icons.Default.Add, contentDescription = null) }, onClick = addLocationAction, modifier = addLocationFabModifier)
             } else {
-                FreetimeFloatingActionButton(
-                    icon = Icons.Default.Add,
-                    contentDescription = stringResource(Res.string.SearchBTNTXT),
-                    onClick = addLocationAction,
-                    modifier = addLocationFabModifier
-                )
+                FloatingActionButton(onClick = addLocationAction, modifier = addLocationFabModifier) { Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT)) }
             }
         }
         }
     }
 
     if (showAddLocationDialog) {
-        FreetimeDialog(
+        AlertDialog(
             onDismissRequest = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() },
-            title = stringResource(Res.string.search_title),
-            content = {
-            FreetimeSearchBar(
-                value = addLocationQuery,
-                onValueChange = { addLocationQuery = it; viewModel.searchCity(it.trim()) },
-                suggestions = searchResults.map { it.name },
-                onSuggestionSelected = { selected ->
-                    searchResults.firstOrNull { it.name == selected }?.let { city ->
-                        viewModel.addLocation(city)
-                        showAddLocationDialog = false
-                        addLocationQuery = ""
-                        viewModel.clearSearch()
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = stringResource(Res.string.search_placeholder)
-            )
-            if (isSearching) {
-                Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) { FreetimeProgressIndicator() }
-            } else if (addLocationQuery.isNotBlank()) {
-                LazyColumn(modifier = Modifier.heightIn(max = 320.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(searchResults, key = { "add-${it.latitude},${it.longitude}" }) { city ->
-                        Column(
-                            modifier = Modifier.fillMaxWidth().freetimeGlass(RoundedCornerShape(22.dp), interactive = true)
-                                .clickable { viewModel.addLocation(city); showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }
-                                .padding(horizontal = 16.dp, vertical = 12.dp)
-                        ) {
-                            FreetimeText(city.name, style = FreetimeDesign.typography.titleMedium)
-                            FreetimeText("${city.latitude}, ${city.longitude}", style = FreetimeDesign.typography.bodySmall, color = FreetimeDesign.palette.contentMuted)
+            title = { Text(stringResource(Res.string.search_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = addLocationQuery,
+                        onValueChange = { addLocationQuery = it; viewModel.searchCity(it.trim()) },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text(stringResource(Res.string.search_placeholder)) },
+                        singleLine = true
+                    )
+                    if (isSearching) {
+                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                    } else if (addLocationQuery.isNotBlank()) {
+                        LazyColumn(modifier = Modifier.heightIn(max = 320.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(searchResults, key = { "add-${it.latitude},${it.longitude}" }) { city ->
+                                Column(
+                                    modifier = Modifier.fillMaxWidth().liquidGlass(RoundedCornerShape(22.dp), interactive = true)
+                                        .clickable { viewModel.addLocation(city); showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }
+                                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                                ) {
+                                    Text(city.name, style = MaterialTheme.typography.titleMedium)
+                                    Text("${city.latitude}, ${city.longitude}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
                         }
                     }
                 }
-            }
             },
-            actions = {
-                FreetimeGlassAction(onClick = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }) {
-                    FreetimeText(stringResource(Res.string.CancelTXT))
+            confirmButton = {
+                TextButton(onClick = { showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }) {
+                    Text(stringResource(Res.string.CancelTXT))
                 }
             }
         )
     }
 
     locationToDelete?.let { location ->
-        FreetimeDialog(
-            title = stringResource(Res.string.DelLoc),
-            text = stringResource(Res.string.DelLocConAsk, location.name),
-            confirmText = stringResource(Res.string.DelTXT),
-            onConfirm = {
-                viewModel.deleteLocation(location)
-                locationToDelete = null
+        AlertDialog(
+            onDismissRequest = { locationToDelete = null },
+            title = { Text(stringResource(Res.string.DelLoc)) },
+            text = { Text(stringResource(Res.string.DelLocConAsk, location.name)) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.deleteLocation(location); locationToDelete = null }) {
+                    Text(stringResource(Res.string.DelTXT))
+                }
             },
-            dismissText = stringResource(Res.string.CancelTXT),
-            onDismissRequest = { locationToDelete = null }
+            dismissButton = {
+                TextButton(onClick = { locationToDelete = null }) {
+                    Text(stringResource(Res.string.CancelTXT))
+                }
+            }
         )
     }
 
@@ -689,17 +639,17 @@ fun MainWeatherScreen(
         var locationUvThreshold by remember(location.id) { mutableIntStateOf(LocationAlertPreferences.uvThreshold(context, location.id)) }
         var locationFrostThreshold by remember(location.id) { mutableIntStateOf(LocationAlertPreferences.frostThreshold(context, location.id)) }
 
-        FreetimeDialog(
+        AlertDialog(
             onDismissRequest = { notificationLocation = null },
-            title = stringResource(Res.string.notification_time_title),
-            content = {
+            title = { Text(stringResource(Res.string.notification_time_title)) },
+            text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    FreetimeTimePicker(
-                        value = selectedTime,
-                        onValueChange = { selectedTime = it },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    FreetimeText(stringResource(Res.string.location_alert_thresholds), style = FreetimeDesign.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    val timePickerState = rememberTimePickerState(initialHour = selectedTime.hour, initialMinute = selectedTime.minute, is24Hour = true)
+                    TimeInput(state = timePickerState, modifier = Modifier.fillMaxWidth())
+                    LaunchedEffect(timePickerState.hour, timePickerState.minute) {
+                        selectedTime = java.time.LocalTime.of(timePickerState.hour, timePickerState.minute)
+                    }
+                    Text(stringResource(Res.string.location_alert_thresholds), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     AlertThresholdRow(stringResource(Res.string.location_temp_threshold, locationTempThreshold), { locationTempThreshold = (locationTempThreshold - 1).coerceAtLeast(1) }, { locationTempThreshold = (locationTempThreshold + 1).coerceAtMost(20) })
                     AlertThresholdRow(stringResource(Res.string.location_wind_threshold, locationWindThreshold), { locationWindThreshold = (locationWindThreshold - 1).coerceAtLeast(1) }, { locationWindThreshold = (locationWindThreshold + 1).coerceAtMost(100) })
                     AlertThresholdRow(stringResource(Res.string.location_rain_threshold, locationRainThreshold), { locationRainThreshold = (locationRainThreshold - 5).coerceAtLeast(10) }, { locationRainThreshold = (locationRainThreshold + 5).coerceAtMost(100) })
@@ -708,19 +658,19 @@ fun MainWeatherScreen(
                     AlertThresholdRow(stringResource(Res.string.location_frost_threshold, locationFrostThreshold), { locationFrostThreshold = (locationFrostThreshold - 1).coerceAtLeast(-20) }, { locationFrostThreshold = (locationFrostThreshold + 1).coerceAtMost(10) })
                 }
             },
-            actions = {
+            confirmButton = {
                 if (location.notificationsEnabled) {
-                    FreetimeGlassAction(onClick = {
+                    Button(onClick = {
                         viewModel.setLocationNotifications(location, false, location.notificationTime)
                         notificationLocation = null
-                    }) { FreetimeText(stringResource(Res.string.notification_disable)) }
+                    }) { Text(stringResource(Res.string.notification_disable)) }
                     Spacer(Modifier.width(8.dp))
                 }
-                FreetimeGlassAction(onClick = { notificationLocation = null }) {
-                    FreetimeText(stringResource(Res.string.CancelTXT))
+                Button(onClick = { notificationLocation = null }) {
+                    Text(stringResource(Res.string.CancelTXT))
                 }
                 Spacer(Modifier.width(8.dp))
-                FreetimeGlassAction(onClick = {
+                Button(onClick = {
                     val time = "%02d:%02d".format(selectedTime.hour, selectedTime.minute)
                     LocationAlertPreferences.setTempThreshold(context, location.id, locationTempThreshold)
                     LocationAlertPreferences.setWindThreshold(context, location.id, locationWindThreshold)
@@ -730,7 +680,7 @@ fun MainWeatherScreen(
                     LocationAlertPreferences.setFrostThreshold(context, location.id, locationFrostThreshold)
                     viewModel.setLocationNotifications(location, true, time)
                     notificationLocation = null
-                }) { FreetimeText(stringResource(Res.string.confirm)) }
+                }) { Text(stringResource(Res.string.confirm)) }
             }
         )
     }
@@ -745,16 +695,16 @@ private fun AlertThresholdRow(label: String, onDecrease: () -> Unit, onIncrease:
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FreetimeText(label, modifier = Modifier.weight(1f), style = FreetimeDesign.typography.bodyMedium)
-        FreetimeGlassAction(onClick = onDecrease) { FreetimeText("−") }
+        Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+        Button(onClick = onDecrease) { Text("−") }
         Spacer(Modifier.width(6.dp))
-        FreetimeGlassAction(onClick = onIncrease) { FreetimeText("+") }
+        Button(onClick = onIncrease) { Text("+") }
     }
 }
 
 @Composable
 private fun GeoWeatherBottomNavigation(
-    destinations: List<FreetimeNavigationDestination>,
+    destinations: List<WeatherNavigationDestination>,
     selectedIndex: Int,
     onDestinationSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
@@ -762,7 +712,7 @@ private fun GeoWeatherBottomNavigation(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .freetimeGlass(RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp))
+            .liquidGlass(RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp))
             .padding(horizontal = 8.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
@@ -782,13 +732,13 @@ private fun GeoWeatherBottomNavigation(
                     contentDescription = destination.label,
                     modifier = Modifier.size(24.dp),
                     colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
-                        if (selected) FreetimeDesign.palette.primary else FreetimeDesign.palette.contentMuted
+                        if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 )
-                FreetimeText(
+                Text(
                     text = destination.label,
-                    style = FreetimeDesign.typography.labelMedium,
-                    color = if (selected) FreetimeDesign.palette.primary else FreetimeDesign.palette.contentMuted
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
