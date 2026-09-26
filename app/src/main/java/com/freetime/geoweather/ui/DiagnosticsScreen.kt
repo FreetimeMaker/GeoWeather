@@ -1,35 +1,23 @@
 package com.freetime.geoweather.ui
-import com.freetime.design.FreetimeIconButton
-import com.freetime.design.FreetimeScaffold
-import com.freetime.design.FreetimeInfoCard
-import com.freetime.design.FreetimeText
-import com.freetime.design.FreetimeGlassButton
-import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeGlassAction
-import com.freetime.design.FreetimeGlassPanel
 
 import android.content.Intent
 import android.os.Build
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.freetime.geoweather.*
-import com.freetime.geoweather.data.DependencyManager
-import com.freetime.geoweather.R as Res
-import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeGlassAction
-import com.freetime.design.FreetimeGlassPanel
 import com.freetime.core.FreetimeCore
+import com.freetime.design.liquidGlass
+import com.freetime.geoweather.*
+import com.freetime.geoweather.R as Res
+import com.freetime.geoweather.data.DependencyManager
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiagnosticsScreen(onBack: () -> Unit) {
     val context = LocalContext.current
@@ -56,27 +44,45 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
         "Network: $network\nSaved locations: $locations\n" +
         "Location permission: $locationPermission\nNotifications: $notificationPermission\n" +
         "Cache: ${String.format(java.util.Locale.getDefault(), "%.1f", cacheMb)} MB\n"
-    FreetimeScaffold(topBar = {
-        FreetimeGlassTopBar(
-            title = stringResource(Res.string.diagnostics_title),
-            navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
-        )
-    }) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            FreetimeInfoCard(
-                title = stringResource(Res.string.diagnostics_title),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                FreetimeText(report)
-            }
-            FreetimeGlassButton(
-                text = stringResource(Res.string.export_diagnostics),
-                onClick = {
-                val intent = Intent(Intent.ACTION_SEND).apply { type = "text/plain"; putExtra(Intent.EXTRA_SUBJECT, "GeoWeather diagnostics"); putExtra(Intent.EXTRA_TEXT, report) }
-                context.startActivity(Intent.createChooser(intent, context.getString(Res.string.export_diagnostics)))
-            },
-                modifier = Modifier.fillMaxWidth()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(Res.string.diagnostics_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    }
+                },
+                modifier = Modifier.liquidGlass(interactive = false)
             )
+        }
+    ) { padding ->
+        Column(
+            Modifier.padding(padding).padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Card(
+                modifier = Modifier.fillMaxWidth().liquidGlass(interactive = false)
+            ) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(Res.string.diagnostics_title), style = MaterialTheme.typography.titleMedium)
+                    Text(report, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+            Button(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_SUBJECT, "GeoWeather diagnostics")
+                        putExtra(Intent.EXTRA_TEXT, report)
+                    }
+                    context.startActivity(Intent.createChooser(intent, context.getString(Res.string.export_diagnostics)))
+                },
+                modifier = Modifier.fillMaxWidth().liquidGlass()
+            ) {
+                Text(stringResource(Res.string.export_diagnostics))
+            }
         }
     }
 }
