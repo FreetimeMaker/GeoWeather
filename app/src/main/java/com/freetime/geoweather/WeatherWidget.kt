@@ -2,6 +2,8 @@ package com.freetime.geoweather
 
 import android.R
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
@@ -69,14 +71,17 @@ open class WeatherWidget(
             configuredLocationId?.let { repository.getLocationById(it) } ?: repository.getSelectedLocation()
         }
         val dataSaver = settings.dataSaver.value
+        val networkAvailable = isWidgetNetworkAvailable(context)
 
         var current = location
-        var cached = false
+        var cached = location?.weatherData != null && !networkAvailable
         val now = System.currentTimeMillis()
         val freshEnough = location?.weatherData != null &&
             location.lastUpdated > 0L &&
             now - location.lastUpdated < WIDGET_REFRESH_WINDOW_MS
-        if (location != null && !(dataSaver && location.weatherData != null) && (forceRefresh || !freshEnough)) {
+        val automaticRefreshAllowed = !dataSaver && !freshEnough
+        val shouldRefresh = networkAvailable && (forceRefresh || automaticRefreshAllowed)
+        if (location != null && shouldRefresh) {
             try {
                 current = configuredLocationId?.let { repository.refreshLocationWeather(it) }
                     ?: repository.refreshSelectedLocationWeather(includeHourly = true)
@@ -263,6 +268,15 @@ private fun widgetForecastIsDay(time: String, daily: List<DailyForecast>): Boole
     val sunset = runCatching { java.time.LocalTime.parse(day?.sunset?.takeLast(5) ?: "19:00") }
         .getOrDefault(java.time.LocalTime.of(19, 0))
     return !localTime.isBefore(sunrise) && localTime.isBefore(sunset)
+}
+
+private fun isWidgetNetworkAvailable(context: Context): Boolean {
+    val connectivity = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        ?: return false
+    val network = connectivity.activeNetwork ?: return false
+    val capabilities = connectivity.getNetworkCapabilities(network) ?: return false
+    return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+        capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
 }
 
 private fun formatWidgetTemp(value: Int, unit: String): String {
