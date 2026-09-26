@@ -76,7 +76,10 @@ data class LocationEntity(
                         else current["weather_code"]?.jsonPrimitive?.intOrNull ?: current["weathercode"]?.jsonPrimitive?.intOrNull
                     }
                     "timelines" in json -> json["timelines"]?.jsonObject?.get("daily")?.jsonArray?.get(0)?.jsonObject?.get("values")?.jsonObject?.get("weatherCodeMax")?.jsonPrimitive?.intOrNull
-                    "currentConditions" in json -> 0 // Visual crossing mapping needed
+                    "currentConditions" in json -> {
+                        val current = json["currentConditions"]?.jsonObject ?: return null
+                        current["icon"]?.jsonPrimitive?.contentOrNull?.let(::visualCrossingIconToWmo)
+                    }
                     "weather_code" in json -> json["weather_code"]?.jsonPrimitive?.intOrNull
                     "weathercode" in json -> json["weathercode"]?.jsonPrimitive?.intOrNull
                     else -> null
@@ -107,6 +110,20 @@ data class LocationEntity(
             "\"currentConditions\":" in data -> "visualcrossing"
             else -> "open_meteo"
         }
+    }
+
+    private fun visualCrossingIconToWmo(icon: String): Int = when (icon.lowercase()) {
+        "clear-day", "clear-night" -> 0
+        "partly-cloudy-day", "partly-cloudy-night" -> 2
+        "cloudy" -> 3
+        "fog" -> 45
+        "wind" -> 3
+        "rain" -> 63
+        "showers-day", "showers-night" -> 80
+        "snow" -> 73
+        "snow-showers-day", "snow-showers-night" -> 85
+        "thunder", "thunder-rain", "thunder-showers-day", "thunder-showers-night" -> 95
+        else -> 3
     }
 
     private fun currentObject(): kotlinx.serialization.json.JsonObject? {
