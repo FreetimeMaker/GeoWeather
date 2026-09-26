@@ -21,6 +21,8 @@
     <application
         android:name=".GeoWeatherApp"
         android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:memtagMode="async"
