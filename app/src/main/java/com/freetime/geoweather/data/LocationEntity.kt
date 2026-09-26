@@ -39,21 +39,8 @@ data class LocationEntity(
                 val json = Json.parseToJsonElement(data).jsonObject
                 when {
                     "current_weather" in json -> json["current_weather"]?.jsonObject?.get("temperature")?.jsonPrimitive?.doubleOrNull
-                    "current" in json -> {
-                        val cur = json["current"]?.jsonObject
-                        // Open-Meteo uses temperature_2m, WeatherAPI temp_c
-                        cur?.get("temperature_2m")?.jsonPrimitive?.doubleOrNull
-                            ?: cur?.get("temp_c")?.jsonPrimitive?.doubleOrNull
-                    }
-                    "timelines" in json -> {
-                        val timelines = json["timelines"]?.jsonObject
-                        if (timelines != null && "minutely" in timelines) {
-                            timelines["minutely"]?.jsonArray?.get(0)?.jsonObject?.get("values")?.jsonObject?.get("temperature")?.jsonPrimitive?.doubleOrNull
-                        } else {
-                            timelines?.get("daily")?.jsonArray?.get(0)?.jsonObject?.get("values")?.jsonObject?.get("temperatureAvg")?.jsonPrimitive?.doubleOrNull
-                        }
-                    }
-                    "currentConditions" in json -> json["currentConditions"]?.jsonObject?.get("temp")?.jsonPrimitive?.doubleOrNull
+                    "current" in json -> json["current"]?.jsonObject
+                        ?.get("temperature_2m")?.jsonPrimitive?.doubleOrNull
                     "temperature_2m" in json -> json["temperature_2m"]?.jsonPrimitive?.doubleOrNull
                     else -> null
                 }
@@ -72,13 +59,8 @@ data class LocationEntity(
                     }
                     "current" in json -> {
                         val current = json["current"]?.jsonObject ?: return null
-                        if ("condition" in current) current["condition"]?.jsonObject?.get("code")?.jsonPrimitive?.intOrNull
-                        else current["weather_code"]?.jsonPrimitive?.intOrNull ?: current["weathercode"]?.jsonPrimitive?.intOrNull
-                    }
-                    "timelines" in json -> json["timelines"]?.jsonObject?.get("daily")?.jsonArray?.get(0)?.jsonObject?.get("values")?.jsonObject?.get("weatherCodeMax")?.jsonPrimitive?.intOrNull
-                    "currentConditions" in json -> {
-                        val current = json["currentConditions"]?.jsonObject ?: return null
-                        current["icon"]?.jsonPrimitive?.contentOrNull?.let(::visualCrossingIconToWmo)
+                        current["weather_code"]?.jsonPrimitive?.intOrNull
+                            ?: current["weathercode"]?.jsonPrimitive?.intOrNull
                     }
                     "weather_code" in json -> json["weather_code"]?.jsonPrimitive?.intOrNull
                     "weathercode" in json -> json["weathercode"]?.jsonPrimitive?.intOrNull
@@ -102,20 +84,6 @@ data class LocationEntity(
     }
 
 
-    private fun visualCrossingIconToWmo(icon: String): Int = when (icon.lowercase()) {
-        "clear-day", "clear-night" -> 0
-        "partly-cloudy-day", "partly-cloudy-night" -> 2
-        "cloudy" -> 3
-        "fog" -> 45
-        "wind" -> 3
-        "rain" -> 63
-        "showers-day", "showers-night" -> 80
-        "snow" -> 73
-        "snow-showers-day", "snow-showers-night" -> 85
-        "thunder", "thunder-rain", "thunder-showers-day", "thunder-showers-night" -> 95
-        else -> 3
-    }
-
     private fun currentObject(): kotlinx.serialization.json.JsonObject? {
         return try {
             weatherData?.let { data ->
@@ -128,27 +96,23 @@ data class LocationEntity(
     val currentHumidity: Int? get() {
         val cur = currentObject() ?: return null
         return cur["relative_humidity_2m"]?.jsonPrimitive?.intOrNull
-            ?: cur["humidity"]?.jsonPrimitive?.intOrNull
     }
 
     /** Pressure in hPa. */
     val currentPressure: Double? get() {
         val cur = currentObject() ?: return null
         return cur["pressure_msl"]?.jsonPrimitive?.doubleOrNull
-            ?: cur["pressure_mb"]?.jsonPrimitive?.doubleOrNull
     }
 
     /** Wind speed in km/h. */
     val currentWindSpeed: Double? get() {
         val cur = currentObject() ?: return null
         return cur["wind_speed_10m"]?.jsonPrimitive?.doubleOrNull
-            ?: cur["wind_kph"]?.jsonPrimitive?.doubleOrNull
     }
 
     val currentWindDirection: Int? get() {
         val cur = currentObject() ?: return null
         return cur["wind_direction_10m"]?.jsonPrimitive?.intOrNull
-            ?: cur["wind_degree"]?.jsonPrimitive?.intOrNull
     }
 
     /** Feels-like temperature in °C. */
@@ -157,7 +121,6 @@ data class LocationEntity(
             weatherData?.let { data ->
                 val json = Json.parseToJsonElement(data).jsonObject
                 json["current"]?.jsonObject?.get("apparent_temperature")?.jsonPrimitive?.doubleOrNull
-                    ?: json["current"]?.jsonObject?.get("feelslike_c")?.jsonPrimitive?.doubleOrNull
             }
         } catch (e: Exception) { null }
     }
@@ -166,7 +129,6 @@ data class LocationEntity(
     val currentWindGusts: Double? get() {
         val cur = currentObject() ?: return null
         return cur["wind_gusts_10m"]?.jsonPrimitive?.doubleOrNull
-            ?: cur["gust_kph"]?.jsonPrimitive?.doubleOrNull
     }
 
     val elevation: Double get() {
