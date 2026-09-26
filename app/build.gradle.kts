@@ -33,6 +33,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.compose.material3)
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation(libs.freetime.core)
     implementation(libs.freetime.design)
