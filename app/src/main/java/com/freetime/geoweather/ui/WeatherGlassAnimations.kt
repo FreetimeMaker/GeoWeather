@@ -1,5 +1,5 @@
 package com.freetime.geoweather.ui
-import com.freetime.design.freetimeGlass
+import com.freetime.design.liquidGlass
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
@@ -32,7 +32,7 @@ fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier, windSpeed: Do
         0f at 0; 0f at 3100; 1f at 3150; .08f at 3230; .85f at 3310; 0f at 3420
     }), label = "flash")
 
-    Box(modifier.height(170.dp).freetimeGlass(CircleShape, interactive = false)) {
+    Box(modifier.height(170.dp).liquidGlass(CircleShape, interactive = false)) {
         Canvas(Modifier.fillMaxSize()) {
             if (night) {
                 drawRect(Color(0xFF07162E).copy(alpha = .30f))
