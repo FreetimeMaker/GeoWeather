@@ -83,9 +83,12 @@ open class WeatherWidget(
         val shouldRefresh = networkAvailable && (forceRefresh || automaticRefreshAllowed)
         if (location != null && shouldRefresh) {
             try {
-                current = configuredLocationId?.let { repository.refreshLocationWeather(it) }
-                    ?: repository.refreshSelectedLocationWeather(includeHourly = true)
-                    ?: location
+                current = configuredLocationId?.let {
+                    repository.refreshLocationWeather(it, if (forceRefresh) 0L else WIDGET_REFRESH_WINDOW_MS)
+                } ?: repository.refreshSelectedLocationWeather(
+                    includeHourly = true,
+                    minAgeMillis = if (forceRefresh) 0L else WIDGET_REFRESH_WINDOW_MS
+                ) ?: location
             } catch (_: Exception) {
                 cached = location.weatherData != null
             }
@@ -141,7 +144,7 @@ open class WeatherWidget(
         }
         val visibleHourly = hourly.take(hourlyCount)
         val visibleDaily = daily.take(dailyCount)
-        val isDay = widgetCurrentIsDay(daily)
+        val isDay = widgetCurrentIsDay(currentTimeZone = currentTimeZone(hourly), daily = daily)
         val palette = widgetPalette(code, isDay)
 
         Column(
@@ -264,9 +267,16 @@ private fun widgetPalette(code: Int, isDay: Boolean): WidgetPalette {
     }
 }
 
-private fun widgetCurrentIsDay(daily: List<DailyForecast>): Boolean {
+private fun currentTimeZone(hourly: List<HourlyForecast>): java.time.ZoneId {
+    val first = hourly.firstOrNull()?.time ?: return java.time.ZoneId.systemDefault()
+    return runCatching {
+        java.time.OffsetDateTime.parse(first).offset
+    }.getOrElse { java.time.ZoneId.systemDefault() }
+}
+
+private fun widgetCurrentIsDay(currentTimeZone: java.time.ZoneId, daily: List<DailyForecast>): Boolean {
     val today = daily.firstOrNull() ?: return true
-    val now = java.time.LocalTime.now()
+    val now = java.time.ZonedDateTime.now(currentTimeZone).toLocalTime()
     val sunrise = runCatching { java.time.LocalTime.parse(today.sunrise.takeLast(5)) }
         .getOrDefault(java.time.LocalTime.of(7, 0))
     val sunset = runCatching { java.time.LocalTime.parse(today.sunset.takeLast(5)) }
