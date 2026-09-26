@@ -366,6 +366,14 @@ class WeatherRepository(
         }
     }
 
+    fun getWeatherTimeZoneId(location: LocationEntity): String? {
+        val data = location.weatherData ?: return null
+        return parseWeatherJson(data, "timezone")
+            ?.get("timezone")
+            ?.jsonPrimitive
+            ?.contentOrNull
+    }
+
     suspend fun getAirQualityExtras(location: LocationEntity): CurrentHourExtras? {
         return try {
             val data = apiClient.get(ApiConstants.getAirQualityUrl(location.latitude, location.longitude))
