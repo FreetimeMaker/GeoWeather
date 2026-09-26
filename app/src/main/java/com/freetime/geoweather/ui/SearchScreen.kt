@@ -1,15 +1,4 @@
 package com.freetime.geoweather.ui
-import com.freetime.design.FreetimeIconButton
-import com.freetime.design.FreetimeScaffold
-import com.freetime.design.FreetimeDesign
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeGlassSearchField
-import com.freetime.design.FreetimeLoadingState
-import com.freetime.design.FreetimeEmptyState
-import com.freetime.design.FreetimeSectionHeader
-import com.freetime.design.FreetimeListItem
-import com.freetime.design.freetimeGlass
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,14 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
-import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeTextField
+import com.freetime.design.liquidGlass
 import kotlinx.coroutines.launch
-import com.freetime.design.FreetimeChip
-import com.freetime.design.FreetimeCard
-import com.freetime.design.FreetimeProgressIndicator
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     viewModel: WeatherViewModel,
@@ -60,74 +46,78 @@ fun SearchScreen(
         onDispose { viewModel.clearSearch() }
     }
 
-    FreetimeScaffold(
+    Scaffold(
         topBar = {
-            FreetimeGlassTopBar(
-                title = stringResource(Res.string.search_title),
-                navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
+            TopAppBar(
+                title = { Text(stringResource(Res.string.search_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    }
+                },
+                modifier = Modifier.liquidGlass(interactive = false)
             )
         }
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            FreetimeGlassSearchField(
+    ) { padding ->
+        Column(modifier = Modifier.padding(padding).padding(16.dp)) {
+            OutlinedTextField(
                 value = query,
                 onValueChange = {
                     query = it
                     viewModel.searchCity(it)
                 },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = stringResource(Res.string.search_placeholder)
+                modifier = Modifier.fillMaxWidth().liquidGlass(),
+                placeholder = { Text(stringResource(Res.string.search_placeholder)) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(12.dp))
             if (query.isBlank()) {
-                FreetimeSectionHeader(title = stringResource(Res.string.quick_actions_title))
+                Text(text = stringResource(Res.string.quick_actions_title))
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FreetimeChip(
-                        text = stringResource(Res.string.command_refresh_weather),
-                        onClick = {
+                    AssistChip(label = { Text(stringResource(Res.string.command_refresh_weather)) }, onClick = {
                             kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
                                 viewModel.refreshAllLocations()
                             }
                         }
                     )
-                    FreetimeChip(text = stringResource(Res.string.command_saved_locations), onClick = onBack)
+                    AssistChip(label = { Text(stringResource(Res.string.command_saved_locations)) }, onClick = onBack)
                 }
                 Spacer(modifier = Modifier.height(12.dp))
             }
             if (query.isBlank() && savedLocations.isNotEmpty()) {
-                FreetimeSectionHeader(title = stringResource(Res.string.saved_places))
+                Text(text = stringResource(Res.string.saved_places))
                 Spacer(modifier = Modifier.height(8.dp))
                 androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(savedLocations.take(8), key = { "saved-search-" + it.id }) { loc ->
-                        FreetimeChip(text = loc.name, onClick = { query = loc.name; viewModel.searchCity(loc.name) })
+                        AssistChip(label = { Text(loc.name) }, onClick = { query = loc.name; viewModel.searchCity(loc.name) })
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
             }
             if (recentSearches.isNotEmpty() && query.isBlank()) {
-                FreetimeSectionHeader(title = stringResource(Res.string.recent_searches))
+                Text(text = stringResource(Res.string.recent_searches))
                 Spacer(modifier = Modifier.height(8.dp))
                 androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(recentSearches) { recent ->
-                        FreetimeChip(text = recent, onClick = { query = recent; viewModel.searchCity(recent) })
+                        AssistChip(label = { Text(recent) }, onClick = { query = recent; viewModel.searchCity(recent) })
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
             when {
-                isSearching -> { FreetimeLoadingState(modifier = Modifier.fillMaxWidth()) }
-                query.isNotBlank() && results.isEmpty() -> { FreetimeEmptyState(title = stringResource(Res.string.search_no_results), modifier = Modifier.fillMaxWidth()) }
+                isSearching -> { LinearProgressIndicator(modifier = Modifier.fillMaxWidth()) }
+                query.isNotBlank() && results.isEmpty() -> { Text(stringResource(Res.string.search_no_results), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) }
                 else -> {
                     LazyColumn {
                         items(results, key = { "${it.latitude},${it.longitude}" }) { city ->
-                            FreetimeListItem(
-                                title = city.name,
-                                subtitle = listOfNotNull(city.admin1, city.country).filter { it.isNotBlank() }.joinToString(" · ").ifBlank { "${city.latitude}, ${city.longitude}" },
-                                modifier = Modifier.padding(vertical = 4.dp),
-                                onClick = {
+                            ListItem(
+                                headlineContent = { Text(city.name) },
+                                supportingContent = { Text(listOfNotNull(city.admin1, city.country).filter { it.isNotBlank() }.joinToString(" · ").ifBlank { "${city.latitude}, ${city.longitude}" }) },
+                                modifier = Modifier.padding(vertical = 4.dp).clickable {
                                     rememberQuery(city.name)
                                     viewModel.addLocation(city)
                                     onCitySelected()
