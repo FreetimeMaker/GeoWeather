@@ -330,117 +330,20 @@ class WeatherRepository(
 
     fun getHourlyForecasts(location: LocationEntity): List<HourlyForecast> {
         val data = location.weatherData ?: return emptyList()
-        val json = parseWeatherJson(data, "hourly forecast") ?: return emptyList()
         return try {
-            val hourly = json["hourly"]?.jsonObject ?: return emptyList()
-            val times = hourly["time"]?.jsonArray ?: return emptyList()
-            val temps = hourly["temperature_2m"]?.jsonArray ?: return emptyList()
-            val codes = hourly["weathercode"]?.jsonArray ?: hourly["weather_code"]?.jsonArray ?: return emptyList()
-            val precipProbabilities = hourly["precipitation_probability"]?.jsonArray
-            val humidities = hourly["relative_humidity_2m"]?.jsonArray
-            val feelsLikes = hourly["apparent_temperature"]?.jsonArray
-            val visibilities = hourly["visibility"]?.jsonArray
-            val pressures = hourly["pressure_msl"]?.jsonArray
-            val cloudBases = hourly["cloud_base"]?.jsonArray
-            val precipitations = hourly["precipitation"]?.jsonArray
-            val rains = hourly["rain"]?.jsonArray
-            val snowfalls = hourly["snowfall"]?.jsonArray
-            val windSpeeds = hourly["wind_speed_10m"]?.jsonArray
-            val windGusts = hourly["wind_gusts_10m"]?.jsonArray
-            val uvIndexes = hourly["uv_index"]?.jsonArray
-
-            val locationTimeZone = getLocationTimeZone(json)
-            val now = Clock.System.now().toLocalDateTime(locationTimeZone)
-            val currentHourPrefix = now.toString().take(13)
-            val startIndex = times.indexOfFirst {
-                it.jsonPrimitive.content.startsWith(currentHourPrefix)
-            }.takeIf { it >= 0 } ?: 0
-
-            // Open-Meteo returns hourly values for the full 16-day request.
-            // Keep the complete remaining forecast so every daily forecast can expose its hours.
-            val count = (minOf(times.size, temps.size, codes.size) - startIndex).coerceAtLeast(0)
-
-            List(count) { offset ->
-                val i = startIndex + offset
-                val timeStr = times[i].jsonPrimitive.contentOrNull ?: return@List null
-                val temp = temps[i].jsonPrimitive.doubleOrNull?.toInt() ?: return@List null
-                val code = codes[i].jsonPrimitive.intOrNull ?: return@List null
-                HourlyForecast(
-                    time = timeStr,
-                    temp = temp,
-                    code = code,
-                    precipProbability = precipProbabilities?.getOrNull(i)?.jsonPrimitive?.intOrNull ?: 0,
-                    humidity = humidities?.getOrNull(i)?.jsonPrimitive?.intOrNull,
-                    feelsLike = feelsLikes?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    visibilityKm = visibilities?.getOrNull(i)?.jsonPrimitive?.doubleOrNull?.div(1000.0),
-                    pressure = pressures?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    cloudBaseM = cloudBases?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    precipitation = precipitations?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    rain = rains?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    snowfall = snowfalls?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    windSpeed = windSpeeds?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    windGusts = windGusts?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    uvIndex = uvIndexes?.getOrNull(i)?.jsonPrimitive?.doubleOrNull
-                )
-            }
+            OpenMeteoForecastParser.hourly(data)
         } catch (e: Exception) {
-            Log.w("WeatherRepository", "Failed to read hourly forecast arrays", e)
+            Log.w("WeatherRepository", "Failed to parse hourly forecast", e)
             emptyList()
         }
     }
 
     fun getDailyForecasts(location: LocationEntity): List<DailyForecast> {
         val data = location.weatherData ?: return emptyList()
-        val json = parseWeatherJson(data, "daily forecast") ?: return emptyList()
         return try {
-            val daily = json["daily"]?.jsonObject ?: return emptyList()
-            val dates = daily["time"]?.jsonArray ?: return emptyList()
-            val codes = daily["weather_code"]?.jsonArray ?: daily["weathercode"]?.jsonArray ?: return emptyList()
-            val maxTemps = daily["temperature_2m_max"]?.jsonArray ?: return emptyList()
-            val minTemps = daily["temperature_2m_min"]?.jsonArray ?: return emptyList()
-            val sunrises = daily["sunrise"]?.jsonArray
-            val sunsets = daily["sunset"]?.jsonArray
-            val precipSums = daily["precipitation_sum"]?.jsonArray
-            val precipProbs = daily["precipitation_probability_max"]?.jsonArray
-            val windMaxs = daily["wind_speed_10m_max"]?.jsonArray
-            val feelsLikeMaxs = daily["apparent_temperature_max"]?.jsonArray
-            val feelsLikeMins = daily["apparent_temperature_min"]?.jsonArray
-            val daylightDurations = daily["daylight_duration"]?.jsonArray
-            val sunshineDurations = daily["sunshine_duration"]?.jsonArray
-            val uvMaxs = daily["uv_index_max"]?.jsonArray
-            val rainSums = daily["rain_sum"]?.jsonArray
-            val snowfallSums = daily["snowfall_sum"]?.jsonArray
-            val precipitationHours = daily["precipitation_hours"]?.jsonArray
-            val windGustMaxs = daily["wind_gusts_10m_max"]?.jsonArray
-
-            List(minOf(dates.size, codes.size, maxTemps.size, minTemps.size, 16)) { i ->
-                val date = dates[i].jsonPrimitive.contentOrNull ?: return@List null
-                val code = codes[i].jsonPrimitive.intOrNull ?: return@List null
-                val maxTemp = maxTemps[i].jsonPrimitive.doubleOrNull?.toInt() ?: return@List null
-                val minTemp = minTemps[i].jsonPrimitive.doubleOrNull?.toInt() ?: return@List null
-                DailyForecast(
-                    date = date,
-                    code = code,
-                    maxTemp = maxTemp,
-                    minTemp = minTemp,
-                    sunrise = sunrises?.getOrNull(i)?.jsonPrimitive?.content ?: "--",
-                    sunset = sunsets?.getOrNull(i)?.jsonPrimitive?.content ?: "--",
-                    precipSum = precipSums?.getOrNull(i)?.jsonPrimitive?.doubleOrNull ?: 0.0,
-                    precipProbMax = precipProbs?.getOrNull(i)?.jsonPrimitive?.intOrNull ?: 0,
-                    windMax = windMaxs?.getOrNull(i)?.jsonPrimitive?.doubleOrNull ?: 0.0,
-                    feelsLikeMax = feelsLikeMaxs?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    feelsLikeMin = feelsLikeMins?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    daylightDuration = daylightDurations?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    sunshineDuration = sunshineDurations?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    uvMax = uvMaxs?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    rainSum = rainSums?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    snowfallSum = snowfallSums?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    precipitationHours = precipitationHours?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
-                    windGustMax = windGustMaxs?.getOrNull(i)?.jsonPrimitive?.doubleOrNull
-                )
-            }.filterNotNull()
+            OpenMeteoForecastParser.daily(data)
         } catch (e: Exception) {
-            Log.w("WeatherRepository", "Failed to read daily forecast arrays", e)
+            Log.w("WeatherRepository", "Failed to parse daily forecast", e)
             emptyList()
         }
     }
