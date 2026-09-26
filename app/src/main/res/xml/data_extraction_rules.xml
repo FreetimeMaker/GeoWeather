@@ -1,34 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
     <cloud-backup>
-        <!-- Back up user-controlled settings and feature configuration only. -->
+        <!-- Only durable user-controlled preferences are eligible for cloud backup. -->
         <include domain="sharedpref" path="geo_weather_prefs.xml" />
         <include domain="sharedpref" path="geoweather_features.xml" />
         <include domain="sharedpref" path="location_alert_preferences.xml" />
         <include domain="sharedpref" path="location_backup.xml" />
-
-        <!-- Widget IDs are device-specific; histories and dedupe state are rebuildable. -->
-        <exclude domain="sharedpref" path="weather_widget_preferences.xml" />
-        <exclude domain="sharedpref" path="weather_alert_dedupe.xml" />
-        <exclude domain="sharedpref" path="forecast_change_history.xml" />
-        <exclude domain="sharedpref" path="search_history.xml" />
-        <exclude domain="sharedpref" path="launch_state.xml" />
-
-        <!-- Room also contains rebuildable weather/forecast history, so do not cloud-back it up. -->
-        <exclude domain="database" path="." />
-        <exclude domain="file" path="." />
     </cloud-backup>
 
     <device-transfer>
+        <!-- Keep device transfer aligned with cloud backup. -->
         <include domain="sharedpref" path="geo_weather_prefs.xml" />
         <include domain="sharedpref" path="geoweather_features.xml" />
         <include domain="sharedpref" path="location_alert_preferences.xml" />
-        <exclude domain="sharedpref" path="weather_widget_preferences.xml" />
-        <exclude domain="sharedpref" path="weather_alert_dedupe.xml" />
-        <exclude domain="sharedpref" path="forecast_change_history.xml" />
-        <exclude domain="sharedpref" path="search_history.xml" />
-        <exclude domain="sharedpref" path="launch_state.xml" />
-        <exclude domain="database" path="." />
-        <exclude domain="file" path="." />
+        <include domain="sharedpref" path="location_backup.xml" />
     </device-transfer>
 </data-extraction-rules>
