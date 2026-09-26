@@ -1,11 +1,4 @@
 package com.freetime.geoweather.ui
-import com.freetime.design.FreetimeIconButton
-import com.freetime.design.FreetimeScaffold
-import com.freetime.design.FreetimeDesign
-import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeGlassAction
-import com.freetime.design.FreetimeGlassPanel
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -15,6 +8,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
@@ -24,15 +23,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.copyToClipboard
-import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeGlassPanel
-import com.freetime.design.FreetimeGlassAction
+import com.freetime.design.liquidGlass
 import com.freetime.donations.DonationTarget
 import com.freetime.donations.FreetimeDonationScreen
 
 private data class ExternalDonation(@StringRes val labelKey: Int, val url: String)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DonateScreen(
     onBack: () -> Unit,
@@ -126,21 +123,26 @@ fun DonateScreen(
         }
     }
 
-    FreetimeScaffold(
+    Scaffold(
         topBar = {
-            FreetimeGlassTopBar(
-                title = stringResource(Res.string.donate_title),
-                navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
+            TopAppBar(
+                title = { Text(stringResource(Res.string.donate_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    }
+                },
+                modifier = Modifier.liquidGlass(interactive = false)
             )
         }
-    ) {
+    ) { padding ->
         FreetimeDonationScreen(
             targets = targets,
             title = stringResource(Res.string.support_development),
             onLinkClick = { target -> onWebViewClick(target.url, target.label) },
             onWalletClick = { target -> copyToClipboard(target.address) },
             onCopyWallet = { target -> copyToClipboard(target.address) },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().padding(padding)
         )
     }
 }
