@@ -101,16 +101,6 @@ data class LocationEntity(
         } catch (e: Exception) { true }
     }
 
-    val provider: String get() {
-        val data = weatherData ?: return "unknown"
-        return when {
-            "\"current_weather\":" in data -> "open_meteo"
-            "\"current\":" in data -> "weatherapi"
-            "\"timelines\":" in data -> "tomorrow.io"
-            "\"currentConditions\":" in data -> "visualcrossing"
-            else -> "open_meteo"
-        }
-    }
 
     private fun visualCrossingIconToWmo(icon: String): Int = when (icon.lowercase()) {
         "clear-day", "clear-night" -> 0
