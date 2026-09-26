@@ -15,12 +15,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.freetime.design.FreetimeCard
-import com.freetime.design.FreetimeDesign
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeIconButton
-import com.freetime.design.FreetimeScaffold
-import com.freetime.design.FreetimeText
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import com.freetime.design.liquidGlass
 import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -48,6 +51,7 @@ fun WeatherMapPreview(lat: Double, lon: Double, modifier: Modifier = Modifier, d
     NativeWeatherMap(lat = lat, lon = lon, frameIndex = 11, radarVisible = !dataSaver, modifier = modifier)
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean = false) {
     var playing by remember { mutableStateOf(!dataSaver) }
@@ -65,52 +69,51 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
         }
     }
 
-    FreetimeScaffold(
+    Scaffold(
         topBar = {
-            FreetimeGlassTopBar(
-                title = stringResource(Res.string.radar_title),
-                navigation = {
-                    FreetimeIconButton(
-                        icon = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null,
-                        onClick = onBack
-                    )
-                }
+            TopAppBar(
+                title = { Text(stringResource(Res.string.radar_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    }
+                },
+                modifier = Modifier.liquidGlass(interactive = false)
             )
         }
-    ) {
-        Box(Modifier.fillMaxSize()) {
+    ) { contentPadding ->
+        Box(Modifier.fillMaxSize().padding(contentPadding)) {
             NativeWeatherMap(lat, lon, frameIndex, radarVisible, Modifier.fillMaxSize(), baseMapVisible, locationVisible) { frames, failed ->
                 availableFrames = frames
                 radarLoadFailed = failed
                 if (frames.isNotEmpty()) frameIndex = frameIndex.coerceIn(0, frames.lastIndex)
             }
             if (dataSaver && !radarVisible) {
-                FreetimeCard(modifier = Modifier.align(Alignment.Center).padding(24.dp).clickable { radarVisible = true }) {
-                    FreetimeText(stringResource(Res.string.radar_data_saver_hint), modifier = Modifier.padding(14.dp))
+                Card(modifier = Modifier.align(Alignment.Center).padding(24.dp).clickable { radarVisible = true }) {
+                    Text(stringResource(Res.string.radar_data_saver_hint), modifier = Modifier.padding(14.dp))
                 }
             }
             Row(
                 modifier = Modifier.align(Alignment.TopCenter).padding(12.dp).horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                FreetimeCard(modifier = Modifier.clickable { radarVisible = !radarVisible }) {
-                    FreetimeText(if (radarVisible) stringResource(Res.string.radar_layer_on) else stringResource(Res.string.radar_layer_off), modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                Card(modifier = Modifier.clickable { radarVisible = !radarVisible }) {
+                    Text(if (radarVisible) stringResource(Res.string.radar_layer_on) else stringResource(Res.string.radar_layer_off), modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
                 }
-                FreetimeCard(modifier = Modifier.clickable { baseMapVisible = !baseMapVisible }) {
-                    FreetimeText(
+                Card(modifier = Modifier.clickable { baseMapVisible = !baseMapVisible }) {
+                    Text(
                         stringResource(if (baseMapVisible) Res.string.map_layer_osm_on else Res.string.map_layer_osm_off),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                     )
                 }
-                FreetimeCard(modifier = Modifier.clickable { locationVisible = !locationVisible }) {
-                    FreetimeText(
+                Card(modifier = Modifier.clickable { locationVisible = !locationVisible }) {
+                    Text(
                         stringResource(if (locationVisible) Res.string.map_layer_location_on else Res.string.map_layer_location_off),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                     )
                 }
             }
-            FreetimeCard(
+            Card(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding()
@@ -122,27 +125,28 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    FreetimeIconButton(
-                        icon = if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = if (playing) stringResource(Res.string.pause_radar) else stringResource(Res.string.play_radar),
-                        onClick = { playing = !playing }
-                    )
+                    IconButton(onClick = { playing = !playing }) {
+                        Icon(
+                            imageVector = if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
+                            contentDescription = if (playing) stringResource(Res.string.pause_radar) else stringResource(Res.string.play_radar)
+                        )
+                    }
                     Column(Modifier.weight(1f)) {
                         val frame = availableFrames.getOrNull(frameIndex)
                         val ageMinutes = frame?.let { ((System.currentTimeMillis() / 1000L - it.time).coerceAtLeast(0L) / 60L).toInt() }
-                        FreetimeText(
+                        Text(
                             when {
                                 radarLoadFailed -> stringResource(Res.string.radar_load_failed)
                                 frame == null -> stringResource(Res.string.radar_loading)
                                 ageMinutes != null && ageMinutes < 5 -> stringResource(Res.string.latest_radar)
                                 else -> stringResource(Res.string.radar_minutes_ago, ageMinutes ?: 0)
                             },
-                            style = FreetimeDesign.typography.labelLarge
+                            style = MaterialTheme.typography.labelLarge
                         )
-                        FreetimeText(
+                        Text(
                             stringResource(Res.string.radar_attribution),
-                            style = FreetimeDesign.typography.labelSmall,
-                            color = FreetimeDesign.palette.contentMuted
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
