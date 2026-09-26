@@ -16,6 +16,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -123,7 +125,7 @@ fun WeatherDetailScreen(
                 append("\n" + stringResource(Res.string.cloud_base_label) + ": " + (sheetExtras?.cloudBaseM?.let { it.roundToInt().toString() + " m" } ?: "--"))
                 append("\n" + stringResource(Res.string.humidity_label) + ": " + (loc.currentHumidity?.let { it.toString() + "%" } ?: "--"))
             }) }
-        )   )
+        )
     }
 
     Scaffold(
@@ -806,8 +808,7 @@ fun WeatherDetailScreen(
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                         items(hourly.take(12)) { hour ->
                                             Card(
-                                                modifier = Modifier.width(94.dp),
-                                                interactive = false
+                                                modifier = Modifier.width(94.dp)
                                             ) {
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                                     Text(hour.time, style = MaterialTheme.typography.labelMedium)
@@ -1136,9 +1137,8 @@ fun WeatherDetailScreen(
                                 items(hourly.size, key = { hourly[it].time }) { hourIndex ->
                                     val hour = hourly[hourIndex]
                                     Card(
-                                        modifier = Modifier.clickable { onHourlyClick(loc.name, hourly, hourIndex) },
-                                        interactive = true
-                                        ) {
+                                        modifier = Modifier.clickable { onHourlyClick(loc.name, hourly, hourIndex) }
+                                            ) {
                                         Column(
                                             modifier = Modifier,
                                             horizontalAlignment = Alignment.CenterHorizontally
@@ -1171,9 +1171,8 @@ fun WeatherDetailScreen(
                             Card(
                                 modifier = Modifier.fillMaxWidth()
                                     .animateContentSize(animationSpec = spring())
-                                    .clickable { onDailyClick(loc.name, daily, hourly, daily.indexOf(day)) },
-                                interactive = true
-                                ) {
+                                    .clickable { onDailyClick(loc.name, daily, hourly, daily.indexOf(day)) }
+                                            ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
@@ -1202,9 +1201,8 @@ fun WeatherDetailScreen(
                                             items(dayHours, key = { it.time }) { hour ->
                                                 val hourIsDay = isForecastDaytime(hour.time)
                                                 Card(
-                                                    modifier = Modifier.width(78.dp),
-                                                    interactive = false
-                                                ) {
+                                                    modifier = Modifier.width(78.dp)
+                                            ) {
                                                     Column(
                                                         horizontalAlignment = Alignment.CenterHorizontally,
                                                         verticalArrangement = Arrangement.spacedBy(4.dp)
