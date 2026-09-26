@@ -48,16 +48,17 @@ sealed class Screen {
 
 @Composable
 fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
-    val repository = remember {
+    val context = LocalContext.current
+    val repository = remember(database, context) {
         WeatherRepository(
+            appContext = context.applicationContext,
             locationDao = database.locationDao(),
             historyDao = database.weatherHistoryDao(),
             forecastSnapshotDao = database.forecastSnapshotDao(),
             apiClient = WeatherApiClient()
         )
     }
-    val viewModel = remember { WeatherViewModel(repository) }
-    val context = LocalContext.current
+    val viewModel = remember(repository) { WeatherViewModel(repository) }
     val freetimeWarning = rememberFreetimeWarnState(
         context = context,
         appName = "GeoWeather",
