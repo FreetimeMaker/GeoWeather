@@ -268,7 +268,7 @@ class WeatherRepository(
                         temperature = temp
                     )
                 )
-            }.filterNotNull()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             throw e
