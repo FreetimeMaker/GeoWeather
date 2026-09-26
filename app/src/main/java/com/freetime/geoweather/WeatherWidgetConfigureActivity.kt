@@ -48,15 +48,17 @@ class WeatherWidgetConfigureActivity : ComponentActivity() {
                 locations.map { it.name }
             )
             list.setOnItemClickListener { _, _, position, _ ->
-                WidgetLocationPreferences.saveLocationId(
-                    this@WeatherWidgetConfigureActivity,
-                    appWidgetId,
-                    locations[position].id
-                )
-                updateConfiguredWidget()
-                val result = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                setResult(RESULT_OK, result)
-                finish()
+                lifecycleScope.launch {
+                    WidgetLocationPreferences.saveLocationId(
+                        this@WeatherWidgetConfigureActivity,
+                        appWidgetId,
+                        locations[position].id
+                    )
+                    updateConfiguredWidget()
+                    val result = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                    setResult(RESULT_OK, result)
+                    finish()
+                }
             }
             setContentView(list)
         }
