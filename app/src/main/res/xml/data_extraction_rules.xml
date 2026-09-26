@@ -1,19 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
--->
+<?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- Back up user-controlled settings and feature configuration only. -->
+        <include domain="sharedpref" path="geo_weather_prefs.xml" />
+        <include domain="sharedpref" path="geoweather_features.xml" />
+        <include domain="sharedpref" path="location_alert_preferences.xml" />
+
+        <!-- Widget IDs are device-specific; histories and dedupe state are rebuildable. -->
+        <exclude domain="sharedpref" path="weather_widget_preferences.xml" />
+        <exclude domain="sharedpref" path="weather_alert_dedupe.xml" />
+        <exclude domain="sharedpref" path="forecast_change_history.xml" />
+        <exclude domain="sharedpref" path="search_history.xml" />
+        <exclude domain="sharedpref" path="launch_state.xml" />
+
+        <!-- Room also contains rebuildable weather/forecast history, so do not cloud-back it up. -->
+        <exclude domain="database" path="." />
+        <exclude domain="file" path="." />
     </cloud-backup>
-    <!--
+
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <include domain="sharedpref" path="geo_weather_prefs.xml" />
+        <include domain="sharedpref" path="geoweather_features.xml" />
+        <include domain="sharedpref" path="location_alert_preferences.xml" />
+        <exclude domain="sharedpref" path="weather_widget_preferences.xml" />
+        <exclude domain="sharedpref" path="weather_alert_dedupe.xml" />
+        <exclude domain="sharedpref" path="forecast_change_history.xml" />
+        <exclude domain="sharedpref" path="search_history.xml" />
+        <exclude domain="sharedpref" path="launch_state.xml" />
+        <exclude domain="database" path="." />
+        <exclude domain="file" path="." />
     </device-transfer>
-    -->
 </data-extraction-rules>
