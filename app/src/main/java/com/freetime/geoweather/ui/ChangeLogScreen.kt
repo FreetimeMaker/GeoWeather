@@ -1,12 +1,4 @@
 package com.freetime.geoweather.ui
-import com.freetime.design.FreetimeIconButton
-import com.freetime.design.FreetimeScaffold
-import com.freetime.design.FreetimeDesign
-import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeGlassPanel
-import com.freetime.design.FreetimeGlassTitle
-import com.freetime.design.FreetimeText
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +6,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,10 +21,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
-import com.freetime.design.freetimeGlass
-import com.freetime.design.FreetimeGlassTopBar
-import com.freetime.design.FreetimeGlassPanel
+import com.freetime.design.liquidGlass
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
@@ -452,16 +451,21 @@ fun ChangeLogScreen(onBack: () -> Unit) {
             stringResource(Res.string.changelog_remove_coin)
         )
     )
-    FreetimeScaffold(
+    Scaffold(
         topBar = {
-            FreetimeGlassTopBar(
-                title = stringResource(Res.string.whats_new_title),
-                navigation = { FreetimeIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, onClick = onBack) }
+            TopAppBar(
+                title = { Text(stringResource(Res.string.whats_new_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    }
+                },
+                modifier = Modifier.liquidGlass(interactive = false)
             )
         }
-    ) {
+    ) { scaffoldPadding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(scaffoldPadding),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -481,18 +485,18 @@ fun ReleaseCard(
     details: List<String>,
     modifier: Modifier = Modifier
 ) {
-    FreetimeGlassPanel(modifier = modifier.fillMaxWidth()) {
+    Card(modifier = modifier.fillMaxWidth().liquidGlass(interactive = false)) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            FreetimeGlassTitle(text = version)
+            Text(text = version, style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(8.dp))
 
             details.forEach { line ->
-                FreetimeText(
+                Text(
                     text = "• $line",
-                    style = FreetimeDesign.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
