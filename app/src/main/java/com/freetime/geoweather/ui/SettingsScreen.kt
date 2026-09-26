@@ -238,13 +238,16 @@ fun SettingsScreen(
                         )
                     } else {
                         savedLocations.forEach { location ->
-                            FreetimeSwitchSetting(
-                                title = location.name,
-                                description = stringResource(Res.string.offline_city_pack_desc),
-                                checked = location.offlinePackEnabled,
-                                onCheckedChange = { enabled ->
-                                    viewModel.setOfflinePackEnabled(location, enabled)
-                                }
+                            ListItem(
+                                headlineContent = { Text(location.name) },
+                                supportingContent = { Text(stringResource(Res.string.offline_city_pack_desc)) },
+                                trailingContent = {
+                                    Switch(
+                                        checked = location.offlinePackEnabled,
+                                        onCheckedChange = { enabled -> viewModel.setOfflinePackEnabled(location, enabled) }
+                                    )
+                                },
+                                modifier = Modifier.liquidGlass(interactive = false)
                             )
                             val ageMs = (System.currentTimeMillis() - location.lastUpdated).coerceAtLeast(0L)
                             val ageText = when {
