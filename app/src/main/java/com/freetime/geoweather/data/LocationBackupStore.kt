@@ -18,7 +18,7 @@ object LocationBackupStore {
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 
     @Serializable
-    private data class BackupLocation(
+    internal data class BackupLocation(
         val name: String,
         val latitude: Double,
         val longitude: Double,
@@ -35,16 +35,8 @@ object LocationBackupStore {
     suspend fun restoreIfNeeded(context: Context, dao: LocationDao) {
         val raw = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getString(KEY_LOCATIONS, null) ?: return
-        val saved = runCatching { json.decodeFromString<List<BackupLocation>>(raw) }.getOrNull()
-            ?: return
-        if (saved.isEmpty()) return
-
         val existing = dao.getAllLocationsSync()
-            .map { coordinateKey(it.latitude, it.longitude) }
-            .toHashSet()
-
-        val missing = saved
-            .filter { coordinateKey(it.latitude, it.longitude) !in existing }
+        val missing = locationsToRestore(raw, existing)
             .map {
                 LocationEntity(
                     name = it.name,
@@ -65,25 +57,35 @@ object LocationBackupStore {
         if (missing.isNotEmpty()) dao.insertLocations(missing)
     }
 
+    internal fun locationsToRestore(raw: String, existing: List<LocationEntity>): List<BackupLocation> {
+        val saved = runCatching { json.decodeFromString<List<BackupLocation>>(raw) }.getOrNull()
+            ?: return emptyList()
+        val existingKeys = existing.map { coordinateKey(it.latitude, it.longitude) }.toHashSet()
+        val seen = existingKeys.toMutableSet()
+        return saved.filter { seen.add(coordinateKey(it.latitude, it.longitude)) }
+    }
+
+    internal fun encodeLocations(locations: List<LocationEntity>): String = json.encodeToString(locations.map {
+        BackupLocation(
+            name = it.name,
+            latitude = it.latitude,
+            longitude = it.longitude,
+            notificationsEnabled = it.notificationsEnabled,
+            notificationTime = it.notificationTime,
+            changeAlertsEnabled = it.changeAlertsEnabled,
+            changeAlertInterval = it.changeAlertInterval,
+            selected = it.selected,
+            isDefault = it.isDefault,
+            sortOrder = it.sortOrder,
+            offlinePackEnabled = it.offlinePackEnabled
+        )
+    })
+
     suspend fun sync(context: Context, dao: LocationDao) {
-        val locations = dao.getAllLocationsSync().map {
-            BackupLocation(
-                name = it.name,
-                latitude = it.latitude,
-                longitude = it.longitude,
-                notificationsEnabled = it.notificationsEnabled,
-                notificationTime = it.notificationTime,
-                changeAlertsEnabled = it.changeAlertsEnabled,
-                changeAlertInterval = it.changeAlertInterval,
-                selected = it.selected,
-                isDefault = it.isDefault,
-                sortOrder = it.sortOrder,
-                offlinePackEnabled = it.offlinePackEnabled
-            )
-        }
+        val locations = dao.getAllLocationsSync()
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .edit()
-            .putString(KEY_LOCATIONS, json.encodeToString(locations))
+            .putString(KEY_LOCATIONS, encodeLocations(locations))
             .apply()
     }
 
