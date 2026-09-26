@@ -44,12 +44,14 @@ import kotlinx.coroutines.withContext
 enum class WidgetVariant { RESPONSIVE, COMPACT, FORECAST, DETAILED }
 
 open class WeatherWidget(
-    private val variant: WidgetVariant = WidgetVariant.RESPONSIVE
+    private val variant: WidgetVariant = WidgetVariant.RESPONSIVE,
+    private val forceRefresh: Boolean = false
 ) : GlanceAppWidget() {
     companion object {
         private val SMALL = DpSize(120.dp, 60.dp)
         private val MEDIUM = DpSize(240.dp, 100.dp)
         private val LARGE = DpSize(320.dp, 180.dp)
+        private const val WIDGET_REFRESH_WINDOW_MS = 5 * 60 * 1000L
     }
 
     override val sizeMode: SizeMode = if (variant == WidgetVariant.RESPONSIVE) {
@@ -70,7 +72,11 @@ open class WeatherWidget(
 
         var current = location
         var cached = false
-        if (location != null && !(dataSaver && location.weatherData != null)) {
+        val now = System.currentTimeMillis()
+        val freshEnough = location?.weatherData != null &&
+            location.lastUpdated > 0L &&
+            now - location.lastUpdated < WIDGET_REFRESH_WINDOW_MS
+        if (location != null && !(dataSaver && location.weatherData != null) && (forceRefresh || !freshEnough)) {
             try {
                 current = configuredLocationId?.let { repository.refreshLocationWeather(it) }
                     ?: repository.refreshSelectedLocationWeather(includeHourly = true)
@@ -206,9 +212,9 @@ open class WeatherWidget(
     }
 }
 
-class CompactWeatherWidget : WeatherWidget(WidgetVariant.COMPACT)
-class ForecastWeatherWidget : WeatherWidget(WidgetVariant.FORECAST)
-class DetailedWeatherWidget : WeatherWidget(WidgetVariant.DETAILED)
+class CompactWeatherWidget(forceRefresh: Boolean = false) : WeatherWidget(WidgetVariant.COMPACT, forceRefresh)
+class ForecastWeatherWidget(forceRefresh: Boolean = false) : WeatherWidget(WidgetVariant.FORECAST, forceRefresh)
+class DetailedWeatherWidget(forceRefresh: Boolean = false) : WeatherWidget(WidgetVariant.DETAILED, forceRefresh)
 
 private data class WidgetPalette(
     val background: Color,
@@ -269,21 +275,21 @@ private fun formatWidgetTemp(value: Int, unit: String): String {
 
 class RefreshActionCallback : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        WeatherWidget().update(context, glanceId)
+        WeatherWidget(forceRefresh = true).update(context, glanceId)
     }
 }
 class RefreshCompactWidgetCallback : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        CompactWeatherWidget().update(context, glanceId)
+        CompactWeatherWidget(forceRefresh = true).update(context, glanceId)
     }
 }
 class RefreshForecastWidgetCallback : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        ForecastWeatherWidget().update(context, glanceId)
+        ForecastWeatherWidget(forceRefresh = true).update(context, glanceId)
     }
 }
 class RefreshDetailedWidgetCallback : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        DetailedWeatherWidget().update(context, glanceId)
+        DetailedWeatherWidget(forceRefresh = true).update(context, glanceId)
     }
 }
