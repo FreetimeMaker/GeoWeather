@@ -861,6 +861,15 @@
     <string name="offline_city_pack">Keep this city available offline</string>
     <string name="offline_city_pack_desc">Refresh this city in the background when offline packs are enabled.</string>
 
+    <!-- Changelog v4.7.2 -->
+    <string name="cl_472_widgets">Expanded home-screen widgets with four distinct variants, responsive layouts, per-widget locations and improved configuration.</string>
+    <string name="cl_472_refresh">Reduced duplicate weather requests with shared refresh coordination, freshness checks and more efficient background updates.</string>
+    <string name="cl_472_offline">Improved widget behavior for offline use and Data Saver with cached forecasts and network-aware refreshes.</string>
+    <string name="cl_472_timezone">Improved day and night widget styling and forecast icons using the weather location timezone and sunrise/sunset data.</string>
+    <string name="cl_472_openmeteo">Removed obsolete weather-provider parsing and tightened Open-Meteo forecast validation for hourly and 16-day forecasts.</string>
+    <string name="cl_472_backup">Improved Android backup and restore for durable settings and saved locations without backing up rebuildable weather caches.</string>
+    <string name="cl_472_stability">Added forecast and backup tests and fixed widget lifecycle, reboot refresh, configuration and build issues.</string>
+
     <string name="cl_471_widgets">Expanded home-screen widgets with compact, forecast and detailed variants, per-widget location selection, weather icons and dynamic weather-aware styling.</string>
     <string name="cl_471_forecast">Improved forecast insights with Today vs tomorrow comparisons, clearer confidence levels, daylight duration and better day/night forecast icons.</string>
     <string name="cl_471_share">Upgraded weather sharing with richer forecast details and improved feels-like explanations for wind, humidity and sun exposure.</string>
