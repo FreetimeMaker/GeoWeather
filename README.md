@@ -74,6 +74,7 @@ You can download the latest version of GeoWeather from the following platforms:
 - **F-Droid**: [com.freetime.geoweather](https://f-droid.org/packages/com.freetime.geoweather)
 - **OpenApk**: [OpenAPK](https://www.openapk.net/de/geoweather/com.freetime.geoweather/)
 - **GitHub Store**: [Open in GitHub Store](https://github-store.org/app?repo=FreetimeMaker/GeoWeather)
+- **Luma Store**: [Luma Store](https://luma.free-time.me/com.freetime.geoweather)
 
 <div align="center">
 
@@ -84,6 +85,8 @@ You can download the latest version of GeoWeather from the following platforms:
 [<img src="media-resources/openapk-badge.png" alt="Get it on OpenAPK.net" height="80">](https://www.openapk.net/de/geoweather/com.freetime.geoweather/)
 
 [<img src="media-resources/badge_github_store.png" alt="Get it on GitHub Store" height="70">](https://github-store.org/app?repo=FreetimeMaker/GeoWeather)
+
+[<img src="https://luma.free-time.me/get-it-on-luma-store.svg" alt="Get it on Luma Store" height="80">](https://luma.free-time.me/com.freetime.geoweather)
 </div>
 
 ## 📄 License
