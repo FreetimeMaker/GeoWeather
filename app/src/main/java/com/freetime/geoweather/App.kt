@@ -14,11 +14,9 @@ import com.freetime.geoweather.Screen.*
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
-import com.freetime.design.FreetimeApp
-import com.freetime.design.FreetimeAppConfig
-import com.freetime.design.FreetimeThemeMode
-import com.freetime.core.FreetimePreferences
-import com.freetime.design.rememberFreetimePreferencesController
+import com.freetime.design.AppTheme
+import com.freetime.design.LiquidGlassRoot
+import com.freetime.design.ThemeMode
 import com.freetime.warn.FreetimeWarn
 import com.freetime.warn.FreetimeWarnContent
 import com.freetime.warn.FreetimeWarnFrequency
@@ -60,8 +58,6 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     }
     val viewModel = remember { WeatherViewModel(repository) }
     val context = LocalContext.current
-    val freetimePreferences = remember { FreetimePreferences.from(context, "geoweather_freetime_preferences") }
-    val freetimePreferencesController = rememberFreetimePreferencesController(freetimePreferences)
     val freetimeWarning = rememberFreetimeWarnState(
         context = context,
         appName = "GeoWeather",
@@ -135,22 +131,19 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         }
     }
 
-    FreetimeApp(
-        controller = freetimePreferencesController,
-        modifierConfig = { config ->
-            config.copy(
-                themeMode = if (darkTheme) FreetimeThemeMode.DARK else FreetimeThemeMode.LIGHT,
-                backdropColors = glassBackdropColors
-            )
-        }
+    AppTheme(
+        themeMode = if (darkTheme) ThemeMode.DARK else ThemeMode.LIGHT,
+        dynamicColor = true,
+        liquidGlassEnabled = true
     ) {
+        LiquidGlassRoot(backgroundColor = glassBackdropColors.first()) {
         if (onboarding) {
             OnboardingScreen(onDone = {
                 launchPrefs.edit().putBoolean("onboarding_done", true).apply()
                 onboarding = false
                 whatsNew = true
             })
-            return@FreetimeApp
+            return@LiquidGlassRoot
         }
         if (whatsNew) {
             ChangeLogScreen(onBack = {
@@ -159,7 +152,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 backStack.add(Main)
                 whatsNew = false
             })
-            return@FreetimeApp
+            return@LiquidGlassRoot
         }
         Box(Modifier.fillMaxSize()) {
                 backStack.forEachIndexed { index, screen ->
@@ -197,6 +190,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 acknowledgeLabel = warnAcknowledge
             )
         )
+          }
     }
 }
 
