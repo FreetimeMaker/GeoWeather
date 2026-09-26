@@ -4,6 +4,7 @@
     <include domain="sharedpref" path="geo_weather_prefs.xml" />
     <include domain="sharedpref" path="geoweather_features.xml" />
     <include domain="sharedpref" path="location_alert_preferences.xml" />
+        <include domain="sharedpref" path="location_backup.xml" />
 
     <!-- Device-specific or rebuildable state must not be restored. -->
     <exclude domain="sharedpref" path="weather_widget_preferences.xml" />
