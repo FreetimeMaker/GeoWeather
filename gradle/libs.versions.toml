@@ -15,7 +15,8 @@ multiplatform-settings = "1.3.0"
 androidx-activity = "1.13.0"
 androidx-work = "2.11.2"
 androidx-core-ktx = "1.19.0"
-freetime = "1.11.0"
+material3 = "1.5.0-alpha29"
+freetime = "2.0.0"
 osmdroid = "6.1.20"
 
 [libraries]
@@ -28,6 +29,7 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "androidx-glance" }
 androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "androidx-glance" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
