@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="16dp" android:background="@android:color/transparent">
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="@string/widget_detailed_name" android:textStyle="bold" android:textSize="16sp" />
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="18° · Partly cloudy" android:textSize="22sp" />
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="Rain 20% · Wind 12 km/h · H 21° / L 11°" android:textSize="13sp" />
+</LinearLayout>
