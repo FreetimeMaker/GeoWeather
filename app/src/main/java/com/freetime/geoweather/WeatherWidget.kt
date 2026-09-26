@@ -99,8 +99,8 @@ open class WeatherWidget(
         } else {
             WeatherCodes.getDescription(code)
         }
-        val hourly = current?.let { repository.getHourlyForecasts(it).take(5) }.orEmpty()
-        val daily = current?.let { repository.getDailyForecasts(it).take(3) }.orEmpty()
+        val hourly = current?.let { repository.getHourlyForecasts(it) }.orEmpty()
+        val daily = current?.let { repository.getDailyForecasts(it) }.orEmpty()
         val refreshDesc = context.getString(Res.string.refresh_nav_desc)
 
         provideContent {
@@ -123,10 +123,24 @@ open class WeatherWidget(
         refreshDesc: String,
         tempUnit: String
     ) {
-        val expanded = variant == WidgetVariant.FORECAST || variant == WidgetVariant.DETAILED ||
-            (variant == WidgetVariant.RESPONSIVE && size.width >= 200.dp)
-        val detailed = variant == WidgetVariant.DETAILED ||
-            (variant == WidgetVariant.RESPONSIVE && size.height >= 140.dp)
+        val compact = size.width < 180.dp || size.height < 80.dp
+        val expanded = !compact && (variant == WidgetVariant.FORECAST || variant == WidgetVariant.DETAILED ||
+            (variant == WidgetVariant.RESPONSIVE && size.width >= 200.dp))
+        val detailed = !compact && (variant == WidgetVariant.DETAILED ||
+            (variant == WidgetVariant.RESPONSIVE && size.height >= 140.dp))
+        val hourlyCount = when {
+            size.width >= 320.dp -> 5
+            size.width >= 260.dp -> 4
+            size.width >= 200.dp -> 3
+            else -> 0
+        }
+        val dailyCount = when {
+            size.width >= 300.dp -> 3
+            size.width >= 220.dp -> 2
+            else -> 0
+        }
+        val visibleHourly = hourly.take(hourlyCount)
+        val visibleDaily = daily.take(dailyCount)
         val isDay = widgetCurrentIsDay(daily)
         val palette = widgetPalette(code, isDay)
 
@@ -142,7 +156,13 @@ open class WeatherWidget(
                     modifier = GlanceModifier.size(if (detailed) 48.dp else 36.dp)
                 )
                 Spacer(GlanceModifier.width(8.dp))
-                Column(modifier = GlanceModifier.width(if (detailed) 220.dp else 150.dp)) {
+                Column(modifier = GlanceModifier.width(
+                    when {
+                        compact -> 72.dp
+                        detailed -> 220.dp
+                        else -> 150.dp
+                    }
+                )) {
                     Text(name, maxLines = 1, style = TextStyle(ColorProvider(palette.primary), 14.sp, FontWeight.Bold))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (temp.isNotEmpty()) {
@@ -167,10 +187,10 @@ open class WeatherWidget(
                 )
             }
 
-            if (expanded && hourly.isNotEmpty()) {
+            if (expanded && visibleHourly.isNotEmpty()) {
                 Spacer(GlanceModifier.height(8.dp))
                 Row(modifier = GlanceModifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    hourly.forEach { hour ->
+                    visibleHourly.forEach { hour ->
                         Column(modifier = GlanceModifier.width(56.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(hour.time.takeLast(5), style = TextStyle(ColorProvider(Color(0xFF486581)), 9.sp))
                             Image(
@@ -184,10 +204,10 @@ open class WeatherWidget(
                 }
             }
 
-            if (detailed && daily.isNotEmpty()) {
+            if (detailed && visibleDaily.isNotEmpty()) {
                 Spacer(GlanceModifier.height(7.dp))
                 Row(modifier = GlanceModifier.fillMaxWidth()) {
-                    daily.forEach { day ->
+                    visibleDaily.forEach { day ->
                         Column(modifier = GlanceModifier.width(92.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(day.date.takeLast(5), style = TextStyle(ColorProvider(Color(0xFF486581)), 9.sp))
                             Image(
