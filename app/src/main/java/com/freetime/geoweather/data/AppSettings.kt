@@ -31,6 +31,10 @@ class AppSettings(private val settings: Settings) {
         const val KEY_DATA_SAVER = "data_saver"
         const val KEY_OFFLINE_PACKS = "offline_packs"
         const val KEY_OFFLINE_PACKS_WIFI_ONLY = "offline_packs_wifi_only"
+        const val KEY_LIQUID_GLASS = "liquid_glass_enabled"
+        const val KEY_REDUCE_MOTION = "reduce_motion"
+        const val KEY_REDUCE_TRANSPARENCY = "reduce_transparency"
+        const val KEY_HIGH_CONTRAST = "high_contrast"
     }
 
     private val _persistentNotif = MutableStateFlow(settings.getBoolean(KEY_PERSISTENT_NOTIF, false))
@@ -172,6 +176,22 @@ class AppSettings(private val settings: Settings) {
         settings[KEY_OFFLINE_PACKS_WIFI_ONLY] = value
         _offlinePacksWifiOnly.value = value
     }
+
+    private val _liquidGlassEnabled = MutableStateFlow(settings.getBoolean(KEY_LIQUID_GLASS, true))
+    val liquidGlassEnabled: StateFlow<Boolean> = _liquidGlassEnabled.asStateFlow()
+    fun setLiquidGlassEnabled(value: Boolean) { settings[KEY_LIQUID_GLASS] = value; _liquidGlassEnabled.value = value }
+
+    private val _reduceMotion = MutableStateFlow(settings.getBoolean(KEY_REDUCE_MOTION, false))
+    val reduceMotion: StateFlow<Boolean> = _reduceMotion.asStateFlow()
+    fun setReduceMotion(value: Boolean) { settings[KEY_REDUCE_MOTION] = value; _reduceMotion.value = value }
+
+    private val _reduceTransparency = MutableStateFlow(settings.getBoolean(KEY_REDUCE_TRANSPARENCY, false))
+    val reduceTransparency: StateFlow<Boolean> = _reduceTransparency.asStateFlow()
+    fun setReduceTransparency(value: Boolean) { settings[KEY_REDUCE_TRANSPARENCY] = value; _reduceTransparency.value = value }
+
+    private val _highContrast = MutableStateFlow(settings.getBoolean(KEY_HIGH_CONTRAST, false))
+    val highContrast: StateFlow<Boolean> = _highContrast.asStateFlow()
+    fun setHighContrast(value: Boolean) { settings[KEY_HIGH_CONTRAST] = value; _highContrast.value = value }
 
     private val _weatherAnimations = MutableStateFlow(settings.getString(KEY_WEATHER_ANIMATIONS, "full"))
     val weatherAnimations: StateFlow<String> = _weatherAnimations.asStateFlow()
