@@ -1,8 +1,10 @@
 package com.freetime.geoweather
 
 import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
+import androidx.glance.appwidget.AppWidgetId
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
@@ -51,11 +53,26 @@ class WeatherWidgetConfigureActivity : ComponentActivity() {
                     appWidgetId,
                     locations[position].id
                 )
+                updateConfiguredWidget()
                 val result = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                 setResult(RESULT_OK, result)
                 finish()
             }
             setContentView(list)
         }
+    }
+
+    private suspend fun updateConfiguredWidget() {
+        val manager = AppWidgetManager.getInstance(this)
+        val providers = listOf(
+            WeatherWidgetReceiver::class.java to WeatherWidget(),
+            CompactWeatherWidgetReceiver::class.java to CompactWeatherWidget(),
+            ForecastWeatherWidgetReceiver::class.java to ForecastWeatherWidget(),
+            DetailedWeatherWidgetReceiver::class.java to DetailedWeatherWidget()
+        )
+        val glanceId = AppWidgetId(appWidgetId)
+        providers.firstOrNull { (receiver, _) ->
+            manager.getAppWidgetIds(ComponentName(this, receiver)).contains(appWidgetId)
+        }?.second?.update(this, glanceId)
     }
 }
