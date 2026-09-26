@@ -15,6 +15,7 @@ import androidx.work.WorkManager
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.data.getDatabaseBuilder
 import com.freetime.geoweather.data.getRoomDatabase
+import com.freetime.geoweather.data.LocationBackupStore
 import com.russhwolf.settings.SharedPreferencesSettings
 import java.util.concurrent.TimeUnit
 
@@ -56,6 +57,9 @@ class GeoWeatherApp : Application() {
         // Remove the old global worker. Daily notifications are scheduled per location.
         WorkManager.getInstance(this).cancelUniqueWork("WeatherDailyNotification")
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            val database = DependencyManager.getDatabase()
+            LocationBackupStore.restoreIfNeeded(this@GeoWeatherApp, database.locationDao())
+            LocationBackupStore.sync(this@GeoWeatherApp, database.locationDao())
             DependencyManager.getRepository().getAllLocationsSync()
                 .filter { it.notificationsEnabled }
                 .forEach { WeatherNotificationScheduler.schedule(this@GeoWeatherApp, it) }
