@@ -268,7 +268,7 @@ class WeatherRepository(
                         temperature = temp
                     )
                 )
-            }
+            }.filterNotNull()
         } catch (e: Exception) {
             e.printStackTrace()
             throw e
@@ -362,9 +362,9 @@ class WeatherRepository(
 
             List(count) { offset ->
                 val i = startIndex + offset
-                val timeStr = times[i].jsonPrimitive.content
-                val temp = temps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0
-                val code = codes[i].jsonPrimitive.intOrNull ?: 0
+                val timeStr = times[i].jsonPrimitive.contentOrNull ?: return@List null
+                val temp = temps[i].jsonPrimitive.doubleOrNull?.toInt() ?: return@List null
+                val code = codes[i].jsonPrimitive.intOrNull ?: return@List null
                 HourlyForecast(
                     time = timeStr,
                     temp = temp,
@@ -414,11 +414,15 @@ class WeatherRepository(
             val windGustMaxs = daily["wind_gusts_10m_max"]?.jsonArray
 
             List(minOf(dates.size, codes.size, maxTemps.size, minTemps.size, 16)) { i ->
+                val date = dates[i].jsonPrimitive.contentOrNull ?: return@List null
+                val code = codes[i].jsonPrimitive.intOrNull ?: return@List null
+                val maxTemp = maxTemps[i].jsonPrimitive.doubleOrNull?.toInt() ?: return@List null
+                val minTemp = minTemps[i].jsonPrimitive.doubleOrNull?.toInt() ?: return@List null
                 DailyForecast(
-                    date = dates[i].jsonPrimitive.content,
-                    code = codes[i].jsonPrimitive.intOrNull ?: 0,
-                    maxTemp = maxTemps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0,
-                    minTemp = minTemps[i].jsonPrimitive.doubleOrNull?.toInt() ?: 0,
+                    date = date,
+                    code = code,
+                    maxTemp = maxTemp,
+                    minTemp = minTemp,
                     sunrise = sunrises?.getOrNull(i)?.jsonPrimitive?.content ?: "--",
                     sunset = sunsets?.getOrNull(i)?.jsonPrimitive?.content ?: "--",
                     precipSum = precipSums?.getOrNull(i)?.jsonPrimitive?.doubleOrNull ?: 0.0,
@@ -434,7 +438,7 @@ class WeatherRepository(
                     precipitationHours = precipitationHours?.getOrNull(i)?.jsonPrimitive?.doubleOrNull,
                     windGustMax = windGustMaxs?.getOrNull(i)?.jsonPrimitive?.doubleOrNull
                 )
-            }
+            }.filterNotNull()
         } catch (e: Exception) {
             Log.w("WeatherRepository", "Failed to read daily forecast arrays", e)
             emptyList()
