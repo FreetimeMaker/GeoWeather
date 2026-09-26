@@ -7,6 +7,8 @@ import com.freetime.geoweather.getAndroidAppContext
 import com.freetime.geoweather.R as Res
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -275,16 +277,32 @@ class WeatherRepository(
         }
     }
 
-    suspend fun refreshSelectedLocationWeather(includeHourly: Boolean = false): LocationEntity? {
+    private val weatherRefreshMutexes = mutableMapOf<Long, Mutex>()
+    private val weatherRefreshMutexesGuard = Mutex()
+
+    private suspend fun refreshMutex(locationId: Long): Mutex =
+        weatherRefreshMutexesGuard.withLock {
+            weatherRefreshMutexes.getOrPut(locationId) { Mutex() }
+        }
+
+    suspend fun refreshSelectedLocationWeather(includeHourly: Boolean = false, minAgeMillis: Long = 0L): LocationEntity? {
         val location = getSelectedLocation() ?: return null
-        updateWeather(location, ApiConstants.getForecastUrl(location.latitude, location.longitude))
-        return getSelectedLocation()
+        return refreshLocationWeather(location.id, minAgeMillis)
     }
 
-    suspend fun refreshLocationWeather(id: Long): LocationEntity? {
-        val location = locationDao.findById(id) ?: return null
-        updateWeather(location, ApiConstants.getForecastUrl(location.latitude, location.longitude))
-        return locationDao.findById(id)
+    suspend fun refreshLocationWeather(id: Long, minAgeMillis: Long = 0L): LocationEntity? {
+        val mutex = refreshMutex(id)
+        return mutex.withLock {
+            val location = locationDao.findById(id) ?: return@withLock null
+            val now = Clock.System.now().toEpochMilliseconds()
+            if (minAgeMillis > 0L && location.weatherData != null &&
+                location.lastUpdated > 0L && now - location.lastUpdated < minAgeMillis
+            ) {
+                return@withLock location
+            }
+            updateWeather(location, ApiConstants.getForecastUrl(location.latitude, location.longitude))
+            locationDao.findById(id)
+        }
     }
 
     suspend fun fetchWeatherData(latitude: Double, longitude: Double): String? {
