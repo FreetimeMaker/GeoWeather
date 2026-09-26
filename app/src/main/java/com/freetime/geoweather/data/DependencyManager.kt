@@ -8,10 +8,11 @@ object DependencyManager {
     private var repository: WeatherRepository? = null
     private var appSettings: AppSettings? = null
 
-    fun initialize(database: WeatherDatabase, settings: Settings) {
+    fun initialize(context: android.content.Context, database: WeatherDatabase, settings: Settings) {
         this.database = database
         this.settings = settings
         this.repository = WeatherRepository(
+            appContext = context.applicationContext,
             locationDao = database.locationDao(),
             historyDao = database.weatherHistoryDao(),
             forecastSnapshotDao = database.forecastSnapshotDao(),
