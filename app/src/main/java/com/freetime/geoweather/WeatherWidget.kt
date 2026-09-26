@@ -105,9 +105,12 @@ open class WeatherWidget(
         val hourly = current?.let { repository.getHourlyForecasts(it) }.orEmpty()
         val daily = current?.let { repository.getDailyForecasts(it) }.orEmpty()
         val refreshDesc = context.getString(Res.string.refresh_nav_desc)
+        val locationTimeZone = current?.let { repository.getWeatherTimeZoneId(it) }
+            ?.let { runCatching { java.time.ZoneId.of(it) }.getOrNull() }
+            ?: java.time.ZoneId.systemDefault()
 
         provideContent {
-            WidgetContent(context, name, temp, code, info, hourly, daily, cached, dataSaver, LocalSize.current, refreshDesc, settings.tempUnit.value)
+            WidgetContent(context, name, temp, code, info, hourly, daily, cached, dataSaver, LocalSize.current, refreshDesc, settings.tempUnit.value, locationTimeZone)
         }
     }
 
@@ -124,7 +127,8 @@ open class WeatherWidget(
         dataSaver: Boolean,
         size: DpSize,
         refreshDesc: String,
-        tempUnit: String
+        tempUnit: String,
+        locationTimeZone: java.time.ZoneId
     ) {
         val compact = size.width < 180.dp || size.height < 80.dp
         val expanded = !compact && (variant == WidgetVariant.FORECAST || variant == WidgetVariant.DETAILED ||
@@ -144,7 +148,7 @@ open class WeatherWidget(
         }
         val visibleHourly = hourly.take(hourlyCount)
         val visibleDaily = daily.take(dailyCount)
-        val isDay = widgetCurrentIsDay(currentTimeZone = currentTimeZone(hourly), daily = daily)
+        val isDay = widgetCurrentIsDay(currentTimeZone = locationTimeZone, daily = daily)
         val palette = widgetPalette(code, isDay)
 
         Column(
@@ -265,13 +269,6 @@ private fun widgetPalette(code: Int, isDay: Boolean): WidgetPalette {
     } else {
         WidgetPalette(background, Color(0xFFF5F8FC), Color(0xFFD9E2EC), Color(0xFFBCCCDC))
     }
-}
-
-private fun currentTimeZone(hourly: List<HourlyForecast>): java.time.ZoneId {
-    val first = hourly.firstOrNull()?.time ?: return java.time.ZoneId.systemDefault()
-    return runCatching {
-        java.time.OffsetDateTime.parse(first).offset
-    }.getOrElse { java.time.ZoneId.systemDefault() }
 }
 
 private fun widgetCurrentIsDay(currentTimeZone: java.time.ZoneId, daily: List<DailyForecast>): Boolean {
