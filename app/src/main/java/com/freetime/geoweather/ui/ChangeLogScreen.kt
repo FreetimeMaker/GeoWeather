@@ -27,6 +27,15 @@ import com.freetime.design.liquidGlass
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v4.7.2" to listOf(
+            stringResource(Res.string.cl_472_widgets),
+            stringResource(Res.string.cl_472_refresh),
+            stringResource(Res.string.cl_472_offline),
+            stringResource(Res.string.cl_472_timezone),
+            stringResource(Res.string.cl_472_openmeteo),
+            stringResource(Res.string.cl_472_backup),
+            stringResource(Res.string.cl_472_stability)
+        ),
         "v4.7.1" to listOf(
             stringResource(Res.string.cl_471_widgets),
             stringResource(Res.string.cl_471_forecast),
