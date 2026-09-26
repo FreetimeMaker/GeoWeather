@@ -5,6 +5,7 @@ import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.domain.City
 import com.freetime.geoweather.getAndroidAppContext
 import com.freetime.geoweather.R as Res
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.datetime.Clock
@@ -99,6 +100,13 @@ class WeatherRepository(
     private val apiClient: WeatherApiClient
 ) {
     private val deletedLocations = linkedSetOf<Pair<Double, Double>>()
+
+    private fun parseWeatherJson(data: String, section: String): JsonObject? = try {
+        Json.parseToJsonElement(data).jsonObject
+    } catch (e: Exception) {
+        Log.w("WeatherRepository", "Failed to parse $section weather data", e)
+        null
+    }
 
     private suspend fun syncLocationBackup() = LocationBackupStore.sync(appContext, locationDao)
 
@@ -322,8 +330,8 @@ class WeatherRepository(
 
     fun getHourlyForecasts(location: LocationEntity): List<HourlyForecast> {
         val data = location.weatherData ?: return emptyList()
+        val json = parseWeatherJson(data, "hourly forecast") ?: return emptyList()
         return try {
-            val json = Json.parseToJsonElement(data).jsonObject
             val hourly = json["hourly"]?.jsonObject ?: return emptyList()
             val times = hourly["time"]?.jsonArray ?: return emptyList()
             val temps = hourly["temperature_2m"]?.jsonArray ?: return emptyList()
@@ -376,14 +384,15 @@ class WeatherRepository(
                 )
             }
         } catch (e: Exception) {
+            Log.w("WeatherRepository", "Failed to read hourly forecast arrays", e)
             emptyList()
         }
     }
 
     fun getDailyForecasts(location: LocationEntity): List<DailyForecast> {
         val data = location.weatherData ?: return emptyList()
+        val json = parseWeatherJson(data, "daily forecast") ?: return emptyList()
         return try {
-            val json = Json.parseToJsonElement(data).jsonObject
             val daily = json["daily"]?.jsonObject ?: return emptyList()
             val dates = daily["time"]?.jsonArray ?: return emptyList()
             val codes = daily["weather_code"]?.jsonArray ?: daily["weathercode"]?.jsonArray ?: return emptyList()
@@ -427,6 +436,7 @@ class WeatherRepository(
                 )
             }
         } catch (e: Exception) {
+            Log.w("WeatherRepository", "Failed to read daily forecast arrays", e)
             emptyList()
         }
     }
@@ -443,8 +453,8 @@ class WeatherRepository(
 
     fun getCurrentHourExtras(location: LocationEntity): CurrentHourExtras? {
         val data = location.weatherData ?: return null
+        val json = parseWeatherJson(data, "current hour extras") ?: return null
         return try {
-            val json = Json.parseToJsonElement(data).jsonObject
             val hourly = json["hourly"]?.jsonObject ?: return null
             val times = hourly["time"]?.jsonArray ?: return null
             val locationTimeZone = getLocationTimeZone(json)
@@ -478,6 +488,7 @@ class WeatherRepository(
                 uvIndex = uvIndex
             )
         } catch (e: Exception) {
+            Log.w("WeatherRepository", "Failed to read current-hour extras", e)
             null
         }
     }
