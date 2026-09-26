@@ -1,13 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
-   See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   Note: This file is ignored for devices older than API 31
-   See https://developer.android.com/about/versions/12/backup-restore
--->
+<?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <!-- Android 11 and lower: keep Auto Backup limited to durable user preferences. -->
+    <include domain="sharedpref" path="geo_weather_prefs.xml" />
+    <include domain="sharedpref" path="geoweather_features.xml" />
+    <include domain="sharedpref" path="location_alert_preferences.xml" />
+
+    <!-- Device-specific or rebuildable state must not be restored. -->
+    <exclude domain="sharedpref" path="weather_widget_preferences.xml" />
+    <exclude domain="sharedpref" path="weather_alert_dedupe.xml" />
+    <exclude domain="sharedpref" path="forecast_change_history.xml" />
+    <exclude domain="sharedpref" path="search_history.xml" />
+    <exclude domain="sharedpref" path="launch_state.xml" />
+    <exclude domain="database" path="." />
+    <exclude domain="file" path="." />
 </full-backup-content>
