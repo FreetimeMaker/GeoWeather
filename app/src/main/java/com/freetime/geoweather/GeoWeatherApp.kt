@@ -33,7 +33,7 @@ class GeoWeatherApp : Application() {
         val database = getRoomDatabase(getDatabaseBuilder(this))
         val sharedPrefs = getSharedPreferences("geo_weather_prefs", MODE_PRIVATE)
         val settings = SharedPreferencesSettings(sharedPrefs)
-        DependencyManager.initialize(database, settings)
+        DependencyManager.initialize(this, database, settings)
     }
 
     private fun restorePersistentWeatherNotification() {
