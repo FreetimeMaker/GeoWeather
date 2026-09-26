@@ -92,6 +92,7 @@ data class CurrentHourExtras(
 )
 
 class WeatherRepository(
+    private val appContext: android.content.Context,
     private val locationDao: LocationDao,
     private val historyDao: WeatherHistoryDao,
     private val forecastSnapshotDao: ForecastSnapshotDao,
@@ -99,12 +100,15 @@ class WeatherRepository(
 ) {
     private val deletedLocations = linkedSetOf<Pair<Double, Double>>()
 
+    private suspend fun syncLocationBackup() = LocationBackupStore.sync(appContext, locationDao)
+
     fun getDeletedLocationsForSync(): List<Pair<Double, Double>> = deletedLocations.toList()
 
     suspend fun applyDeletedLocations(locations: List<Pair<Double, Double>>) {
         locations.forEach { (lat, lon) ->
             locationDao.findByCoordinates(lat, lon)?.let { locationDao.deleteLocation(it) }
         }
+        syncLocationBackup()
     }
 
     fun getAllLocations(): Flow<List<LocationEntity>> =
@@ -144,6 +148,7 @@ class WeatherRepository(
                 )
             }
         }
+        syncLocationBackup()
     }
 
     suspend fun searchCity(query: String) = apiClient.searchCity(query)
@@ -166,21 +171,25 @@ class WeatherRepository(
         if (id == -1L) {
             return locationDao.findByCoordinates(city.latitude, city.longitude) ?: entity
         }
+        syncLocationBackup()
         return entity.copy(id = id)
     }
 
     suspend fun selectLocation(location: LocationEntity) {
         locationDao.deselectAllLocations()
         locationDao.updateLocation(location.copy(selected = true))
+        syncLocationBackup()
     }
 
     suspend fun deleteLocation(location: LocationEntity) {
         locationDao.deleteLocation(location)
         deletedLocations += location.latitude to location.longitude
+        syncLocationBackup()
     }
 
     suspend fun setOfflinePackEnabled(location: LocationEntity, enabled: Boolean) {
         locationDao.updateLocation(location.copy(offlinePackEnabled = enabled))
+        syncLocationBackup()
     }
 
     suspend fun clearOfflinePackCache(location: LocationEntity) {
@@ -194,14 +203,17 @@ class WeatherRepository(
 
     suspend fun toggleLocationNotifications(location: LocationEntity) {
         locationDao.updateLocation(location.copy(notificationsEnabled = !location.notificationsEnabled))
+        syncLocationBackup()
     }
 
     suspend fun setLocationNotifications(location: LocationEntity, enabled: Boolean, time: String = location.notificationTime) {
         locationDao.updateLocation(location.copy(notificationsEnabled = enabled, notificationTime = time))
+        syncLocationBackup()
     }
 
     suspend fun setNotificationTime(location: LocationEntity, time: String) {
         locationDao.updateLocation(location.copy(notificationTime = time))
+        syncLocationBackup()
     }
 
     suspend fun moveLocation(location: LocationEntity, direction: Int) {
@@ -218,6 +230,7 @@ class WeatherRepository(
         val target = ordered[targetIndex]
         locationDao.updateLocation(current.copy(sortOrder = targetIndex))
         locationDao.updateLocation(target.copy(sortOrder = currentIndex))
+        syncLocationBackup()
     }
 
     suspend fun toggleDefaultLocation(location: LocationEntity) {
@@ -227,6 +240,7 @@ class WeatherRepository(
             locationDao.clearDefaultLocation()
             locationDao.updateLocation(location.copy(isDefault = true))
         }
+        syncLocationBackup()
     }
 
     suspend fun updateWeather(location: LocationEntity, providerUrl: String) {
