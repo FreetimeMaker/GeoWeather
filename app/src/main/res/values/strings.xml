@@ -162,7 +162,7 @@
     <string name="donate_nav_desc">Donate</string>
     <string name="settings_nav_desc">Settings</string>
     <string name="no_locations_msg">No locations added yet.\nClick on the plus icon below.</string>
-    <string name="error_loading_weather">Error loading weather</string>
+    <string name="error_loading_weather">Error loading weather data</string>
 
     <string name="dir_n">N</string>
     <string name="dir_ne">NE</string>
