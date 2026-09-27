@@ -214,4 +214,7 @@
     <string name="cl_211_localization">Limpieza de localización: externalizar todas las cadenas de texto incrustadas en la UI.</string>
     <string name="cl_211_stability">Mejorada la estabilidad del código y corregidos errores menores.</string>
     <string name="cl_210_forecast">Se extendió el pronóstico a 16 días para Open-Meteo.</string>
+    <string name="don_nowpayments_via">Dona a través de NOWPayments</string>
+    <string name="persistent_weather_summary">%1$s · Lluvia %2$d %% · Ráfagas %3$s</string>
+    <string name="persistent_next_hour">Próxima hora: %1$s · %2$d %% lluvia</string>
 </resources>
