@@ -52,7 +52,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 25
+          java-version: 17
           cache: 'gradle'
 
       - name: Setup Gradle
@@ -72,40 +72,76 @@ jobs:
           fi
           "$SDKMANAGER" --sdk_root="$SDK_ROOT" "build-tools;34.0.0"
 
-      - name: Use APKSIGNER 34.0.0
-        id: find_apksigner
+      - name: Find Android Build Tools
+        id: android_tools
         shell: bash
         run: |
           set -euo pipefail
           SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
           APKSIGNER="$SDK_ROOT/build-tools/34.0.0/apksigner"
+          ZIPALIGN="$SDK_ROOT/build-tools/34.0.0/zipalign"
+
           test -x "$APKSIGNER"
+          test -x "$ZIPALIGN"
+
           "$APKSIGNER" version
           echo "apksigner=$APKSIGNER" >> "$GITHUB_OUTPUT"
+          echo "zipalign=$ZIPALIGN" >> "$GITHUB_OUTPUT"
+
+      - name: Align Android APK
+        id: align_apk
+        shell: bash
+        run: |
+          set -euo pipefail
+          UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
+          ALIGNED_APK="app/build/outputs/apk/release/app-release-aligned.apk"
+
+          "${{ steps.android_tools.outputs.zipalign }}" \
+            -f \
+            -p \
+            4 \
+            "$UNSIGNED_APK" \
+            "$ALIGNED_APK"
+
+          "${{ steps.android_tools.outputs.zipalign }}" \
+            -c \
+            -p \
+            4 \
+            "$ALIGNED_APK"
+
+          echo "aligned_apk=$ALIGNED_APK" >> "$GITHUB_OUTPUT"
 
       - name: Sign Android
         id: sign_apk
+        shell: bash
         run: |
-          UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
+          set -euo pipefail
+          ALIGNED_APK="${{ steps.align_apk.outputs.aligned_apk }}"
           SIGNED_APK="GeoWeather-v${{ steps.versioncheck.outputs.version }}.apk"
           KEYSTORE_PATH="./keystore/GeoWeather-KeyStore.jks"
 
           echo "==> Signiere APK: $SIGNED_APK"
-          "${{ steps.find_apksigner.outputs.apksigner }}" sign \
+          "${{ steps.android_tools.outputs.apksigner }}" sign \
             --ks "$KEYSTORE_PATH" \
             --ks-key-alias alle \
             --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
             --key-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
             --out "$SIGNED_APK" \
-            "$UNSIGNED_APK"
+            "$ALIGNED_APK"
 
           echo "signed_apk=$SIGNED_APK" >> "$GITHUB_OUTPUT"
 
-      - name: Verify APK Signature
+      - name: Verify APK
+        shell: bash
         run: |
+          set -euo pipefail
+          APK="${{ steps.sign_apk.outputs.signed_apk }}"
+
           echo "==> Überprüfe Signatur"
-          "${{ steps.find_apksigner.outputs.apksigner }}" verify --verbose \
-            "${{ steps.sign_apk.outputs.signed_apk }}"
+          "${{ steps.android_tools.outputs.apksigner }}" verify --verbose "$APK"
+
+          echo "==> Überprüfe Alignment"
+          "${{ steps.android_tools.outputs.zipalign }}" -c -P 16 -v 4 "$APK"
 
       - name: Upload APK as build artifact
         uses: actions/upload-artifact@v7
