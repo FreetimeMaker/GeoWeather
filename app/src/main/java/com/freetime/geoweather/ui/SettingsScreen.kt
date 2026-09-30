@@ -44,6 +44,7 @@ fun SettingsScreen(
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
     val pressureUnit by appSettings.pressureUnit.collectAsState()
+    val timeFormat by appSettings.timeFormat.collectAsState()
     val persistentNotif by appSettings.persistentNotif.collectAsState()
     val tempThreshold by appSettings.tempThreshold.collectAsState()
     val windThreshold by appSettings.windThreshold.collectAsState()
@@ -120,6 +121,15 @@ fun SettingsScreen(
                 ),
                 selected = pressureUnit,
                 onSelect = { appSettings.setPressureUnit(it) }
+            )
+            Text(stringResource(Res.string.time_format), style = MaterialTheme.typography.bodyLarge)
+            UnitRadioRow(
+                options = listOf(
+                    "non_military" to stringResource(Res.string.time_format_non_military),
+                    "military" to stringResource(Res.string.time_format_military)
+                ),
+                selected = timeFormat,
+                onSelect = { appSettings.setTimeFormat(it) }
             )
 
             } }
