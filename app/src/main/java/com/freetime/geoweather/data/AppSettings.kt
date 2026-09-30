@@ -35,6 +35,7 @@ class AppSettings(private val settings: Settings) {
         const val KEY_REDUCE_MOTION = "reduce_motion"
         const val KEY_REDUCE_TRANSPARENCY = "reduce_transparency"
         const val KEY_HIGH_CONTRAST = "high_contrast"
+        const val KEY_TIME_FORMAT = "time_format"
     }
 
     private val _persistentNotif = MutableStateFlow(settings.getBoolean(KEY_PERSISTENT_NOTIF, false))
@@ -192,6 +193,13 @@ class AppSettings(private val settings: Settings) {
     private val _highContrast = MutableStateFlow(settings.getBoolean(KEY_HIGH_CONTRAST, false))
     val highContrast: StateFlow<Boolean> = _highContrast.asStateFlow()
     fun setHighContrast(value: Boolean) { settings[KEY_HIGH_CONTRAST] = value; _highContrast.value = value }
+
+    private val _timeFormat = MutableStateFlow(settings.getString(KEY_TIME_FORMAT, "military"))
+    val timeFormat: StateFlow<String> = _timeFormat.asStateFlow()
+    fun setTimeFormat(value: String) {
+        settings[KEY_TIME_FORMAT] = value
+        _timeFormat.value = value
+    }
 
     private val _weatherAnimations = MutableStateFlow(settings.getString(KEY_WEATHER_ANIMATIONS, "full"))
     val weatherAnimations: StateFlow<String> = _weatherAnimations.asStateFlow()
