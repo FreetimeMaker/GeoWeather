@@ -58,7 +58,7 @@
     <string name="pressure_rising">Растущее</string>
     <string name="pressure_falling">Падающее</string>
     <string name="open_weather_radar">Открыть погодный радар</string>
-    <string name="weather_alerts_title">Оповещения о погоде</string>
+    <string name="weather_alerts_title">Предупреждения о погоде</string>
     <string name="alert_snow">Предупреждение о сильном снегопаде</string>
     <string name="alert_thunderstorm">Предупреждение о грозе</string>
     <string name="open_change_log">Открыть журнал изменений</string>
@@ -78,7 +78,7 @@
     <string name="wc_snowfall">Снегопад</string>
     <string name="wc_snow_grains">Снежные зерна</string>
     <string name="wc_rain_showers">Ливень</string>
-    <string name="wc_snow_showers">Снегопад</string>
+    <string name="wc_snow_showers">Кратковременный снег</string>
     <string name="wc_thunderstorm">Гроза</string>
     <string name="wc_thunderstorm_hail">Гроза с градом</string>
     <string name="wc_unknown">Неизвестно</string>
@@ -160,7 +160,7 @@
     <string name="briefing_evening">Вечер</string>
     <string name="daily_weather_notification">%1$s · %2$s: %3$s, %4$s · Дождь %5$d%% · Порывы %6$d км/ч</string>
     <string name="notification_channel_updates">Обновления погоды</string>
-    <string name="notification_channel_alerts">Оповещения о погоде</string>
+    <string name="notification_channel_alerts">Предупреждения о погоде</string>
     <string name="webview_settings_title">Настройки WebView</string>
     <string name="disable_private_view">Отключить приватный просмотр</string>
     <string name="disable_private_view_subtitle">Разрешить cookies и отслеживание</string>
@@ -256,7 +256,7 @@
     <string name="FixActivities">Исправлено падение активности при открытии GitHub Sponsors или FreetimeSDK для пожертвований</string>
     <string name="changelog_remove_coin">Удалена опция пожертвования через Coinbase из-за удаления Coinbase Commerce</string>
     <string name="changelog_remove_api_key">Удален ключ API QWeather из настроек</string>
-    <string name="AddedMoreDons">Добавлено больше вариантов пожертвований</string>
+    <string name="AddedMoreDons">Добавлены дополнительные варианты пожертвований</string>
     <string name="HopefullyFixedFMSDK">Надеюсь, исправлена опция пожертвования через FreetimeSDK</string>
     <string name="cl_coordinate_search">Функция поиска по координатам</string>
     <string name="cl_state_in_search">Добавлен регион в поиске, чтобы нужный город был очевиден</string>
@@ -281,7 +281,7 @@
     <string name="cl_v138_ca">Возврат только к Android</string>
     <string name="cl_v139_fix_dons">Обновлено, чтобы не падало при попытке пожертвовать</string>
     <string name="cl_v140_api">Изменено все с 7 дней на 3 дня, так как я работаю над API для приложения с различными опциональными планами.</string>
-    <string name="cl_v141_more_dons">Добавлено больше вариантов пожертвований</string>
+    <string name="cl_v141_more_dons">Добавлены ещё варианты пожертвований</string>
     <string name="cl_v142_added_api">Добавлен собственный API</string>
     <string name="cl_v143_fix_start">Исправлена ошибка запуска</string>
     <string name="cl_220_sdk">Интегрирован FreetimeSDK для криптопожертвований.</string>
@@ -617,7 +617,7 @@
     <string name="location_overview_title">Обзор локаций</string>
     <string name="updated_age_short">%1$d мин назад</string>
     <string name="quick_actions_title">Быстрые действия</string>
-    <string name="command_current_location">Текущее местоположение</string>
+    <string name="command_current_location">Текущее местоположени</string>
     <string name="command_refresh_weather">Обновить сохраненную погоду</string>
     <string name="command_saved_locations">Сохраненные локации</string>
     <string name="share_card_title">Снимок GeoWeather</string>
