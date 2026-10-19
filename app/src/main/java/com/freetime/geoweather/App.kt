@@ -97,6 +97,18 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     // Theme follows daylight automatically: light from sunrise, dark from sunset.
     // Until weather data is available, use a conservative 07:00/19:00 fallback.
     val locations by viewModel.locations.collectAsState(initial = emptyList())
+    val initialLocations by viewModel.initialLocations.collectAsState()
+    var startNavigationHandled by remember(viewModel) { mutableStateOf(false) }
+    LaunchedEffect(initialLocations, onboarding, whatsNew) {
+        val loaded = initialLocations ?: return@LaunchedEffect
+        if (startNavigationHandled || onboarding || whatsNew) return@LaunchedEffect
+        // Consume an empty start too, so adding the first location cannot trigger navigation.
+        startNavigationHandled = true
+        if (backStack.size == 1 && backStack.first() == Main) {
+            val location = loaded.firstOrNull { it.isDefault } ?: loaded.firstOrNull()
+            location?.let { navigate(Detail(locationId = it.id)) }
+        }
+    }
     val themeLocation = locations.firstOrNull()
     val daily = remember(themeLocation?.weatherData) {
         themeLocation?.let { viewModel.getDailyForecasts(it) }.orEmpty()
@@ -302,4 +314,3 @@ private fun ScreenContent(
         }
     }
 }
-

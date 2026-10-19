@@ -425,7 +425,7 @@ fun WeatherDetailScreen(
                                     val avgPressure = recent.mapNotNull { it.pressure }.takeIf { it.isNotEmpty() }?.average()
                                     val maxWind = recent.mapNotNull { it.windSpeed }.maxOrNull()
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                        WeatherDetailItem(stringResource(Res.string.temperature_delta), (if (tempChange >= 0) "+" else "") + String.format(java.util.Locale.getDefault(), "%.1f°", tempChange), modifier = Modifier.weight(1f))
+                                        WeatherDetailItem(stringResource(Res.string.temperature_delta), formatTempDelta(tempChange, tempUnit, signed = true), modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.humidity_label), avgHumidity?.let { String.format(java.util.Locale.getDefault(), "%.0f%%", it) } ?: "--", modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.pressure_label), avgPressure?.let { String.format(java.util.Locale.getDefault(), "%.0f hPa", it) } ?: "--", modifier = Modifier.weight(1f))
                                         WeatherDetailItem(stringResource(Res.string.wind_label), maxWind?.let { String.format(java.util.Locale.getDefault(), "%.0f km/h", it) } ?: "--", modifier = Modifier.weight(1f))
@@ -460,8 +460,8 @@ fun WeatherDetailScreen(
                             (currentHour?.windSpeed ?: loc.currentWindSpeed ?: 0.0) >= 25.0 && feelsDelta < -1.0 -> stringResource(Res.string.feels_like_wind)
                             (loc.currentHumidity ?: currentHour?.humidity ?: 0) >= 75 && feelsDelta > 1.0 -> stringResource(Res.string.feels_like_humidity)
                             (currentHour?.uvIndex ?: extras?.uvIndex ?: 0.0) >= 5.0 && feelsDelta > 0.5 -> stringResource(Res.string.feels_like_sun)
-                            feelsDelta >= 1.0 -> stringResource(Res.string.feels_like_difference_warmer, formatTemp(feelsDelta, tempUnit))
-                            feelsDelta <= -1.0 -> stringResource(Res.string.feels_like_difference_cooler, formatTemp(kotlin.math.abs(feelsDelta), tempUnit))
+                            feelsDelta >= 1.0 -> stringResource(Res.string.feels_like_difference_warmer, formatTempDelta(feelsDelta, tempUnit))
+                            feelsDelta <= -1.0 -> stringResource(Res.string.feels_like_difference_cooler, formatTempDelta(kotlin.math.abs(feelsDelta), tempUnit))
                             else -> stringResource(Res.string.feels_like_neutral)
                         }
                         val pressureTrend = when (extras?.pressureTrend ?: 0) {
@@ -497,8 +497,8 @@ fun WeatherDetailScreen(
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                     Text(stringResource(Res.string.forecast_changes_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     forecastChanges.take(12).forEach { change ->
-                                        val max = if (change.maxTempDelta >= 0) "+" + change.maxTempDelta else change.maxTempDelta.toString()
-                                        val min = if (change.minTempDelta >= 0) "+" + change.minTempDelta else change.minTempDelta.toString()
+                                        val max = formatTempDelta(change.maxTempDelta.toDouble(), tempUnit, signed = true)
+                                        val min = formatTempDelta(change.minTempDelta.toDouble(), tempUnit, signed = true)
                                         val rain = if (change.rainProbabilityDelta >= 0) "+" + change.rainProbabilityDelta else change.rainProbabilityDelta.toString()
                                         val wind = String.format(java.util.Locale.getDefault(), "%+.0f", change.windDelta)
                                         val recorded = if (change.recordedAt > 0L) {
@@ -514,7 +514,7 @@ fun WeatherDetailScreen(
                                                     fontWeight = FontWeight.Bold
                                                 )
                                                 Text(
-                                                    stringResource(Res.string.forecast_change_values, max, min, rain, wind),
+                                                    stringResource(Res.string.forecast_change_temperature_values, max, min, rain, wind),
                                                     style = MaterialTheme.typography.bodyMedium
                                                 )
                                             }
@@ -545,13 +545,7 @@ fun WeatherDetailScreen(
                                 } else {
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                         items(reliableAccuracy, key = { it.horizonHours }) { bucket ->
-                                            val error = if (tempUnit == "fahrenheit") bucket.meanAbsoluteError * 9.0 / 5.0 else bucket.meanAbsoluteError
-                                            val formattedError = String.format(
-                                                java.util.Locale.getDefault(),
-                                                "%.1f°%s",
-                                                error,
-                                                if (tempUnit == "fahrenheit") "F" else "C"
-                                            )
+                                            val formattedError = formatTempDelta(bucket.meanAbsoluteError, tempUnit)
                                             Card(modifier = Modifier.width(180.dp)) {
                                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                                     Text(
@@ -597,8 +591,8 @@ fun WeatherDetailScreen(
                                     )
                                     Text(
                                         stringResource(
-                                            Res.string.forecast_confidence_spread_units,
-                                            String.format(java.util.Locale.getDefault(), "%.1f", confidence.temperatureSpread),
+                                            Res.string.forecast_confidence_temperature_spread,
+                                            formatTempDelta(confidence.temperatureSpread, tempUnit),
                                             confidence.precipitationSpread,
                                             formatWind(confidence.windSpread, null, windUnit)
                                         ),
@@ -610,7 +604,7 @@ fun WeatherDetailScreen(
                                             Card(modifier = Modifier.width(150.dp)) {
                                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                                     Text(model.model, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
-                                                    Text(String.format(java.util.Locale.getDefault(), "%.1f°C", model.temperature), style = MaterialTheme.typography.titleMedium)
+                                                    Text(formatTempDecimal(model.temperature, tempUnit), style = MaterialTheme.typography.titleMedium)
                                                     Text(stringResource(Res.string.forecast_model_rain, model.precipitationProbability), style = MaterialTheme.typography.labelSmall)
                                                     Text(stringResource(Res.string.forecast_model_wind_value, formatWind(model.windSpeed, null, windUnit)), style = MaterialTheme.typography.labelSmall)
                                                 }
@@ -634,8 +628,8 @@ fun WeatherDetailScreen(
                                     Text(stringResource(Res.string.tomorrow_comparison_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     Text(
                                         when {
-                                            delta >= 1.0 -> stringResource(Res.string.tomorrow_warmer, formatTemp(delta, tempUnit))
-                                            delta <= -1.0 -> stringResource(Res.string.tomorrow_cooler, formatTemp(kotlin.math.abs(delta), tempUnit))
+                                            delta >= 1.0 -> stringResource(Res.string.tomorrow_warmer, formatTempDelta(delta, tempUnit))
+                                            delta <= -1.0 -> stringResource(Res.string.tomorrow_cooler, formatTempDelta(kotlin.math.abs(delta), tempUnit))
                                             else -> stringResource(Res.string.tomorrow_similar_temp)
                                         },
                                         style = MaterialTheme.typography.bodyLarge
@@ -658,8 +652,8 @@ fun WeatherDetailScreen(
                                                 Card(modifier = Modifier.weight(1f)) {
                                                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                                         Text(day.date.takeLast(5), style = MaterialTheme.typography.labelSmall)
-                                                        Text(day.maxTemp.toString() + "°", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                                        Text(day.minTemp.toString() + "°", style = MaterialTheme.typography.labelSmall)
+                                                        Text(formatTemp(day.maxTemp.toDouble(), tempUnit), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                                        Text(formatTemp(day.minTemp.toDouble(), tempUnit), style = MaterialTheme.typography.labelSmall)
                                                         Text("☔ " + day.precipProbMax + "%", style = MaterialTheme.typography.labelSmall)
                                                         if ((day.snowfallSum ?: 0.0) > 0.0) Text("❄ " + String.format(java.util.Locale.getDefault(), "%.1f", day.snowfallSum) + " cm", style = MaterialTheme.typography.labelSmall)
                                                     }
@@ -691,7 +685,7 @@ fun WeatherDetailScreen(
                                                     Text(day.score.toString() + "/100", style = MaterialTheme.typography.titleLarge)
                                                     day.models.forEach { model ->
                                                         Text(
-                                                            model.model + " " + String.format(java.util.Locale.getDefault(), "%.1f°C", model.temperature) +
+                                                            model.model + " " + formatTempDecimal(model.temperature, tempUnit) +
                                                                 " · " + model.precipitationProbability + "%",
                                                             style = MaterialTheme.typography.labelSmall
                                                         )
@@ -1347,11 +1341,6 @@ fun DetailInfoRow(label: String, value: String) {
     }
 }
 
-fun formatTemp(celsius: Double, tempUnit: String): String {
-    val display = if (tempUnit == "fahrenheit") (celsius * 9 / 5 + 32).toInt() else celsius.toInt()
-    val suffix = if (tempUnit == "fahrenheit") "°F" else "°C"
-    return "$display$suffix"
-}
 
 @Composable
 fun formatWind(kmh: Double?, degrees: Int?, windUnit: String): String {
@@ -1645,7 +1634,7 @@ fun ForecastDetailScreen(
                     }
                 }
             }
-            
+
         }
     }
 }

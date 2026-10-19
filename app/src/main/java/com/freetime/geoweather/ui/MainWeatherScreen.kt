@@ -59,6 +59,7 @@ fun MainWeatherScreen(
     onCurrentLocationClick: (String, Double, Double) -> Unit
 ) {
     val locations by viewModel.locations.collectAsState()
+    val tempUnit by DependencyManager.getAppSettings().tempUnit.collectAsState()
     val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
@@ -123,7 +124,7 @@ fun MainWeatherScreen(
                 title = {
                     Column {
                         Text(stringResource(Res.string.app_name))
-                        if (navigationCompact) locations.firstOrNull()?.currentTemp?.let { Text("${it.toInt()}°", style = MaterialTheme.typography.labelMedium) }
+                        if (navigationCompact) locations.firstOrNull()?.currentTemp?.let { Text(formatTemp(it, tempUnit), style = MaterialTheme.typography.labelMedium) }
                     }
                 },
                 modifier = Modifier.liquidGlass(interactive = false)
@@ -167,7 +168,7 @@ fun MainWeatherScreen(
                                     Column(Modifier.weight(1f)) {
                                         Text(loc.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
                                         Text(
-                                            text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
+                                            text = loc.currentTemp?.let { temp -> formatTemp(temp, tempUnit) } ?: "--",
                                             style = MaterialTheme.typography.titleLarge
                                         )
                                         Text(
@@ -202,7 +203,7 @@ fun MainWeatherScreen(
                                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                     Text(loc.name, style = MaterialTheme.typography.titleLarge)
                                     Text(
-                                        text = loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--",
+                                        text = loc.currentTemp?.let { temp -> formatTemp(temp, tempUnit) } ?: "--",
                                         style = MaterialTheme.typography.headlineLarge
                                     )
                                     Text(
@@ -253,7 +254,7 @@ fun MainWeatherScreen(
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                         Column(Modifier.weight(1f)) {
                                             Text(stringResource(Res.string.compare_temperature_spread), style = MaterialTheme.typography.labelSmall)
-                                            Text(minTemp.toInt().toString() + "–" + maxTemp.toInt() + "°C", style = MaterialTheme.typography.titleMedium)
+                                            Text(formatTemp(minTemp, tempUnit) + "–" + formatTemp(maxTemp, tempUnit), style = MaterialTheme.typography.titleMedium)
                                         }
                                         Column(Modifier.weight(1f)) {
                                             Text(stringResource(Res.string.compare_windiest), style = MaterialTheme.typography.labelSmall)
@@ -276,7 +277,7 @@ fun MainWeatherScreen(
                                     Card(modifier = Modifier.width(180.dp)) {
                                         Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                             Text(loc.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
-                                            Text(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.headlineMedium)
+                                            Text(loc.currentTemp?.let { formatTemp(it, tempUnit) } ?: "--", style = MaterialTheme.typography.headlineMedium)
                                             Text(loc.currentHumidity?.let { stringResource(Res.string.humidity_value, it) } ?: "--", style = MaterialTheme.typography.labelMedium)
                                             Text(loc.currentWindSpeed?.let { stringResource(Res.string.wind_value, it.toInt()) } ?: "--", style = MaterialTheme.typography.labelMedium)
                                         }
@@ -387,7 +388,7 @@ fun MainWeatherScreen(
                                     Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                         Text(loc.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
                                         Text(
-                                            if (low != null && high != null) context.getString(Res.string.trip_temperature_range, low, high) else context.getString(Res.string.forecast_unavailable),
+                                            if (low != null && high != null) context.getString(Res.string.trip_temperature_range_formatted, formatTemp(low.toDouble(), tempUnit), formatTemp(high.toDouble(), tempUnit)) else context.getString(Res.string.forecast_unavailable),
                                             style = MaterialTheme.typography.bodyMedium
                                         )
                                         Text(context.getString(Res.string.rain_risk_up_to, rain), style = MaterialTheme.typography.labelMedium)
@@ -409,7 +410,7 @@ fun MainWeatherScreen(
                                     compared.forEach { (loc, low, high) ->
                                         val days = viewModel.getDailyForecasts(loc).take(7)
                                         val rain = days.maxOfOrNull { it.precipProbMax } ?: 0
-                                        val range = if (low != null && high != null) low.toString() + "–" + high + "°C" else "--"
+                                        val range = if (low != null && high != null) formatTemp(low.toDouble(), tempUnit) + "–" + formatTemp(high.toDouble(), tempUnit) else "--"
                                         Text(
                                             stringResource(Res.string.trip_compare_row, loc.name, range, rain),
                                             style = MaterialTheme.typography.bodyMedium
@@ -450,7 +451,7 @@ fun MainWeatherScreen(
                                                     modifier = Modifier.size(40.dp)
                                                 )
                                             }
-                                            Text(loc.currentTemp?.let { temp -> temp.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.titleLarge)
+                                            Text(loc.currentTemp?.let { temp -> formatTemp(temp, tempUnit) } ?: "--", style = MaterialTheme.typography.titleLarge)
                                         }
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                             Text(loc.currentWindSpeed?.let { speed -> stringResource(Res.string.wind_value, speed.toInt()) } ?: "--", style = MaterialTheme.typography.labelSmall)
@@ -491,7 +492,7 @@ fun MainWeatherScreen(
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text(loc.name, style = MaterialTheme.typography.titleMedium)
-                            Text(loc.currentTemp?.let { it.toInt().toString() + "°C" } ?: "--", style = MaterialTheme.typography.bodyMedium)
+                            Text(loc.currentTemp?.let { formatTemp(it, tempUnit) } ?: "--", style = MaterialTheme.typography.bodyMedium)
                         }
                         IconButton(onClick = {
                                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -517,6 +518,8 @@ fun MainWeatherScreen(
                 }
             }
             }
+
+        }
 
             val onNavigationSelected: (Int) -> Unit = { index ->
                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -562,7 +565,6 @@ fun MainWeatherScreen(
             } else {
                 FloatingActionButton(onClick = addLocationAction, modifier = addLocationFabModifier) { Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT)) }
             }
-        }
         }
     }
 
@@ -650,12 +652,12 @@ fun MainWeatherScreen(
                         selectedTime = java.time.LocalTime.of(timePickerState.hour, timePickerState.minute)
                     }
                     Text(stringResource(Res.string.location_alert_thresholds), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    AlertThresholdRow(stringResource(Res.string.location_temp_threshold, locationTempThreshold), { locationTempThreshold = (locationTempThreshold - 1).coerceAtLeast(1) }, { locationTempThreshold = (locationTempThreshold + 1).coerceAtMost(20) })
+                    AlertThresholdRow(stringResource(Res.string.location_temp_threshold_formatted, formatTempDelta(locationTempThreshold.toDouble(), tempUnit)), { locationTempThreshold = (locationTempThreshold - 1).coerceAtLeast(1) }, { locationTempThreshold = (locationTempThreshold + 1).coerceAtMost(20) })
                     AlertThresholdRow(stringResource(Res.string.location_wind_threshold, locationWindThreshold), { locationWindThreshold = (locationWindThreshold - 1).coerceAtLeast(1) }, { locationWindThreshold = (locationWindThreshold + 1).coerceAtMost(100) })
                     AlertThresholdRow(stringResource(Res.string.location_rain_threshold, locationRainThreshold), { locationRainThreshold = (locationRainThreshold - 5).coerceAtLeast(10) }, { locationRainThreshold = (locationRainThreshold + 5).coerceAtMost(100) })
                     AlertThresholdRow(stringResource(Res.string.location_gust_threshold, locationGustThreshold), { locationGustThreshold = (locationGustThreshold - 5).coerceAtLeast(10) }, { locationGustThreshold = (locationGustThreshold + 5).coerceAtMost(150) })
                     AlertThresholdRow(stringResource(Res.string.location_uv_threshold, locationUvThreshold), { locationUvThreshold = (locationUvThreshold - 1).coerceAtLeast(1) }, { locationUvThreshold = (locationUvThreshold + 1).coerceAtMost(15) })
-                    AlertThresholdRow(stringResource(Res.string.location_frost_threshold, locationFrostThreshold), { locationFrostThreshold = (locationFrostThreshold - 1).coerceAtLeast(-20) }, { locationFrostThreshold = (locationFrostThreshold + 1).coerceAtMost(10) })
+                    AlertThresholdRow(stringResource(Res.string.location_frost_threshold_formatted, formatTemp(locationFrostThreshold.toDouble(), tempUnit)), { locationFrostThreshold = (locationFrostThreshold - 1).coerceAtLeast(-20) }, { locationFrostThreshold = (locationFrostThreshold + 1).coerceAtMost(10) })
                 }
             },
             confirmButton = {

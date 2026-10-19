@@ -1,13 +1,17 @@
 <resources>
     <string name="app_name">GeoWeather</string>
 
-    <string name="main_donation_hint">Enjoying GeoWeather? Support the development</string>
+    <string
+        name="main_donation_hint"
+    >Enjoying GeoWeather? Support the development</string>
 
     <string name="search_title">Search City</string>
     <string name="search_hint">City name or Coordinates</string>
     <string name="search_placeholder">e.g. New York or 40.71, -74.00</string>
     <string name="SearchBTNTXT">Search</string>
-    <string name="search_no_results">No results found. Check your connection and try another name or coordinates.</string>
+    <string
+        name="search_no_results"
+    >No results found. Check your connection and try another name or coordinates.</string>
 
     <string name="back_nav_desc">Back</string>
     <string name="settings_title">Settings</string>
@@ -15,11 +19,17 @@
     <string name="about_title">About</string>
 
     <string name="support_development">Support development</string>
-    <string name="select_option_msg">Choose one of the following options to support the project.</string>
+    <string
+        name="select_option_msg"
+    >Choose one of the following options to support the project.</string>
     <string name="about_developer_title">About the Developer</string>
-    <string name="about_developer_text">Hi! I\'m Freetime Maker, the creator of GeoWeather. I started this project because I wanted a weather app that is clean, fast, and respects user privacy above all else.</string>
+    <string
+        name="about_developer_text"
+    >Hi! I\'m Freetime Maker, the creator of GeoWeather. I started this project because I wanted a weather app that is clean, fast, and respects user privacy above all else.</string>
     <string name="donation_mission_title">Why support GeoWeather?</string>
-    <string name="donation_mission_text">GeoWeather is 100% free, open-source, and has no ads or trackers. Your donations help cover API costs and support the ongoing development of this and other privacy-focused apps.</string>
+    <string
+        name="donation_mission_text"
+    >GeoWeather is 100% free, open-source, and has no ads or trackers. Your donations help cover API costs and support the ongoing development of this and other privacy-focused apps.</string>
 
     <string name="wind_label">Wind</string>
     <string name="humidity_label">Humidity</string>
@@ -28,7 +38,9 @@
     <string name="sunrise_label">Sunrise</string>
     <string name="sunset_label">Sunset</string>
     <string name="precipitation_label">Precipitation</string>
-    <string name="precipitation_probability_label">Precipitation probability</string>
+    <string
+        name="precipitation_probability_label"
+    >Precipitation probability</string>
     <string name="wind_max_label">Max wind</string>
     <string name="visibility_label">Visibility</string>
 
@@ -38,7 +50,9 @@
     <string name="CancelTXT">Cancel</string>
 
     <string name="current_location">Current Location</string>
-    <string name="current_location_unavailable">Current location unavailable. Check permission and GPS.</string>
+    <string
+        name="current_location_unavailable"
+    >Current location unavailable. Check permission and GPS.</string>
 
     <!-- Weather Conditions -->
     <string name="wc_clear">Clear sky</string>
@@ -86,9 +100,13 @@
     <string name="force_dark_mode">Force Dark Mode</string>
     <string name="open_change_log">Open Change Log</string>
     <string name="dynamic_color_title">Dynamic Colors (Material You)</string>
-    <string name="dynamic_color_subtitle">Colors based on your wallpaper (Android 12+)</string>
+    <string
+        name="dynamic_color_subtitle"
+    >Colors based on your wallpaper (Android 12+)</string>
     <string name="oled_black_title">OLED Black Mode</string>
-    <string name="oled_black_subtitle">Pure black background for AMOLED screens</string>
+    <string
+        name="oled_black_subtitle"
+    >Pure black background for AMOLED screens</string>
 
     <string name="unit_settings_title">Unit Settings</string>
     <string name="temperature_unit">Temperature Unit</string>
@@ -103,43 +121,79 @@
     <string name="unit_mmhg">mmHg</string>
 
     <string name="notification_settings_title">Notification Settings</string>
-    <string name="temp_threshold_label">Temperature Change Threshold: %1$d°</string>
+    <string
+        name="temp_threshold_label"
+    >Temperature Change Threshold: %1$d°</string>
     <string name="wind_threshold_label">Wind Increase Threshold: %1$d</string>
-    <string name="persistent_notif_title">Persistent Weather Notification</string>
-    <string name="persistent_notif_subtitle">Show current temperature in the status bar</string>
-    <string name="persistent_weather_summary">%1$s · Rain %2$d%% · Gusts %3$s</string>
+    <string
+        name="persistent_notif_title"
+    >Persistent Weather Notification</string>
+    <string
+        name="persistent_notif_subtitle"
+    >Show current temperature in the status bar</string>
+    <string
+        name="persistent_weather_summary"
+    >%1$s · Rain %2$d%% · Gusts %3$s</string>
     <string name="persistent_next_hour">Next hour: %1$s · %2$d%% rain</string>
-    <string name="appearance_accessibility_title">Liquid Glass &amp; accessibility</string>
+    <string
+        name="appearance_accessibility_title"
+    >Liquid Glass &amp; accessibility</string>
     <string name="liquid_glass_title">Liquid Glass</string>
-    <string name="liquid_glass_desc">Uses the Freetime Core live backdrop, luminance, refraction and interactive glass renderer.</string>
+    <string
+        name="liquid_glass_desc"
+    >Uses the Freetime Core live backdrop, luminance, refraction and interactive glass renderer.</string>
     <string name="reduce_motion_title">Reduce motion</string>
-    <string name="reduce_motion_desc">Reduces decorative motion and Liquid Glass interaction animations.</string>
+    <string
+        name="reduce_motion_desc"
+    >Reduces decorative motion and Liquid Glass interaction animations.</string>
     <string name="reduce_transparency_title">Reduce transparency</string>
-    <string name="reduce_transparency_desc">Uses more opaque surfaces and disables glass refraction.</string>
+    <string
+        name="reduce_transparency_desc"
+    >Uses more opaque surfaces and disables glass refraction.</string>
     <string name="high_contrast_title">High contrast</string>
-    <string name="high_contrast_desc">Strengthens glass edges, scrims and content separation.</string>
+    <string
+        name="high_contrast_desc"
+    >Strengthens glass edges, scrims and content separation.</string>
     <string name="smart_alerts_title">Smart alerts</string>
     <string name="smart_rain_alert_title">Rain alerts</string>
-    <string name="smart_rain_alert_desc">Notify when rain is likely in the next few hours.</string>
+    <string
+        name="smart_rain_alert_desc"
+    >Notify when rain is likely in the next few hours.</string>
     <string name="smart_wind_alert_title">Strong wind alerts</string>
-    <string name="smart_wind_alert_desc">Notify when forecast gusts become strong.</string>
+    <string
+        name="smart_wind_alert_desc"
+    >Notify when forecast gusts become strong.</string>
     <string name="smart_frost_alert_title">Frost alerts</string>
-    <string name="smart_frost_alert_desc">Notify when forecast temperature reaches freezing.</string>
+    <string
+        name="smart_frost_alert_desc"
+    >Notify when forecast temperature reaches freezing.</string>
     <string name="smart_uv_alert_title">High UV alerts</string>
-    <string name="smart_uv_alert_desc">Notify when the UV index reaches a high level.</string>
-    <string name="frost_alert_notification">%1$s: Frost expected around %2$s (%3$d°C)</string>
-    <string name="uv_alert_notification">%1$s: High UV expected around %2$s (UV %3$s)</string>
+    <string
+        name="smart_uv_alert_desc"
+    >Notify when the UV index reaches a high level.</string>
+    <string
+        name="frost_alert_notification"
+    >%1$s: Frost expected around %2$s (%3$d°C)</string>
+    <string
+        name="uv_alert_notification"
+    >%1$s: High UV expected around %2$s (UV %3$s)</string>
     <string name="briefing_morning">Morning</string>
     <string name="briefing_evening">Evening</string>
-    <string name="daily_weather_notification">%1$s · %2$s: %3$s, %4$s · Rain %5$d%% · Gusts %6$d km/h</string>
+    <string
+        name="daily_weather_notification"
+    >%1$s · %2$s: %3$s, %4$s · Rain %5$d%% · Gusts %6$d km/h</string>
     <string name="notification_channel_updates">Weather updates</string>
     <string name="notification_channel_alerts">Weather alerts</string>
 
     <string name="webview_settings_title">WebView Settings</string>
     <string name="disable_private_view">Disable Private View</string>
-    <string name="disable_private_view_subtitle">Allow cookies and tracking</string>
+    <string
+        name="disable_private_view_subtitle"
+    >Allow cookies and tracking</string>
     <string name="open_external_browser">Open in External Browser</string>
-    <string name="open_external_browser_subtitle">Open links in external browser instead of app</string>
+    <string
+        name="open_external_browser_subtitle"
+    >Open links in external browser instead of app</string>
 
     <string name="backup_restore_title">Backup &amp; Restore</string>
     <string name="export_locations">Export Locations</string>
@@ -149,8 +203,12 @@
     <string name="export_failed">Export failed</string>
     <string name="import_failed">Import failed</string>
     <string name="feedback_btn">Send Feedback and suggestions via Email</string>
-    <string name="feedback_github_btn">Report Issue or Suggest Feature on GitHub</string>
-    <string name="feedback_alternative_hint">You can also provide feedback directly on our GitHub repository.</string>
+    <string
+        name="feedback_github_btn"
+    >Report Issue or Suggest Feature on GitHub</string>
+    <string
+        name="feedback_alternative_hint"
+    >You can also provide feedback directly on our GitHub repository.</string>
 
     <!-- Forecast and details -->
     <string name="hourly_label">Hourly</string>
@@ -161,7 +219,9 @@
     <string name="refresh_nav_desc">Refresh</string>
     <string name="donate_nav_desc">Donate</string>
     <string name="settings_nav_desc">Settings</string>
-    <string name="no_locations_msg">No locations added yet.\nClick on the plus icon below.</string>
+    <string
+        name="no_locations_msg"
+    >No locations added yet.\nClick on the plus icon below.</string>
     <string name="error_loading_weather">Error loading weather data</string>
 
     <string name="dir_n">N</string>
@@ -181,7 +241,9 @@
     <string name="weather_alerts_title">Weather Alerts</string>
     <string name="alert_snow">Heavy Snowfall Warning</string>
     <string name="alert_thunderstorm">Thunderstorm Warning</string>
-    <string name="alert_hail_thunderstorm">Severe Thunderstorm / Hail Warning</string>
+    <string
+        name="alert_hail_thunderstorm"
+    >Severe Thunderstorm / Hail Warning</string>
     <string name="alert_heavy_rain">Heavy Rain Warning</string>
     <string name="alert_rain_showers">Heavy Rain Shower Warning</string>
     <string name="alert_freezing_rain">Freezing Rain Warning</string>
@@ -202,233 +264,577 @@
     <string name="widget_loading">Loading...</string>
     <string name="no_location_selected">No Location</string>
     <string name="error_connection">Error: Check Connection</string>
-    <string name="temperature_change_msg">Temperature changed from %1$s to %2$s</string>
+    <string
+        name="temperature_change_msg"
+    >Temperature changed from %1$s to %2$s</string>
     <string name="WeatherNotificationTXT">Weather in %1$s: %2$s, %3$s</string>
 
     <!-- Changelog v4.6.0 -->
-    <string name="cl_460_smart">Added Smart Weather insights and a 2-hour precipitation nowcast</string>
-    <string name="cl_460_timeline">Added a richer hourly weather timeline with precipitation and wind gusts</string>
-    <string name="cl_460_sun">Added sun path details with sunrise, sunset, golden hour, blue hour and UV information</string>
-    <string name="cl_460_conditions">Added conditions and trend insights for visibility, cloud base, pressure and feels-like weather</string>
-    <string name="cl_460_history">Added local weather history, temperature range visualization and data freshness indicators</string>
-    <string name="cl_460_indicators">Added multiple data-based weather indicators with recent indicator history</string>
-    <string name="cl_460_locations">Added a location overview and comparison summary for saved places</string>
-    <string name="cl_460_widgets">Improved widgets, persistent weather notifications and daily weather briefings</string>
-    <string name="cl_460_landscape">Added responsive landscape support and improved weather details for wider screens</string>
-    <string name="cl_460_glass_details">Added a Liquid Glass weather detail sheet and shareable weather image cards</string>
-    <string name="cl_460_diagnostics">Expanded diagnostics and improved weather background motion with reduced-motion support</string>
-    <string name="cl_460_fixes">Fixed duplicate resources and several UI and build issues</string>
+    <string
+        name="cl_460_smart"
+    >Added Smart Weather insights and a 2-hour precipitation nowcast</string>
+    <string
+        name="cl_460_timeline"
+    >Added a richer hourly weather timeline with precipitation and wind gusts</string>
+    <string
+        name="cl_460_sun"
+    >Added sun path details with sunrise, sunset, golden hour, blue hour and UV information</string>
+    <string
+        name="cl_460_conditions"
+    >Added conditions and trend insights for visibility, cloud base, pressure and feels-like weather</string>
+    <string
+        name="cl_460_history"
+    >Added local weather history, temperature range visualization and data freshness indicators</string>
+    <string
+        name="cl_460_indicators"
+    >Added multiple data-based weather indicators with recent indicator history</string>
+    <string
+        name="cl_460_locations"
+    >Added a location overview and comparison summary for saved places</string>
+    <string
+        name="cl_460_widgets"
+    >Improved widgets, persistent weather notifications and daily weather briefings</string>
+    <string
+        name="cl_460_landscape"
+    >Added responsive landscape support and improved weather details for wider screens</string>
+    <string
+        name="cl_460_glass_details"
+    >Added a Liquid Glass weather detail sheet and shareable weather image cards</string>
+    <string
+        name="cl_460_diagnostics"
+    >Expanded diagnostics and improved weather background motion with reduced-motion support</string>
+    <string
+        name="cl_460_fixes"
+    >Fixed duplicate resources and several UI and build issues</string>
 
     <!-- Changelog v4.2.0 -->
-    <string name="cl_420_briefings">Added Morning and Evening weather briefings</string>
-    <string name="cl_420_activity_windows">Added smart activity windows for walking, running, cycling and photography</string>
-    <string name="cl_420_travel">Added travel planning foundations for weather-aware trips</string>
-    <string name="cl_420_location_groups">Added location groups for organizing saved places</string>
-    <string name="cl_420_accuracy">Added forecast accuracy tracking based on historical weather data</string>
-    <string name="cl_420_provider_compare">Added weather provider comparison foundations</string>
-    <string name="cl_420_widgets">Added configurable multi-widget preferences</string>
-    <string name="cl_420_sync_v3">Added Sync v3 foundations with stable location IDs, update timestamps and deletion tracking</string>
-    <string name="cl_420_notifications">Added Normal, Outdoor and Travel notification profiles</string>
-    <string name="cl_420_quiet_hours">Added Quiet Hours for suppressing regular overnight weather notifications</string>
-    <string name="cl_420_onboarding">Added a first-run onboarding experience</string>
-    <string name="cl_420_diagnostics">Added a privacy-friendly Diagnostics &amp; Privacy screen with shareable diagnostics</string>
-    <string name="cl_420_shortcuts">Added Android app shortcuts for Current Location, Search and Settings</string>
-    <string name="cl_420_deeplink">Added geoweather://open deep-link support</string>
-    <string name="cl_420_whats_new">What’s New is now shown automatically once per app version</string>
+    <string
+        name="cl_420_briefings"
+    >Added Morning and Evening weather briefings</string>
+    <string
+        name="cl_420_activity_windows"
+    >Added smart activity windows for walking, running, cycling and photography</string>
+    <string
+        name="cl_420_travel"
+    >Added travel planning foundations for weather-aware trips</string>
+    <string
+        name="cl_420_location_groups"
+    >Added location groups for organizing saved places</string>
+    <string
+        name="cl_420_accuracy"
+    >Added forecast accuracy tracking based on historical weather data</string>
+    <string
+        name="cl_420_provider_compare"
+    >Added weather provider comparison foundations</string>
+    <string
+        name="cl_420_widgets"
+    >Added configurable multi-widget preferences</string>
+    <string
+        name="cl_420_sync_v3"
+    >Added Sync v3 foundations with stable location IDs, update timestamps and deletion tracking</string>
+    <string
+        name="cl_420_notifications"
+    >Added Normal, Outdoor and Travel notification profiles</string>
+    <string
+        name="cl_420_quiet_hours"
+    >Added Quiet Hours for suppressing regular overnight weather notifications</string>
+    <string
+        name="cl_420_onboarding"
+    >Added a first-run onboarding experience</string>
+    <string
+        name="cl_420_diagnostics"
+    >Added a privacy-friendly Diagnostics &amp; Privacy screen with shareable diagnostics</string>
+    <string
+        name="cl_420_shortcuts"
+    >Added Android app shortcuts for Current Location, Search and Settings</string>
+    <string
+        name="cl_420_deeplink"
+    >Added geoweather://open deep-link support</string>
+    <string
+        name="cl_420_whats_new"
+    >What’s New is now shown automatically once per app version</string>
 
     <!-- Changelog v4.1.0 -->
-    <string name="cl_410_appwrite_auth">Added Appwrite account authentication</string>
+    <string
+        name="cl_410_appwrite_auth"
+    >Added Appwrite account authentication</string>
     <string name="cl_410_oauth">Added GitHub and GitLab OAuth login</string>
-    <string name="cl_410_profile">Added account name and OAuth profile picture support</string>
-    <string name="cl_410_subscriptions">Added GeoWeather subscription support</string>
+    <string
+        name="cl_410_profile"
+    >Added account name and OAuth profile picture support</string>
+    <string
+        name="cl_410_subscriptions"
+    >Added GeoWeather subscription support</string>
     <string name="cl_410_codes">Added subscription code redemption</string>
-    <string name="cl_410_plan_features">Subscription features are now loaded dynamically from the GeoWeather API</string>
-    <string name="cl_410_plan_limits">Added plan-based location, forecast and notification limits</string>
-    <string name="cl_410_upgrade">Added an Upgrade Subscription button for users below Ultrimium</string>
-    <string name="cl_410_cloud_sync">Added cloud synchronization for settings and saved locations</string>
-    <string name="cl_410_auto_sync">Added automatic synchronization after local changes and account login</string>
-    <string name="cl_410_sync_controls">Added manual Sync Now and Restore from Cloud controls</string>
-    <string name="cl_410_main_plan">The current subscription is now visible on the main and weather detail screens</string>
-    <string name="cl_410_forecast_limits">Weather details now respect the forecast length included in the current subscription</string>
-    <string name="cl_410_liquid">Improved Liquid Glass integration across account, subscription and sync UI</string>
-    <string name="cl_410_sdk">Updated the Appwrite Android SDK and fixed OAuth, TablesDB and account integration compatibility</string>
+    <string
+        name="cl_410_plan_features"
+    >Subscription features are now loaded dynamically from the GeoWeather API</string>
+    <string
+        name="cl_410_plan_limits"
+    >Added plan-based location, forecast and notification limits</string>
+    <string
+        name="cl_410_upgrade"
+    >Added an Upgrade Subscription button for users below Ultrimium</string>
+    <string
+        name="cl_410_cloud_sync"
+    >Added cloud synchronization for settings and saved locations</string>
+    <string
+        name="cl_410_auto_sync"
+    >Added automatic synchronization after local changes and account login</string>
+    <string
+        name="cl_410_sync_controls"
+    >Added manual Sync Now and Restore from Cloud controls</string>
+    <string
+        name="cl_410_main_plan"
+    >The current subscription is now visible on the main and weather detail screens</string>
+    <string
+        name="cl_410_forecast_limits"
+    >Weather details now respect the forecast length included in the current subscription</string>
+    <string
+        name="cl_410_liquid"
+    >Improved Liquid Glass integration across account, subscription and sync UI</string>
+    <string
+        name="cl_410_sdk"
+    >Updated the Appwrite Android SDK and fixed OAuth, TablesDB and account integration compatibility</string>
 
     <!-- Changelog -->
     <string name="whats_new_title">What\'s new?</string>
 
-    <string name="cl_310_android_icon">Fixed Android App Icon is an other then the new One</string>
+    <string
+        name="cl_310_android_icon"
+    >Fixed Android App Icon is an other then the new One</string>
     <string name="cl_310_weather_time">Fixed the Time in WeatherDetails</string>
     <string name="cl_310_removed_sdk">Removed FreetimeSDK</string>
 
     <string name="cl_300_kmp">Migrated to Kotlin Multiplatform (KMP)</string>
-    <string name="cl_300_windows_linux">Added support for Windows and Linux</string>
-    <string name="cl_300_room">Refactored Database to Room Multiplatform</string>
+    <string
+        name="cl_300_windows_linux"
+    >Added support for Windows and Linux</string>
+    <string
+        name="cl_300_room"
+    >Refactored Database to Room Multiplatform</string>
     <string name="cl_300_ktor">Refactored Networking to Ktor</string>
     <string name="cl_300_compose">Updated UI to Compose Multiplatform</string>
     <string name="cl_300_app_icon">New App Icon</string>
-    <string name="cl_300_feedback">P.S.: Tell me with a Feedback what you think about the new UI and the new App Icon. I would love to hear your opinion!</string>
+    <string
+        name="cl_300_feedback"
+    >P.S.: Tell me with a Feedback what you think about the new UI and the new App Icon. I would love to hear your opinion!</string>
 
-    <string name="cl_230_widget">Enhanced the Weather Widget with responsive hourly Forecast and made it better</string>
-    <string name="cl_230_sdk_safety">Added Safety Wrappers around FreetimeSDK\'s FreetimePay and fixed the Promotion Rendering in DonateScreen for Freetime SDK</string>
-    <string name="cl_230_sdk_reliability">Improved FreetimeSDK Reliability by adding error handler and more for Promotions</string>
-    <string name="cl_230_feedback_email">Updated E-Mail address for Feedback (The Provider (addy.io) I used for Sending it to the Mail Address didn\'t work anymore)</string>
+    <string
+        name="cl_230_widget"
+    >Enhanced the Weather Widget with responsive hourly Forecast and made it better</string>
+    <string
+        name="cl_230_sdk_safety"
+    >Added Safety Wrappers around FreetimeSDK\'s FreetimePay and fixed the Promotion Rendering in DonateScreen for Freetime SDK</string>
+    <string
+        name="cl_230_sdk_reliability"
+    >Improved FreetimeSDK Reliability by adding error handler and more for Promotions</string>
+    <string
+        name="cl_230_feedback_email"
+    >Updated E-Mail address for Feedback (The Provider (addy.io) I used for Sending it to the Mail Address didn\'t work anymore)</string>
     <string name="cl_230_dependencies">Updated Dependencies</string>
 
-    <string name="cl_222_expandable_forecast">Expandable 16-day forecast for a cleaner UI</string>
+    <string
+        name="cl_222_expandable_forecast"
+    >Expandable 16-day forecast for a cleaner UI</string>
     <string name="cl_222_radar">Integrated In-App Weather Radar</string>
-    <string name="cl_222_details_grid">Optimized compact weather details grid</string>
+    <string
+        name="cl_222_details_grid"
+    >Optimized compact weather details grid</string>
     <string name="cl_222_ms_wind">Added m/s wind speed unit</string>
-    <string name="cl_222_cardinal_direction">Cardinal wind direction text added</string>
+    <string
+        name="cl_222_cardinal_direction"
+    >Cardinal wind direction text added</string>
 
-    <string name="cl_212_feedback">Added Feedback System and removed Affiliate Links</string>
+    <string
+        name="cl_212_feedback"
+    >Added Feedback System and removed Affiliate Links</string>
 
     <string name="FixFMSDK">Fixed Donations via FreetimeSDK</string>
     <string name="AddedMoonData">Added Moon Data for Real Now</string>
-    <string name="FixActivities">Fixed Activity Crash when opening GitHub Sponsors or FreetimeSDK for Donation</string>
-    <string name="changelog_remove_coin">Deleted Coinbase donation option due to removal of Coinbase Commerce</string>
-    <string name="changelog_remove_api_key">Removed QWeather API Key from Settings</string>
+    <string
+        name="FixActivities"
+    >Fixed Activity Crash when opening GitHub Sponsors or FreetimeSDK for Donation</string>
+    <string
+        name="changelog_remove_coin"
+    >Deleted Coinbase donation option due to removal of Coinbase Commerce</string>
+    <string
+        name="changelog_remove_api_key"
+    >Removed QWeather API Key from Settings</string>
     <string name="AddedMoreDons">Added More Donation Options</string>
-    <string name="HopefullyFixedFMSDK">Hopefully Fixed FreetimeSDK Donation Option</string>
+    <string
+        name="HopefullyFixedFMSDK"
+    >Hopefully Fixed FreetimeSDK Donation Option</string>
 
     <string name="cl_coordinate_search">Coordinate Searching function</string>
-    <string name="cl_state_in_search">Added State in search to make the right city obvious</string>
+    <string
+        name="cl_state_in_search"
+    >Added State in search to make the right city obvious</string>
     <string name="cl_material_you">Added Material YOU support</string>
-    <string name="cl_unit_switching">Added Unit Switching (Celsius/Fahrenheit, km/h/mph)</string>
-    <string name="cl_localization">Full localization and UI text cleanup</string>
-    <string name="cl_historical_data">Historical weather data and trends</string>
-    <string name="cl_custom_notifs">Customizable weather notification thresholds</string>
-    <string name="cl_multi_service">Added support for multiple weather providers (Open-Meteo &amp; WeatherAPI)</string>
-    <string name="cl_forecast_enhanced">Enhanced 16-day forecast with interactive details</string>
-    <string name="cl_widget_refresh">New Home Screen Widget with refresh button</string>
+    <string
+        name="cl_unit_switching"
+    >Added Unit Switching (Celsius/Fahrenheit, km/h/mph)</string>
+    <string
+        name="cl_localization"
+    >Full localization and UI text cleanup</string>
+    <string
+        name="cl_historical_data"
+    >Historical weather data and trends</string>
+    <string
+        name="cl_custom_notifs"
+    >Customizable weather notification thresholds</string>
+    <string
+        name="cl_multi_service"
+    >Added support for multiple weather providers (Open-Meteo &amp; WeatherAPI)</string>
+    <string
+        name="cl_forecast_enhanced"
+    >Enhanced 16-day forecast with interactive details</string>
+    <string
+        name="cl_widget_refresh"
+    >New Home Screen Widget with refresh button</string>
     <string name="cl_moon_phase">Added moon phase data support</string>
 
-    <string name="cl_v136_auto_open">Auto-navigation to default or single location on startup</string>
-    <string name="cl_v136_default_location">Set favorite locations as default with a star icon</string>
-    <string name="cl_v136_current_location">Native \"Current Location\" support using system services</string>
-    <string name="cl_v136_degoogled">Completely removed Google Play Services dependency</string>
-    <string name="cl_v136_ui_ux">Added \"My Location\" button and optimized notification icons</string>
-    <string name="cl_v136_stability">Fixed crashes (LazyColumn context) and improved stability</string>
-    <string name="cl_v137_ci_cd">Improved build stability and CI/CD performance with Gradle caching</string>
-    <string name="cl_v137_signing">Enhanced security for automated APK signing in GitHub Actions</string>
-    <string name="cl_v137_wasm">Fixed WebAssembly (Wasm) build issues caused by external dependencies</string>
+    <string
+        name="cl_v136_auto_open"
+    >Auto-navigation to default or single location on startup</string>
+    <string
+        name="cl_v136_default_location"
+    >Set favorite locations as default with a star icon</string>
+    <string
+        name="cl_v136_current_location"
+    >Native \"Current Location\" support using system services</string>
+    <string
+        name="cl_v136_degoogled"
+    >Completely removed Google Play Services dependency</string>
+    <string
+        name="cl_v136_ui_ux"
+    >Added \"My Location\" button and optimized notification icons</string>
+    <string
+        name="cl_v136_stability"
+    >Fixed crashes (LazyColumn context) and improved stability</string>
+    <string
+        name="cl_v137_ci_cd"
+    >Improved build stability and CI/CD performance with Gradle caching</string>
+    <string
+        name="cl_v137_signing"
+    >Enhanced security for automated APK signing in GitHub Actions</string>
+    <string
+        name="cl_v137_wasm"
+    >Fixed WebAssembly (Wasm) build issues caused by external dependencies</string>
     <string name="cl_v138_ca">Changed back to Android only</string>
-    <string name="cl_v139_fix_dons">Updated so it won\'t Crash when trying to Donate</string>
-    <string name="cl_v140_api">Changed everything from 7 Days to 3 Days because I am working on an API for the App with Different optional plans.</string>
+    <string
+        name="cl_v139_fix_dons"
+    >Updated so it won\'t Crash when trying to Donate</string>
+    <string
+        name="cl_v140_api"
+    >Changed everything from 7 Days to 3 Days because I am working on an API for the App with Different optional plans.</string>
     <string name="cl_v141_more_dons">Added more Donation Options</string>
     <string name="cl_v142_added_api">Added my own API</string>
     <string name="cl_v143_fix_start">Fixed a StartUp Error</string>
 
     <string name="cl_212_russian">Added full Russian language support.</string>
-    <string name="cl_212_lang_select">Added manual language selection in settings.</string>
-    <string name="cl_212_persistent">Added persistent status bar notification for current weather.</string>
-    <string name="cl_220_sdk">Integrated FreetimeSDK for crypto donations.</string>
-    <string name="cl_220_tools">Updated Kotlin to 2.4.10 and AGP to 9.3.0.</string>
-    <string name="cl_220_lang">Added manual language changer in settings.</string>
-    <string name="cl_220_trans">Improved and updated translations for multiple languages.</string>
-    <string name="cl_220_fixes">General bug fixes and performance improvements.</string>
-    <string name="cl_211_localization">Full localization cleanup: Externalized all hardcoded UI strings.</string>
-    <string name="cl_211_stability">Code stability improvements and minor bug fixes.</string>
-    <string name="cl_210_forecast">Extended forecast to 16 days for Open-Meteo.</string>
-    <string name="cl_210_charts">Added 24h Trend charts for temperature and precipitation.</string>
+    <string
+        name="cl_212_lang_select"
+    >Added manual language selection in settings.</string>
+    <string
+        name="cl_212_persistent"
+    >Added persistent status bar notification for current weather.</string>
+    <string
+        name="cl_220_sdk"
+    >Integrated FreetimeSDK for crypto donations.</string>
+    <string
+        name="cl_220_tools"
+    >Updated Kotlin to 2.4.10 and AGP to 9.3.0.</string>
+    <string
+        name="cl_220_lang"
+    >Added manual language changer in settings.</string>
+    <string
+        name="cl_220_trans"
+    >Improved and updated translations for multiple languages.</string>
+    <string
+        name="cl_220_fixes"
+    >General bug fixes and performance improvements.</string>
+    <string
+        name="cl_211_localization"
+    >Full localization cleanup: Externalized all hardcoded UI strings.</string>
+    <string
+        name="cl_211_stability"
+    >Code stability improvements and minor bug fixes.</string>
+    <string
+        name="cl_210_forecast"
+    >Extended forecast to 16 days for Open-Meteo.</string>
+    <string
+        name="cl_210_charts"
+    >Added 24h Trend charts for temperature and precipitation.</string>
     <string name="cl_210_wind">Added Wind Compass and Gust information.</string>
     <string name="cl_210_radar">Integrated Weather Radar via Windy.com.</string>
-    <string name="cl_210_aqi">Added UV-Index and detailed Air Quality/Pollutants (PM2.5, NO2, O3).</string>
+    <string
+        name="cl_210_aqi"
+    >Added UV-Index and detailed Air Quality/Pollutants (PM2.5, NO2, O3).</string>
     <string name="cl_210_pollen">Added Pollen count information.</string>
-    <string name="cl_210_earthquake">Added Earthquake monitor for nearby geological activity.</string>
-    <string name="cl_210_backup">Added local JSON Backup &amp; Restore for locations.</string>
-    <string name="cl_210_oled">Added OLED Black Mode for AMOLED screens.</string>
-    <string name="cl_210_moon">Enhanced Moon Phase display with graphical icons.</string>
-    <string name="cl_210_photography">Added Photography info: Golden Hour and Blue Hour.</string>
-    <string name="cl_210_technical">Added technical data: Altitude, Timezone, Visibility, and Cloud Base.</string>
-    <string name="cl_210_icons">Added App Icon Themes: choose between Google Style, Minimalist, or Retro.</string>
-    <string name="cl_210_scores">Added Outdoor Activity Score (Jogging, Laundry, Gardening).</string>
-    <string name="cl_210_shortcuts">Added App Shortcuts: jump to top 3 cities from your homescreen.</string>
-    <string name="cl_210_notifs">Fixed background notifications and added per-city notification toggles.</string>
-    <string name="cl_210_privacy">Removed all account and login requirements for total privacy.</string>
-    <string name="cl_210_noads">Removed all advertisements and in-app purchases.</string>
-    <string name="cl_200_desc">Added More Weather Provider and changed a few things</string>
-    <string name="cl_190_webview">Added 2 new Settings for the Webview: You can disable the PrivacyWebView or you can open it in your External Browser.</string>
-    <string name="cl_181_reset">Reseted the WeatherDetailActivity and more to v1.3.8</string>
-    <string name="cl_180_repository">Deleted the Repository Files so Weather Data will be coming from the Weather Detail Activity again.</string>
-    <string name="cl_172_home">Fixed Home screen weather display issues by switching to ID-based location lookups.</string>
-    <string name="cl_172_fallbacks">Resolved persistent loading issues with improved provider fallbacks.</string>
-    <string name="cl_172_login">Improved GitHub/Modrinth login reliability and automated profile syncing.</string>
-    <string name="cl_172_refresh">Added manual refresh button to the Home screen for instant updates.</string>
-    <string name="cl_171_weather">Resolved weather loading issues by adding robust fallbacks to Open-Meteo.</string>
-    <string name="cl_171_home_refresh">Home screen now correctly displays up-to-date weather data with automatic and manual refresh options.</string>
-    <string name="cl_171_login_stable">Improved GitHub and Modrinth login stability and fixed deep-link redirection.</string>
-    <string name="cl_171_tomorrow_icons">Added full icon support for Tomorrow.io, including day/night variations.</string>
-    <string name="cl_171_cache">Enhanced local database caching to ensure weather data is available instantly.</string>
-    <string name="cl_170_local">Full transition to a local-first system. Weather data and geocoding are now fetched directly from providers.</string>
-    <string name="cl_170_supabase">Added support for Modrinth login. GitHub login now uses the official Supabase SDK for better stability.</string>
-    <string name="cl_170_sync">Direct Supabase integration for location and user profile synchronization.</string>
-    <string name="cl_170_providers">Integrated Tomorrow.io and Visual Crossing support (keys can be added in settings).</string>
-    <string name="cl_170_cache_display">Added immediate cache display for weather to eliminate loading wait times.</string>
-    <string name="cl_170_fixes">Fixed deep-link redirection and resolved various UI and translation bugs.</string>
+    <string
+        name="cl_210_earthquake"
+    >Added Earthquake monitor for nearby geological activity.</string>
+    <string
+        name="cl_210_backup"
+    >Added local JSON Backup &amp; Restore for locations.</string>
+    <string
+        name="cl_210_oled"
+    >Added OLED Black Mode for AMOLED screens.</string>
+    <string
+        name="cl_210_moon"
+    >Enhanced Moon Phase display with graphical icons.</string>
+    <string
+        name="cl_210_photography"
+    >Added Photography info: Golden Hour and Blue Hour.</string>
+    <string
+        name="cl_210_technical"
+    >Added technical data: Altitude, Timezone, Visibility, and Cloud Base.</string>
+    <string
+        name="cl_210_icons"
+    >Added App Icon Themes: choose between Google Style, Minimalist, or Retro.</string>
+    <string
+        name="cl_210_scores"
+    >Added Outdoor Activity Score (Jogging, Laundry, Gardening).</string>
+    <string
+        name="cl_210_shortcuts"
+    >Added App Shortcuts: jump to top 3 cities from your homescreen.</string>
+    <string
+        name="cl_210_notifs"
+    >Fixed background notifications and added per-city notification toggles.</string>
+    <string
+        name="cl_210_privacy"
+    >Removed all account and login requirements for total privacy.</string>
+    <string
+        name="cl_210_noads"
+    >Removed all advertisements and in-app purchases.</string>
+    <string
+        name="cl_200_desc"
+    >Added More Weather Provider and changed a few things</string>
+    <string
+        name="cl_190_webview"
+    >Added 2 new Settings for the Webview: You can disable the PrivacyWebView or you can open it in your External Browser.</string>
+    <string
+        name="cl_181_reset"
+    >Reseted the WeatherDetailActivity and more to v1.3.8</string>
+    <string
+        name="cl_180_repository"
+    >Deleted the Repository Files so Weather Data will be coming from the Weather Detail Activity again.</string>
+    <string
+        name="cl_172_home"
+    >Fixed Home screen weather display issues by switching to ID-based location lookups.</string>
+    <string
+        name="cl_172_fallbacks"
+    >Resolved persistent loading issues with improved provider fallbacks.</string>
+    <string
+        name="cl_172_login"
+    >Improved GitHub/Modrinth login reliability and automated profile syncing.</string>
+    <string
+        name="cl_172_refresh"
+    >Added manual refresh button to the Home screen for instant updates.</string>
+    <string
+        name="cl_171_weather"
+    >Resolved weather loading issues by adding robust fallbacks to Open-Meteo.</string>
+    <string
+        name="cl_171_home_refresh"
+    >Home screen now correctly displays up-to-date weather data with automatic and manual refresh options.</string>
+    <string
+        name="cl_171_login_stable"
+    >Improved GitHub and Modrinth login stability and fixed deep-link redirection.</string>
+    <string
+        name="cl_171_tomorrow_icons"
+    >Added full icon support for Tomorrow.io, including day/night variations.</string>
+    <string
+        name="cl_171_cache"
+    >Enhanced local database caching to ensure weather data is available instantly.</string>
+    <string
+        name="cl_170_local"
+    >Full transition to a local-first system. Weather data and geocoding are now fetched directly from providers.</string>
+    <string
+        name="cl_170_supabase"
+    >Added support for Modrinth login. GitHub login now uses the official Supabase SDK for better stability.</string>
+    <string
+        name="cl_170_sync"
+    >Direct Supabase integration for location and user profile synchronization.</string>
+    <string
+        name="cl_170_providers"
+    >Integrated Tomorrow.io and Visual Crossing support (keys can be added in settings).</string>
+    <string
+        name="cl_170_cache_display"
+    >Added immediate cache display for weather to eliminate loading wait times.</string>
+    <string
+        name="cl_170_fixes"
+    >Fixed deep-link redirection and resolved various UI and translation bugs.</string>
     <string name="cl_160_modrinth">Added Modrinth Login and More</string>
-    <string name="cl_158_providers">Added support for multiple weather providers via custom API.</string>
-    <string name="cl_158_tiers">Integrated subscription tiers (Free, Freemium, Premium) visibility.</string>
-    <string name="cl_158_loading">Resolved endless loading screen when weather data fetching fails.</string>
-    <string name="cl_158_account">Improved Account screen with plan details and logout options.</string>
-    <string name="cl_158_localization">Full transition from hardcoded text to localized resources.</string>
-    <string name="cl_157_strings">Replaced all hardcoded German and non-English strings with English resources</string>
-    <string name="cl_157_localization">Improved UI localization and consistency</string>
-    <string name="cl_157_versioning">Updated versioning and internal string management</string>
-    <string name="cl_156_auth">Updated Authentication flow with improved Bearer token support</string>
-    <string name="cl_156_bg_sync">Added background synchronization for smoother user experience</string>
-    <string name="cl_156_weather">Integrated authenticated weather data fetching</string>
+    <string
+        name="cl_158_providers"
+    >Added support for multiple weather providers via custom API.</string>
+    <string
+        name="cl_158_tiers"
+    >Integrated subscription tiers (Free, Freemium, Premium) visibility.</string>
+    <string
+        name="cl_158_loading"
+    >Resolved endless loading screen when weather data fetching fails.</string>
+    <string
+        name="cl_158_account"
+    >Improved Account screen with plan details and logout options.</string>
+    <string
+        name="cl_158_localization"
+    >Full transition from hardcoded text to localized resources.</string>
+    <string
+        name="cl_157_strings"
+    >Replaced all hardcoded German and non-English strings with English resources</string>
+    <string
+        name="cl_157_localization"
+    >Improved UI localization and consistency</string>
+    <string
+        name="cl_157_versioning"
+    >Updated versioning and internal string management</string>
+    <string
+        name="cl_156_auth"
+    >Updated Authentication flow with improved Bearer token support</string>
+    <string
+        name="cl_156_bg_sync"
+    >Added background synchronization for smoother user experience</string>
+    <string
+        name="cl_156_weather"
+    >Integrated authenticated weather data fetching</string>
     <string name="cl_156_translations">Added new translations (Mara)</string>
-    <string name="cl_156_stability">Improved app stability and fixed minor UI issues</string>
-    <string name="cl_155_cloud">Added Cloud Synchronization for favorite locations</string>
-    <string name="cl_155_sync_btn">Added manual \'Sync with Cloud\' button in Account settings</string>
-    <string name="cl_155_auto_sync">Automatic background synchronization on startup and login</string>
-    <string name="cl_155_persistence">Improved data persistence and cross-device availability</string>
-    <string name="cl_154_profile">Added support for user profile pictures from API</string>
-    <string name="cl_154_history">Moved weather history section to Weather Detail view</string>
-    <string name="cl_154_openmeteo">Improved Open-Meteo API compatibility and weather loading</string>
-    <string name="cl_154_icons">Fixed weather history icon in Main Screen</string>
+    <string
+        name="cl_156_stability"
+    >Improved app stability and fixed minor UI issues</string>
+    <string
+        name="cl_155_cloud"
+    >Added Cloud Synchronization for favorite locations</string>
+    <string
+        name="cl_155_sync_btn"
+    >Added manual \'Sync with Cloud\' button in Account settings</string>
+    <string
+        name="cl_155_auto_sync"
+    >Automatic background synchronization on startup and login</string>
+    <string
+        name="cl_155_persistence"
+    >Improved data persistence and cross-device availability</string>
+    <string
+        name="cl_154_profile"
+    >Added support for user profile pictures from API</string>
+    <string
+        name="cl_154_history"
+    >Moved weather history section to Weather Detail view</string>
+    <string
+        name="cl_154_openmeteo"
+    >Improved Open-Meteo API compatibility and weather loading</string>
+    <string
+        name="cl_154_icons"
+    >Fixed weather history icon in Main Screen</string>
     <string name="cl_154_coil">Added image loading support with Coil</string>
-    <string name="cl_153_github">Implemented GitHub OAuth authentication via API</string>
-    <string name="cl_153_optional">Login is now optional and managed via Settings</string>
-    <string name="cl_153_deeplink">Improved deep link handling for authentication callback</string>
-    <string name="cl_153_merge">Fixed resource merging and translation issues</string>
-    <string name="cl_153_icons">Updated Weather Icon mapping for better day/night accuracy</string>
-    <string name="cl_152_auth">Added Authentication &amp; User Profile support</string>
-    <string name="cl_152_login_setting">Added \'Require Login\' security setting</string>
-    <string name="cl_152_history">Added Historical Weather Trends (Last 3 days)</string>
-    <string name="cl_152_pro">Added 7-day forecast support for PRO users</string>
+    <string
+        name="cl_153_github"
+    >Implemented GitHub OAuth authentication via API</string>
+    <string
+        name="cl_153_optional"
+    >Login is now optional and managed via Settings</string>
+    <string
+        name="cl_153_deeplink"
+    >Improved deep link handling for authentication callback</string>
+    <string
+        name="cl_153_merge"
+    >Fixed resource merging and translation issues</string>
+    <string
+        name="cl_153_icons"
+    >Updated Weather Icon mapping for better day/night accuracy</string>
+    <string
+        name="cl_152_auth"
+    >Added Authentication &amp; User Profile support</string>
+    <string
+        name="cl_152_login_setting"
+    >Added \'Require Login\' security setting</string>
+    <string
+        name="cl_152_history"
+    >Added Historical Weather Trends (Last 3 days)</string>
+    <string
+        name="cl_152_pro"
+    >Added 7-day forecast support for PRO users</string>
     <string name="cl_152_api">Improved API error handling and stability</string>
     <string name="cl_152_charts">Added date labels to historical charts</string>
-    <string name="cl_152_workers">Optimized background workers and widget for security</string>
+    <string
+        name="cl_152_workers"
+    >Optimized background workers and widget for security</string>
     <string name="cl_135_donations">Added More Donation Links</string>
-    <string name="cl_135_system_theme">Made Every Screen (Hopefully) like System when activated</string>
+    <string
+        name="cl_135_system_theme"
+    >Made Every Screen (Hopefully) like System when activated</string>
     <string name="cl_311_fix_fdroid">Fixed F-Droid Build</string>
-    <string name="cl_313_fix_linux">Fixed Linux Crash when trying to open a Page via Web</string>
+    <string
+        name="cl_313_fix_linux"
+    >Fixed Linux Crash when trying to open a Page via Web</string>
 
 
     <!-- v4.0.0 -->
-    <string name="cl_400_liquid_glass">Redesigned the app with a Liquid Glass interface across the main screens, navigation, cards, and weather details.</string>
-    <string name="cl_400_weather_animations">Added animated weather effects for rain, snow, clouds, fog, thunderstorms, wind, and day/night conditions.</string>
-    <string name="cl_400_animation_settings">Added Full, Reduced, and Off weather animation modes.</string>
-    <string name="cl_400_auto_theme">Material You is now always enabled, with automatic light mode from sunrise to sunset and dark mode after sunset.</string>
-    <string name="cl_400_next_rain">Added Next Rain information and precipitation probability to hourly forecasts.</string>
-    <string name="cl_400_timeline">Added a scrollable 24-hour weather timeline.</string>
-    <string name="cl_400_sun_moon">Added Sun &amp; Moon information including sunrise, sunset, and moon phases.</string>
-    <string name="cl_400_trip_forecast">Added a compact multi-day Trip Forecast overview.</string>
-    <string name="cl_400_air_quality">Added air quality information including European AQI, PM2.5, and PM10.</string>
-    <string name="cl_400_pollen">Added alder, birch, and grass pollen information.</string>
-    <string name="cl_400_uv">Added UV index information with risk levels.</string>
-    <string name="cl_400_compare">Added a Liquid Glass location comparison view for saved locations.</string>
-    <string name="cl_400_share">Added weather sharing directly from the weather detail screen.</string>
-    <string name="cl_400_notifications">Fixed background weather notifications and added temperature and wind change alerts.</string>
-    <string name="cl_400_notification_icon">Added a dedicated monochrome weather notification icon.</string>
+    <string
+        name="cl_400_liquid_glass"
+    >Redesigned the app with a Liquid Glass interface across the main screens, navigation, cards, and weather details.</string>
+    <string
+        name="cl_400_weather_animations"
+    >Added animated weather effects for rain, snow, clouds, fog, thunderstorms, wind, and day/night conditions.</string>
+    <string
+        name="cl_400_animation_settings"
+    >Added Full, Reduced, and Off weather animation modes.</string>
+    <string
+        name="cl_400_auto_theme"
+    >Material You is now always enabled, with automatic light mode from sunrise to sunset and dark mode after sunset.</string>
+    <string
+        name="cl_400_next_rain"
+    >Added Next Rain information and precipitation probability to hourly forecasts.</string>
+    <string
+        name="cl_400_timeline"
+    >Added a scrollable 24-hour weather timeline.</string>
+    <string
+        name="cl_400_sun_moon"
+    >Added Sun &amp; Moon information including sunrise, sunset, and moon phases.</string>
+    <string
+        name="cl_400_trip_forecast"
+    >Added a compact multi-day Trip Forecast overview.</string>
+    <string
+        name="cl_400_air_quality"
+    >Added air quality information including European AQI, PM2.5, and PM10.</string>
+    <string
+        name="cl_400_pollen"
+    >Added alder, birch, and grass pollen information.</string>
+    <string
+        name="cl_400_uv"
+    >Added UV index information with risk levels.</string>
+    <string
+        name="cl_400_compare"
+    >Added a Liquid Glass location comparison view for saved locations.</string>
+    <string
+        name="cl_400_share"
+    >Added weather sharing directly from the weather detail screen.</string>
+    <string
+        name="cl_400_notifications"
+    >Fixed background weather notifications and added temperature and wind change alerts.</string>
+    <string
+        name="cl_400_notification_icon"
+    >Added a dedicated monochrome weather notification icon.</string>
     <string name="cl_400_tile">Added a Quick Settings weather tile.</string>
-    <string name="cl_400_widget">Updated the home screen weather widget styling.</string>
-    <string name="cl_400_nav">Moved primary actions into the new Liquid Glass bottom navigation.</string>
-    <string name="cl_400_stars">Removed the favorite star controls from location cards.</string>
-    <string name="cl_400_localization">Moved newly added hardcoded interface text into English string resources for localization.</string>
-    <string name="cl_400_android">Continued GeoWeather as an Android-focused app and simplified the project structure.</string>
-    <string name="cl_400_stability">Fixed manifest, Kotlin source formatting, notification, widget, and release-build issues.</string>
+    <string
+        name="cl_400_widget"
+    >Updated the home screen weather widget styling.</string>
+    <string
+        name="cl_400_nav"
+    >Moved primary actions into the new Liquid Glass bottom navigation.</string>
+    <string
+        name="cl_400_stars"
+    >Removed the favorite star controls from location cards.</string>
+    <string
+        name="cl_400_localization"
+    >Moved newly added hardcoded interface text into English string resources for localization.</string>
+    <string
+        name="cl_400_android"
+    >Continued GeoWeather as an Android-focused app and simplified the project structure.</string>
+    <string
+        name="cl_400_stability"
+    >Fixed manifest, Kotlin source formatting, notification, widget, and release-build issues.</string>
 
     <!-- New weather features -->
     <string name="share_weather">Share weather</string>
@@ -468,11 +874,17 @@
     <string name="moon_waning_crescent">Waning Crescent</string>
     <string name="cl_401_fix_error">Fixed a Startup Error</string>
     <string name="cl_403_new_liquid">Added new Liquid Glass</string>
-    <string name="rain_alert_notification">Rain expected around %1$s in %2$s (%3$d%%)</string>
-    <string name="extreme_weather_notification">Severe weather expected in %1$s: %2$s</string>
+    <string
+        name="rain_alert_notification"
+    >Rain expected around %1$s in %2$s (%3$d%%)</string>
+    <string
+        name="extreme_weather_notification"
+    >Severe weather expected in %1$s: %2$s</string>
     <string name="notification_time_title">Daily notification time</string>
     <string name="notification_disable">Disable notifications</string>
-    <string name="location_alert_thresholds">Alert thresholds for this location</string>
+    <string
+        name="location_alert_thresholds"
+    >Alert thresholds for this location</string>
     <string name="location_temp_threshold">Temperature change: %1$d°C</string>
     <string name="location_wind_threshold">Wind change: %1$d km/h</string>
     <string name="location_rain_threshold">Rain probability: %1$d%%</string>
@@ -480,7 +892,9 @@
     <string name="location_uv_threshold">UV index: %1$d</string>
     <string name="location_frost_threshold">Frost temperature: %1$d°C</string>
     <string name="favorite_location">Favorite location</string>
-    <string name="offline_cached_weather">Offline · showing last saved weather</string>
+    <string
+        name="offline_cached_weather"
+    >Offline · showing last saved weather</string>
     <string name="last_updated_minutes">Updated %1$d min ago</string>
     <string name="confirm">OK</string>
     <string name="time_label">Time</string>
@@ -497,7 +911,9 @@
     <string name="strong_wind_gusts">Strong wind gusts</string>
     <string name="heavy_precipitation">Heavy precipitation</string>
     <string name="login_title">Sign in to GeoWeather</string>
-    <string name="login_subtitle">An Appwrite account is required to use GeoWeather.</string>
+    <string
+        name="login_subtitle"
+    >An Appwrite account is required to use GeoWeather.</string>
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
     <string name="name_label">Name</string>
@@ -505,7 +921,9 @@
     <string name="create_account">Create account</string>
     <string name="have_account">Already have an account? Sign in</string>
     <string name="need_account">No account yet? Create one</string>
-    <string name="auth_failed">Authentication failed. Please check your details.</string>
+    <string
+        name="auth_failed"
+    >Authentication failed. Please check your details.</string>
     <string name="logout">Sign out</string>
     <string name="sign_in_github">GitHub</string>
     <string name="sign_in_gitlab">GitLab</string>
@@ -516,10 +934,14 @@
     <string name="redeem_code_title">Redeem code</string>
     <string name="redeem_code_hint">Subscription code</string>
     <string name="redeem_code">Redeem</string>
-    <string name="redeem_code_invalid">This code is invalid or has already been used.</string>
+    <string
+        name="redeem_code_invalid"
+    >This code is invalid or has already been used.</string>
     <string name="redeem_code_success">Subscription activated: %1$s</string>
     <string name="sync_title">Sync</string>
-    <string name="sync_description">Sync settings and saved locations with your Appwrite account.</string>
+    <string
+        name="sync_description"
+    >Sync settings and saved locations with your Appwrite account.</string>
     <string name="sync_now">Sync now</string>
     <string name="sync_restore">Restore from cloud</string>
     <string name="sync_success">Synchronization completed.</string>
@@ -528,21 +950,35 @@
     <string name="plan_locations">Up to %1$d saved locations</string>
     <string name="plan_forecast_days">%1$d-day forecast</string>
     <string name="plan_notifications_on">Weather notifications included</string>
-    <string name="plan_notifications_off">Weather notifications not included</string>
-    <string name="sync_automatic">Changes are synchronized automatically.</string>
+    <string
+        name="plan_notifications_off"
+    >Weather notifications not included</string>
+    <string
+        name="sync_automatic"
+    >Changes are synchronized automatically.</string>
     <string name="plan_badge">%1$s plan</string>
-    <string name="location_limit_reached">Your %1$s plan allows up to %2$d saved locations.</string>
-    <string name="notifications_plan_required">Weather notifications are not included in your current plan.</string>
+    <string
+        name="location_limit_reached"
+    >Your %1$s plan allows up to %2$d saved locations.</string>
+    <string
+        name="notifications_plan_required"
+    >Weather notifications are not included in your current plan.</string>
     <string name="upgrade_subscription">Upgrade subscription</string>
-    <string name="account_optional_description">An account is optional. Sign in to use cloud sync, subscriptions and code redemption.</string>
+    <string
+        name="account_optional_description"
+    >An account is optional. Sign in to use cloud sync, subscriptions and code redemption.</string>
     <string name="sign_in_or_create_account">Sign in or create account</string>
-    <string name="sync_requires_account">Sign in to synchronize settings and saved locations.</string>
+    <string
+        name="sync_requires_account"
+    >Sign in to synchronize settings and saved locations.</string>
     <string name="sign_in_social">Sign in with GitHub or GitLab</string>
     <string name="last_synced">Last synced: %1$s</string>
     <string name="compare_plans">Compare plans</string>
     <string name="current_plan">Current plan</string>
     <string name="sign_out">Sign out</string>
-    <string name="signed_out">Signed out. GeoWeather is using the Free plan.</string>
+    <string
+        name="signed_out"
+    >Signed out. GeoWeather is using the Free plan.</string>
     <string name="recent_searches">Recent searches</string>
     <string name="weather_animations_title">Weather animations</string>
     <string name="animation_intensity">Animation intensity</string>
@@ -552,11 +988,17 @@
     <string name="diagnostics_title">Diagnostics &amp; privacy</string>
     <string name="export_diagnostics">Share diagnostics</string>
     <string name="onboarding_weather">Your weather, your places</string>
-    <string name="onboarding_weather_desc">Add locations, compare forecasts and use the current-location view whenever you need it.</string>
+    <string
+        name="onboarding_weather_desc"
+    >Add locations, compare forecasts and use the current-location view whenever you need it.</string>
     <string name="onboarding_alerts">Useful weather alerts</string>
-    <string name="onboarding_alerts_desc">GeoWeather can notify you about weather changes. Notification access is optional.</string>
+    <string
+        name="onboarding_alerts_desc"
+    >GeoWeather can notify you about weather changes. Notification access is optional.</string>
     <string name="onboarding_account">Cloud sync is optional</string>
-    <string name="onboarding_account_desc">Use GeoWeather without an account on the Free plan, or sign in with GitHub or GitLab to synchronize supported data.</string>
+    <string
+        name="onboarding_account_desc"
+    >Use GeoWeather without an account on the Free plan, or sign in with GitHub or GitLab to synchronize supported data.</string>
     <string name="skip">Skip</string>
     <string name="next">Next</string>
     <string name="done">Done</string>
@@ -565,70 +1007,166 @@
     <string name="profile_outdoor">Outdoor</string>
     <string name="profile_travel">Travel</string>
     <string name="quiet_hours">Quiet hours</string>
-    <string name="quiet_hours_desc">Suppress regular weather updates overnight. Important weather alerts remain available.</string>
+    <string
+        name="quiet_hours_desc"
+    >Suppress regular weather updates overnight. Important weather alerts remain available.</string>
 
     <!-- v4.3.0 -->
-    <string name="cl_430_liquid_glass">Redesigned the interface with Liquid Glass effects and new Liquid Glass shapes.</string>
-    <string name="cl_430_dark_light">Improved Liquid Glass support for light and dark themes.</string>
-    <string name="cl_430_forecast_16_days">Added up to 16 days of weather forecasts with Open-Meteo.</string>
-    <string name="cl_430_pull_refresh">Added pull-to-refresh to the weather details screen.</string>
-    <string name="cl_430_refresh_button">Removed the redundant refresh button from the weather details top bar.</string>
-    <string name="cl_430_location_sorting">Simplified saved locations by removing manual location sorting controls.</string>
-    <string name="cl_430_accounts_removed">Removed accounts, subscriptions, cloud sync and plan restrictions.</string>
-    <string name="cl_430_forecast_limits">All available forecast days are now accessible without subscription limits.</string>
-    <string name="cl_430_donation_fix">Improved donation wallet handling and fixed a crash caused by duplicate wallet entries.</string>
-    <string name="cl_430_weather_details">Improved weather detail and forecast screens.</string>
-    <string name="cl_430_notification_profiles">Added Normal, Outdoor and Travel notification profiles.</string>
-    <string name="cl_430_quiet_hours">Added Quiet Hours for suppressing regular overnight weather notifications.</string>
-    <string name="cl_430_onboarding">Added a first-run onboarding experience.</string>
-    <string name="cl_430_diagnostics">Added a privacy-friendly Diagnostics &amp; Privacy screen.</string>
-    <string name="cl_430_shortcuts">Added Android app shortcuts for Current Location, Search and Settings.</string>
-    <string name="cl_430_deeplink">Added geoweather://open deep-link support.</string>
-    <string name="cl_430_whats_new">What’s New is shown automatically once per app version.</string>
+    <string
+        name="cl_430_liquid_glass"
+    >Redesigned the interface with Liquid Glass effects and new Liquid Glass shapes.</string>
+    <string
+        name="cl_430_dark_light"
+    >Improved Liquid Glass support for light and dark themes.</string>
+    <string
+        name="cl_430_forecast_16_days"
+    >Added up to 16 days of weather forecasts with Open-Meteo.</string>
+    <string
+        name="cl_430_pull_refresh"
+    >Added pull-to-refresh to the weather details screen.</string>
+    <string
+        name="cl_430_refresh_button"
+    >Removed the redundant refresh button from the weather details top bar.</string>
+    <string
+        name="cl_430_location_sorting"
+    >Simplified saved locations by removing manual location sorting controls.</string>
+    <string
+        name="cl_430_accounts_removed"
+    >Removed accounts, subscriptions, cloud sync and plan restrictions.</string>
+    <string
+        name="cl_430_forecast_limits"
+    >All available forecast days are now accessible without subscription limits.</string>
+    <string
+        name="cl_430_donation_fix"
+    >Improved donation wallet handling and fixed a crash caused by duplicate wallet entries.</string>
+    <string
+        name="cl_430_weather_details"
+    >Improved weather detail and forecast screens.</string>
+    <string
+        name="cl_430_notification_profiles"
+    >Added Normal, Outdoor and Travel notification profiles.</string>
+    <string
+        name="cl_430_quiet_hours"
+    >Added Quiet Hours for suppressing regular overnight weather notifications.</string>
+    <string
+        name="cl_430_onboarding"
+    >Added a first-run onboarding experience.</string>
+    <string
+        name="cl_430_diagnostics"
+    >Added a privacy-friendly Diagnostics &amp; Privacy screen.</string>
+    <string
+        name="cl_430_shortcuts"
+    >Added Android app shortcuts for Current Location, Search and Settings.</string>
+    <string
+        name="cl_430_deeplink"
+    >Added geoweather://open deep-link support.</string>
+    <string
+        name="cl_430_whats_new"
+    >What’s New is shown automatically once per app version.</string>
     <string name="cl_430_fixes">Fixed several UI and build issues.</string>
 
-    <string name="cl_430_freetime_maven">Migrated shared app functionality to the me.free-time libraries from Maven Central.</string>
-    <string name="cl_430_freetime_modules">GeoWeather now uses Freetime Core, Design, Browser and Donations.</string>
-    <string name="cl_430_shared_glass">Moved Liquid Glass to the shared Freetime Design implementation.</string>
-    <string name="cl_430_shared_browser">Moved external browser handling to Freetime Browser.</string>
-    <string name="cl_430_shared_donations">Moved donation UI and donation models to Freetime Donations.</string>
-    <string name="cl_430_backdrop_fix">Fixed stale GeoWeather Liquid Glass backdrop references after the Freetime Design migration.</string>
+    <string
+        name="cl_430_freetime_maven"
+    >Migrated shared app functionality to the me.free-time libraries from Maven Central.</string>
+    <string
+        name="cl_430_freetime_modules"
+    >GeoWeather now uses Freetime Core, Design, Browser and Donations.</string>
+    <string
+        name="cl_430_shared_glass"
+    >Moved Liquid Glass to the shared Freetime Design implementation.</string>
+    <string
+        name="cl_430_shared_browser"
+    >Moved external browser handling to Freetime Browser.</string>
+    <string
+        name="cl_430_shared_donations"
+    >Moved donation UI and donation models to Freetime Donations.</string>
+    <string
+        name="cl_430_backdrop_fix"
+    >Fixed stale GeoWeather Liquid Glass backdrop references after the Freetime Design migration.</string>
 
 
     <!-- v4.4.1 -->
-    <string name="cl_441_freetime_maven">Migrated shared app functionality to the me.free-time libraries from Maven Central.</string>
-    <string name="cl_441_freetime_modules">GeoWeather now uses Freetime Core, Design, Browser and Donations.</string>
-    <string name="cl_441_shared_glass">Moved Liquid Glass to the shared Freetime Design implementation.</string>
-    <string name="cl_441_shared_browser">Moved external browser handling to Freetime Browser.</string>
-    <string name="cl_441_shared_donations">Moved donation UI and donation models to Freetime Donations.</string>
-    <string name="cl_441_backdrop_fix">Fixed Liquid Glass backdrop integration after migrating to Freetime Design.</string>
-    <string name="cl_441_contrast">Improved text and icon contrast across light and dark themes.</string>
+    <string
+        name="cl_441_freetime_maven"
+    >Migrated shared app functionality to the me.free-time libraries from Maven Central.</string>
+    <string
+        name="cl_441_freetime_modules"
+    >GeoWeather now uses Freetime Core, Design, Browser and Donations.</string>
+    <string
+        name="cl_441_shared_glass"
+    >Moved Liquid Glass to the shared Freetime Design implementation.</string>
+    <string
+        name="cl_441_shared_browser"
+    >Moved external browser handling to Freetime Browser.</string>
+    <string
+        name="cl_441_shared_donations"
+    >Moved donation UI and donation models to Freetime Donations.</string>
+    <string
+        name="cl_441_backdrop_fix"
+    >Fixed Liquid Glass backdrop integration after migrating to Freetime Design.</string>
+    <string
+        name="cl_441_contrast"
+    >Improved text and icon contrast across light and dark themes.</string>
     <string name="cl_441_fixes">Fixed additional UI and build issues.</string>
 
     <!-- v4.4.2 -->
-    <string name="cl_442_glass">Expanded Liquid Glass styling across the main screen, settings, diagnostics, onboarding, changelog, search, radar, donations and web views.</string>
-    <string name="cl_442_components">Replaced additional Material containers and actions with dedicated GeoWeather glass components.</string>
-    <string name="cl_442_performance">Improved UI performance with lazy rendering for changelog and donation content.</string>
-    <string name="cl_442_compare">Location comparison cards can now be opened directly.</string>
-    <string name="cl_442_dependencies">Updated Freetime libraries and other app dependencies.</string>
-    <string name="cl_442_fixes">Improved interface consistency and fixed additional UI issues.</string>
+    <string
+        name="cl_442_glass"
+    >Expanded Liquid Glass styling across the main screen, settings, diagnostics, onboarding, changelog, search, radar, donations and web views.</string>
+    <string
+        name="cl_442_components"
+    >Replaced additional Material containers and actions with dedicated GeoWeather glass components.</string>
+    <string
+        name="cl_442_performance"
+    >Improved UI performance with lazy rendering for changelog and donation content.</string>
+    <string
+        name="cl_442_compare"
+    >Location comparison cards can now be opened directly.</string>
+    <string
+        name="cl_442_dependencies"
+    >Updated Freetime libraries and other app dependencies.</string>
+    <string
+        name="cl_442_fixes"
+    >Improved interface consistency and fixed additional UI issues.</string>
 
     <!-- v4.5.0 -->
-    <string name="cl_450_redesign">Redesigned GeoWeather with a more transparent, SimpMusic-inspired Liquid Glass interface.</string>
-    <string name="cl_450_navigation">Reworked the main navigation into a compact floating glass control.</string>
-    <string name="cl_450_components">Replaced more Material 3 surfaces, fields, actions and dialogs with dedicated GeoWeather glass components.</string>
-    <string name="cl_450_add_location">Adding a location now happens directly in a Liquid Glass dialog instead of a separate screen.</string>
-    <string name="cl_450_search">Location search now starts after the first character and hides locations that are already saved.</string>
-    <string name="cl_450_time_picker">Replaced the Material time picker with compact glass notification time controls.</string>
-    <string name="cl_450_contrast">Improved light and dark mode text contrast across shared glass components.</string>
-    <string name="cl_450_consistency">Improved settings, search, weather details and other screens for a more consistent interface.</string>
-    <string name="cl_450_fixes">Fixed UI and build issues introduced during the design migration.</string>
+    <string
+        name="cl_450_redesign"
+    >Redesigned GeoWeather with a more transparent, SimpMusic-inspired Liquid Glass interface.</string>
+    <string
+        name="cl_450_navigation"
+    >Reworked the main navigation into a compact floating glass control.</string>
+    <string
+        name="cl_450_components"
+    >Replaced more Material 3 surfaces, fields, actions and dialogs with dedicated GeoWeather glass components.</string>
+    <string
+        name="cl_450_add_location"
+    >Adding a location now happens directly in a Liquid Glass dialog instead of a separate screen.</string>
+    <string
+        name="cl_450_search"
+    >Location search now starts after the first character and hides locations that are already saved.</string>
+    <string
+        name="cl_450_time_picker"
+    >Replaced the Material time picker with compact glass notification time controls.</string>
+    <string
+        name="cl_450_contrast"
+    >Improved light and dark mode text contrast across shared glass components.</string>
+    <string
+        name="cl_450_consistency"
+    >Improved settings, search, weather details and other screens for a more consistent interface.</string>
+    <string
+        name="cl_450_fixes"
+    >Fixed UI and build issues introduced during the design migration.</string>
 
     <!-- WeatherDetail 2.0 -->
     <string name="smart_weather_title">Smart weather</string>
     <string name="nowcast_title">Next 2 hours</string>
-    <string name="nowcast_dry">No significant precipitation expected in the next 2 hours.</string>
-    <string name="nowcast_wet">Precipitation from %1$s to %2$s · peak %3$d%% · %4$s mm</string>
+    <string
+        name="nowcast_dry"
+    >No significant precipitation expected in the next 2 hours.</string>
+    <string
+        name="nowcast_wet"
+    >Precipitation from %1$s to %2$s · peak %3$d%% · %4$s mm</string>
     <string name="weather_timeline_title">Weather timeline</string>
     <string name="sun_path_title">Sun path</string>
 
@@ -642,31 +1180,51 @@
     <string name="conditions_insights_title">Conditions &amp; trends</string>
     <string name="feels_like_reason_title">Feels-like</string>
     <string name="feels_like_wind">Wind is making it feel cooler.</string>
-    <string name="feels_like_humidity">Humidity is making the temperature feel warmer.</string>
-    <string name="feels_like_neutral">Current humidity and wind have little effect on the perceived temperature.</string>
-    <string name="feels_like_sun">Sun and UV exposure can make it feel warmer.</string>
-    <string name="feels_like_difference_warmer">It feels %1$s warmer than the measured air temperature.</string>
-    <string name="feels_like_difference_cooler">It feels %1$s cooler than the measured air temperature.</string>
+    <string
+        name="feels_like_humidity"
+    >Humidity is making the temperature feel warmer.</string>
+    <string
+        name="feels_like_neutral"
+    >Current humidity and wind have little effect on the perceived temperature.</string>
+    <string
+        name="feels_like_sun"
+    >Sun and UV exposure can make it feel warmer.</string>
+    <string
+        name="feels_like_difference_warmer"
+    >It feels %1$s warmer than the measured air temperature.</string>
+    <string
+        name="feels_like_difference_cooler"
+    >It feels %1$s cooler than the measured air temperature.</string>
     <string name="share_humidity">Humidity %1$d%%</string>
     <string name="share_today_forecast">Today %1$s / %2$s · %3$d%% rain</string>
-    <string name="share_tomorrow_forecast">Tomorrow %1$s / %2$s · %3$d%% rain</string>
+    <string
+        name="share_tomorrow_forecast"
+    >Tomorrow %1$s / %2$s · %3$d%% rain</string>
 
     <string name="pressure_steady">Steady</string>
-    <string name="offline_cached_summary">Cached weather · %1$d min old · %2$d forecast days cached</string>
+    <string
+        name="offline_cached_summary"
+    >Cached weather · %1$d min old · %2$d forecast days cached</string>
     <string name="distribution_notice_show">Show distribution notice</string>
     <string name="temperature_delta">Δ temp</string>
     <string name="high_label">High</string>
     <string name="low_label">Low</string>
     <string name="moon_illumination">%1$d%% illuminated</string>
-    <string name="moon_next_phases">Next full moon: %1$d d · new moon: %2$d d</string>
+    <string
+        name="moon_next_phases"
+    >Next full moon: %1$d d · new moon: %2$d d</string>
     <string name="alert_strong_wind">Strong wind / gusts</string>
     <string name="alert_extreme_uv">Very high UV</string>
     <string name="alert_low_visibility">Low visibility</string>
     <string name="alert_heavy_precipitation">Heavy precipitation</string>
-    <string name="data_based_alert_note">Weather-data indicator, not an official government warning.</string>
+    <string
+        name="data_based_alert_note"
+    >Weather-data indicator, not an official government warning.</string>
     <!-- Locations, history and freshness -->
     <string name="weather_history_title">Recent weather history</string>
-    <string name="weather_history_empty">History will appear after weather updates have been recorded.</string>
+    <string
+        name="weather_history_empty"
+    >History will appear after weather updates have been recorded.</string>
     <string name="history_samples">%1$d recorded samples</string>
     <string name="history_range">Range %1$s – %2$s</string>
     <string name="freshness_live">Fresh</string>
@@ -688,72 +1246,164 @@
     <string name="compare_most_humid">Most humid</string>
     <string name="details_sheet_title">Weather details</string>
     <string name="alert_history_title">Recent weather indicators</string>
-    <string name="alert_history_empty">No recent weather indicators recorded.</string>
+    <string
+        name="alert_history_empty"
+    >No recent weather indicators recorded.</string>
     <string name="alert_active">Active</string>
     <string name="alert_ended">Ended</string>
     <!-- v4.6.1 -->
-    <string name="cl_461_jitpack">Migrated Freetime Core, Design, Browser and Donations to JitPack and Freetime Core 1.3.0.</string>
-    <string name="cl_461_glass">Updated the shared Liquid Glass implementation with stronger backdrop blur.</string>
-    <string name="cl_461_icons">Restored weather condition icons on the main location overview and saved locations.</string>
-    <string name="cl_461_main_scroll">Made the main weather screen fully scrollable and more compact.</string>
-    <string name="cl_461_layout">Reduced redundant location UI and improved spacing around the floating navigation.</string>
-    <string name="cl_461_fixes">Fixed additional weather detail, resource and build issues.</string>
+    <string
+        name="cl_461_jitpack"
+    >Migrated Freetime Core, Design, Browser and Donations to JitPack and Freetime Core 1.3.0.</string>
+    <string
+        name="cl_461_glass"
+    >Updated the shared Liquid Glass implementation with stronger backdrop blur.</string>
+    <string
+        name="cl_461_icons"
+    >Restored weather condition icons on the main location overview and saved locations.</string>
+    <string
+        name="cl_461_main_scroll"
+    >Made the main weather screen fully scrollable and more compact.</string>
+    <string
+        name="cl_461_layout"
+    >Reduced redundant location UI and improved spacing around the floating navigation.</string>
+    <string
+        name="cl_461_fixes"
+    >Fixed additional weather detail, resource and build issues.</string>
     <!-- v4.6.3 -->
-    <string name="cl_463_core">Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.7.0.</string>
-    <string name="cl_463_packages">Migrated shared Freetime libraries to their new com.freetime package names.</string>
-    <string name="cl_463_design">Expanded use of the shared Freetime Design system across GeoWeather.</string>
-    <string name="cl_463_states">Added shared empty, loading, error and status states from Freetime Design.</string>
-    <string name="cl_463_motion">Weather animations now respect Android’s system reduced-motion setting.</string>
-    <string name="cl_463_diagnostics">Updated diagnostics to use the new shared Freetime info card and text components.</string>
-    <string name="cl_463_fixes">Fixed Freetime Browser, Core and Donations integration after the 1.7.0 package migration.</string>
+    <string
+        name="cl_463_core"
+    >Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.7.0.</string>
+    <string
+        name="cl_463_packages"
+    >Migrated shared Freetime libraries to their new com.freetime package names.</string>
+    <string
+        name="cl_463_design"
+    >Expanded use of the shared Freetime Design system across GeoWeather.</string>
+    <string
+        name="cl_463_states"
+    >Added shared empty, loading, error and status states from Freetime Design.</string>
+    <string
+        name="cl_463_motion"
+    >Weather animations now respect Android’s system reduced-motion setting.</string>
+    <string
+        name="cl_463_diagnostics"
+    >Updated diagnostics to use the new shared Freetime info card and text components.</string>
+    <string
+        name="cl_463_fixes"
+    >Fixed Freetime Browser, Core and Donations integration after the 1.7.0 package migration.</string>
     <!-- v4.6.2 -->
-    <string name="cl_462_core">Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.5.1.</string>
-    <string name="cl_462_glass">Updated Liquid Glass with a more transparent, SimpMusic-inspired appearance and interactive press effects.</string>
-    <string name="cl_462_navigation">Redesigned the floating main navigation with a glass capsule and separate circular add-location action.</string>
-    <string name="cl_462_controls">Refined the glass top bar and shared glass controls for a more consistent interface.</string>
-    <string name="cl_462_detail_icon">Restored weather condition icons below weather animations in the weather detail screen.</string>
-    <string name="cl_462_forecast_icons">Forecast weather icons now automatically switch between day and night using the forecast time and sunrise/sunset.</string>
-    <string name="cl_462_dark_mode">Fixed dark mode so the complete app background is covered by the dark theme.</string>
-    <string name="cl_462_fixes">Fixed additional weather detail, resource and UI issues.</string>
+    <string
+        name="cl_462_core"
+    >Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.5.1.</string>
+    <string
+        name="cl_462_glass"
+    >Updated Liquid Glass with a more transparent, SimpMusic-inspired appearance and interactive press effects.</string>
+    <string
+        name="cl_462_navigation"
+    >Redesigned the floating main navigation with a glass capsule and separate circular add-location action.</string>
+    <string
+        name="cl_462_controls"
+    >Refined the glass top bar and shared glass controls for a more consistent interface.</string>
+    <string
+        name="cl_462_detail_icon"
+    >Restored weather condition icons below weather animations in the weather detail screen.</string>
+    <string
+        name="cl_462_forecast_icons"
+    >Forecast weather icons now automatically switch between day and night using the forecast time and sunrise/sunset.</string>
+    <string
+        name="cl_462_dark_mode"
+    >Fixed dark mode so the complete app background is covered by the dark theme.</string>
+    <string
+        name="cl_462_fixes"
+    >Fixed additional weather detail, resource and UI issues.</string>
     <!-- v4.6.5 -->
-    <string name="cl_465_core_110">Updated to Freetime Core 1.11.0 with the new Liquid Glass renderer, FreetimeWarn, backdrop luminance, live appearance preferences, accessibility controls and safe drawing insets.</string>
+    <string
+        name="cl_465_core_110"
+    >Updated to Freetime Core 1.11.0 with the new Liquid Glass renderer, FreetimeWarn, backdrop luminance, live appearance preferences, accessibility controls and safe drawing insets.</string>
 
-    <string name="cl_465_theme">Fixed automatic light and dark mode so GeoWeather correctly follows daylight and falls back to the system theme when sun data is unavailable.</string>
-    <string name="cl_465_forecast_night">Improved forecast weather icons so nighttime forecasts use the matching night icons after sunset.</string>
-    <string name="cl_465_forecast_16day">Improved the 16-day forecast foundation with hourly forecast data available across the full forecast range.</string>
-    <string name="cl_465_fixes">Fixed additional weather detail, theme and forecast UI issues.</string>
+    <string
+        name="cl_465_theme"
+    >Fixed automatic light and dark mode so GeoWeather correctly follows daylight and falls back to the system theme when sun data is unavailable.</string>
+    <string
+        name="cl_465_forecast_night"
+    >Improved forecast weather icons so nighttime forecasts use the matching night icons after sunset.</string>
+    <string
+        name="cl_465_forecast_16day"
+    >Improved the 16-day forecast foundation with hourly forecast data available across the full forecast range.</string>
+    <string
+        name="cl_465_fixes"
+    >Fixed additional weather detail, theme and forecast UI issues.</string>
     <!-- v4.6.4 -->
-    <string name="cl_464_core">Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.9.1.</string>
-    <string name="cl_464_design">Migrated GeoWeather’s main screens and shared UI to Freetime Design components.</string>
-    <string name="cl_464_adaptive">Added weather-adaptive Liquid Glass backgrounds and adaptive navigation.</string>
-    <string name="cl_464_components">Added shared Freetime dialogs, search, time picker, tabs, bottom sheets and floating actions.</string>
-    <string name="cl_464_modules">Migrated the in-app browser and donation experience to the shared Freetime modules.</string>
-    <string name="cl_464_details">Updated weather details with Freetime pull-to-refresh, dividers, scaffolds and typography.</string>
-    <string name="cl_464_material">Removed obsolete GeoWeather glass wrappers, the legacy Material 3 theme and the direct Compose Material 3 UI dependency.</string>
-    <string name="cl_464_widgets">Kept Glance Material 3 specifically for Android widgets.</string>
-    <string name="cl_464_fixes">Fixed Freetime 1.9.1 typography, dialog and weather icon integration issues.</string>
-    <string name="freetime_warn_title">Important distribution information</string>
-    <string name="freetime_warn_message">Android platform and distribution requirements can change how %1$s is installed or updated. GeoWeather remains open source and available through supported distribution channels.</string>
+    <string
+        name="cl_464_core"
+    >Updated Freetime Core, Design, Browser and Donations to Freetime Core 1.9.1.</string>
+    <string
+        name="cl_464_design"
+    >Migrated GeoWeather’s main screens and shared UI to Freetime Design components.</string>
+    <string
+        name="cl_464_adaptive"
+    >Added weather-adaptive Liquid Glass backgrounds and adaptive navigation.</string>
+    <string
+        name="cl_464_components"
+    >Added shared Freetime dialogs, search, time picker, tabs, bottom sheets and floating actions.</string>
+    <string
+        name="cl_464_modules"
+    >Migrated the in-app browser and donation experience to the shared Freetime modules.</string>
+    <string
+        name="cl_464_details"
+    >Updated weather details with Freetime pull-to-refresh, dividers, scaffolds and typography.</string>
+    <string
+        name="cl_464_material"
+    >Removed obsolete GeoWeather glass wrappers, the legacy Material 3 theme and the direct Compose Material 3 UI dependency.</string>
+    <string
+        name="cl_464_widgets"
+    >Kept Glance Material 3 specifically for Android widgets.</string>
+    <string
+        name="cl_464_fixes"
+    >Fixed Freetime 1.9.1 typography, dialog and weather icon integration issues.</string>
+    <string
+        name="freetime_warn_title"
+    >Important distribution information</string>
+    <string
+        name="freetime_warn_message"
+    >Android platform and distribution requirements can change how %1$s is installed or updated. GeoWeather remains open source and available through supported distribution channels.</string>
     <string name="freetime_warn_learn_more">Learn more</string>
     <string name="freetime_warn_acknowledge">I understand</string>
 
     <!-- Weather intelligence, offline and privacy -->
     <string name="data_offline_title">Data &amp; offline</string>
     <string name="data_saver_title">Data saver</string>
-    <string name="data_saver_desc">Reduces optional network-heavy features such as automatic radar and model refreshes.</string>
+    <string
+        name="data_saver_desc"
+    >Reduces optional network-heavy features such as automatic radar and model refreshes.</string>
     <string name="offline_packs_title">Offline forecast packs</string>
-    <string name="offline_packs_desc">Keep the latest full forecast for saved locations available when the device is offline.</string>
-    <string name="offline_packs_note">Saved weather forecasts remain on this device. Radar map tiles are loaded from the map providers when needed.</string>
-    <string name="data_sources_privacy_title">Data sources &amp; privacy</string>
-    <string name="data_source_forecast">Forecasts, hourly weather and model comparison · Open-Meteo</string>
+    <string
+        name="offline_packs_desc"
+    >Keep the latest full forecast for saved locations available when the device is offline.</string>
+    <string
+        name="offline_packs_note"
+    >Saved weather forecasts remain on this device. Radar map tiles are loaded from the map providers when needed.</string>
+    <string
+        name="data_sources_privacy_title"
+    >Data sources &amp; privacy</string>
+    <string
+        name="data_source_forecast"
+    >Forecasts, hourly weather and model comparison · Open-Meteo</string>
     <string name="data_source_map">Base map · OpenStreetMap</string>
     <string name="data_source_radar">Radar imagery · RainViewer</string>
-    <string name="privacy_local_note">Locations, forecast snapshots, alert history and app preferences are stored locally by GeoWeather. Network requests send the coordinates required to retrieve weather or map data.</string>
+    <string
+        name="privacy_local_note"
+    >Locations, forecast snapshots, alert history and app preferences are stored locally by GeoWeather. Network requests send the coordinates required to retrieve weather or map data.</string>
     <string name="saved_places">Saved places</string>
     <string name="forecast_changes_title">Forecast changes</string>
-    <string name="forecast_changes_note">Timeline of meaningful changes recorded as newer forecasts replace earlier ones.</string>
+    <string
+        name="forecast_changes_note"
+    >Timeline of meaningful changes recorded as newer forecasts replace earlier ones.</string>
     <string name="forecast_accuracy_title">Forecast accuracy</string>
-    <string name="forecast_accuracy_note">Local estimate based on the difference between a recent forecast temperature and stored observations.</string>
+    <string
+        name="forecast_accuracy_note"
+    >Local estimate based on the difference between a recent forecast temperature and stored observations.</string>
     <string name="weather_calendar_title">Weather calendar</string>
     <string name="outdoor_photography_title">Outdoor &amp; photography</string>
     <string name="activity_walking">Walking</string>
@@ -777,22 +1427,32 @@
     <string name="tomorrow_comparison_title">Today vs tomorrow</string>
     <string name="tomorrow_warmer">Tomorrow is %1$s warmer</string>
     <string name="tomorrow_cooler">Tomorrow is %1$s cooler</string>
-    <string name="tomorrow_similar_temp">Tomorrow has a similar temperature</string>
+    <string
+        name="tomorrow_similar_temp"
+    >Tomorrow has a similar temperature</string>
     <string name="tomorrow_rain_change">Rain chance: %1$d%% → %2$d%%</string>
     <string name="tomorrow_wind_change">Max wind: %1$s → %2$s</string>
     <string name="daylight_duration">Daylight: %1$d h %2$d min</string>
-    <string name="forecast_confidence_spread">Model spread · temperature %1$s°C · rain %2$d%% · wind %3$s km/h</string>
+    <string
+        name="forecast_confidence_spread"
+    >Model spread · temperature %1$s°C · rain %2$d%% · wind %3$s km/h</string>
     <string name="forecast_model_rain">Rain %1$d%%</string>
     <string name="forecast_model_wind">Wind %1$s km/h</string>
     <string name="forecast_model_wind_value">Wind %1$s</string>
-    <string name="forecast_confidence_spread_units">Model spread · temperature %1$s°C · rain %2$d%% · wind %3$s</string>
+    <string
+        name="forecast_confidence_spread_units"
+    >Model spread · temperature %1$s°C · rain %2$d%% · wind %3$s</string>
     <string name="activity_wind_reason_value">Wind %1$s</string>
     <string name="smart_wind_detail_value">%1$s</string>
-    <string name="alert_next_6h">Next 6h · rain %1$d%% / %2$s mm · gusts %3$s</string>
+    <string
+        name="alert_next_6h"
+    >Next 6h · rain %1$d%% / %2$s mm · gusts %3$s</string>
     <string name="intelligence_today">Today</string>
     <string name="intelligence_tonight">Tonight</string>
     <string name="intelligence_briefing">%1$s in %2$s: %3$d–%4$d°</string>
-    <string name="intelligence_rain_possible">rain possible around %1$s (%2$d%%)</string>
+    <string
+        name="intelligence_rain_possible"
+    >rain possible around %1$s (%2$d%%)</string>
     <string name="intelligence_strong_wind">strong wind possible</string>
     <string name="intelligence_high_uv">high UV</string>
     <string name="smart_rain_likely">Rain likely around %1$s</string>
@@ -805,9 +1465,13 @@
     <string name="smart_precipitation_detail">%1$d%% precipitation</string>
     <string name="smart_weather_overview">Weather overview</string>
     <string name="precipitation_timeline_title">Precipitation timeline</string>
-    <string name="no_precipitation_12h">No precipitation indicated in the next 12 hours.</string>
+    <string
+        name="no_precipitation_12h"
+    >No precipitation indicated in the next 12 hours.</string>
     <string name="model_agreement_title">16-day model agreement</string>
-    <string name="model_agreement_note">Higher scores mean ECMWF, GFS and Best Match are closer together.</string>
+    <string
+        name="model_agreement_note"
+    >Higher scores mean ECMWF, GFS and Best Match are closer together.</string>
 
 
     <string name="travel_planner_title">Travel planner</string>
@@ -820,7 +1484,9 @@
     <string name="pack_windproof">windproof layer</string>
     <string name="pack_winter_shoes">winter shoes</string>
     <string name="pack_everyday">normal everyday clothing</string>
-    <string name="radar_data_saver_hint">Data Saver · tap Radar to load weather imagery</string>
+    <string
+        name="radar_data_saver_hint"
+    >Data Saver · tap Radar to load weather imagery</string>
     <string name="radar_layer_on">Radar ✓</string>
     <string name="radar_layer_off">Radar</string>
     <string name="map_layer_osm">OpenStreetMap ✓</string>
@@ -829,7 +1495,9 @@
     <string name="play_radar">Play radar</string>
     <string name="latest_radar">Latest radar</string>
     <string name="radar_minutes_ago">%1$d min ago</string>
-    <string name="radar_attribution">Past 2 hours · 10 minute frames · Weather data by RainViewer</string>
+    <string
+        name="radar_attribution"
+    >Past 2 hours · 10 minute frames · Weather data by RainViewer</string>
 
 
     <string name="warmest_label">Warmest</string>
@@ -843,7 +1511,9 @@
     <string name="widget_data_saver_saved">Data Saver · saved forecast</string>
     <string name="widget_offline_saved">Offline · last saved forecast</string>
     <string name="widget_rain_gusts">Rain %1$d%% · Gusts %2$d km/h</string>
-    <string name="widget_rain_gusts_time">Rain %1$d%% · Gusts %2$d km/h · %3$s</string>
+    <string
+        name="widget_rain_gusts_time"
+    >Rain %1$d%% · Gusts %2$d km/h · %3$s</string>
 
 
     <string name="offline_refresh_all">Refresh offline data</string>
@@ -859,66 +1529,147 @@
     <string name="offline_not_cached">Not cached</string>
 
     <string name="offline_city_pack">Keep this city available offline</string>
-    <string name="offline_city_pack_desc">Refresh this city in the background when offline packs are enabled.</string>
+    <string
+        name="offline_city_pack_desc"
+    >Refresh this city in the background when offline packs are enabled.</string>
 
     <!-- Changelog v4.7.2 -->
-    <string name="cl_472_widgets">Expanded home-screen widgets with four distinct variants, responsive layouts, per-widget locations and improved configuration.</string>
-    <string name="cl_472_refresh">Reduced duplicate weather requests with shared refresh coordination, freshness checks and more efficient background updates.</string>
-    <string name="cl_472_offline">Improved widget behavior for offline use and Data Saver with cached forecasts and network-aware refreshes.</string>
-    <string name="cl_472_timezone">Improved day and night widget styling and forecast icons using the weather location timezone and sunrise/sunset data.</string>
-    <string name="cl_472_openmeteo">Removed obsolete weather-provider parsing and tightened Open-Meteo forecast validation for hourly and 16-day forecasts.</string>
-    <string name="cl_472_backup">Improved Android backup and restore for durable settings and saved locations without backing up rebuildable weather caches.</string>
-    <string name="cl_472_stability">Added forecast and backup tests and fixed widget lifecycle, reboot refresh, configuration and build issues.</string>
+    <string
+        name="cl_472_widgets"
+    >Expanded home-screen widgets with four distinct variants, responsive layouts, per-widget locations and improved configuration.</string>
+    <string
+        name="cl_472_refresh"
+    >Reduced duplicate weather requests with shared refresh coordination, freshness checks and more efficient background updates.</string>
+    <string
+        name="cl_472_offline"
+    >Improved widget behavior for offline use and Data Saver with cached forecasts and network-aware refreshes.</string>
+    <string
+        name="cl_472_timezone"
+    >Improved day and night widget styling and forecast icons using the weather location timezone and sunrise/sunset data.</string>
+    <string
+        name="cl_472_openmeteo"
+    >Removed obsolete weather-provider parsing and tightened Open-Meteo forecast validation for hourly and 16-day forecasts.</string>
+    <string
+        name="cl_472_backup"
+    >Improved Android backup and restore for durable settings and saved locations without backing up rebuildable weather caches.</string>
+    <string
+        name="cl_472_stability"
+    >Added forecast and backup tests and fixed widget lifecycle, reboot refresh, configuration and build issues.</string>
 
-    <string name="cl_471_widgets">Expanded home-screen widgets with compact, forecast and detailed variants, per-widget location selection, weather icons and dynamic weather-aware styling.</string>
-    <string name="cl_471_forecast">Improved forecast insights with Today vs tomorrow comparisons, clearer confidence levels, daylight duration and better day/night forecast icons.</string>
-    <string name="cl_471_share">Upgraded weather sharing with richer forecast details and improved feels-like explanations for wind, humidity and sun exposure.</string>
-    <string name="cl_471_alerts">Added per-location smart alert thresholds for temperature changes, wind, rain probability, gusts, UV and frost.</string>
-    <string name="cl_471_notifications">Improved persistent weather notifications and smart weather alert handling.</string>
-    <string name="cl_471_performance">Improved Liquid Glass and weather-screen performance and fixed additional widget, forecast and UI issues.</string>
+    <string
+        name="cl_471_widgets"
+    >Expanded home-screen widgets with compact, forecast and detailed variants, per-widget location selection, weather icons and dynamic weather-aware styling.</string>
+    <string
+        name="cl_471_forecast"
+    >Improved forecast insights with Today vs tomorrow comparisons, clearer confidence levels, daylight duration and better day/night forecast icons.</string>
+    <string
+        name="cl_471_share"
+    >Upgraded weather sharing with richer forecast details and improved feels-like explanations for wind, humidity and sun exposure.</string>
+    <string
+        name="cl_471_alerts"
+    >Added per-location smart alert thresholds for temperature changes, wind, rain probability, gusts, UV and frost.</string>
+    <string
+        name="cl_471_notifications"
+    >Improved persistent weather notifications and smart weather alert handling.</string>
+    <string
+        name="cl_471_performance"
+    >Improved Liquid Glass and weather-screen performance and fixed additional widget, forecast and UI issues.</string>
 
-    <string name="cl_470_intelligence">Added richer weather intelligence with activity planning, photography conditions, precipitation timelines and a severe weather dashboard.</string>
-    <string name="cl_470_models">Added forecast confidence and daily weather-model agreement to make forecast uncertainty easier to understand.</string>
-    <string name="cl_470_radar">Rebuilt the weather radar and map as a native map experience with radar controls and an embedded weather-map preview.</string>
-    <string name="cl_470_offline">Added Data Saver and Offline Forecast Packs with per-city selection, cache status, last-updated information and manual offline refresh.</string>
-    <string name="cl_470_travel">Expanded the travel planner with weather comparisons, packing hints and improved saved-location insights.</string>
-    <string name="cl_470_search">Improved city search with saved-place shortcuts and clearer region and country information.</string>
-    <string name="cl_470_notifications">Added smarter rain, wind, frost and UV alerts and improved persistent weather notification reliability.</string>
-    <string name="cl_470_performance">Improved performance across weather details and saved locations and fixed additional forecast, notification and UI issues.</string>
+    <string
+        name="cl_470_intelligence"
+    >Added richer weather intelligence with activity planning, photography conditions, precipitation timelines and a severe weather dashboard.</string>
+    <string
+        name="cl_470_models"
+    >Added forecast confidence and daily weather-model agreement to make forecast uncertainty easier to understand.</string>
+    <string
+        name="cl_470_radar"
+    >Rebuilt the weather radar and map as a native map experience with radar controls and an embedded weather-map preview.</string>
+    <string
+        name="cl_470_offline"
+    >Added Data Saver and Offline Forecast Packs with per-city selection, cache status, last-updated information and manual offline refresh.</string>
+    <string
+        name="cl_470_travel"
+    >Expanded the travel planner with weather comparisons, packing hints and improved saved-location insights.</string>
+    <string
+        name="cl_470_search"
+    >Improved city search with saved-place shortcuts and clearer region and country information.</string>
+    <string
+        name="cl_470_notifications"
+    >Added smarter rain, wind, frost and UV alerts and improved persistent weather notification reliability.</string>
+    <string
+        name="cl_470_performance"
+    >Improved performance across weather details and saved locations and fixed additional forecast, notification and UI issues.</string>
 
     <string name="map_layer_osm_on">Map: on</string>
     <string name="map_layer_osm_off">Map: off</string>
     <string name="map_layer_location_on">Location: on</string>
     <string name="map_layer_location_off">Location: off</string>
-    <string name="offline_wifi_only">Refresh offline packs on Wi-Fi only</string>
-    <string name="offline_wifi_only_desc">Background offline-pack downloads wait for Wi-Fi. Weather alerts and notifications can still refresh when needed.</string>
+    <string
+        name="offline_wifi_only"
+    >Refresh offline packs on Wi-Fi only</string>
+    <string
+        name="offline_wifi_only_desc"
+    >Background offline-pack downloads wait for Wi-Fi. Weather alerts and notifications can still refresh when needed.</string>
     <string name="trip_dates_title">Travel dates</string>
     <string name="trip_dates_range">%1$s – %2$s</string>
     <string name="trip_start">Start</string>
     <string name="trip_end">End</string>
     <string name="trip_temperature_range">%1$d–%2$d°C · selected trip</string>
+    <string
+        name="trip_temperature_range_formatted"
+    >%1$s–%2$s · selected trip</string>
+    <string
+        name="location_temp_threshold_formatted"
+    >Temperature change: %1$s</string>
+    <string
+        name="location_frost_threshold_formatted"
+    >Frost temperature: %1$s</string>
     <string name="radar_loading">Loading radar…</string>
     <string name="radar_load_failed">Radar unavailable</string>
-    <string name="forecast_change_values">High %1$s°C · low %2$s°C · rain %3$s%% · wind %4$s km/h</string>\n    <string name="offline_status_fresh">Fresh</string>
+    <string
+        name="forecast_change_values"
+    >High %1$s°C · low %2$s°C · rain %3$s%% · wind %4$s km/h</string>\n    <string
+        name="offline_status_fresh"
+    >Fresh</string>
     <string name="offline_status_aging">Aging</string>
     <string name="offline_status_stale">Stale</string>
     <string name="offline_status_missing">Not cached</string>
     <string name="offline_pack_status">%1$s · %2$s · %3$s</string>
     <string name="offline_clear_cache">Clear cached forecast</string>
-    <string name="forecast_accuracy_collecting">Collecting enough forecast observations to estimate local accuracy.</string>
+    <string
+        name="forecast_accuracy_collecting"
+    >Collecting enough forecast observations to estimate local accuracy.</string>
     <string name="forecast_accuracy_horizon">%1$d-hour forecast</string>
-    <string name="forecast_accuracy_error">Mean error %1$s · %2$d samples</string>
+    <string
+        name="forecast_accuracy_error"
+    >Mean error %1$s · %2$d samples</string>
     <string name="widget_responsive_name">GeoWeather Responsive</string>
-    <string name="widget_responsive_desc">Responsive weather widget that adapts to the available size.</string>
+    <string
+        name="widget_responsive_desc"
+    >Responsive weather widget that adapts to the available size.</string>
     <string name="widget_compact_name">GeoWeather Compact</string>
-    <string name="widget_compact_desc">Current temperature and weather for the selected location.</string>
+    <string
+        name="widget_compact_desc"
+    >Current temperature and weather for the selected location.</string>
     <string name="widget_forecast_name">GeoWeather Forecast</string>
-    <string name="widget_forecast_desc">Current weather with the next hourly forecast.</string>
+    <string
+        name="widget_forecast_desc"
+    >Current weather with the next hourly forecast.</string>
     <string name="widget_detailed_name">GeoWeather Detailed</string>
-    <string name="widget_detailed_desc">Current weather, hourly forecast, daily forecast, rain and wind.</string>
+    <string
+        name="widget_detailed_desc"
+    >Current weather, hourly forecast, daily forecast, rain and wind.</string>
     <string name="widget_config_title">Choose widget location</string>
-    <string name="widget_config_empty">Add a location in GeoWeather before creating this widget.</string>
+    <string
+        name="widget_config_empty"
+    >Add a location in GeoWeather before creating this widget.</string>
     <string name="time_format">Time format</string>
     <string name="time_format_military">Military time (24-hour)</string>
     <string name="time_format_non_military">Non-military time (12-hour)</string>
+    <string
+        name="forecast_confidence_temperature_spread"
+    >Model spread · temperature %1$s · rain %2$d%% · wind %3$s</string>
+    <string
+        name="forecast_change_temperature_values"
+    >High %1$s · low %2$s · rain %3$s%% · wind %4$s km/h</string>
 </resources>

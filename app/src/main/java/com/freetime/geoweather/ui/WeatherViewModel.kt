@@ -33,7 +33,14 @@ class WeatherViewModel(
 
     private var searchJob: Job? = null
 
+    // null means not loaded; preserve the first database result, including an empty list.
+    private val _initialLocations = MutableStateFlow<List<LocationEntity>?>(null)
+    val initialLocations: StateFlow<List<LocationEntity>?> = _initialLocations.asStateFlow()
+
     val locations = repository.getAllLocations()
+        .onEach { loaded ->
+            if (_initialLocations.value == null) _initialLocations.value = loaded
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun repositoryForSync(): WeatherRepository = repository
