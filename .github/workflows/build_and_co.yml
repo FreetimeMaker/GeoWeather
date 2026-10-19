@@ -3,7 +3,7 @@ name: Build, Sign and Release Android App
 on:
   push:
     branches:
-      - '**'
+      - "**"
   workflow_dispatch:
 
 permissions:
@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Detect version and tag status
         id: versioncheck
@@ -53,7 +53,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: 'gradle'
+          cache: "gradle"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
@@ -61,7 +61,7 @@ jobs:
       - name: Build Android App
         run: ./gradlew :app:assembleRelease
 
-      - name: Install Android Build Tools 34.0.0
+      - name: Install Android Build Tools 35.0.0
         shell: bash
         run: |
           set -euo pipefail
@@ -70,7 +70,7 @@ jobs:
           if [ ! -x "$SDKMANAGER" ]; then
             SDKMANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -path '*/bin/sdkmanager' 2>/dev/null | sort -V | tail -n1)"
           fi
-          "$SDKMANAGER" --sdk_root="$SDK_ROOT" "build-tools;34.0.0"
+          "$SDKMANAGER" --sdk_root="$SDK_ROOT" "build-tools;35.0.0"
 
       - name: Find Android Build Tools
         id: android_tools
@@ -78,8 +78,8 @@ jobs:
         run: |
           set -euo pipefail
           SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
-          APKSIGNER="$SDK_ROOT/build-tools/34.0.0/apksigner"
-          ZIPALIGN="$SDK_ROOT/build-tools/34.0.0/zipalign"
+          APKSIGNER="$SDK_ROOT/build-tools/35.0.0/apksigner"
+          ZIPALIGN="$SDK_ROOT/build-tools/35.0.0/zipalign"
 
           test -x "$APKSIGNER"
           test -x "$ZIPALIGN"
@@ -98,14 +98,14 @@ jobs:
 
           "${{ steps.android_tools.outputs.zipalign }}" \
             -f \
-            -p \
+            -P 16 \
             4 \
             "$UNSIGNED_APK" \
             "$ALIGNED_APK"
 
           "${{ steps.android_tools.outputs.zipalign }}" \
             -c \
-            -p \
+            -P 16 \
             4 \
             "$ALIGNED_APK"
 
