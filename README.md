@@ -13,6 +13,7 @@
 </div>
 
 # Translations
+
 <div align="center">
 
 [![Translations Status](https://translate.codeberg.org/widget/geoweather/geoweather/287x66-grey.png)](https://translate.codeberg.org/engage/geoweather/)
@@ -28,7 +29,7 @@
 ![F-Droid latest release](https://img.shields.io/f-droid/v/com.freetime.geoweather?color=%23ea9010&style=for-the-badge)
 [![GitHub license](https://img.shields.io/github/license/FreetimeMaker/GeoWeather?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/blob/main/LICENSE)
 [![GitHub Downloads (all time)](https://img.shields.io/github/downloads/FreetimeMaker/GeoWeather/total?style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/releases)
-![F-Droid Downloads (all time)](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Fcom.freetime.geoweather.json&query=%24.total_downloads&logo=fdroid&label=Downloads%20(all%20time))
+![F-Droid Downloads (all time)](<https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Fcom.freetime.geoweather.json&query=%24.total_downloads&logo=fdroid&label=Downloads%20(all%20time)>)
 [![Luma Store downloads](https://ndlaevedujqxhygbyxfh.supabase.co/functions/v1/download-badge?app_id=ce113263-48cb-48ac-a77e-59e751607667)](https://luma.free-time.me/discover/com.freetime.geoweather)
 [![GitHub stars](https://img.shields.io/github/stars/FreetimeMaker/GeoWeather?color=%2359a14f&style=for-the-badge)](https://github.com/FreetimeMaker/GeoWeather/stargazers)
 [![Android Build, Sign and Release](https://github.com/FreetimeMaker/GeoWeather/actions/workflows/build_and_co.yml/badge.svg)](https://github.com/FreetimeMaker/GeoWeather/actions/workflows/build_and_co.yml)
@@ -36,7 +37,7 @@
 <img alt="Kotlin" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Kotlin/kotlin1.svg" />
 <img src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Android/android1.svg" />
 <a href="https://github.com/FreetimeMaker/GeoWeather/issues">
-  <img src="https://m3-markdown-badges.vercel.app/issues/1/2/FreetimeMaker/GeoWeather" alt="Issues"/>
+<img src="https://m3-markdown-badges.vercel.app/issues/1/2/FreetimeMaker/GeoWeather" alt="Issues"/>
 </a>
 </div>
 
@@ -53,6 +54,29 @@ GeoWeather is a modern Android weather application that allows you to monitor we
 - 🎨 **Weather Icons**: Visual representation of weather conditions
 - 🔔 **Notifications**: Receive weather alerts and updates
 - 📝 **Integrated Change Log**: Track version updates directly in the app
+
+## Personalize your weather
+
+In **Settings → Startup and display**, choose your favorite location, last viewed
+location, location overview, or current location as the start screen. The default
+is your favorite (or first saved) location; Back opens the overview. Current
+location uses the available device location and falls back to a saved location
+when it is unavailable.
+
+Choose **Compact** for the essentials or **Detailed** for additional analyses.
+The day planner summarizes today and ranks consecutive two-hour windows for
+walking, running, cycling, or gardening locally, without an AI service. These
+heuristic suggestions are not safety advice and are hidden when data is older
+than two hours or required forecast data is missing.
+
+Saved forecasts remain readable offline with their update timestamp. Rain alerts
+use hourly forecast windows, respect quiet hours, and have a three-hour cooldown
+per location; background scheduling and forecasts cannot promise an exact rain
+start time. Enable location notifications and smart rain alerts to receive them.
+
+Use **Share** on a location to create an image with the data timestamp and source.
+You can provide a custom title and hide the location before sharing; the resulting
+image and text are sent only to the app you choose in Android's share sheet.
 
 ## 🛠️ Technology Stack
 

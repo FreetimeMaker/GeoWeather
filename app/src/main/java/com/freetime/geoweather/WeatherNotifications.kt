@@ -24,16 +24,22 @@ object WeatherNotifications {
         }
     }
 
-    fun show(context: Context, id: Int, title: String, message: String, alert: Boolean = false) {
+    fun show(context: Context, id: Int, title: String, message: String, alert: Boolean = false): Boolean {
         val settings = runCatching { com.freetime.geoweather.data.DependencyManager.getAppSettings() }.getOrNull()
         val hour = java.time.LocalTime.now().hour
         val quietNow = settings?.quietHours?.value == true && (hour >= 22 || hour < 7)
-        if (quietNow) return
+        if (quietNow) return false
         val profile = settings?.notificationProfile?.value ?: "normal"
-        if (!alert && profile == "outdoor") return
+        if (!alert && profile == "outdoor") return false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return false
         ensureChannels(context)
+        val manager = NotificationManagerCompat.from(context)
+        if (!manager.areNotificationsEnabled()) return false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            context.getSystemService(NotificationManager::class.java)
+                .getNotificationChannel(if (alert) CHANNEL_ALERTS else CHANNEL_UPDATES)?.importance == NotificationManager.IMPORTANCE_NONE
+        ) return false
         val pendingIntent = PendingIntent.getActivity(
             context, 0, Intent(context, MainActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -47,6 +53,7 @@ object WeatherNotifications {
             .setAutoCancel(true)
             .setPriority(if (alert) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_DEFAULT)
             .build()
-        NotificationManagerCompat.from(context).notify(id, notification)
+        manager.notify(id, notification)
+        return true
     }
 }

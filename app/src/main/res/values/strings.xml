@@ -1672,4 +1672,83 @@
     <string
         name="forecast_change_temperature_values"
     >High %1$s · low %2$s · rain %3$s%% · wind %4$s km/h</string>
+
+    <string name="day_planner_title">Day planner</string>
+    <string
+        name="day_planner_stale"
+    >Forecast outdated or update time unavailable — no current planning suggestions.</string>
+    <string
+        name="day_planner_zone"
+    >Location time zone unavailable — no planning suggestions.</string>
+    <string name="day_planner_summary">Today: %1$s; %2$s; %3$s.</string>
+    <string name="day_planner_temperature">%1$s to %2$s</string>
+    <string
+        name="day_planner_temperature_unknown"
+    >temperature range unavailable</string>
+    <string
+        name="day_planner_rain"
+    >first possible rain in the remaining forecast today at %1$s (%2$s)</string>
+    <string name="day_planner_probability">%1$d%% probability</string>
+    <string
+        name="day_planner_probability_unknown"
+    >probability unavailable</string>
+    <string
+        name="day_planner_rain_unknown"
+    >rain timing unavailable from incomplete data</string>
+    <string
+        name="day_planner_no_rain"
+    >no rain indicated in the available future hours today</string>
+    <string name="day_planner_wind">remaining forecast wind up to %1$s</string>
+    <string name="day_planner_wind_unknown">wind unavailable</string>
+    <string
+        name="day_planner_incomplete"
+    >Rain or wind data is incomplete; unreported values do not mean dry or calm conditions.</string>
+    <string name="day_planner_walking">Walking</string>
+    <string name="day_planner_running">Running</string>
+    <string name="day_planner_cycling">Cycling</string>
+    <string name="day_planner_gardening">Gardening</string>
+    <string
+        name="day_planner_window"
+    >Best available 2-hour window in the next 24 hours: %1$s – %2$s · score %3$d/100</string>
+    <string
+        name="day_planner_no_window"
+    >No continuous 2-hour window with sufficient data and without excluded conditions in the next 24 hours.</string>
+    <string
+        name="day_planner_disclaimer"
+    >Simple comfort heuristic based on temperature, rain and wind, not safety advice. Thunderstorms, snow, freezing precipitation and strong wind are excluded; check local warnings.</string>
+
+    <string name="persistent_weather_channel_name">Persistent Weather</string>
+    <string name="opening_default_browser">Opening in default browser...</string>
+
+    <string name="rain_hourly_alert_title">Rain possible</string>
+    <string name="rain_hourly_alert_message">%1$s: The hourly forecast indicates possible rain during %2$s–%3$s (location time), with a %4$d%% precipitation probability. The exact start time is uncertain.</string>
+
+    <string name="start_preferences_title">Startup and display</string>
+    <string name="start_screen_title">Start screen</string>
+    <string name="start_screen_favorite">Favorite location</string>
+    <string name="start_screen_last">Last viewed location</string>
+    <string name="start_screen_overview">Overview</string>
+    <string name="start_screen_current">Current location</string>
+    <string name="start_detail_level_title">Detail level</string>
+    <string name="start_detail_compact">Compact</string>
+    <string name="start_detail_detailed">Detailed</string>
+
+    <string name="data_status_updated">Weather data updated: %1$s (device time)</string>
+    <string name="data_status_unknown">Unknown</string>
+    <string name="data_status_offline">No connection · Showing saved weather, not live observations.</string>
+    <string name="data_status_stale">Weather data is outdated or its age is unknown. Refresh before relying on it; current recommendations are unavailable.</string>
+    <string name="data_status_refresh_failed">Could not update weather. Saved data has been kept.</string>
+
+    <string name="weather_share_dialog_title">Share weather card</string>
+    <string name="weather_share_custom_title">Custom title (optional)</string>
+    <string name="weather_share_title_example">Weekend trip</string>
+    <string name="weather_share_hide_location">Hide location</string>
+    <string name="weather_share_privacy_hint">Hiding the location removes its name from the image and shared text. Check your custom title and details for other identifying information.</string>
+    <string name="weather_share_default_title">Weather</string>
+    <string name="weather_share_updated_at">Data as of %1$s · %2$s</string>
+    <string name="weather_share_updated_unknown">Data timestamp unavailable</string>
+    <string name="weather_share_source">Source: Open-Meteo · GeoWeather</string>
+    <string name="weather_share_error">Could not share the weather card. Please try again.</string>
+    <string name="weather_share_send">Share</string>
+    <string name="weather_share_cancel">Cancel</string>
 </resources>

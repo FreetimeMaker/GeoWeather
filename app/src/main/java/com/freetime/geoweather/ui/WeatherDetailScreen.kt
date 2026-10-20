@@ -75,6 +75,9 @@ fun WeatherDetailScreen(
     val animationMode by appSettings.weatherAnimations.collectAsState()
     val oledBlack by appSettings.oledBlack.collectAsState()
     val dataSaver by appSettings.dataSaver.collectAsState()
+    val detailLevel by appSettings.detailLevel.collectAsState()
+    val detailed = detailLevel == "detailed"
+    val nowMillis by rememberWeatherClock()
     val haptics = LocalHapticFeedback.current
     val detailListState = rememberLazyListState()
     val detailTopBarCompact by remember { derivedStateOf { detailListState.firstVisibleItemIndex > 0 || detailListState.firstVisibleItemScrollOffset > 140 } }
@@ -84,19 +87,26 @@ fun WeatherDetailScreen(
     var transientLocation by remember { mutableStateOf<LocationEntity?>(null) }
     var isRefreshing by remember { mutableStateOf(false) }
     var showDetailSheet by remember { mutableStateOf(false) }
+    var showShareDialog by remember { mutableStateOf(false) }
+    var refreshFailed by remember { mutableStateOf(false) }
     val configuration = androidx.compose.ui.platform.LocalConfiguration.current
     val isWideLayout = configuration.screenWidthDp >= 700 ||
         configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
     fun doRefresh() {
         isRefreshing = true
+        refreshFailed = false
         if (isTransient) {
             viewModel.fetchTransientWeather(transientName!!, transientLat, transientLon) {
-                transientLocation = it
+                if (it != null) transientLocation = it
+                refreshFailed = it == null
                 isRefreshing = false
             }
         } else {
-            viewModel.refreshLocation(locationId) { isRefreshing = false }
+            viewModel.refreshLocation(locationId) { success ->
+                refreshFailed = !success
+                isRefreshing = false
+            }
         }
     }
 
@@ -109,6 +119,32 @@ fun WeatherDetailScreen(
 
     val loc = if (isTransient) transientLocation else dbLocation
     val title = if (isTransient) transientName!! else loc?.name ?: ""
+
+    if (showShareDialog && loc?.currentTemp != null) {
+        val shareDaily = remember(loc.weatherData) { viewModel.getDailyForecasts(loc) }
+        val shareDetails = buildList {
+            val today = java.time.Instant.ofEpochMilli(nowMillis)
+                .atZone(runCatching { java.time.ZoneId.of(loc.timezoneName) }.getOrDefault(java.time.ZoneOffset.UTC))
+                .toLocalDate()
+            (0L..1L).forEach { offset ->
+                val day = shareDaily.firstOrNull { it.date == today.plusDays(offset).toString() } ?: return@forEach
+                add(stringResource(
+                    if (offset == 0L) Res.string.share_today_forecast else Res.string.share_tomorrow_forecast,
+                    formatTemp(day.minTemp.toDouble(), tempUnit),
+                    formatTemp(day.maxTemp.toDouble(), tempUnit),
+                    day.precipProbMax
+                ))
+            }
+        }
+        WeatherShareDialog(
+            locationName = loc.name,
+            temperature = formatTemp(loc.currentTemp!!, tempUnit),
+            description = loc.currentWeatherCode?.let { stringResource(WeatherCodes.getStringResource(it)) }.orEmpty(),
+            updatedAt = loc.lastUpdated,
+            forecastDetails = shareDetails,
+            onDismiss = { showShareDialog = false }
+        )
+    }
 
     if (showDetailSheet && loc?.weatherData != null) {
         val sheetHourly = remember(loc.weatherData) { viewModel.getHourlyForecasts(loc) }
@@ -137,34 +173,7 @@ fun WeatherDetailScreen(
                     if (loc?.currentTemp != null) {
                         IconButton(onClick = {
                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                            val description = loc.currentWeatherCode?.let { context.getString(WeatherCodes.getStringResource(it)) } ?: ""
-                            val shareDaily = viewModel.getDailyForecasts(loc)
-                            val shareDetails = buildList {
-                                shareDaily.getOrNull(0)?.let { day ->
-                                    add(context.getString(
-                                        Res.string.share_today_forecast,
-                                        formatTemp(day.minTemp.toDouble(), tempUnit),
-                                        formatTemp(day.maxTemp.toDouble(), tempUnit),
-                                        day.precipProbMax
-                                    ))
-                                }
-                                shareDaily.getOrNull(1)?.let { day ->
-                                    add(context.getString(
-                                        Res.string.share_tomorrow_forecast,
-                                        formatTemp(day.minTemp.toDouble(), tempUnit),
-                                        formatTemp(day.maxTemp.toDouble(), tempUnit),
-                                        day.precipProbMax
-                                    ))
-                                }
-                            }
-                            val bitmap = createWeatherShareCard(
-                                title = loc.name,
-                                temperature = formatTemp(loc.currentTemp!!, tempUnit),
-                                description = description,
-                                subtitle = loc.currentHumidity?.let { context.getString(Res.string.share_humidity, it) } ?: "",
-                                details = shareDetails
-                            )
-                            shareWeatherCard(context, bitmap, loc.name)
+                            showShareDialog = true
                         }) { Icon(Icons.Default.Share, contentDescription = stringResource(Res.string.share_weather)) }
                     }
                 },
@@ -175,7 +184,14 @@ fun WeatherDetailScreen(
         val padding = scaffoldPadding
         when {
             loc == null -> {
-                Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                    if (refreshFailed) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Text(stringResource(Res.string.error_loading_weather))
+                            Button(onClick = { doRefresh() }) { Text(stringResource(Res.string.refresh_nav_desc)) }
+                        }
+                    } else CircularProgressIndicator()
+                }
             }
             loc.weatherData == null -> {
                 if (isRefreshing) {
@@ -190,8 +206,8 @@ fun WeatherDetailScreen(
                 val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
                 val weatherHistory by viewModel.getWeatherHistory(loc.name).collectAsState(initial = emptyList())
                 var airExtras by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.CurrentHourExtras?>(null) }
-                LaunchedEffect(loc.id, loc.weatherData, dataSaver) {
-                    airExtras = if (dataSaver) null else viewModel.getAirQualityExtras(loc)
+                LaunchedEffect(loc.id, loc.weatherData, dataSaver, detailed) {
+                    airExtras = if (dataSaver || !detailed) null else viewModel.getAirQualityExtras(loc)
                 }
                 var forecastConfidence by remember(loc.id, loc.weatherData) { mutableStateOf<com.freetime.geoweather.data.ForecastConfidence?>(null) }
                 var dailyModelAgreement by remember(loc.id, loc.weatherData) { mutableStateOf<List<com.freetime.geoweather.data.DailyModelAgreement>>(emptyList()) }
@@ -199,8 +215,8 @@ fun WeatherDetailScreen(
                 LaunchedEffect(loc.id, loc.weatherData) {
                     if (!isTransient && loc.id != 0L) forecastAccuracy = viewModel.getForecastAccuracy(loc.id)
                 }
-                LaunchedEffect(loc.id, loc.weatherData, dataSaver) {
-                    if (dataSaver) {
+                LaunchedEffect(loc.id, loc.weatherData, dataSaver, detailed) {
+                    if (dataSaver || !detailed) {
                         forecastConfidence = null
                         dailyModelAgreement = emptyList()
                     } else {
@@ -292,17 +308,9 @@ fun WeatherDetailScreen(
                         }
                     }
 
-                    item {
-                        val minutesAgo = ((System.currentTimeMillis() - loc.lastUpdated).coerceAtLeast(0L) / 60_000L).toInt()
-                        if (!isNetworkAvailable() && loc.weatherData != null) {
-                            Card(modifier = Modifier.fillMaxWidth().liquidGlass(interactive = false)) { Text(stringResource(Res.string.offline_cached_summary, minutesAgo, daily.size), modifier = Modifier.padding(12.dp)) }
-                        } else if (loc.lastUpdated > 0L) {
-                            Text(
-                                stringResource(Res.string.last_updated_minutes, minutesAgo),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                    item(key = "data-status") {
+                        WeatherDataStatus(loc.lastUpdated, nowMillis)
+                        if (refreshFailed) Text(stringResource(Res.string.data_status_refresh_failed))
                     }
 
                     item {
@@ -356,7 +364,11 @@ fun WeatherDetailScreen(
                         }
                     }
 
-                    if (hourly.isNotEmpty()) {
+                    item(key = "day-planner") {
+                        WeatherDayPlannerCard(hourly, daily, loc.timezoneName, tempUnit, windUnit, nowMillis, loc.lastUpdated)
+                    }
+
+                    if (detailed && hourly.isNotEmpty()) {
                         item {
                             val next = hourly.take(12)
                             val wet = next.filter { it.precipProbability > 0 || (it.precipitation ?: 0.0) > 0.0 }
@@ -383,26 +395,11 @@ fun WeatherDetailScreen(
                         }
                     }
 
-                    if (code != null) {
+                    if (code != null && loc.lastUpdated > 0 && nowMillis - loc.lastUpdated in 0..7_200_000L) {
                         item { WeatherAlertsSection(loc.name, code, hourly, extras, windUnit) }
                     }
 
-                    item {
-                        val ageMinutes = ((System.currentTimeMillis() - loc.lastUpdated).coerceAtLeast(0L) / 60_000L).toInt()
-                        val freshness = when {
-                            !isNetworkAvailable() -> stringResource(Res.string.freshness_cached)
-                            ageMinutes <= 15 -> stringResource(Res.string.freshness_live)
-                            ageMinutes <= 60 -> stringResource(Res.string.freshness_recent)
-                            else -> stringResource(Res.string.freshness_stale)
-                        }
-                        Card(modifier = Modifier.fillMaxWidth()) {
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                                Text(freshness, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                Text(stringResource(Res.string.updated_age_short, ageMinutes), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                        }
-                    }
-
+                    if (detailed) {
                     item {
                         Card(modifier = Modifier.fillMaxWidth()) {
                             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -701,101 +698,6 @@ fun WeatherDetailScreen(
 
                     if (hourly.isNotEmpty()) {
                         item {
-                            val activityDetails = com.freetime.geoweather.WeatherIntelligence.activityDetails(hourly)
-                            val photo = com.freetime.geoweather.WeatherIntelligence.photographyWindows(hourly, daily.firstOrNull())
-                            Card(modifier = Modifier.fillMaxWidth()) {
-                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Text(stringResource(Res.string.outdoor_photography_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    (activityDetails + photo).forEach { detail ->
-                                        Card(modifier = Modifier.fillMaxWidth()) {
-                                            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                                                Text(stringResource(Res.string.activity_score, localizedActivityName(detail.activity), detail.score), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
-                                                Text(
-                                                    if (detail.bestHours.isEmpty()) stringResource(Res.string.no_recommended_window) else detail.bestHours.joinToString(" · ") { it.takeLast(5) },
-                                                    style = MaterialTheme.typography.bodyMedium
-                                                )
-                                                if (detail.reasons.isNotEmpty()) {
-                                                    val localizedReasons = detail.reasons.map { localizedActivityReason(it, windUnit) }
-                                                    Text(localizedReasons.joinToString(" · "), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (hourly.isNotEmpty()) {
-                        item {
-                            val activityWindows = com.freetime.geoweather.WeatherIntelligence.activityWindows(hourly.take(24))
-                            val bestWindow = activityWindows.maxByOrNull { it.score }
-                            Card(modifier = Modifier.fillMaxWidth()) {
-                                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Text(stringResource(Res.string.outdoor_planner_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    bestWindow?.takeIf { it.hours.isNotEmpty() }?.let { best ->
-                                        Text(stringResource(Res.string.activity_score, localizedActivityName(best.activity), best.score), style = MaterialTheme.typography.titleLarge)
-                                        Text(best.hours.joinToString(" · ") { it.takeLast(5) }, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                    }
-                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        items(activityWindows, key = { it.activity }) { activity ->
-                                            Card(modifier = Modifier.width(150.dp)) {
-                                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                                    Text(localizedActivityName(activity.activity), style = MaterialTheme.typography.labelLarge)
-                                                    Text(activity.score.toString() + "/100", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                                    Text(
-                                                        if (activity.hours.isEmpty()) stringResource(Res.string.no_good_window) else activity.hours.joinToString(" · ") { it.takeLast(5) },
-                                                        style = MaterialTheme.typography.labelSmall
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    item {
-                        val smart = com.freetime.geoweather.WeatherIntelligence.smartHero(hourly, daily.firstOrNull())
-                        val nowcast = com.freetime.geoweather.WeatherIntelligence.nowcast(hourly)
-                        Card(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Text(stringResource(Res.string.smart_weather_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                val smartTexts = localizedSmartInsight(smart, windUnit)
-                                Text(
-                                    smartTexts.first,
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-                                smartTexts.second?.let { secondary ->
-                                    Text(secondary, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                                HorizontalDivider()
-                                Text(stringResource(Res.string.nowcast_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                if (nowcast?.startsAt != null && nowcast.endsAt != null) {
-                                    Text(
-                                        stringResource(
-                                            Res.string.nowcast_wet,
-                                            nowcast.startsAt,
-                                            nowcast.endsAt,
-                                            nowcast.peakProbability,
-                                            String.format(java.util.Locale.getDefault(), "%.1f", nowcast.peakAmountMm)
-                                        )
-                                    )
-                                } else {
-                                    Text(stringResource(Res.string.nowcast_dry))
-                                }
-                            }
-                        }
-                    }
-
-                    if (hourly.isNotEmpty()) {
-                        item {
                             Card(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     Text(stringResource(Res.string.weather_timeline_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
@@ -897,7 +799,9 @@ fun WeatherDetailScreen(
                         }
                     }
 
-                    if (hourly.isNotEmpty()) {
+                    }
+
+                    if (detailed && hourly.isNotEmpty() && loc.lastUpdated > 0 && nowMillis - loc.lastUpdated in 0..7_200_000L) {
                         item {
                             val nextRainIndex = hourly.indexOfFirst { it.precipProbability >= 40 || it.code in 51..67 || it.code in 80..82 || it.code in 95..99 }
                             val nextRainText = if (nextRainIndex >= 0) {
@@ -932,7 +836,7 @@ fun WeatherDetailScreen(
                                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                                     Text(hour.time.takeLast(5), style = MaterialTheme.typography.labelSmall)
                                                     Image(painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code, isForecastDaytime(hour.time))), contentDescription = null, modifier = Modifier.size(32.dp))
-                                                    Text("${hour.temp}°", fontWeight = FontWeight.Bold)
+                                                    Text(formatTemp(hour.temp.toDouble(), tempUnit), fontWeight = FontWeight.Bold)
                                                     if (hour.precipProbability > 0) {
                                                         Text("${hour.precipProbability}%", style = MaterialTheme.typography.labelSmall)
                                                     }
@@ -945,6 +849,7 @@ fun WeatherDetailScreen(
                         }
                     }
 
+                    if (detailed) {
                     item {
                         val feelsLike = loc.currentFeelsLike ?: loc.currentTemp
                         Card(
@@ -1114,6 +1019,8 @@ fun WeatherDetailScreen(
                         }
                     }
 
+                    }
+
                     if (hourly.isNotEmpty()) {
                         item {
                             Text(
@@ -1137,7 +1044,7 @@ fun WeatherDetailScreen(
                                             modifier = Modifier,
                                             horizontalAlignment = Alignment.CenterHorizontally
                                         ) {
-                                            Text(hour.time.take(5), style = MaterialTheme.typography.labelMedium)
+                                            Text(hour.time.takeLast(5), style = MaterialTheme.typography.labelMedium)
                                             Image(painter = painterResource(WeatherIconMapper.getWeatherIcon(hour.code, isForecastDaytime(hour.time))), contentDescription = null, modifier = Modifier.size(36.dp))
                                             Text(
                                                 formatTemp(hour.temp.toDouble(), tempUnit),

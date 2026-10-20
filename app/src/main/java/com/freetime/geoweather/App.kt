@@ -79,13 +79,23 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         mutableStateOf(!onboarding && launchPrefs.getString("last_seen_version", "") != appVersion)
     }
     val backStack = remember { mutableStateListOf<Screen>(Main) }
-    fun navigate(screen: Screen) { backStack.add(screen) }
-    fun goBack() { if (backStack.size > 1) backStack.removeLast() }
+    var navigationRevision by remember { mutableStateOf(0L) }
+    fun navigate(screen: Screen) {
+        navigationRevision++
+        if (screen is Detail && screen.locationId != -1L) {
+            appSettings.setLastLocationId(screen.locationId)
+        }
+        backStack.add(screen)
+    }
+    fun goBack() {
+        navigationRevision++
+        if (backStack.size > 1) backStack.removeLast()
+    }
 
     DisposableEffect(Unit) {
         systemBackHandler = {
             if (backStack.size > 1) {
-                backStack.removeLast()
+                goBack()
                 true
             } else {
                 false
@@ -104,9 +114,28 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         if (startNavigationHandled || onboarding || whatsNew) return@LaunchedEffect
         // Consume an empty start too, so adding the first location cannot trigger navigation.
         startNavigationHandled = true
-        if (backStack.size == 1 && backStack.first() == Main) {
-            val location = loaded.firstOrNull { it.isDefault } ?: loaded.firstOrNull()
-            location?.let { navigate(Detail(locationId = it.id)) }
+        if (backStack.size != 1 || backStack.first() != Main) return@LaunchedEffect
+        val revision = navigationRevision
+        val preference = appSettings.startScreen.value
+        val fallback = savedStartScreen(preference, loaded, appSettings.lastLocationId.value)
+        val target = if (preference == "current") {
+            kotlinx.coroutines.withTimeoutOrNull(10_000L) {
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                    try {
+                        getCurrentCoordinates()?.let { (lat, lon) ->
+                            // Startup must not wait on the blocking legacy geocoder.
+                            Detail(transientName = context.getString(Res.string.current_location), transientLat = lat, transientLon = lon)
+                        }
+                    } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                        throw cancelled
+                    } catch (_: Exception) {
+                        null
+                    }
+                }
+            } ?: fallback
+        } else fallback
+        if (navigationRevision == revision && backStack.size == 1 && backStack.first() == Main) {
+            target?.let { navigate(it) }
         }
     }
     val themeLocation = locations.firstOrNull()
@@ -205,6 +234,19 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         )
           }
     }
+}
+
+internal fun savedStartScreen(
+    preference: String,
+    locations: List<LocationEntity>,
+    lastLocationId: Long
+): Detail? {
+    if (preference == "overview") return null
+    val favorite = locations.firstOrNull { it.isDefault } ?: locations.firstOrNull()
+    val location = if (preference == "last") {
+        locations.firstOrNull { it.id == lastLocationId } ?: favorite
+    } else favorite
+    return location?.let { Detail(locationId = it.id) }
 }
 
 @Composable

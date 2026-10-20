@@ -36,6 +36,32 @@ class AppSettings(private val settings: Settings) {
         const val KEY_REDUCE_TRANSPARENCY = "reduce_transparency"
         const val KEY_HIGH_CONTRAST = "high_contrast"
         const val KEY_TIME_FORMAT = "time_format"
+        const val KEY_START_SCREEN = "start_screen"
+        const val KEY_DETAIL_LEVEL = "detail_level"
+        const val KEY_LAST_LOCATION_ID = "last_location_id"
+    }
+
+    private val _startScreen = MutableStateFlow(settings.getString(KEY_START_SCREEN, "favorite"))
+    val startScreen: StateFlow<String> = _startScreen.asStateFlow()
+    fun setStartScreen(value: String) {
+        require(value in setOf("favorite", "last", "overview", "current"))
+        settings[KEY_START_SCREEN] = value
+        _startScreen.value = value
+    }
+
+    private val _detailLevel = MutableStateFlow(settings.getString(KEY_DETAIL_LEVEL, "compact"))
+    val detailLevel: StateFlow<String> = _detailLevel.asStateFlow()
+    fun setDetailLevel(value: String) {
+        require(value in setOf("compact", "detailed"))
+        settings[KEY_DETAIL_LEVEL] = value
+        _detailLevel.value = value
+    }
+
+    private val _lastLocationId = MutableStateFlow(settings.getLong(KEY_LAST_LOCATION_ID, -1L))
+    val lastLocationId: StateFlow<Long> = _lastLocationId.asStateFlow()
+    fun setLastLocationId(value: Long) {
+        settings[KEY_LAST_LOCATION_ID] = value
+        _lastLocationId.value = value
     }
 
     private val _persistentNotif = MutableStateFlow(settings.getBoolean(KEY_PERSISTENT_NOTIF, false))

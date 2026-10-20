@@ -243,13 +243,19 @@ class WeatherViewModel(
             e.printStackTrace()
             false
         }
-    }    fun refreshLocation(id: Long, onDone: () -> Unit = {}) {        viewModelScope.launch {
+    }
+
+    fun refreshLocation(id: Long, onDone: (Boolean) -> Unit = {}) {
+        viewModelScope.launch {
             try {
-                repository.refreshLocationWeather(id)
+                val started = System.currentTimeMillis()
+                val updated = repository.refreshLocationWeather(id)
+                onDone(updated != null && updated.lastUpdated >= started)
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
             } catch (e: Exception) {
                 e.printStackTrace()
-            } finally {
-                onDone()
+                onDone(false)
             }
         }
     }
@@ -276,6 +282,8 @@ class WeatherViewModel(
                 } else {
                     onDone(null)
                 }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
             } catch (e: Exception) {
                 e.printStackTrace()
                 onDone(null)

@@ -60,6 +60,8 @@ fun MainWeatherScreen(
 ) {
     val locations by viewModel.locations.collectAsState()
     val tempUnit by DependencyManager.getAppSettings().tempUnit.collectAsState()
+    val detailLevel by DependencyManager.getAppSettings().detailLevel.collectAsState()
+    val detailed = detailLevel == "detailed"
     val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
     var locationToDelete by remember { mutableStateOf<LocationEntity?>(null) }
@@ -138,7 +140,7 @@ fun MainWeatherScreen(
         if (locations.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { Column(horizontalAlignment = Alignment.CenterHorizontally) { Text(stringResource(Res.string.app_name), style = MaterialTheme.typography.headlineSmall); Text(stringResource(Res.string.no_locations_msg), textAlign = TextAlign.Center) } }
         } else {
-            if (isLandscape) {
+            if (isLandscape && detailed) {
                 Row(
                     modifier = Modifier.fillMaxSize().padding(padding),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -232,7 +234,7 @@ fun MainWeatherScreen(
                 contentPadding = PaddingValues(top = 8.dp, bottom = 112.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                if (locations.size > 1) {
+                if (detailed && locations.size > 1) {
                     val comparable = orderedLocations.filter { it.currentTemp != null }
                     if (comparable.size >= 2) {
                         val minTemp = comparable.minOf { it.currentTemp!! }

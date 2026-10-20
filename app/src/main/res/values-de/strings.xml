@@ -241,4 +241,82 @@
     <string name="cl_forecast_enhanced">Erweiterte 16-Tage-Vorhersage mit interaktiven Details</string>
     <string name="cl_moon_phase">Unterstützung für Mondphasendaten hinzugefügt</string>
     <string name="cl_v136_degoogled">Abhängigkeit von Google Play Services vollständig entfernt</string>
+
+    <string name="day_planner_title">Tagesplaner</string>
+    <string
+        name="day_planner_stale"
+    >Vorhersage veraltet oder Aktualisierungszeit unbekannt — keine aktuellen Planungsvorschläge.</string>
+    <string
+        name="day_planner_zone"
+    >Standortzeitzone unbekannt — keine Planungsvorschläge.</string>
+    <string name="day_planner_summary">Heute: %1$s; %2$s; %3$s.</string>
+    <string name="day_planner_temperature">%1$s bis %2$s</string>
+    <string
+        name="day_planner_temperature_unknown"
+    >Temperaturspanne unbekannt</string>
+    <string
+        name="day_planner_rain"
+    >erster möglicher Regen in der restlichen heutigen Vorhersage um %1$s (%2$s)</string>
+    <string name="day_planner_probability">%1$d%% Wahrscheinlichkeit</string>
+    <string
+        name="day_planner_probability_unknown"
+    >Wahrscheinlichkeit unbekannt</string>
+    <string
+        name="day_planner_rain_unknown"
+    >Regenzeitpunkt wegen unvollständiger Daten unbekannt</string>
+    <string
+        name="day_planner_no_rain"
+    >kein Regen in den verfügbaren zukünftigen Stunden heute angegeben</string>
+    <string
+        name="day_planner_wind"
+    >Wind in der restlichen Vorhersage bis %1$s</string>
+    <string name="day_planner_wind_unknown">Wind unbekannt</string>
+    <string
+        name="day_planner_incomplete"
+    >Regen- oder Winddaten sind unvollständig; fehlende Werte bedeuten weder Trockenheit noch Windstille.</string>
+    <string name="day_planner_walking">Spazieren</string>
+    <string name="day_planner_running">Laufen</string>
+    <string name="day_planner_cycling">Radfahren</string>
+    <string name="day_planner_gardening">Gartenarbeit</string>
+    <string
+        name="day_planner_window"
+    >Bestes verfügbares 2-Stunden-Fenster der nächsten 24 Stunden: %1$s – %2$s · Wertung %3$d/100</string>
+    <string
+        name="day_planner_no_window"
+    >Kein zusammenhängendes 2-Stunden-Fenster mit ausreichenden Daten und ohne ausgeschlossene Bedingungen in den nächsten 24 Stunden.</string>
+    <string
+        name="day_planner_disclaimer"
+    >Einfache Komfortheuristik aus Temperatur, Regen und Wind, keine Sicherheitsempfehlung. Gewitter, Schnee, gefrierender Niederschlag und starker Wind sind ausgeschlossen; örtliche Warnungen beachten.</string>
+
+    <string name="rain_hourly_alert_title">Regen möglich</string>
+    <string name="rain_hourly_alert_message">%1$s: Die stündliche Prognose deutet auf möglichen Regen im Zeitraum %2$s–%3$s (Ortszeit) hin, bei %4$d%% Niederschlagswahrscheinlichkeit. Der genaue Beginn ist unsicher.</string>
+
+    <string name="start_preferences_title">Start und Darstellung</string>
+    <string name="start_screen_title">Startbildschirm</string>
+    <string name="start_screen_favorite">Favorisierter Ort</string>
+    <string name="start_screen_last">Zuletzt angesehener Ort</string>
+    <string name="start_screen_overview">Übersicht</string>
+    <string name="start_screen_current">Aktueller Standort</string>
+    <string name="start_detail_level_title">Detailgrad</string>
+    <string name="start_detail_compact">Kompakt</string>
+    <string name="start_detail_detailed">Ausführlich</string>
+
+    <string name="data_status_updated">Wetterdaten aktualisiert: %1$s (Gerätezeit)</string>
+    <string name="data_status_unknown">Unbekannt</string>
+    <string name="data_status_offline">Keine Verbindung · Gespeichertes Wetter, keine Live-Beobachtungen.</string>
+    <string name="data_status_stale">Die Wetterdaten sind veraltet oder ihr Alter ist unbekannt. Bitte vor der Verwendung aktualisieren; aktuelle Empfehlungen sind nicht verfügbar.</string>
+    <string name="data_status_refresh_failed">Wetter konnte nicht aktualisiert werden. Gespeicherte Daten bleiben erhalten.</string>
+
+    <string name="weather_share_dialog_title">Wetterkarte teilen</string>
+    <string name="weather_share_custom_title">Eigener Titel (optional)</string>
+    <string name="weather_share_title_example">Wochenendtrip</string>
+    <string name="weather_share_hide_location">Standort verbergen</string>
+    <string name="weather_share_privacy_hint">Der Standortname wird aus Bild und Begleittext entfernt. Prüfe deinen Titel und die Details auf weitere identifizierende Angaben.</string>
+    <string name="weather_share_default_title">Wetter</string>
+    <string name="weather_share_updated_at">Datenstand: %1$s · %2$s</string>
+    <string name="weather_share_updated_unknown">Datenstand unbekannt</string>
+    <string name="weather_share_source">Quelle: Open-Meteo · GeoWeather</string>
+    <string name="weather_share_error">Die Wetterkarte konnte nicht geteilt werden. Bitte versuche es erneut.</string>
+    <string name="weather_share_send">Teilen</string>
+    <string name="weather_share_cancel">Abbrechen</string>
 </resources>

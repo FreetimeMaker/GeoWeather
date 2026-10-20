@@ -5,6 +5,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.R as SharedRes
 
@@ -34,7 +37,16 @@ class WeatherChangeWorker(
             try {
                 val oldTemp = location.currentTemp
                 val oldWind = location.currentWindSpeed
-                val updated = repository.refreshLocationWeather(location.id) ?: location
+                val refreshStarted = System.currentTimeMillis()
+                val updated = repository.refreshLocationWeather(location.id)
+                currentCoroutineContext().ensureActive()
+                val now = System.currentTimeMillis()
+                if (updated == null || !RainAlertPolicy.isFreshRefresh(
+                        location.lastUpdated, refreshStarted, updated.lastUpdated, now
+                    )) {
+                    retry = true
+                    return@forEach
+                }
                 val newTemp = updated.currentTemp
                 val newWind = updated.currentWindSpeed
                 val tempThreshold = LocationAlertPreferences.tempThreshold(applicationContext, location.id, appSettings.tempThreshold.value)
@@ -68,7 +80,7 @@ class WeatherChangeWorker(
                 if (location.notificationsEnabled) {
                     val hourly = repository.getHourlyForecasts(updated)
                     val severe = hourly.take(6).firstOrNull {
-                        it.code in 95..99 || it.code in 71..86 ||
+                        it.code in 95..99 || it.code in setOf(71, 73, 75, 77, 85, 86) ||
                             (appSettings.smartWindAlert.value && (it.windGusts ?: 0.0) >= windGustThreshold) ||
                             (appSettings.smartRainAlert.value && (it.precipitation ?: 0.0) >= 10.0)
                     }
@@ -79,7 +91,7 @@ class WeatherChangeWorker(
                         if (prefs.getString(alertKey, null) != signature) {
                             val reason = when {
                                 severe.code in 95..99 -> WeatherCodes.getDescription(severe.code)
-                                severe.code in 71..86 -> WeatherCodes.getDescription(severe.code)
+                                severe.code in setOf(71, 73, 75, 77, 85, 86) -> WeatherCodes.getDescription(severe.code)
                                 appSettings.smartWindAlert.value && (severe.windGusts ?: 0.0) >= windGustThreshold -> applicationContext.getString(SharedRes.string.strong_wind_gusts)
                                 else -> applicationContext.getString(SharedRes.string.heavy_precipitation)
                             }
@@ -99,28 +111,41 @@ class WeatherChangeWorker(
                         }
                     }
 
-                    val rain = if (appSettings.smartRainAlert.value) hourly.drop(1).take(3).firstOrNull {
-                        it.precipProbability >= rainProbabilityThreshold && (it.rain ?: it.precipitation ?: 0.0) > 0.0
-                    } else null
+                    val rainPrefs = applicationContext.getSharedPreferences("weather_alert_dedupe", Context.MODE_PRIVATE)
+                    val sentKey = "rain_sent_${location.id}"
+                    val slotKey = "rain_slot_${location.id}"
+                    val rainNow = System.currentTimeMillis()
+                    val rain = if (appSettings.smartRainAlert.value) RainAlertPolicy.select(
+                        slots = hourly.map { RainAlertPolicy.Slot(it.time, it.precipProbability, it.rain ?: it.precipitation ?: 0.0) },
+                        timezone = repository.getWeatherTimeZoneId(updated),
+                        now = rainNow,
+                        fresh = RainAlertPolicy.isFreshRefresh(location.lastUpdated, refreshStarted, updated.lastUpdated, rainNow),
+                        quietHours = appSettings.quietHours.value,
+                        deviceHour = java.time.LocalTime.now().hour,
+                        threshold = rainProbabilityThreshold,
+                        lastSent = if (rainPrefs.contains(sentKey)) rainPrefs.getLong(sentKey, 0) else null,
+                        lastSlot = if (rainPrefs.contains(slotKey)) rainPrefs.getLong(slotKey, 0) else null
+                    ) else null
                     if (rain != null) {
-                        val prefs = applicationContext.getSharedPreferences("weather_alert_dedupe", Context.MODE_PRIVATE)
-                        val alertKey = "rain_${location.id}"
-                        val signature = "${rain.time}:${rain.precipProbability}"
-                        if (prefs.getString(alertKey, null) != signature) {
-                            val message = applicationContext.getString(
-                                SharedRes.string.rain_alert_notification,
-                                rain.time,
-                                updated.name,
-                                rain.precipProbability
-                            )
-                            WeatherNotifications.show(
+                        val localStart = java.time.LocalDateTime.parse(rain.slot.time)
+                        val hourFormat = java.time.format.DateTimeFormatter.ofPattern("HH:mm")
+                        val message = applicationContext.getString(
+                            SharedRes.string.rain_hourly_alert_message,
+                            updated.name,
+                            localStart.format(hourFormat),
+                            localStart.plusHours(1).format(hourFormat),
+                            rain.slot.probability
+                        )
+                        currentCoroutineContext().ensureActive()
+                        if (WeatherNotifications.show(
                                 applicationContext,
                                 400000 + (location.id % 100000).toInt(),
-                                applicationContext.getString(SharedRes.string.next_rain_title),
+                                applicationContext.getString(SharedRes.string.rain_hourly_alert_title),
                                 message,
                                 alert = true
-                            )
-                            prefs.edit().putString(alertKey, signature).apply()
+                            )) {
+                            rainPrefs.edit().putLong(sentKey, System.currentTimeMillis())
+                                .putLong(slotKey, rain.startMillis).apply()
                         }
                     }
 
@@ -165,6 +190,8 @@ class WeatherChangeWorker(
                             smartPrefs.edit().putString(key, signature).apply()
                         }
                     }                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (_: Exception) {
                 retry = true
             }

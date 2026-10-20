@@ -41,6 +41,8 @@ fun SettingsScreen(
     onDiagnosticsClick: () -> Unit,
     onShowDistributionNotice: () -> Unit
 ) {
+    val startScreen by appSettings.startScreen.collectAsState()
+    val detailLevel by appSettings.detailLevel.collectAsState()
     val tempUnit by appSettings.tempUnit.collectAsState()
     val windUnit by appSettings.windUnit.collectAsState()
     val pressureUnit by appSettings.pressureUnit.collectAsState()
@@ -93,6 +95,30 @@ fun SettingsScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
+            item(key = "start_preferences") {
+                SettingsGroup(stringResource(Res.string.start_preferences_title)) {
+                    Text(stringResource(Res.string.start_screen_title), style = MaterialTheme.typography.bodyLarge)
+                    UnitRadioRow(
+                        options = listOf(
+                            "favorite" to stringResource(Res.string.start_screen_favorite),
+                            "last" to stringResource(Res.string.start_screen_last),
+                            "overview" to stringResource(Res.string.start_screen_overview),
+                            "current" to stringResource(Res.string.start_screen_current)
+                        ),
+                        selected = startScreen,
+                        onSelect = appSettings::setStartScreen
+                    )
+                    Text(stringResource(Res.string.start_detail_level_title), style = MaterialTheme.typography.bodyLarge)
+                    UnitRadioRow(
+                        options = listOf(
+                            "compact" to stringResource(Res.string.start_detail_compact),
+                            "detailed" to stringResource(Res.string.start_detail_detailed)
+                        ),
+                        selected = detailLevel,
+                        onSelect = appSettings::setDetailLevel
+                    )
+                }
+            }
             item(key = "units") { SettingsGroup(stringResource(Res.string.unit_settings_title)) {
             Text(stringResource(Res.string.temperature_unit), style = MaterialTheme.typography.bodyLarge)
             UnitRadioRow(
