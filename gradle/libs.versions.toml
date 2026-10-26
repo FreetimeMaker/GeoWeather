@@ -16,7 +16,7 @@ androidx-activity = "1.13.0"
 androidx-work = "2.12.0"
 androidx-core-ktx = "1.19.1"
 material3 = "1.5.0-beta02"
-freetime = "2.0.0"
+freetime = "3.0.0"
 osmdroid = "6.1.20"
 
 [libraries]

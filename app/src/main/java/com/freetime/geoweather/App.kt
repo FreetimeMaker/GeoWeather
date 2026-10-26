@@ -15,7 +15,7 @@ import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
 import com.freetime.design.AppTheme
-import com.freetime.design.LiquidGlassRoot
+import com.freetime.design.FloatingBottomNavigationGlassRoot
 import com.freetime.design.ThemeMode
 import com.freetime.warn.FreetimeWarn
 import com.freetime.warn.FreetimeWarnContent
@@ -165,6 +165,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         systemDarkTheme
     }
 
+    val navigationGlassEnabled by appSettings.liquidGlassEnabled.collectAsState()
     val glassBackdropColors = remember(darkTheme) {
         if (darkTheme) {
             listOf(Color(0xFF090909), Color(0xFF101010), Color(0xFF080808))
@@ -176,16 +177,16 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
     AppTheme(
         themeMode = if (darkTheme) ThemeMode.DARK else ThemeMode.LIGHT,
         dynamicColor = true,
-        liquidGlassEnabled = true
+        floatingBottomNavigationGlassEnabled = navigationGlassEnabled
     ) {
-        LiquidGlassRoot(backgroundColor = glassBackdropColors.first()) {
+        FloatingBottomNavigationGlassRoot(backgroundColor = glassBackdropColors.first()) {
         if (onboarding) {
             OnboardingScreen(onDone = {
                 launchPrefs.edit().putBoolean("onboarding_done", true).apply()
                 onboarding = false
                 whatsNew = true
             })
-            return@LiquidGlassRoot
+            return@FloatingBottomNavigationGlassRoot
         }
         if (whatsNew) {
             ChangeLogScreen(onBack = {
@@ -194,7 +195,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 backStack.add(Main)
                 whatsNew = false
             })
-            return@LiquidGlassRoot
+            return@FloatingBottomNavigationGlassRoot
         }
         Box(Modifier.fillMaxSize()) {
                 backStack.forEachIndexed { index, screen ->

@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
-import com.freetime.design.liquidGlass
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +54,7 @@ fun SearchScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
-                modifier = Modifier.liquidGlass(interactive = false)
+                modifier = Modifier
             )
         }
     ) { padding ->
@@ -66,7 +65,7 @@ fun SearchScreen(
                     query = it
                     viewModel.searchCity(it)
                 },
-                modifier = Modifier.fillMaxWidth().liquidGlass(),
+                modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(stringResource(Res.string.search_placeholder)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true

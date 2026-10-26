@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
-import com.freetime.design.liquidGlass
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -469,7 +468,7 @@ fun ChangeLogScreen(onBack: () -> Unit) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
-                modifier = Modifier.liquidGlass(interactive = false)
+                modifier = Modifier
             )
         }
     ) { scaffoldPadding ->
@@ -494,7 +493,7 @@ fun ReleaseCard(
     details: List<String>,
     modifier: Modifier = Modifier
 ) {
-    Card(modifier = modifier.fillMaxWidth().liquidGlass(interactive = false)) {
+    Card(modifier = modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalAlignment = Alignment.Start

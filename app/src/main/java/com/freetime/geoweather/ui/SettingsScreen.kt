@@ -26,8 +26,6 @@ import com.freetime.geoweather.data.loadTextFile
 import com.freetime.geoweather.data.saveTextFile
 import com.freetime.geoweather.openUrl
 import com.freetime.geoweather.R as Res
-import com.freetime.design.liquidGlass
-import com.freetime.design.liquidGlassCapsule
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,7 +83,7 @@ fun SettingsScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
-                modifier = Modifier.liquidGlass(interactive = false)
+                modifier = Modifier
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -283,7 +281,7 @@ fun SettingsScreen(
                                         onCheckedChange = { enabled -> viewModel.setOfflinePackEnabled(location, enabled) }
                                     )
                                 },
-                                modifier = Modifier.liquidGlass(interactive = false)
+                                modifier = Modifier
                             )
                             val ageMs = (System.currentTimeMillis() - location.lastUpdated).coerceAtLeast(0L)
                             val ageText = when {
@@ -330,7 +328,7 @@ fun SettingsScreen(
                                 }
                             }
                         },
-                        modifier = Modifier.fillMaxWidth().liquidGlassCapsule()
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
                             stringResource(
@@ -374,7 +372,7 @@ fun SettingsScreen(
                             snackbarHostState.showSnackbar(if (ok) exportSuccess else exportFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f).liquidGlassCapsule()
+                    modifier = Modifier.weight(1f)
                 ) {
                     Text(stringResource(Res.string.export_locations))
                 }
@@ -387,7 +385,7 @@ fun SettingsScreen(
                             snackbarHostState.showSnackbar(if (ok) importSuccess else importFailed)
                         }
                     },
-                    modifier = Modifier.weight(1f).liquidGlassCapsule()
+                    modifier = Modifier.weight(1f)
                 ) {
                     Text(stringResource(Res.string.import_locations))
                 }
@@ -403,16 +401,16 @@ fun SettingsScreen(
                 )
                 Button(
                     onClick = onShowDistributionNotice,
-                    modifier = Modifier.fillMaxWidth().liquidGlassCapsule()
+                    modifier = Modifier.fillMaxWidth()
                 ) { Text(stringResource(Res.string.distribution_notice_show)) }
                 Button(
                     onClick = { onWebViewClick("https://keepandroidopen.org", "Keep Android Open") },
-                    modifier = Modifier.fillMaxWidth().liquidGlassCapsule()
+                    modifier = Modifier.fillMaxWidth()
                 ) { Text("Keep Android Open") }
             } }
             item(key = "actions") { Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Spacer(Modifier.height(24.dp))
-            Button(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth().liquidGlassCapsule()) { Text(stringResource(Res.string.diagnostics_title)) }
+            Button(onClick = onDiagnosticsClick, modifier = Modifier.fillMaxWidth()) { Text(stringResource(Res.string.diagnostics_title)) }
             Spacer(Modifier.height(8.dp))
             Button(onClick = onChangeLogClick, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(Res.string.open_change_log))
@@ -427,14 +425,14 @@ fun SettingsScreen(
             )
             Button(
                 onClick = { openUrl("mailto:FreetimeMaker@proton.me?subject=GeoWeather Feedback") },
-                modifier = Modifier.fillMaxWidth().liquidGlassCapsule()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(Res.string.feedback_btn))
             }
             Spacer(Modifier.height(8.dp))
             Button(
                 onClick = { onWebViewClick("https://github.com/FreetimeMaker/GeoWeather/issues", "GitHub Issues") },
-                modifier = Modifier.fillMaxWidth().liquidGlassCapsule()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(Res.string.feedback_github_btn))
             }
@@ -446,7 +444,7 @@ fun SettingsScreen(
 @Composable
 private fun SettingsGroup(title: String, content: @Composable ColumnScope.() -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).liquidGlass(interactive = false)
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),

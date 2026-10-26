@@ -23,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.copyToClipboard
-import com.freetime.design.liquidGlass
 import com.freetime.donations.DonationTarget
 import com.freetime.donations.FreetimeDonationScreen
 
@@ -132,7 +131,7 @@ fun DonateScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
-                modifier = Modifier.liquidGlass(interactive = false)
+                modifier = Modifier
             )
         }
     ) { padding ->

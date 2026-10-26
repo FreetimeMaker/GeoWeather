@@ -1,10 +1,8 @@
 package com.freetime.geoweather.ui
-import com.freetime.design.liquidGlass
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -32,7 +30,7 @@ fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier, windSpeed: Do
         0f at 0; 0f at 3100; 1f at 3150; .08f at 3230; .85f at 3310; 0f at 3420
     }), label = "flash")
 
-    Box(modifier.height(170.dp).liquidGlass(CircleShape, interactive = false)) {
+    Box(modifier.height(170.dp)) {
         Canvas(Modifier.fillMaxSize()) {
             if (night) {
                 drawRect(Color(0xFF07162E).copy(alpha = .30f))
@@ -74,7 +72,7 @@ fun AnimatedWeatherGlass(code: Int, modifier: Modifier = Modifier, windSpeed: Do
                         drawCircle(Color.White.copy(alpha = .16f), r * 1.7f * pulse, center)
                     }
                 }
-                2, 3 -> { // clouds physically drift over the glass
+                2, 3 -> { // clouds drift across the weather scene
                     repeat(5) { i ->
                         val baseX = size.width * (.12f + i * .2f) + drift * if (i % 2 == 0) 1f else -0.7f
                         val baseY = size.height * (.42f + (i % 2) * .15f)

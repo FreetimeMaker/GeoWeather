@@ -12,7 +12,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.freetime.core.FreetimeCore
-import com.freetime.design.liquidGlass
 import com.freetime.geoweather.*
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.data.DependencyManager
@@ -54,7 +53,7 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
-                modifier = Modifier.liquidGlass(interactive = false)
+                modifier = Modifier
             )
         }
     ) { padding ->
@@ -63,7 +62,7 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Card(
-                modifier = Modifier.fillMaxWidth().liquidGlass(interactive = false)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(stringResource(Res.string.diagnostics_title), style = MaterialTheme.typography.titleMedium)
@@ -79,7 +78,7 @@ fun DiagnosticsScreen(onBack: () -> Unit) {
                     }
                     context.startActivity(Intent.createChooser(intent, context.getString(Res.string.export_diagnostics)))
                 },
-                modifier = Modifier.fillMaxWidth().liquidGlass()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(Res.string.export_diagnostics))
             }

@@ -43,7 +43,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.freetime.geoweather.data.AppSettings
-import com.freetime.design.liquidGlass
 import com.freetime.geoweather.data.LocationEntity
 import com.freetime.geoweather.data.HourlyForecast
 import com.freetime.geoweather.data.DailyForecast
@@ -177,7 +176,7 @@ fun WeatherDetailScreen(
                         }) { Icon(Icons.Default.Share, contentDescription = stringResource(Res.string.share_weather)) }
                     }
                 },
-                modifier = Modifier.liquidGlass(interactive = false)
+                modifier = Modifier
             )
         }
     ) { scaffoldPadding ->
@@ -240,7 +239,6 @@ fun WeatherDetailScreen(
                 val code = loc.currentWeatherCode
                 val rawTemp = loc.currentTemp
                 // Temporarily disable weather scene animations for GPU crash isolation.
-                // Liquid Glass/Backdrop remains enabled.
                 val animationsEnabled = animationMode != "off"
                 val systemReducedMotion = false
                 val reducedMotion = animationMode == "reduced" || systemReducedMotion
@@ -439,7 +437,7 @@ fun WeatherDetailScreen(
                                                 Modifier
                                                     .weight(1f)
                                                     .height((12 + 56 * fraction).dp)
-                                                    .liquidGlass(RoundedCornerShape(20.dp), interactive = false)
+                                                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(20.dp))
                                             )
                                         }
                                     }
@@ -1460,7 +1458,7 @@ fun ForecastDetailScreen(
         else "$locationName · ${daily?.date ?: ""}"
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text(title) }, navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null) } }, modifier = Modifier.liquidGlass(interactive = false)) }
+        topBar = { TopAppBar(title = { Text(title) }, navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null) } }, modifier = Modifier) }
     ) { scaffoldPadding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(scaffoldPadding).padding(16.dp),

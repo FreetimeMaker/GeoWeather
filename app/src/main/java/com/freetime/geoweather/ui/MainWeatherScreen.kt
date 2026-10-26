@@ -1,5 +1,7 @@
 package com.freetime.geoweather.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -22,6 +24,9 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Search
+import com.freetime.design.FloatingBottomNavigationBar
+import com.freetime.design.FloatingBottomNavigationItem
 import androidx.compose.material3.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.runtime.*
@@ -37,7 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.freetime.geoweather.data.LocationEntity
-import com.freetime.design.liquidGlass
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.getCurrentCoordinates
 import com.freetime.geoweather.getDetectedLocationName
@@ -129,7 +133,7 @@ fun MainWeatherScreen(
                         if (navigationCompact) locations.firstOrNull()?.currentTemp?.let { Text(formatTemp(it, tempUnit), style = MaterialTheme.typography.labelMedium) }
                     }
                 },
-                modifier = Modifier.liquidGlass(interactive = false)
+                modifier = Modifier
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -159,7 +163,8 @@ fun MainWeatherScreen(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .liquidGlass(RoundedCornerShape(24.dp), interactive = true)
+                                        .clip(RoundedCornerShape(24.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceContainer)
                                         .clickable {
                                             viewModel.selectLocation(loc)
                                             onLocationClick(loc)
@@ -195,7 +200,8 @@ fun MainWeatherScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .liquidGlass(RoundedCornerShape(30.dp), interactive = true)
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceContainer)
                                     .clickable {
                                         viewModel.selectLocation(loc)
                                         onLocationClick(loc)
@@ -221,7 +227,7 @@ fun MainWeatherScreen(
                         }
                         Button(
                             onClick = onDonateClick,
-                            modifier = Modifier.fillMaxWidth().liquidGlass(RoundedCornerShape(24.dp))
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(stringResource(Res.string.main_donation_hint))
                         }
@@ -249,7 +255,8 @@ fun MainWeatherScreen(
                                 modifier = Modifier
                                     .padding(horizontal = 12.dp)
                                     .fillMaxWidth()
-                                    .liquidGlass(RoundedCornerShape(28.dp), interactive = false)
+                                    .clip(RoundedCornerShape(28.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceContainer)
                             ) {
                                 Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                     Text(stringResource(Res.string.compare_summary_title), style = MaterialTheme.typography.titleMedium)
@@ -531,8 +538,12 @@ fun MainWeatherScreen(
                     2 -> onSettingsClick()
                 }
             }
+            val addLocationAction = {
+                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                showAddLocationDialog = true
+            }
             if (configuration.screenWidthDp >= 720) {
-                NavigationRail(modifier = Modifier.align(Alignment.CenterStart).liquidGlass(interactive = false)) {
+                NavigationRail(modifier = Modifier.align(Alignment.CenterStart)) {
                     adaptiveDestinations.forEachIndexed { index, destination ->
                         NavigationRailItem(
                             selected = index == 0,
@@ -547,25 +558,23 @@ fun MainWeatherScreen(
                     destinations = adaptiveDestinations,
                     selectedIndex = 0,
                     onDestinationSelected = onNavigationSelected,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .navigationBarsPadding()
+                    onSearchSelected = addLocationAction,
+                    searchSelected = showAddLocationDialog,
+                    modifier = Modifier.align(Alignment.BottomCenter)
                 )
             }
 
-            val addLocationAction = {
-                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                showAddLocationDialog = true
-            }
             val addLocationFabModifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()
                 .padding(end = 20.dp, bottom = 92.dp)
 
-            if (isLandscape) {
-                ExtendedFloatingActionButton(text = { Text(stringResource(Res.string.SearchBTNTXT)) }, icon = { Icon(Icons.Default.Add, contentDescription = null) }, onClick = addLocationAction, modifier = addLocationFabModifier)
-            } else {
-                FloatingActionButton(onClick = addLocationAction, modifier = addLocationFabModifier) { Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT)) }
+            if (configuration.screenWidthDp >= 720) {
+                if (isLandscape) {
+                    ExtendedFloatingActionButton(text = { Text(stringResource(Res.string.SearchBTNTXT)) }, icon = { Icon(Icons.Default.Add, contentDescription = null) }, onClick = addLocationAction, modifier = addLocationFabModifier)
+                } else {
+                    FloatingActionButton(onClick = addLocationAction, modifier = addLocationFabModifier) { Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT)) }
+                }
             }
         }
     }
@@ -589,7 +598,8 @@ fun MainWeatherScreen(
                         LazyColumn(modifier = Modifier.heightIn(max = 320.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             items(searchResults, key = { "add-${it.latitude},${it.longitude}" }) { city ->
                                 Column(
-                                    modifier = Modifier.fillMaxWidth().liquidGlass(RoundedCornerShape(22.dp), interactive = true)
+                                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceContainer)
                                         .clickable { viewModel.addLocation(city); showAddLocationDialog = false; addLocationQuery = ""; viewModel.clearSearch() }
                                         .padding(horizontal = 16.dp, vertical = 12.dp)
                                 ) {
@@ -711,40 +721,26 @@ private fun GeoWeatherBottomNavigation(
     destinations: List<WeatherNavigationDestination>,
     selectedIndex: Int,
     onDestinationSelected: (Int) -> Unit,
+    onSearchSelected: () -> Unit,
+    searchSelected: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .liquidGlass(RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp))
-            .padding(horizontal = 8.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        destinations.forEachIndexed { index, destination ->
-            val selected = index == selectedIndex
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onDestinationSelected(index) }
-                    .padding(vertical = 7.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(3.dp)
-            ) {
-                Image(
-                    imageVector = destination.icon,
-                    contentDescription = destination.label,
-                    modifier = Modifier.size(24.dp),
-                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
-                        if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                )
-                Text(
-                    text = destination.label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-    }
+    val searchLabel = stringResource(Res.string.SearchBTNTXT)
+    FloatingBottomNavigationBar(
+        items = destinations.map { destination ->
+            FloatingBottomNavigationItem(
+                label = destination.label,
+                icon = { Icon(destination.icon, contentDescription = destination.label) }
+            )
+        },
+        selectedItemIndex = selectedIndex,
+        onItemSelected = onDestinationSelected,
+        searchItem = FloatingBottomNavigationItem(
+            label = searchLabel,
+            icon = { Icon(Icons.Default.Search, contentDescription = searchLabel) }
+        ),
+        onSearchSelected = onSearchSelected,
+        modifier = modifier.fillMaxWidth(),
+        searchSelected = searchSelected
+    )
 }

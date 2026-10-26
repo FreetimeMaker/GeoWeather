@@ -23,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import com.freetime.design.liquidGlass
 import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -78,7 +77,7 @@ fun RadarScreen(lat: Double, lon: Double, onBack: () -> Unit, dataSaver: Boolean
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
-                modifier = Modifier.liquidGlass(interactive = false)
+                modifier = Modifier
             )
         }
     ) { contentPadding ->

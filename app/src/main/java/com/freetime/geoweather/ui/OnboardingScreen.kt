@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.freetime.design.liquidGlass
 import com.freetime.geoweather.R as Res
 
 @Composable
@@ -24,7 +23,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .liquidGlass(interactive = false)
+                
         ) {
             Column(
                 Modifier.fillMaxWidth().padding(20.dp),
