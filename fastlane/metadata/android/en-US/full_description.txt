@@ -41,3 +41,5 @@ Experience an intuitive weather application inspired by the Swiss MeteoSwiss app
 - Local JSON Backup & Restore for your cities
 
 Perfect for daily weather checks, travel planning, or simply staying informed without being tracked. Download GeoWeather now!
+
+P.S.: To get Updates faster use Luma Store (avaible to Download via my own F-Droid Repo or GitHub Releases) or my own F-Droid Repo.

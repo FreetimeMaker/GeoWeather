@@ -1,5 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <resources>
+    <!-- Changelog v4.7.3 -->
+    <string
+        name="cl_473_freetime"
+    >Alle Freetime-Bibliotheken auf Version 3.0.0 aktualisiert und auf die neuen Design-APIs umgestellt.</string>
+    <string
+        name="cl_473_navigation"
+    >Schwebende untere Navigation mit separater Stadtsuche hinzugefügt; auf größeren Bildschirmen bleibt die seitliche Navigation erhalten.</string>
+    <string
+        name="cl_473_material"
+    >Karten, Schaltflächen, Dialoge und obere App-Leisten auf reguläres Material-3-Design umgestellt; Liquid Glass ist jetzt auf die untere Navigation beschränkt.</string>
+    <string
+        name="cl_473_glass"
+    >Die gespeicherte Liquid-Glass-Einstellung steuert jetzt den neuen Navigationseffekt; bei deaktiviertem Effekt wird eine Material-Oberfläche angezeigt.</string>
     <string name="app_name">GeoWeather</string>
     <string name="DonViaOxaPay">Spende über OxaPay</string>
     <string name="DonViaBTC">Spende über Bitcoin</string>
@@ -27,7 +40,9 @@
     <string name="open_change_log">Änderungsprotokoll öffnen</string>
     <string name="WeatherNotificationTXT">Wetter in %1$s: %2$s°C, %3$s</string>
     <string name="whats_new_title">Was ist neu?</string>
-    <string name="changelog_remove_coin">• Coinbase-Spendenoption aufgrund der Entfernung von Coinbase Commerce entfernt</string>
+    <string
+        name="changelog_remove_coin"
+    >• Coinbase-Spendenoption aufgrund der Entfernung von Coinbase Commerce entfernt</string>
     <string name="dir_n">N</string>
     <string name="dir_ne">NO</string>
     <string name="dir_e">O</string>
@@ -42,10 +57,18 @@
     <string name="DonViaBNB">Spende über BNB</string>
     <string name="DonViaPEPE">Spende über PEPE</string>
     <string name="DonViaSOL">Spende über SOL</string>
-    <string name="feedback_btn">Feedback und Vorschläge per E-Mail senden</string>
-    <string name="feedback_github_btn">Fehler melden oder Feature auf GitHub vorschlagen</string>
-    <string name="feedback_alternative_hint">Du kannst uns auch direkt auf unserem GitHub-Repository Feedback geben.</string>
-    <string name="backup_restore_title">Sicherung &amp; Wiederherstellung</string>
+    <string
+        name="feedback_btn"
+    >Feedback und Vorschläge per E-Mail senden</string>
+    <string
+        name="feedback_github_btn"
+    >Fehler melden oder Feature auf GitHub vorschlagen</string>
+    <string
+        name="feedback_alternative_hint"
+    >Du kannst uns auch direkt auf unserem GitHub-Repository Feedback geben.</string>
+    <string
+        name="backup_restore_title"
+    >Sicherung &amp; Wiederherstellung</string>
     <string name="export_locations">Standorte exportieren</string>
     <string name="import_locations">Standorte importieren</string>
     <string name="export_success">Standorte erfolgreich exportiert</string>
@@ -61,7 +84,9 @@
     <string name="alert_thunderstorm">Gewitterwarnung</string>
     <string name="open_weather_radar">Wetter-Radar öffnen</string>
     <string name="oled_black_title">OLED-Schwarz Modus</string>
-    <string name="oled_black_subtitle">Tiefschwarzer Hintergrund für AMOLED-Displays</string>
+    <string
+        name="oled_black_subtitle"
+    >Tiefschwarzer Hintergrund für AMOLED-Displays</string>
     <string name="visibility_label">Sichtweite</string>
     <string name="cloud_base_label">Wolkenuntergrenze</string>
     <string name="pressure_trend_label">Luftdruck-Trend</string>
@@ -70,110 +95,268 @@
     <string name="pressure_falling">Fallend</string>
     <string name="altitude_label">Höhe</string>
     <string name="timezone_label">Zeitzone</string>
-    <string name="donation_mission_title">Warum GeoWeather unterstützen?</string>
-    <string name="donation_mission_text">GeoWeather ist 100 % kostenlos, quelloffen und enthält keine Werbung oder Tracker. Deine Spenden helfen dabei, die API-Kosten zu decken und die kontinuierliche Entwicklung dieser und anderer datenschutzorientierter Apps zu unterstützen. Jeder Beitrag, egal wie klein, hält dieses Projekt am Leben. Vielen Dank! ❤️</string>
-    <string name="main_donation_hint">Gefällt dir GeoWeather? Unterstütze die Entwicklung</string>
+    <string
+        name="donation_mission_title"
+    >Warum GeoWeather unterstützen?</string>
+    <string
+        name="donation_mission_text"
+    >GeoWeather ist 100 % kostenlos, quelloffen und enthält keine Werbung oder Tracker. Deine Spenden helfen dabei, die API-Kosten zu decken und die kontinuierliche Entwicklung dieser und anderer datenschutzorientierter Apps zu unterstützen. Jeder Beitrag, egal wie klein, hält dieses Projekt am Leben. Vielen Dank! ❤️</string>
+    <string
+        name="main_donation_hint"
+    >Gefällt dir GeoWeather? Unterstütze die Entwicklung</string>
     <string name="about_developer_title">Über den Entwickler</string>
-    <string name="about_developer_text">Hallo! Ich bin Freetime Maker, der Schöpfer von GeoWeather. Ich habe dieses Projekt gestartet, weil ich eine Wetter-App wollte, die schlank und schnell ist und die Privatsphäre der Nutzer über alles andere stellt. Diese App wird in meiner Freizeit mit Leidenschaft für Open-Source-Software entwickelt. Deine Unterstützung ermöglicht es mir, sie weiter zu verbessern und neue Funktionen für die Community zu erforschen!</string>
+    <string
+        name="about_developer_text"
+    >Hallo! Ich bin Freetime Maker, der Schöpfer von GeoWeather. Ich habe dieses Projekt gestartet, weil ich eine Wetter-App wollte, die schlank und schnell ist und die Privatsphäre der Nutzer über alles andere stellt. Diese App wird in meiner Freizeit mit Leidenschaft für Open-Source-Software entwickelt. Deine Unterstützung ermöglicht es mir, sie weiter zu verbessern und neue Funktionen für die Community zu erforschen!</string>
     <string name="don_nowpayments_via">Spenden über NOWPayments</string>
     <!-- Changelog v2.1.2 -->
-    <string name="cl_212_russian">Vollständige russische Sprachunterstützung hinzugefügt.</string>
-    <string name="cl_212_lang_select">Manuelle Sprachauswahl in den Einstellungen hinzugefügt.</string>
-    <string name="cl_212_persistent">Dauerhafte Statusleisten-Benachrichtigung für aktuelles Wetter hinzugefügt.</string>
+    <string
+        name="cl_212_russian"
+    >Vollständige russische Sprachunterstützung hinzugefügt.</string>
+    <string
+        name="cl_212_lang_select"
+    >Manuelle Sprachauswahl in den Einstellungen hinzugefügt.</string>
+    <string
+        name="cl_212_persistent"
+    >Dauerhafte Statusleisten-Benachrichtigung für aktuelles Wetter hinzugefügt.</string>
     <!-- Changelog v2.1.1 -->
-    <string name="cl_211_localization">Vollständige Lokalisierungs-Bereinigung: Alle hartkodierten Texte externalisiert.</string>
-    <string name="cl_211_stability">Code-Stabilität verbessert und kleinere Fehler behoben.</string>
+    <string
+        name="cl_211_localization"
+    >Vollständige Lokalisierungs-Bereinigung: Alle hartkodierten Texte externalisiert.</string>
+    <string
+        name="cl_211_stability"
+    >Code-Stabilität verbessert und kleinere Fehler behoben.</string>
     <!-- Changelog v2.1.0 -->
-    <string name="cl_210_forecast">Vorhersage für Open-Meteo auf 16 Tage erweitert.</string>
-    <string name="cl_210_charts">24h-Trend-Diagramme für Temperatur und Niederschlag hinzugefügt.</string>
-    <string name="cl_210_wind">Windkompass und Böen-Informationen hinzugefügt.</string>
+    <string
+        name="cl_210_forecast"
+    >Vorhersage für Open-Meteo auf 16 Tage erweitert.</string>
+    <string
+        name="cl_210_charts"
+    >24h-Trend-Diagramme für Temperatur und Niederschlag hinzugefügt.</string>
+    <string
+        name="cl_210_wind"
+    >Windkompass und Böen-Informationen hinzugefügt.</string>
     <string name="cl_210_radar">Wetterradar über Windy.com integriert.</string>
-    <string name="cl_210_aqi">UV-Index und detaillierte Luftqualität/Schadstoffe (PM2.5, NO2, O3) hinzugefügt.</string>
+    <string
+        name="cl_210_aqi"
+    >UV-Index und detaillierte Luftqualität/Schadstoffe (PM2.5, NO2, O3) hinzugefügt.</string>
     <string name="cl_210_pollen">Pollenflug-Informationen hinzugefügt.</string>
-    <string name="cl_210_earthquake">Erdbebenmonitor für geologische Aktivitäten in der Nähe hinzugefügt.</string>
-    <string name="cl_210_backup">Lokales JSON-Backup &amp; Wiederherstellung für Standorte hinzugefügt.</string>
-    <string name="cl_210_oled">OLED-Schwarz-Modus für AMOLED-Bildschirme hinzugefügt.</string>
-    <string name="cl_210_moon">Verbesserte Mondphasenanzeige mit grafischen Symbolen.</string>
-    <string name="cl_210_photography">Fotografie-Infos hinzugefügt: Goldene Stunde und Blaue Stunde.</string>
-    <string name="cl_210_technical">Technische Daten hinzugefügt: Höhe, Zeitzone, Sichtweite und Wolkenuntergrenze.</string>
-    <string name="cl_210_icons">App-Icon-Stile hinzugefügt: Wähle zwischen Google-Stil, Minimalistisch oder Retro.</string>
-    <string name="cl_210_scores">Aktivitäts-Score hinzugefügt (Joggen, Wäsche, Gartenarbeit).</string>
-    <string name="cl_210_shortcuts">App-Shortcuts hinzugefügt: Springe direkt vom Homescreen zu deinen Top 3 Städten.</string>
-    <string name="cl_210_notifs">Hintergrundbenachrichtigungen korrigiert und stadtweise Benachrichtigungseinstellungen hinzugefügt.</string>
-    <string name="cl_210_privacy">Alle Account- und Login-Anforderungen für totale Privatsphäre entfernt.</string>
-    <string name="cl_210_noads">Alle Werbeanzeigen und In-App-Käufe entfernt.</string>
+    <string
+        name="cl_210_earthquake"
+    >Erdbebenmonitor für geologische Aktivitäten in der Nähe hinzugefügt.</string>
+    <string
+        name="cl_210_backup"
+    >Lokales JSON-Backup &amp; Wiederherstellung für Standorte hinzugefügt.</string>
+    <string
+        name="cl_210_oled"
+    >OLED-Schwarz-Modus für AMOLED-Bildschirme hinzugefügt.</string>
+    <string
+        name="cl_210_moon"
+    >Verbesserte Mondphasenanzeige mit grafischen Symbolen.</string>
+    <string
+        name="cl_210_photography"
+    >Fotografie-Infos hinzugefügt: Goldene Stunde und Blaue Stunde.</string>
+    <string
+        name="cl_210_technical"
+    >Technische Daten hinzugefügt: Höhe, Zeitzone, Sichtweite und Wolkenuntergrenze.</string>
+    <string
+        name="cl_210_icons"
+    >App-Icon-Stile hinzugefügt: Wähle zwischen Google-Stil, Minimalistisch oder Retro.</string>
+    <string
+        name="cl_210_scores"
+    >Aktivitäts-Score hinzugefügt (Joggen, Wäsche, Gartenarbeit).</string>
+    <string
+        name="cl_210_shortcuts"
+    >App-Shortcuts hinzugefügt: Springe direkt vom Homescreen zu deinen Top 3 Städten.</string>
+    <string
+        name="cl_210_notifs"
+    >Hintergrundbenachrichtigungen korrigiert und stadtweise Benachrichtigungseinstellungen hinzugefügt.</string>
+    <string
+        name="cl_210_privacy"
+    >Alle Account- und Login-Anforderungen für totale Privatsphäre entfernt.</string>
+    <string
+        name="cl_210_noads"
+    >Alle Werbeanzeigen und In-App-Käufe entfernt.</string>
     <!-- Changelog v2.0.0 -->
-    <string name="cl_200_desc">Weitere Wetteranbieter hinzugefügt und einige Dinge geändert</string>
+    <string
+        name="cl_200_desc"
+    >Weitere Wetteranbieter hinzugefügt und einige Dinge geändert</string>
     <!-- Changelog v1.9.0 -->
-    <string name="cl_190_webview">2 neue Einstellungen für die Webview hinzugefügt: PrivacyWebView deaktivieren oder im externen Browser öffnen.</string>
+    <string
+        name="cl_190_webview"
+    >2 neue Einstellungen für die Webview hinzugefügt: PrivacyWebView deaktivieren oder im externen Browser öffnen.</string>
     <!-- Changelog v1.8.1 -->
-    <string name="cl_181_reset">WeatherDetailActivity und mehr auf v1.3.8 zurückgesetzt</string>
+    <string
+        name="cl_181_reset"
+    >WeatherDetailActivity und mehr auf v1.3.8 zurückgesetzt</string>
     <!-- Changelog v1.8.0 -->
-    <string name="cl_180_repository">Repository-Dateien gelöscht, Wetterdaten kommen wieder direkt aus der WeatherDetailActivity.</string>
+    <string
+        name="cl_180_repository"
+    >Repository-Dateien gelöscht, Wetterdaten kommen wieder direkt aus der WeatherDetailActivity.</string>
     <!-- Changelog v1.7.2 -->
-    <string name="cl_172_home">Probleme mit der Wetteranzeige auf dem Homescreen durch ID-basierte Standortsuche behoben.</string>
-    <string name="cl_172_fallbacks">Ladeprobleme durch verbesserte Anbieter-Fallbacks behoben.</string>
-    <string name="cl_172_login">GitHub/Modrinth-Login-Zuverlässigkeit verbessert und Profil-Synchronisierung automatisiert.</string>
-    <string name="cl_172_refresh">Manueller Refresh-Button auf dem Homescreen für sofortige Updates hinzugefügt.</string>
+    <string
+        name="cl_172_home"
+    >Probleme mit der Wetteranzeige auf dem Homescreen durch ID-basierte Standortsuche behoben.</string>
+    <string
+        name="cl_172_fallbacks"
+    >Ladeprobleme durch verbesserte Anbieter-Fallbacks behoben.</string>
+    <string
+        name="cl_172_login"
+    >GitHub/Modrinth-Login-Zuverlässigkeit verbessert und Profil-Synchronisierung automatisiert.</string>
+    <string
+        name="cl_172_refresh"
+    >Manueller Refresh-Button auf dem Homescreen für sofortige Updates hinzugefügt.</string>
     <!-- Changelog v1.7.1 -->
-    <string name="cl_171_weather">Wetterladeprobleme durch robuste Fallbacks auf Open-Meteo behoben.</string>
-    <string name="cl_171_home_refresh">Homescreen zeigt nun korrekt aktuelle Wetterdaten mit automatischen und manuellen Aktualisierungsoptionen.</string>
-    <string name="cl_171_login_stable">GitHub- und Modrinth-Login-Stabilität verbessert und Deep-Link-Weiterleitung korrigiert.</string>
-    <string name="cl_171_tomorrow_icons">Volle Icon-Unterstützung für Tomorrow.io hinzugefügt, inklusive Tag/Nacht-Variationen.</string>
-    <string name="cl_171_cache">Lokales Datenbank-Caching verbessert, um sofortige Verfügbarkeit der Wetterdaten zu gewährleisten.</string>
+    <string
+        name="cl_171_weather"
+    >Wetterladeprobleme durch robuste Fallbacks auf Open-Meteo behoben.</string>
+    <string
+        name="cl_171_home_refresh"
+    >Homescreen zeigt nun korrekt aktuelle Wetterdaten mit automatischen und manuellen Aktualisierungsoptionen.</string>
+    <string
+        name="cl_171_login_stable"
+    >GitHub- und Modrinth-Login-Stabilität verbessert und Deep-Link-Weiterleitung korrigiert.</string>
+    <string
+        name="cl_171_tomorrow_icons"
+    >Volle Icon-Unterstützung für Tomorrow.io hinzugefügt, inklusive Tag/Nacht-Variationen.</string>
+    <string
+        name="cl_171_cache"
+    >Lokales Datenbank-Caching verbessert, um sofortige Verfügbarkeit der Wetterdaten zu gewährleisten.</string>
     <!-- Changelog v1.7.0 -->
-    <string name="cl_170_local">Vollständiger Übergang zu einem Local-First-System. Wetterdaten und Geocoding werden jetzt direkt von Anbietern abgerufen.</string>
-    <string name="cl_170_supabase">Unterstützung für Modrinth-Login hinzugefügt. GitHub-Login nutzt jetzt das offizielle Supabase SDK für bessere Stabilität.</string>
-    <string name="cl_170_sync">Direkte Supabase-Integration für Standort- und Benutzerprofil-Synchronisierung.</string>
-    <string name="cl_170_providers">Tomorrow.io und Visual Crossing Unterstützung integriert (Schlüssel in den Einstellungen einstellbar).</string>
-    <string name="cl_170_cache_display">Sofortige Cache-Anzeige für Wetter hinzugefügt, um Wartezeiten zu eliminieren.</string>
-    <string name="cl_170_fixes">Deep-Link-Weiterleitung korrigiert und verschiedene UI- und Übersetzungsfehler behoben.</string>
+    <string
+        name="cl_170_local"
+    >Vollständiger Übergang zu einem Local-First-System. Wetterdaten und Geocoding werden jetzt direkt von Anbietern abgerufen.</string>
+    <string
+        name="cl_170_supabase"
+    >Unterstützung für Modrinth-Login hinzugefügt. GitHub-Login nutzt jetzt das offizielle Supabase SDK für bessere Stabilität.</string>
+    <string
+        name="cl_170_sync"
+    >Direkte Supabase-Integration für Standort- und Benutzerprofil-Synchronisierung.</string>
+    <string
+        name="cl_170_providers"
+    >Tomorrow.io und Visual Crossing Unterstützung integriert (Schlüssel in den Einstellungen einstellbar).</string>
+    <string
+        name="cl_170_cache_display"
+    >Sofortige Cache-Anzeige für Wetter hinzugefügt, um Wartezeiten zu eliminieren.</string>
+    <string
+        name="cl_170_fixes"
+    >Deep-Link-Weiterleitung korrigiert und verschiedene UI- und Übersetzungsfehler behoben.</string>
     <!-- Changelog v1.6.0 -->
     <string name="cl_160_modrinth">Modrinth Login und mehr hinzugefügt</string>
     <!-- Changelog v1.5.8 -->
-    <string name="cl_158_providers">Unterstützung für mehrere Wetteranbieter über eigene API hinzugefügt.</string>
-    <string name="cl_158_tiers">Sichtbarkeit der Abonnementstufen (Kostenlos, Freemium, Premium) integriert.</string>
-    <string name="cl_158_loading">Endloser Ladebildschirm bei Fehlern beim Abrufen der Wetterdaten behoben.</string>
-    <string name="cl_158_account">Account-Bildschirm mit Plandetails und Logout-Optionen verbessert.</string>
-    <string name="cl_158_localization">Vollständiger Übergang von hartkodierten Texten zu lokalisierten Ressourcen.</string>
+    <string
+        name="cl_158_providers"
+    >Unterstützung für mehrere Wetteranbieter über eigene API hinzugefügt.</string>
+    <string
+        name="cl_158_tiers"
+    >Sichtbarkeit der Abonnementstufen (Kostenlos, Freemium, Premium) integriert.</string>
+    <string
+        name="cl_158_loading"
+    >Endloser Ladebildschirm bei Fehlern beim Abrufen der Wetterdaten behoben.</string>
+    <string
+        name="cl_158_account"
+    >Account-Bildschirm mit Plandetails und Logout-Optionen verbessert.</string>
+    <string
+        name="cl_158_localization"
+    >Vollständiger Übergang von hartkodierten Texten zu lokalisierten Ressourcen.</string>
     <!-- Changelog v1.5.7 -->
-    <string name="cl_157_strings">Alle hartkodierten deutschen und nicht-englischen Strings durch englische Ressourcen ersetzt</string>
-    <string name="cl_157_localization">UI-Lokalisierung und Konsistenz verbessert</string>
-    <string name="cl_157_versioning">Versionierung und internes String-Management aktualisiert</string>
+    <string
+        name="cl_157_strings"
+    >Alle hartkodierten deutschen und nicht-englischen Strings durch englische Ressourcen ersetzt</string>
+    <string
+        name="cl_157_localization"
+    >UI-Lokalisierung und Konsistenz verbessert</string>
+    <string
+        name="cl_157_versioning"
+    >Versionierung und internes String-Management aktualisiert</string>
     <!-- Changelog v1.5.6 -->
-    <string name="cl_156_auth">Authentifizierungsfluss mit verbesserter Bearer-Token-Unterstützung aktualisiert</string>
-    <string name="cl_156_bg_sync">Hintergrundsynchronisierung für flüssigere Benutzererfahrung hinzugefügt</string>
-    <string name="cl_156_weather">Authentifizierter Abruf von Wetterdaten integriert</string>
-    <string name="cl_156_translations">Neue Übersetzungen hinzugefügt (Mara)</string>
-    <string name="cl_156_stability">App-Stabilität verbessert und kleinere UI-Probleme behoben</string>
+    <string
+        name="cl_156_auth"
+    >Authentifizierungsfluss mit verbesserter Bearer-Token-Unterstützung aktualisiert</string>
+    <string
+        name="cl_156_bg_sync"
+    >Hintergrundsynchronisierung für flüssigere Benutzererfahrung hinzugefügt</string>
+    <string
+        name="cl_156_weather"
+    >Authentifizierter Abruf von Wetterdaten integriert</string>
+    <string
+        name="cl_156_translations"
+    >Neue Übersetzungen hinzugefügt (Mara)</string>
+    <string
+        name="cl_156_stability"
+    >App-Stabilität verbessert und kleinere UI-Probleme behoben</string>
     <!-- Changelog v1.5.5 -->
-    <string name="cl_155_cloud">Cloud-Synchronisierung für Lieblingsorte hinzugefügt</string>
-    <string name="cl_155_sync_btn">Manueller \'Mit Cloud synchronisieren\'-Button in den Accounteinstellungen hinzugefügt</string>
-    <string name="cl_155_auto_sync">Automatische Hintergrundsynchronisierung beim Start und Login</string>
-    <string name="cl_155_persistence">Datenpersistenz und geräteübergreifende Verfügbarkeit verbessert</string>
+    <string
+        name="cl_155_cloud"
+    >Cloud-Synchronisierung für Lieblingsorte hinzugefügt</string>
+    <string
+        name="cl_155_sync_btn"
+    >Manueller \'Mit Cloud synchronisieren\'-Button in den Accounteinstellungen hinzugefügt</string>
+    <string
+        name="cl_155_auto_sync"
+    >Automatische Hintergrundsynchronisierung beim Start und Login</string>
+    <string
+        name="cl_155_persistence"
+    >Datenpersistenz und geräteübergreifende Verfügbarkeit verbessert</string>
     <!-- Changelog v1.5.4 -->
-    <string name="cl_154_profile">Unterstützung für Benutzerprofilbilder von der API hinzugefügt</string>
-    <string name="cl_154_history">Wetterverlauf in die Detailansicht verschoben</string>
-    <string name="cl_154_openmeteo">Open-Meteo-API-Kompatibilität und Wetterladen verbessert</string>
-    <string name="cl_154_icons">Wetterverlauf-Icon auf dem Hauptbildschirm korrigiert</string>
-    <string name="cl_154_coil">Bildladeunterstützung mit Coil hinzugefügt</string>
+    <string
+        name="cl_154_profile"
+    >Unterstützung für Benutzerprofilbilder von der API hinzugefügt</string>
+    <string
+        name="cl_154_history"
+    >Wetterverlauf in die Detailansicht verschoben</string>
+    <string
+        name="cl_154_openmeteo"
+    >Open-Meteo-API-Kompatibilität und Wetterladen verbessert</string>
+    <string
+        name="cl_154_icons"
+    >Wetterverlauf-Icon auf dem Hauptbildschirm korrigiert</string>
+    <string
+        name="cl_154_coil"
+    >Bildladeunterstützung mit Coil hinzugefügt</string>
     <!-- Changelog v1.5.3 -->
-    <string name="cl_153_github">GitHub OAuth-Authentifizierung über API implementiert</string>
-    <string name="cl_153_optional">Login ist jetzt optional und über Einstellungen verwaltbar</string>
-    <string name="cl_153_deeplink">Deep-Link-Handling für Authentifizierungs-Callback verbessert</string>
-    <string name="cl_153_merge">Ressourcen-Merging und Übersetzungsprobleme behoben</string>
-    <string name="cl_153_icons">Wetter-Icon-Mapping für bessere Tag/Nacht-Genauigkeit aktualisiert</string>
+    <string
+        name="cl_153_github"
+    >GitHub OAuth-Authentifizierung über API implementiert</string>
+    <string
+        name="cl_153_optional"
+    >Login ist jetzt optional und über Einstellungen verwaltbar</string>
+    <string
+        name="cl_153_deeplink"
+    >Deep-Link-Handling für Authentifizierungs-Callback verbessert</string>
+    <string
+        name="cl_153_merge"
+    >Ressourcen-Merging und Übersetzungsprobleme behoben</string>
+    <string
+        name="cl_153_icons"
+    >Wetter-Icon-Mapping für bessere Tag/Nacht-Genauigkeit aktualisiert</string>
     <!-- Changelog v1.5.2 -->
-    <string name="cl_152_auth">Authentifizierung &amp; Benutzerprofil-Unterstützung hinzugefügt</string>
-    <string name="cl_152_login_setting">\'Login erforderlich\'-Sicherheitseinstellung hinzugefügt</string>
-    <string name="cl_152_history">Historische Wettertrends hinzugefügt (letzte 3 Tage)</string>
-    <string name="cl_152_pro">7-Tage-Vorhersage für PRO-Nutzer hinzugefügt</string>
-    <string name="cl_152_api">API-Fehlerbehandlung und Stabilität verbessert</string>
-    <string name="cl_152_charts">Datumslabels zu historischen Diagrammen hinzugefügt</string>
-    <string name="cl_152_workers">Hintergrund-Worker und Widget für Sicherheit optimiert</string>
+    <string
+        name="cl_152_auth"
+    >Authentifizierung &amp; Benutzerprofil-Unterstützung hinzugefügt</string>
+    <string
+        name="cl_152_login_setting"
+    >\'Login erforderlich\'-Sicherheitseinstellung hinzugefügt</string>
+    <string
+        name="cl_152_history"
+    >Historische Wettertrends hinzugefügt (letzte 3 Tage)</string>
+    <string
+        name="cl_152_pro"
+    >7-Tage-Vorhersage für PRO-Nutzer hinzugefügt</string>
+    <string
+        name="cl_152_api"
+    >API-Fehlerbehandlung und Stabilität verbessert</string>
+    <string
+        name="cl_152_charts"
+    >Datumslabels zu historischen Diagrammen hinzugefügt</string>
+    <string
+        name="cl_152_workers"
+    >Hintergrund-Worker und Widget für Sicherheit optimiert</string>
     <!-- Changelog v1.3.5 -->
     <string name="cl_135_donations">Weitere Spendenlinks hinzugefügt</string>
-    <string name="cl_135_system_theme">Alle Bildschirme (hoffentlich) an Systemthema angepasst</string>
+    <string
+        name="cl_135_system_theme"
+    >Alle Bildschirme (hoffentlich) an Systemthema angepasst</string>
     <string name="sunset_label">Sonnenuntergang</string>
     <string name="sunrise_label">Sonnenaufgang</string>
     <string name="search_title">Stadt suchen</string>
@@ -189,7 +372,9 @@
     <string name="pressure_label">Druck</string>
     <string name="feels_like_label">Fühlt sich an wie</string>
     <string name="precipitation_label">Niederschlag</string>
-    <string name="precipitation_probability_label">Niederschlagswahrscheinlichkeit</string>
+    <string
+        name="precipitation_probability_label"
+    >Niederschlagswahrscheinlichkeit</string>
     <string name="wind_max_label">Max. Wind</string>
     <string name="wc_clear">Klarer Himmel</string>
     <string name="wc_mainly_clear">Überwiegend klar</string>
@@ -199,48 +384,90 @@
     <string name="wc_rain">Regen</string>
     <string name="unit_hpa">hPa</string>
     <string name="unit_mmhg">mmHg</string>
-    <string name="notification_settings_title">Benachrichtigungseinstellungen</string>
-    <string name="temp_threshold_label">Schwellenwert für Temperaturänderung: %1$d°</string>
-    <string name="wind_threshold_label">Schwellenwert für Windzunahme: %1$d</string>
-    <string name="persistent_notif_title">Dauerhafte Wetterbenachrichtigung</string>
-    <string name="persistent_notif_subtitle">Aktuelle Temperatur in der Statusleiste anzeigen</string>
+    <string
+        name="notification_settings_title"
+    >Benachrichtigungseinstellungen</string>
+    <string
+        name="temp_threshold_label"
+    >Schwellenwert für Temperaturänderung: %1$d°</string>
+    <string
+        name="wind_threshold_label"
+    >Schwellenwert für Windzunahme: %1$d</string>
+    <string
+        name="persistent_notif_title"
+    >Dauerhafte Wetterbenachrichtigung</string>
+    <string
+        name="persistent_notif_subtitle"
+    >Aktuelle Temperatur in der Statusleiste anzeigen</string>
     <string name="webview_settings_title">WebView-Einstellungen</string>
     <string name="disable_private_view">Private Ansicht deaktivieren</string>
-    <string name="disable_private_view_subtitle">Cookies und Nachverfolgung zulassen</string>
+    <string
+        name="disable_private_view_subtitle"
+    >Cookies und Nachverfolgung zulassen</string>
     <string name="open_external_browser">In externem Browser öffnen</string>
-    <string name="open_external_browser_subtitle">Links in einem externen Browser statt in der App öffnen</string>
+    <string
+        name="open_external_browser_subtitle"
+    >Links in einem externen Browser statt in der App öffnen</string>
     <string name="hourly_label">Stündlich</string>
     <string name="forecast_3day_label">16-Tage-Vorhersage</string>
     <string name="refresh_nav_desc">Auffrischen</string>
     <string name="donate_nav_desc">Spenden</string>
     <string name="settings_nav_desc">Einstellungen</string>
-    <string name="no_locations_msg">Noch keine Standorte hinzugefügt.\nAuf das Plus-Symbol unten klicken.</string>
+    <string
+        name="no_locations_msg"
+    >Noch keine Standorte hinzugefügt.\nAuf das Plus-Symbol unten klicken.</string>
     <string name="humidity_suffix">%</string>
     <string name="set_as_default">Als Standard festlegen</string>
     <string name="widget_loading">Wird geladen ...</string>
     <string name="no_location_selected">Kein Standort</string>
     <string name="error_connection">Fehler: Verbindung prüfen</string>
-    <string name="temperature_change_msg">Temperatur hat sich von %1$s auf %2$s geändert</string>
+    <string
+        name="temperature_change_msg"
+    >Temperatur hat sich von %1$s auf %2$s geändert</string>
     <string name="cl_310_weather_time">Zeit in Wetterdetails korrigiert</string>
     <string name="cl_310_removed_sdk">FreetimeSDK entfernt</string>
     <string name="cl_300_kmp">Auf Kotlin Multiplatform (KMP) migriert</string>
-    <string name="cl_300_windows_linux">Unterstützung für Windows und Linux hinzugefügt</string>
+    <string
+        name="cl_300_windows_linux"
+    >Unterstützung für Windows und Linux hinzugefügt</string>
     <string name="cl_300_app_icon">Neues App-Symbol</string>
     <string name="cl_230_dependencies">Abhängigkeiten aktualisiert</string>
-    <string name="cl_222_ms_wind">Einheit m/s für die Windgeschwindigkeit hinzugefügt</string>
-    <string name="cl_222_cardinal_direction">Text zur Hauptwindrichtung hinzugefügt</string>
+    <string
+        name="cl_222_ms_wind"
+    >Einheit m/s für die Windgeschwindigkeit hinzugefügt</string>
+    <string
+        name="cl_222_cardinal_direction"
+    >Text zur Hauptwindrichtung hinzugefügt</string>
     <string name="FixFMSDK">Spenden über FreetimeSDK korrigiert</string>
-    <string name="changelog_remove_api_key">QWeather-API-Schlüssel aus den Einstellungen entfernt</string>
+    <string
+        name="changelog_remove_api_key"
+    >QWeather-API-Schlüssel aus den Einstellungen entfernt</string>
     <string name="AddedMoreDons">Weitere Spendenoptionen hinzugefügt</string>
     <string name="cl_coordinate_search">Koordinatensuchfunktion</string>
-    <string name="cl_material_you">Material YOU-Unterstützung hinzugefügt</string>
-    <string name="cl_unit_switching">Einheitenumschaltung hinzugefügt (Celsius/Fahrenheit, km/h/mph)</string>
-    <string name="cl_historical_data">Historische Wetterdaten und -trends</string>
-    <string name="cl_custom_notifs">Anpassbare Schwellenwerte für Wetterbenachrichtigung</string>
-    <string name="cl_multi_service">Unterstützung für mehrere Wetteranbieter (Open-Meteo &amp; WeatherAPI) hinzugefügt</string>
-    <string name="cl_forecast_enhanced">Erweiterte 16-Tage-Vorhersage mit interaktiven Details</string>
-    <string name="cl_moon_phase">Unterstützung für Mondphasendaten hinzugefügt</string>
-    <string name="cl_v136_degoogled">Abhängigkeit von Google Play Services vollständig entfernt</string>
+    <string
+        name="cl_material_you"
+    >Material YOU-Unterstützung hinzugefügt</string>
+    <string
+        name="cl_unit_switching"
+    >Einheitenumschaltung hinzugefügt (Celsius/Fahrenheit, km/h/mph)</string>
+    <string
+        name="cl_historical_data"
+    >Historische Wetterdaten und -trends</string>
+    <string
+        name="cl_custom_notifs"
+    >Anpassbare Schwellenwerte für Wetterbenachrichtigung</string>
+    <string
+        name="cl_multi_service"
+    >Unterstützung für mehrere Wetteranbieter (Open-Meteo &amp; WeatherAPI) hinzugefügt</string>
+    <string
+        name="cl_forecast_enhanced"
+    >Erweiterte 16-Tage-Vorhersage mit interaktiven Details</string>
+    <string
+        name="cl_moon_phase"
+    >Unterstützung für Mondphasendaten hinzugefügt</string>
+    <string
+        name="cl_v136_degoogled"
+    >Abhängigkeit von Google Play Services vollständig entfernt</string>
 
     <string name="day_planner_title">Tagesplaner</string>
     <string
@@ -289,7 +516,9 @@
     >Einfache Komfortheuristik aus Temperatur, Regen und Wind, keine Sicherheitsempfehlung. Gewitter, Schnee, gefrierender Niederschlag und starker Wind sind ausgeschlossen; örtliche Warnungen beachten.</string>
 
     <string name="rain_hourly_alert_title">Regen möglich</string>
-    <string name="rain_hourly_alert_message">%1$s: Die stündliche Prognose deutet auf möglichen Regen im Zeitraum %2$s–%3$s (Ortszeit) hin, bei %4$d%% Niederschlagswahrscheinlichkeit. Der genaue Beginn ist unsicher.</string>
+    <string
+        name="rain_hourly_alert_message"
+    >%1$s: Die stündliche Prognose deutet auf möglichen Regen im Zeitraum %2$s–%3$s (Ortszeit) hin, bei %4$d%% Niederschlagswahrscheinlichkeit. Der genaue Beginn ist unsicher.</string>
 
     <string name="start_preferences_title">Start und Darstellung</string>
     <string name="start_screen_title">Startbildschirm</string>
@@ -301,22 +530,34 @@
     <string name="start_detail_compact">Kompakt</string>
     <string name="start_detail_detailed">Ausführlich</string>
 
-    <string name="data_status_updated">Wetterdaten aktualisiert: %1$s (Gerätezeit)</string>
+    <string
+        name="data_status_updated"
+    >Wetterdaten aktualisiert: %1$s (Gerätezeit)</string>
     <string name="data_status_unknown">Unbekannt</string>
-    <string name="data_status_offline">Keine Verbindung · Gespeichertes Wetter, keine Live-Beobachtungen.</string>
-    <string name="data_status_stale">Die Wetterdaten sind veraltet oder ihr Alter ist unbekannt. Bitte vor der Verwendung aktualisieren; aktuelle Empfehlungen sind nicht verfügbar.</string>
-    <string name="data_status_refresh_failed">Wetter konnte nicht aktualisiert werden. Gespeicherte Daten bleiben erhalten.</string>
+    <string
+        name="data_status_offline"
+    >Keine Verbindung · Gespeichertes Wetter, keine Live-Beobachtungen.</string>
+    <string
+        name="data_status_stale"
+    >Die Wetterdaten sind veraltet oder ihr Alter ist unbekannt. Bitte vor der Verwendung aktualisieren; aktuelle Empfehlungen sind nicht verfügbar.</string>
+    <string
+        name="data_status_refresh_failed"
+    >Wetter konnte nicht aktualisiert werden. Gespeicherte Daten bleiben erhalten.</string>
 
     <string name="weather_share_dialog_title">Wetterkarte teilen</string>
     <string name="weather_share_custom_title">Eigener Titel (optional)</string>
     <string name="weather_share_title_example">Wochenendtrip</string>
     <string name="weather_share_hide_location">Standort verbergen</string>
-    <string name="weather_share_privacy_hint">Der Standortname wird aus Bild und Begleittext entfernt. Prüfe deinen Titel und die Details auf weitere identifizierende Angaben.</string>
+    <string
+        name="weather_share_privacy_hint"
+    >Der Standortname wird aus Bild und Begleittext entfernt. Prüfe deinen Titel und die Details auf weitere identifizierende Angaben.</string>
     <string name="weather_share_default_title">Wetter</string>
     <string name="weather_share_updated_at">Datenstand: %1$s · %2$s</string>
     <string name="weather_share_updated_unknown">Datenstand unbekannt</string>
     <string name="weather_share_source">Quelle: Open-Meteo · GeoWeather</string>
-    <string name="weather_share_error">Die Wetterkarte konnte nicht geteilt werden. Bitte versuche es erneut.</string>
+    <string
+        name="weather_share_error"
+    >Die Wetterkarte konnte nicht geteilt werden. Bitte versuche es erneut.</string>
     <string name="weather_share_send">Teilen</string>
     <string name="weather_share_cancel">Abbrechen</string>
 </resources>

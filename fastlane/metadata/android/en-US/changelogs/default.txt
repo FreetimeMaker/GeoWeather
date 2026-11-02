@@ -1,7 +1,4 @@
-• Expanded home-screen widgets with four variants, responsive layouts, per-widget locations and improved configuration
-• Reduced duplicate Open-Meteo requests with coordinated refreshes, freshness checks and more efficient background updates
-• Improved offline and Data Saver widget behavior with cached forecasts and network-aware refreshes
-• Improved day/night widget styling and forecast icons using each weather location's timezone and sunrise/sunset data
-• Removed obsolete weather-provider parsing and strengthened Open-Meteo hourly and 16-day forecast validation
-• Improved Android backup and restore for settings and saved locations while excluding rebuildable weather caches
-• Added forecast and backup tests and fixed widget lifecycle, reboot refresh, configuration and build issues
+• Updated all Freetime libraries to 3.0.0 and migrated to the new design APIs
+• Added floating bottom navigation with a separate city search action; larger screens retain the navigation rail
+• Updated cards, buttons, dialogs and top bars to Material 3 styling, with Liquid Glass limited to bottom navigation
+• Connected the saved Liquid Glass preference to the new navigation effect with a Material fallback when disabled

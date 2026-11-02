@@ -1533,6 +1533,20 @@
         name="offline_city_pack_desc"
     >Refresh this city in the background when offline packs are enabled.</string>
 
+    <!-- Changelog v4.7.3 -->
+    <string
+        name="cl_473_freetime"
+    >Updated all Freetime libraries to version 3.0.0 and migrated to the new design APIs.</string>
+    <string
+        name="cl_473_navigation"
+    >Added floating bottom navigation with a separate city search action while keeping the navigation rail on larger screens.</string>
+    <string
+        name="cl_473_material"
+    >Updated cards, buttons, dialogs and top bars to standard Material 3 styling; Liquid Glass is now limited to bottom navigation.</string>
+    <string
+        name="cl_473_glass"
+    >Connected the saved Liquid Glass preference to the new navigation effect, with a Material fallback when disabled.</string>
+
     <!-- Changelog v4.7.2 -->
     <string
         name="cl_472_widgets"
@@ -1718,10 +1732,14 @@
     >Simple comfort heuristic based on temperature, rain and wind, not safety advice. Thunderstorms, snow, freezing precipitation and strong wind are excluded; check local warnings.</string>
 
     <string name="persistent_weather_channel_name">Persistent Weather</string>
-    <string name="opening_default_browser">Opening in default browser...</string>
+    <string
+        name="opening_default_browser"
+    >Opening in default browser...</string>
 
     <string name="rain_hourly_alert_title">Rain possible</string>
-    <string name="rain_hourly_alert_message">%1$s: The hourly forecast indicates possible rain during %2$s–%3$s (location time), with a %4$d%% precipitation probability. The exact start time is uncertain.</string>
+    <string
+        name="rain_hourly_alert_message"
+    >%1$s: The hourly forecast indicates possible rain during %2$s–%3$s (location time), with a %4$d%% precipitation probability. The exact start time is uncertain.</string>
 
     <string name="start_preferences_title">Startup and display</string>
     <string name="start_screen_title">Start screen</string>
@@ -1733,22 +1751,36 @@
     <string name="start_detail_compact">Compact</string>
     <string name="start_detail_detailed">Detailed</string>
 
-    <string name="data_status_updated">Weather data updated: %1$s (device time)</string>
+    <string
+        name="data_status_updated"
+    >Weather data updated: %1$s (device time)</string>
     <string name="data_status_unknown">Unknown</string>
-    <string name="data_status_offline">No connection · Showing saved weather, not live observations.</string>
-    <string name="data_status_stale">Weather data is outdated or its age is unknown. Refresh before relying on it; current recommendations are unavailable.</string>
-    <string name="data_status_refresh_failed">Could not update weather. Saved data has been kept.</string>
+    <string
+        name="data_status_offline"
+    >No connection · Showing saved weather, not live observations.</string>
+    <string
+        name="data_status_stale"
+    >Weather data is outdated or its age is unknown. Refresh before relying on it; current recommendations are unavailable.</string>
+    <string
+        name="data_status_refresh_failed"
+    >Could not update weather. Saved data has been kept.</string>
 
     <string name="weather_share_dialog_title">Share weather card</string>
     <string name="weather_share_custom_title">Custom title (optional)</string>
     <string name="weather_share_title_example">Weekend trip</string>
     <string name="weather_share_hide_location">Hide location</string>
-    <string name="weather_share_privacy_hint">Hiding the location removes its name from the image and shared text. Check your custom title and details for other identifying information.</string>
+    <string
+        name="weather_share_privacy_hint"
+    >Hiding the location removes its name from the image and shared text. Check your custom title and details for other identifying information.</string>
     <string name="weather_share_default_title">Weather</string>
     <string name="weather_share_updated_at">Data as of %1$s · %2$s</string>
-    <string name="weather_share_updated_unknown">Data timestamp unavailable</string>
+    <string
+        name="weather_share_updated_unknown"
+    >Data timestamp unavailable</string>
     <string name="weather_share_source">Source: Open-Meteo · GeoWeather</string>
-    <string name="weather_share_error">Could not share the weather card. Please try again.</string>
+    <string
+        name="weather_share_error"
+    >Could not share the weather card. Please try again.</string>
     <string name="weather_share_send">Share</string>
     <string name="weather_share_cancel">Cancel</string>
 </resources>
