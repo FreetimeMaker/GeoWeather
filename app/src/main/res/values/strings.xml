@@ -9,6 +9,7 @@
     <string name="search_hint">City name or Coordinates</string>
     <string name="search_placeholder">e.g. New York or 40.71, -74.00</string>
     <string name="SearchBTNTXT">Search</string>
+    <string name="add_location_action">Add location</string>
     <string
         name="search_no_results"
     >No results found. Check your connection and try another name or coordinates.</string>
@@ -173,7 +174,7 @@
     >Notify when the UV index reaches a high level.</string>
     <string
         name="frost_alert_notification"
-    >%1$s: Frost expected around %2$s (%3$d°C)</string>
+    >%1$s: Frost expected around %2$s (%3$s)</string>
     <string
         name="uv_alert_notification"
     >%1$s: High UV expected around %2$s (UV %3$s)</string>

@@ -13,6 +13,13 @@ class TemperatureFormattingTest {
         assertEquals("20°C", formatTemp(20.9, "unknown"))
     }
 
+    @Test fun notificationTemperatureRangesRespectSelectedUnit() {
+        assertEquals("32°F–68°F", formatTempRange(0.0, 20.0, "fahrenheit"))
+        assertEquals("0°C–20°C", formatTempRange(0.0, 20.0, "celsius"))
+        assertEquals("-4°F–14°F", formatTempRange(-20.0, -10.0, "fahrenheit"))
+        assertEquals("0°C–20°C", formatTempRange(0.0, 20.0, "unknown"))
+    }
+
     @Test fun differencesHaveNoOffset() {
         assertEquals(0.0, temperatureDeltaValue(0.0, "fahrenheit"))
         assertEquals(9.0, temperatureDeltaValue(5.0, "fahrenheit"))

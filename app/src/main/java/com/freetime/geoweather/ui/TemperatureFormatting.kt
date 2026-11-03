@@ -15,6 +15,9 @@ private fun temperatureSuffix(tempUnit: String): String =
 fun formatTemp(celsius: Double, tempUnit: String): String =
     "${temperatureValue(celsius, tempUnit).toInt()}${temperatureSuffix(tempUnit)}"
 
+fun formatTempRange(minCelsius: Double, maxCelsius: Double, tempUnit: String): String =
+    "${formatTemp(minCelsius, tempUnit)}–${formatTemp(maxCelsius, tempUnit)}"
+
 fun formatTempDecimal(celsius: Double, tempUnit: String): String =
     String.format(Locale.getDefault(), "%.1f%s", temperatureValue(celsius, tempUnit), temperatureSuffix(tempUnit))
 

@@ -14,6 +14,7 @@
         name="cl_473_glass"
     >Die gespeicherte Liquid-Glass-Einstellung steuert jetzt den neuen Navigationseffekt; bei deaktiviertem Effekt wird eine Material-Oberfläche angezeigt.</string>
     <string name="app_name">GeoWeather</string>
+    <string name="add_location_action">Standort hinzufügen</string>
     <string name="DonViaOxaPay">Spende über OxaPay</string>
     <string name="DonViaBTC">Spende über Bitcoin</string>
     <string name="DonViaETH">Spende über Ethereum</string>

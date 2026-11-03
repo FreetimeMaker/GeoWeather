@@ -1,6 +1,8 @@
 package com.freetime.geoweather.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
@@ -80,6 +82,10 @@ fun MainWeatherScreen(
     var isLocating by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val addLocationAction = {
+        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        showAddLocationDialog = true
+    }
     val currentLocationName = stringResource(Res.string.current_location)
     val configuration = androidx.compose.ui.platform.LocalConfiguration.current
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
@@ -142,7 +148,31 @@ fun MainWeatherScreen(
             val padding = PaddingValues(0.dp)
 
         if (locations.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { Column(horizontalAlignment = Alignment.CenterHorizontally) { Text(stringResource(Res.string.app_name), style = MaterialTheme.typography.headlineSmall); Text(stringResource(Res.string.no_locations_msg), textAlign = TextAlign.Center) } }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        start = if (configuration.screenWidthDp >= 720) 96.dp else 24.dp,
+                        end = 24.dp,
+                        bottom = 112.dp
+                    )
+                    .navigationBarsPadding(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()).padding(vertical = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(stringResource(Res.string.app_name), style = MaterialTheme.typography.headlineSmall)
+                    Text(stringResource(Res.string.no_locations_msg), textAlign = TextAlign.Center)
+                    Button(onClick = addLocationAction) {
+                        Icon(Icons.Default.Add, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(Res.string.add_location_action))
+                    }
+                }
+            }
         } else {
             if (isLandscape && detailed) {
                 Row(
@@ -537,10 +567,6 @@ fun MainWeatherScreen(
                     1 -> onDonateClick()
                     2 -> onSettingsClick()
                 }
-            }
-            val addLocationAction = {
-                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                showAddLocationDialog = true
             }
             if (configuration.screenWidthDp >= 720) {
                 NavigationRail(modifier = Modifier.align(Alignment.CenterStart)) {

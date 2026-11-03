@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.freetime.geoweather.data.DependencyManager
+import com.freetime.geoweather.ui.formatTempRange
 import com.freetime.geoweather.R as SharedRes
 
 class WeatherNotificationWorker(
@@ -38,7 +39,9 @@ class WeatherNotificationWorker(
             val period = applicationContext.getString(
                 if (hour < 12) SharedRes.string.briefing_morning else SharedRes.string.briefing_evening
             )
-            val range = daily?.let { it.minTemp.toString() + "–" + it.maxTemp + "°" } ?: tempStr
+            val range = daily?.let {
+                formatTempRange(it.minTemp.toDouble(), it.maxTemp.toDouble(), appSettings.tempUnit.value)
+            } ?: tempStr
             val message = applicationContext.getString(
                 SharedRes.string.daily_weather_notification,
                 period,

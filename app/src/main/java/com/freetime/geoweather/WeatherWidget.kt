@@ -53,11 +53,12 @@ open class WeatherWidget(
         private val SMALL = DpSize(120.dp, 60.dp)
         private val MEDIUM = DpSize(240.dp, 100.dp)
         private val LARGE = DpSize(320.dp, 180.dp)
+        private val EXTRA_LARGE = DpSize(320.dp, 240.dp)
         private const val WIDGET_REFRESH_WINDOW_MS = 5 * 60 * 1000L
     }
 
     override val sizeMode: SizeMode = if (variant == WidgetVariant.RESPONSIVE) {
-        SizeMode.Responsive(setOf(SMALL, MEDIUM, LARGE))
+        SizeMode.Responsive(setOf(SMALL, MEDIUM, LARGE, EXTRA_LARGE))
     } else {
         SizeMode.Exact
     }
@@ -131,21 +132,12 @@ open class WeatherWidget(
         locationTimeZone: java.time.ZoneId
     ) {
         val compact = size.width < 180.dp || size.height < 80.dp
-        val expanded = !compact && (variant == WidgetVariant.FORECAST || variant == WidgetVariant.DETAILED ||
+        val expanded = !compact && size.height >= 140.dp && (variant == WidgetVariant.FORECAST || variant == WidgetVariant.DETAILED ||
             (variant == WidgetVariant.RESPONSIVE && size.width >= 200.dp))
-        val detailed = !compact && (variant == WidgetVariant.DETAILED ||
+        val detailed = !compact && size.height >= 230.dp && (variant == WidgetVariant.DETAILED ||
             (variant == WidgetVariant.RESPONSIVE && size.height >= 140.dp))
-        val hourlyCount = when {
-            size.width >= 320.dp -> 5
-            size.width >= 260.dp -> 4
-            size.width >= 200.dp -> 3
-            else -> 0
-        }
-        val dailyCount = when {
-            size.width >= 300.dp -> 3
-            size.width >= 220.dp -> 2
-            else -> 0
-        }
+        val hourlyCount = ((size.width.value - 20f) / 64f).toInt().coerceIn(0, 5)
+        val dailyCount = ((size.width.value - 20f) / 96f).toInt().coerceIn(0, 3)
         val visibleHourly = hourly.take(hourlyCount)
         val visibleDaily = daily.take(dailyCount)
         val isDay = widgetCurrentIsDay(currentTimeZone = locationTimeZone, daily = daily)
@@ -157,26 +149,21 @@ open class WeatherWidget(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    provider = ImageProvider(WeatherIconMapper.getWeatherIcon(code)),
-                    contentDescription = info,
-                    modifier = GlanceModifier.size(if (detailed) 48.dp else 36.dp)
-                )
-                Spacer(GlanceModifier.width(8.dp))
-                Column(modifier = GlanceModifier.width(
-                    when {
-                        compact -> 72.dp
-                        detailed -> 220.dp
-                        else -> 150.dp
+                if (!compact) {
+                    Image(
+                        provider = ImageProvider(WeatherIconMapper.getWeatherIcon(code)),
+                        contentDescription = info,
+                        modifier = GlanceModifier.size(40.dp)
+                    )
+                    Spacer(GlanceModifier.width(6.dp))
+                }
+                Column(modifier = GlanceModifier.defaultWeight()) {
+                    Text(name, maxLines = 1, style = TextStyle(ColorProvider(palette.primary), if (compact) 12.sp else 14.sp, FontWeight.Bold))
+                    if (temp.isNotEmpty()) {
+                        Text(temp, maxLines = 1, style = TextStyle(ColorProvider(palette.primary), if (compact) 22.sp else 28.sp, FontWeight.Bold))
                     }
-                )) {
-                    Text(name, maxLines = 1, style = TextStyle(ColorProvider(palette.primary), 14.sp, FontWeight.Bold))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (temp.isNotEmpty()) {
-                            Text(temp, style = TextStyle(ColorProvider(Color(0xFF102A43)), 18.sp, FontWeight.Bold))
-                            Spacer(GlanceModifier.width(5.dp))
-                        }
-                        Text(info, maxLines = 1, style = TextStyle(ColorProvider(palette.secondary), 11.sp))
+                    if (!compact) {
+                        Text(info, maxLines = 1, style = TextStyle(ColorProvider(palette.secondary), 13.sp))
                     }
                 }
                 Image(
@@ -186,11 +173,11 @@ open class WeatherWidget(
                 )
             }
 
-            if (cached) {
+            if (cached && !compact) {
                 Text(
                     if (dataSaver) context.getString(Res.string.widget_data_saver_saved)
                     else context.getString(Res.string.widget_offline_saved),
-                    style = TextStyle(ColorProvider(palette.muted), 10.sp)
+                    style = TextStyle(ColorProvider(palette.muted), 12.sp)
                 )
             }
 
@@ -198,14 +185,14 @@ open class WeatherWidget(
                 Spacer(GlanceModifier.height(8.dp))
                 Row(modifier = GlanceModifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     visibleHourly.forEach { hour ->
-                        Column(modifier = GlanceModifier.width(56.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(hour.time.takeLast(5), style = TextStyle(ColorProvider(Color(0xFF486581)), 9.sp))
+                        Column(modifier = GlanceModifier.defaultWeight(), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(hour.time.takeLast(5), maxLines = 1, style = TextStyle(ColorProvider(palette.secondary), 14.sp, FontWeight.Bold))
                             Image(
                                 ImageProvider(WeatherIconMapper.getWeatherIcon(hour.code, widgetForecastIsDay(hour.time, daily))),
                                 null,
                                 GlanceModifier.size(24.dp)
                             )
-                            Text(formatWidgetTemp(hour.temp, tempUnit), style = TextStyle(ColorProvider(Color(0xFF102A43)), 11.sp, FontWeight.Bold))
+                            Text(formatWidgetTemp(hour.temp, tempUnit), maxLines = 1, style = TextStyle(ColorProvider(palette.primary), 16.sp, FontWeight.Bold))
                         }
                     }
                 }
@@ -215,8 +202,8 @@ open class WeatherWidget(
                 Spacer(GlanceModifier.height(7.dp))
                 Row(modifier = GlanceModifier.fillMaxWidth()) {
                     visibleDaily.forEach { day ->
-                        Column(modifier = GlanceModifier.width(92.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(day.date.takeLast(5), style = TextStyle(ColorProvider(Color(0xFF486581)), 9.sp))
+                        Column(modifier = GlanceModifier.defaultWeight(), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(day.date.takeLast(5), maxLines = 1, style = TextStyle(ColorProvider(palette.secondary), 13.sp, FontWeight.Bold))
                             Image(
                                 ImageProvider(WeatherIconMapper.getWeatherIcon(day.code, true)),
                                 null,
@@ -224,10 +211,11 @@ open class WeatherWidget(
                             )
                             Text(
                                 formatWidgetTemp(day.minTemp, tempUnit) + "/" + formatWidgetTemp(day.maxTemp, tempUnit),
-                                style = TextStyle(ColorProvider(Color(0xFF334E68)), 9.sp)
+                                maxLines = 1,
+                                                                style = TextStyle(ColorProvider(palette.primary), 13.sp, FontWeight.Bold)
                             )
                             if (day.precipProbMax > 0) {
-                                Text(day.precipProbMax.toString() + "%", style = TextStyle(ColorProvider(Color(0xFF486581)), 8.sp))
+                                Text(day.precipProbMax.toString() + "%", style = TextStyle(ColorProvider(palette.secondary), 12.sp))
                             }
                         }
                     }
@@ -248,14 +236,14 @@ class CompactWeatherWidget(forceRefresh: Boolean = false) : WeatherWidget(Widget
 class ForecastWeatherWidget(forceRefresh: Boolean = false) : WeatherWidget(WidgetVariant.FORECAST, forceRefresh)
 class DetailedWeatherWidget(forceRefresh: Boolean = false) : WeatherWidget(WidgetVariant.DETAILED, forceRefresh)
 
-private data class WidgetPalette(
+internal data class WidgetPalette(
     val background: Color,
     val primary: Color,
     val secondary: Color,
     val muted: Color
 )
 
-private fun widgetPalette(code: Int, isDay: Boolean): WidgetPalette {
+internal fun widgetPalette(code: Int, isDay: Boolean): WidgetPalette {
     val background = when {
         !isDay -> Color(0xFF17233A)
         code in 95..99 -> Color(0xFF394552)
@@ -264,7 +252,8 @@ private fun widgetPalette(code: Int, isDay: Boolean): WidgetPalette {
         code in 1..3 || code == 45 || code == 48 -> Color(0xFFE3E8ED)
         else -> Color(0xFFE3F2FD)
     }
-    return if (isDay) {
+    val darkBackground = !isDay || code in 95..99
+    return if (!darkBackground) {
         WidgetPalette(background, Color(0xFF102A43), Color(0xFF334E68), Color(0xFF486581))
     } else {
         WidgetPalette(background, Color(0xFFF5F8FC), Color(0xFFD9E2EC), Color(0xFFBCCCDC))

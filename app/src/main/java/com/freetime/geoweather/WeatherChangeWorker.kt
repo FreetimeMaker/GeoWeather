@@ -9,6 +9,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import com.freetime.geoweather.data.DependencyManager
+import com.freetime.geoweather.ui.formatTemp
 import com.freetime.geoweather.R as SharedRes
 
 class WeatherChangeWorker(
@@ -163,7 +164,7 @@ class WeatherChangeWorker(
                                     SharedRes.string.frost_alert_notification,
                                     updated.name,
                                     frost.time,
-                                    frost.temp
+                                    formatTemp(frost.temp.toDouble(), appSettings.tempUnit.value)
                                 ),
                                 alert = true
                             )
