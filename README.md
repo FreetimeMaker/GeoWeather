@@ -3,6 +3,9 @@
 <p><i>A modern weather app for Android, inspired by MeteoSwiss</i></p>
 </div>
 
+## This Repo is sponored by
+[![Sponsor](https://readme.cash/i/aqa0943lcp.svg)](https://readme.cash/c/aqa0943lcp)
+
 <div align="center">
 <h1>📸 Pictures of GeoWeather in Action</h1>
 
