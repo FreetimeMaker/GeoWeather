@@ -31,7 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Brush
+
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -72,7 +72,7 @@ fun WeatherDetailScreen(
     val windUnit by appSettings.windUnit.collectAsState()
     val pressureUnit by appSettings.pressureUnit.collectAsState()
     val animationMode by appSettings.weatherAnimations.collectAsState()
-    val oledBlack by appSettings.oledBlack.collectAsState()
+
     val dataSaver by appSettings.dataSaver.collectAsState()
     val detailLevel by appSettings.detailLevel.collectAsState()
     val detailed = detailLevel == "detailed"
@@ -253,7 +253,7 @@ fun WeatherDetailScreen(
                 val sunriseTime = runCatching { java.time.LocalTime.parse(firstDayForLight?.sunrise?.takeLast(5) ?: "07:00") }.getOrDefault(java.time.LocalTime.of(7, 0))
                 val sunsetTime = runCatching { java.time.LocalTime.parse(firstDayForLight?.sunset?.takeLast(5) ?: "19:00") }.getOrDefault(java.time.LocalTime.of(19, 0))
                 val isNight = nowTime.isBefore(sunriseTime) || !nowTime.isBefore(sunsetTime)
-                val twilight = twilightAmount(nowTime, sunriseTime, sunsetTime)
+
                 val isForecastDaytime: (String) -> Boolean = { rawTime ->
                     val forecastDateTime = runCatching { java.time.LocalDateTime.parse(rawTime) }.getOrNull()
                     val forecastTime = forecastDateTime?.toLocalTime()
@@ -269,21 +269,7 @@ fun WeatherDetailScreen(
                     }.getOrDefault(java.time.LocalTime.of(19, 0))
                     forecastTime?.let { !it.isBefore(forecastSunrise) && it.isBefore(forecastSunset) } ?: true
                 }
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .background(if (oledBlack && isNight) Brush.verticalGradient(listOf(Color.Black, Color.Black)) else weatherBackdropBrush(code, isNight, twilight))
-                ) {
-                    if (animationsEnabled && code != null) {
-                        FullScreenWeatherBackground(
-                            code = code,
-                            windSpeed = loc.currentWindSpeed ?: 0.0,
-                            windDirection = loc.currentWindDirection ?: 0,
-                            intensity = if (reducedMotion) .45f else rainIntensity,
-                            night = isNight,
-                            reducedMotion = reducedMotion
-                        )
-                    }
+                Box(Modifier.fillMaxSize()) {
                 PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = { doRefresh() }, modifier = Modifier.fillMaxSize()) {
                 LazyColumn(
                     state = detailListState,
@@ -291,20 +277,6 @@ fun WeatherDetailScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    item(key = "detail-tabs") {
-                        PrimaryTabRow(selectedTabIndex = 0, modifier = Modifier.fillMaxWidth()) {
-                            val tabs = listOf(stringResource(Res.string.location_overview_title), stringResource(Res.string.weather_timeline_title), stringResource(Res.string.forecast_3day_label))
-                            tabs.forEachIndexed { index, label ->
-                                Tab(selected = index == 0, onClick = {
-                                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                    when (index) {
-                                        1 -> if (hourly.isNotEmpty()) onHourlyClick(loc.name, hourly, 0)
-                                        2 -> if (daily.isNotEmpty()) onDailyClick(loc.name, daily, hourly, 0)
-                                    }
-                                }, text = { Text(label) })
-                            }
-                        }
-                    }
 
                     item(key = "data-status") {
                         WeatherDataStatus(loc.lastUpdated, nowMillis)
@@ -1187,27 +1159,6 @@ fun WeatherDetailScreen(
 }
 
 
-private fun weatherBackdropBrush(code: Int?, isNight: Boolean, twilight: Float): Brush {
-    val colors = when {
-        isNight -> listOf(Color.Black.copy(alpha = .22f), Color(0xFF151515).copy(alpha = .14f), Color.Transparent)
-        code in 95..99 -> listOf(Color(0xFF252A3D).copy(alpha = .48f), Color(0xFF48536C).copy(alpha = .30f), Color.Transparent)
-        code in 51..67 || code in 80..82 -> listOf(Color(0xFF355B78).copy(alpha = .38f), Color(0xFF7AA6C2).copy(alpha = .22f), Color.Transparent)
-        code in 71..77 || code in 85..86 -> listOf(Color(0xFFB8C9D8).copy(alpha = .30f), Color(0xFFE4EDF4).copy(alpha = .18f), Color.Transparent)
-        code == 0 || code == 1 -> listOf(Color(0xFFFFC86B).copy(alpha = .24f), Color(0xFF87C8F5).copy(alpha = .20f), Color.Transparent)
-        else -> listOf(Color(0xFF8EA9BC).copy(alpha = .20f), Color(0xFFB7C6D0).copy(alpha = .14f), Color.Transparent)
-    }
-    val dusk = Color(0xFFFF8A65).copy(alpha = .30f * twilight)
-    return Brush.verticalGradient(if (twilight > .01f) listOf(colors.first(), dusk, colors.last()) else colors)
-}
-
-private fun twilightAmount(now: java.time.LocalTime, sunrise: java.time.LocalTime, sunset: java.time.LocalTime): Float {
-    fun minutes(t: java.time.LocalTime) = t.hour * 60 + t.minute
-    val n = minutes(now)
-    val rise = minutes(sunrise)
-    val set = minutes(sunset)
-    val distance = minOf(kotlin.math.abs(n - rise), kotlin.math.abs(n - set))
-    return (1f - distance / 30f).coerceIn(0f, 1f)
-}
 
 @androidx.annotation.DrawableRes
 private fun weatherIconForTime(code: Int, isNight: Boolean): Int = when (code) {

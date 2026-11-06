@@ -27,10 +27,9 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Search
-import com.freetime.design.FloatingBottomNavigationBar
-import com.freetime.design.FloatingBottomNavigationItem
+
 import androidx.compose.material3.*
-import androidx.compose.ui.graphics.vector.ImageVector
+
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +52,6 @@ import kotlinx.coroutines.delay
 import com.freetime.geoweather.R as Res
 import kotlinx.coroutines.launch
 
-private data class WeatherNavigationDestination(val label: String, val icon: ImageVector)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,11 +90,7 @@ fun MainWeatherScreen(
     val locationUnavailableMsg = stringResource(Res.string.current_location_unavailable)
     var travelStartOffset by remember { mutableIntStateOf(0) }
     var travelEndOffset by remember { mutableIntStateOf(6) }
-    val adaptiveDestinations = listOf(
-        WeatherNavigationDestination(currentLocationName, Icons.Default.MyLocation),
-        WeatherNavigationDestination(stringResource(Res.string.donate_nav_desc), Icons.Default.Favorite),
-        WeatherNavigationDestination(stringResource(Res.string.settings_nav_desc), Icons.Default.Settings)
-    )
+
 
     fun openCurrentLocation() {
         scope.launch {
@@ -139,7 +133,36 @@ fun MainWeatherScreen(
                         if (navigationCompact) locations.firstOrNull()?.currentTemp?.let { Text(formatTemp(it, tempUnit), style = MaterialTheme.typography.labelMedium) }
                     }
                 },
-                modifier = Modifier
+                actions = {
+                    IconButton(onClick = addLocationAction) {
+                        Icon(Icons.Default.Search, contentDescription = stringResource(Res.string.SearchBTNTXT))
+                    }
+                    IconButton(
+                        onClick = {
+                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            openCurrentLocation()
+                        },
+                        enabled = !isLocating
+                    ) {
+                        if (isLocating) {
+                            CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
+                        } else {
+                            Icon(Icons.Default.MyLocation, contentDescription = currentLocationName)
+                        }
+                    }
+                    IconButton(onClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        onDonateClick()
+                    }) {
+                        Icon(Icons.Default.Favorite, contentDescription = stringResource(Res.string.donate_nav_desc))
+                    }
+                    IconButton(onClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        onSettingsClick()
+                    }) {
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings_nav_desc))
+                    }
+                }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -152,11 +175,9 @@ fun MainWeatherScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        start = if (configuration.screenWidthDp >= 720) 96.dp else 24.dp,
-                        end = 24.dp,
-                        bottom = 112.dp
-                    )
-                    .navigationBarsPadding(),
+                        horizontal = 24.dp,
+                        vertical = 24.dp
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -187,7 +208,7 @@ fun MainWeatherScreen(
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(bottom = 96.dp)
+                            contentPadding = PaddingValues(bottom = 16.dp)
                         ) {
                             items(orderedLocations, key = { "landscape-" + it.id }) { loc ->
                                 Row(
@@ -267,7 +288,7 @@ fun MainWeatherScreen(
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(top = 8.dp, bottom = 112.dp),
+                contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 if (detailed && locations.size > 1) {
@@ -560,48 +581,7 @@ fun MainWeatherScreen(
 
         }
 
-            val onNavigationSelected: (Int) -> Unit = { index ->
-                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                when (index) {
-                    0 -> if (!isLocating) openCurrentLocation()
-                    1 -> onDonateClick()
-                    2 -> onSettingsClick()
-                }
-            }
-            if (configuration.screenWidthDp >= 720) {
-                NavigationRail(modifier = Modifier.align(Alignment.CenterStart)) {
-                    adaptiveDestinations.forEachIndexed { index, destination ->
-                        NavigationRailItem(
-                            selected = index == 0,
-                            onClick = { onNavigationSelected(index) },
-                            icon = { Icon(destination.icon, contentDescription = destination.label) },
-                            label = { Text(destination.label) }
-                        )
-                    }
-                }
-            } else {
-                GeoWeatherBottomNavigation(
-                    destinations = adaptiveDestinations,
-                    selectedIndex = 0,
-                    onDestinationSelected = onNavigationSelected,
-                    onSearchSelected = addLocationAction,
-                    searchSelected = showAddLocationDialog,
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                )
-            }
 
-            val addLocationFabModifier = Modifier
-                .align(Alignment.BottomEnd)
-                .navigationBarsPadding()
-                .padding(end = 20.dp, bottom = 92.dp)
-
-            if (configuration.screenWidthDp >= 720) {
-                if (isLandscape) {
-                    ExtendedFloatingActionButton(text = { Text(stringResource(Res.string.SearchBTNTXT)) }, icon = { Icon(Icons.Default.Add, contentDescription = null) }, onClick = addLocationAction, modifier = addLocationFabModifier)
-                } else {
-                    FloatingActionButton(onClick = addLocationAction, modifier = addLocationFabModifier) { Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.SearchBTNTXT)) }
-                }
-            }
         }
     }
 
@@ -740,33 +720,4 @@ private fun AlertThresholdRow(label: String, onDecrease: () -> Unit, onIncrease:
         Spacer(Modifier.width(6.dp))
         Button(onClick = onIncrease) { Text("+") }
     }
-}
-
-@Composable
-private fun GeoWeatherBottomNavigation(
-    destinations: List<WeatherNavigationDestination>,
-    selectedIndex: Int,
-    onDestinationSelected: (Int) -> Unit,
-    onSearchSelected: () -> Unit,
-    searchSelected: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val searchLabel = stringResource(Res.string.SearchBTNTXT)
-    FloatingBottomNavigationBar(
-        items = destinations.map { destination ->
-            FloatingBottomNavigationItem(
-                label = destination.label,
-                icon = { Icon(destination.icon, contentDescription = destination.label) }
-            )
-        },
-        selectedItemIndex = selectedIndex,
-        onItemSelected = onDestinationSelected,
-        searchItem = FloatingBottomNavigationItem(
-            label = searchLabel,
-            icon = { Icon(Icons.Default.Search, contentDescription = searchLabel) }
-        ),
-        onSearchSelected = onSearchSelected,
-        modifier = modifier.fillMaxWidth(),
-        searchSelected = searchSelected
-    )
 }
