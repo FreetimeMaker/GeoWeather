@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -15,7 +14,6 @@ import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
 import com.freetime.design.AppTheme
-import com.freetime.design.FloatingBottomNavigationGlassRoot
 import com.freetime.design.ThemeMode
 import com.freetime.warn.FreetimeWarn
 import com.freetime.warn.FreetimeWarnContent
@@ -165,28 +163,17 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         systemDarkTheme
     }
 
-    val navigationGlassEnabled by appSettings.liquidGlassEnabled.collectAsState()
-    val glassBackdropColors = remember(darkTheme) {
-        if (darkTheme) {
-            listOf(Color(0xFF090909), Color(0xFF101010), Color(0xFF080808))
-        } else {
-            listOf(Color(0xFFF4F4F4), Color(0xFFEEEEEE), Color(0xFFF8F8F8))
-        }
-    }
-
     AppTheme(
         themeMode = if (darkTheme) ThemeMode.DARK else ThemeMode.LIGHT,
-        dynamicColor = true,
-        floatingBottomNavigationGlassEnabled = navigationGlassEnabled
+        dynamicColor = true
     ) {
-        FloatingBottomNavigationGlassRoot(backgroundColor = glassBackdropColors.first()) {
         if (onboarding) {
             OnboardingScreen(onDone = {
                 launchPrefs.edit().putBoolean("onboarding_done", true).apply()
                 onboarding = false
                 whatsNew = true
             })
-            return@FloatingBottomNavigationGlassRoot
+            return@AppTheme
         }
         if (whatsNew) {
             ChangeLogScreen(onBack = {
@@ -195,7 +182,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 backStack.add(Main)
                 whatsNew = false
             })
-            return@FloatingBottomNavigationGlassRoot
+            return@AppTheme
         }
         Box(Modifier.fillMaxSize()) {
                 backStack.forEachIndexed { index, screen ->
@@ -233,7 +220,6 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 acknowledgeLabel = warnAcknowledge
             )
         )
-          }
     }
 }
 

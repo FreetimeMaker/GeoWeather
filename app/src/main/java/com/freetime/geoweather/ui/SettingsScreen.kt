@@ -60,7 +60,7 @@ fun SettingsScreen(
     val dataSaver by appSettings.dataSaver.collectAsState()
     val offlinePacks by appSettings.offlinePacks.collectAsState()
     val offlinePacksWifiOnly by appSettings.offlinePacksWifiOnly.collectAsState()
-    val liquidGlassEnabled by appSettings.liquidGlassEnabled.collectAsState()
+
     val reduceMotion by appSettings.reduceMotion.collectAsState()
     val reduceTransparency by appSettings.reduceTransparency.collectAsState()
     val highContrast by appSettings.highContrast.collectAsState()
@@ -158,11 +158,7 @@ fun SettingsScreen(
 
             } }
             item(key = "appearance") { SettingsGroup(stringResource(Res.string.appearance_accessibility_title)) {
-                SettingsToggle(
-                    stringResource(Res.string.liquid_glass_title),
-                    stringResource(Res.string.liquid_glass_desc),
-                    liquidGlassEnabled
-                ) { appSettings.setLiquidGlassEnabled(it) }
+
                 SettingsToggle(
                     stringResource(Res.string.reduce_motion_title),
                     stringResource(Res.string.reduce_motion_desc),

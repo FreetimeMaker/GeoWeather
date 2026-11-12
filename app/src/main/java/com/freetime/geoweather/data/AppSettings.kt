@@ -31,7 +31,7 @@ class AppSettings(private val settings: Settings) {
         const val KEY_DATA_SAVER = "data_saver"
         const val KEY_OFFLINE_PACKS = "offline_packs"
         const val KEY_OFFLINE_PACKS_WIFI_ONLY = "offline_packs_wifi_only"
-        const val KEY_LIQUID_GLASS = "liquid_glass_enabled"
+
         const val KEY_REDUCE_MOTION = "reduce_motion"
         const val KEY_REDUCE_TRANSPARENCY = "reduce_transparency"
         const val KEY_HIGH_CONTRAST = "high_contrast"
@@ -204,9 +204,6 @@ class AppSettings(private val settings: Settings) {
         _offlinePacksWifiOnly.value = value
     }
 
-    private val _liquidGlassEnabled = MutableStateFlow(settings.getBoolean(KEY_LIQUID_GLASS, true))
-    val liquidGlassEnabled: StateFlow<Boolean> = _liquidGlassEnabled.asStateFlow()
-    fun setLiquidGlassEnabled(value: Boolean) { settings[KEY_LIQUID_GLASS] = value; _liquidGlassEnabled.value = value }
 
     private val _reduceMotion = MutableStateFlow(settings.getBoolean(KEY_REDUCE_MOTION, false))
     val reduceMotion: StateFlow<Boolean> = _reduceMotion.asStateFlow()

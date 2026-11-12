@@ -138,15 +138,11 @@
     <string name="persistent_next_hour">Next hour: %1$s · %2$d%% rain</string>
     <string
         name="appearance_accessibility_title"
-    >Liquid Glass &amp; accessibility</string>
-    <string name="liquid_glass_title">Liquid Glass</string>
-    <string
-        name="liquid_glass_desc"
-    >Uses the Freetime Core live backdrop, luminance, refraction and interactive glass renderer.</string>
+    >Appearance &amp; accessibility</string>
     <string name="reduce_motion_title">Reduce motion</string>
     <string
         name="reduce_motion_desc"
-    >Reduces decorative motion and Liquid Glass interaction animations.</string>
+    >Reduces decorative motion and interaction animations.</string>
     <string name="reduce_transparency_title">Reduce transparency</string>
     <string
         name="reduce_transparency_desc"

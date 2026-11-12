@@ -574,15 +574,11 @@
     <string name="persistent_next_hour">Nästa timme: %1$s · %2$d%% regn</string>
     <string
         name="appearance_accessibility_title"
-    >Liquid Glass och tillgänglighet</string>
-    <string name="liquid_glass_title">Liquid Glass</string>
-    <string
-        name="liquid_glass_desc"
-    >Använder Freetime Cores dynamiska bakgrund, luminans, ljusbrytning och interaktiva glasrenderare.</string>
+    >Utseende och tillgänglighet</string>
     <string name="reduce_motion_title">Minska rörelse</string>
     <string
         name="reduce_motion_desc"
-    >Minskar dekorativa rörelser och interaktionsanimationer för Liquid Glass.</string>
+    >Minskar dekorativa rörelser och interaktionsanimationer.</string>
     <string name="reduce_transparency_title">Minska genomskinlighet</string>
     <string
         name="reduce_transparency_desc"
