@@ -1,6 +1,29 @@
 <resources>
     <string name="app_name">GeoWeather</string>
 
+    <string name="freetime_notifications_title">Freetime notifications</string>
+    <string name="freetime_notifications_updates">App updates</string>
+    <string name="freetime_notifications_changelogs">Release notes</string>
+    <string
+        name="freetime_notifications_developer_messages"
+    >Developer messages</string>
+    <string
+        name="freetime_notifications_polling_info"
+    >Checks every 15 minutes using public requests to GitHub and the Freetime blog. These are not immediate push notifications or weather alerts.</string>
+    <string
+        name="freetime_notifications_loading"
+    >Loading notification preferences…</string>
+    <string
+        name="freetime_notifications_saving"
+    >Saving notification preference…</string>
+    <string
+        name="freetime_notifications_load_error"
+    >Could not load notification preferences.</string>
+    <string
+        name="freetime_notifications_save_error"
+    >Could not save the notification preference. Please try again.</string>
+    <string name="freetime_notifications_retry">Retry</string>
+
     <string
         name="main_donation_hint"
     >Enjoying GeoWeather? Support the development</string>

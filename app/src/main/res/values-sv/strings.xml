@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
     <string name="app_name">GeoWeather</string>
+
+    <string name="freetime_notifications_title">Freetime-aviseringar</string>
+    <string name="freetime_notifications_updates">Appuppdateringar</string>
+    <string
+        name="freetime_notifications_changelogs"
+    >Versionsinformation</string>
+    <string
+        name="freetime_notifications_developer_messages"
+    >Meddelanden från utvecklaren</string>
+    <string
+        name="freetime_notifications_polling_info"
+    >Kontrollerar var 15:e minut med offentliga förfrågningar till GitHub och Freetime-bloggen. Detta är inte omedelbara pushaviseringar eller vädervarningar.</string>
+    <string
+        name="freetime_notifications_loading"
+    >Läser in aviseringsinställningar…</string>
+    <string
+        name="freetime_notifications_saving"
+    >Sparar aviseringsinställningen…</string>
+    <string
+        name="freetime_notifications_load_error"
+    >Kunde inte läsa in aviseringsinställningarna.</string>
+    <string
+        name="freetime_notifications_save_error"
+    >Kunde inte spara aviseringsinställningen. Försök igen.</string>
+    <string name="freetime_notifications_retry">Försök igen</string>
     <string name="DonViaOxaPay">Donera via OxaPay</string>
     <string name="DonViaBTC">Donera via Bitcoin</string>
     <string name="DonViaETH">Donera via Ethereum</string>

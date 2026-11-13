@@ -14,13 +14,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import com.freetime.notifications.FreetimeNotifications
 import com.freetime.geoweather.data.DependencyManager
 import com.freetime.geoweather.data.onCreateDocumentResult
 import com.freetime.geoweather.data.onOpenDocumentResult
 import com.freetime.geoweather.data.registerFilePickers
 
 class MainActivity : ComponentActivity() {
-    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) FreetimeNotifications.requestCheck(this)
+    }
     private val requestLocationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { _ -> }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -13,8 +13,7 @@ import com.freetime.geoweather.Screen.*
 import com.freetime.geoweather.R as Res
 import com.freetime.geoweather.data.*
 import com.freetime.geoweather.ui.*
-import com.freetime.design.AppTheme
-import com.freetime.design.ThemeMode
+import com.freetime.design.templates.expressive.FreetimeTheme
 import com.freetime.warn.FreetimeWarn
 import com.freetime.warn.FreetimeWarnContent
 import com.freetime.warn.FreetimeWarnFrequency
@@ -163,8 +162,8 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
         systemDarkTheme
     }
 
-    AppTheme(
-        themeMode = if (darkTheme) ThemeMode.DARK else ThemeMode.LIGHT,
+    FreetimeTheme(
+        darkTheme = darkTheme,
         dynamicColor = true
     ) {
         if (onboarding) {
@@ -173,7 +172,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 onboarding = false
                 whatsNew = true
             })
-            return@AppTheme
+            return@FreetimeTheme
         }
         if (whatsNew) {
             ChangeLogScreen(onBack = {
@@ -182,7 +181,7 @@ fun WeatherApp(database: WeatherDatabase, appSettings: AppSettings) {
                 backStack.add(Main)
                 whatsNew = false
             })
-            return@AppTheme
+            return@FreetimeTheme
         }
         Box(Modifier.fillMaxSize()) {
                 backStack.forEachIndexed { index, screen ->

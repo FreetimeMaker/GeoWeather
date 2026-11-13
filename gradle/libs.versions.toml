@@ -17,7 +17,7 @@ androidx-work = "2.12.0"
 androidx-core-ktx = "1.19.1"
 material3 = "1.5.0-rc01"
 compose-bom = "2026.09.00"
-freetime = "3.1.0"
+freetime = "3.2.0"
 osmdroid = "6.1.20"
 
 [libraries]
@@ -44,6 +44,7 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
@@ -61,6 +62,7 @@ freetime-design = { module = "com.freetime:Design", version.ref = "freetime" }
 freetime-browser = { module = "com.freetime:Browser", version.ref = "freetime" }
 freetime-donations = { module = "com.freetime:Donations", version.ref = "freetime" }
 freetime-warn = { module = "com.freetime:FreetimeWarn", version.ref = "freetime" }
+freetime-notifications = { module = "com.freetime:Notifications", version.ref = "freetime" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

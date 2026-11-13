@@ -234,6 +234,13 @@ fun SettingsScreen(
             SettingsToggle(stringResource(Res.string.smart_uv_alert_title), stringResource(Res.string.smart_uv_alert_desc), smartUvAlert) { appSettings.setSmartUvAlert(it) }
 
             } }
+            item(key = "freetime_notifications") {
+                SettingsGroup(stringResource(Res.string.freetime_notifications_title)) {
+                    FreetimeNotificationSettings(onError = { message ->
+                        scope.launch { snackbarHostState.showSnackbar(message) }
+                    })
+                }
+            }
             item(key = "offline") { SettingsGroup(stringResource(Res.string.data_offline_title)) {
                 SettingsToggle(
                     stringResource(Res.string.data_saver_title),

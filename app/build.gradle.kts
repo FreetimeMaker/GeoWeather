@@ -34,11 +34,13 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui.tooling.preview)
+
     implementation(libs.freetime.core)
     implementation(libs.freetime.design)
     implementation(libs.freetime.browser)
     implementation(libs.freetime.donations)
     implementation(libs.freetime.warn)
+    implementation(libs.freetime.notifications)
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.content.negotiation)
@@ -68,6 +70,7 @@ dependencies {
     implementation(libs.osmdroid)
 
     testImplementation(libs.kotlin.test)
+    testImplementation(libs.kotlin.test.junit)
 }
 
 kotlin {
