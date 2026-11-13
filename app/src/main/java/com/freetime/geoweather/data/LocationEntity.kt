@@ -29,6 +29,7 @@ data class LocationEntity(
     val changeAlertsEnabled: Boolean = false,
     val changeAlertInterval: String = "3",
     val selected: Boolean = false,
+    // Legacy field retained for database and backup compatibility; no longer affects location selection or ordering.
     val isDefault: Boolean = false,
     val sortOrder: Int = 0,
     val offlinePackEnabled: Boolean = false

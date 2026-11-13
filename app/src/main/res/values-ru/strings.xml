@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
+    <string
+        name="persistent_notification_permission"
+    >Разрешите уведомления и канал постоянного отображения погоды в настройках Android.</string>
+    <string
+        name="persistent_notification_start_failed"
+    >Не удалось запустить уведомление о погоде. Повторите попытку, пока приложение открыто.</string>
+    <string
+        name="persistent_notification_no_location"
+    >Добавьте место, чтобы показывать здесь погоду.</string>
     <string name="app_name">GeoWeather</string>
 
     <string name="freetime_notifications_title">Уведомления Freetime</string>

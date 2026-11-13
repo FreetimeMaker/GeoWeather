@@ -1,4 +1,13 @@
 <resources>
+    <string
+        name="persistent_notification_permission"
+    >Allow notifications and the persistent weather channel in Android settings to show the weather notification.</string>
+    <string
+        name="persistent_notification_start_failed"
+    >The weather notification could not be started. Please try again while the app is open.</string>
+    <string
+        name="persistent_notification_no_location"
+    >Add a location to display its weather here.</string>
     <string name="app_name">GeoWeather</string>
 
     <string name="freetime_notifications_title">Freetime notifications</string>

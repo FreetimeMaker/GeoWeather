@@ -22,7 +22,10 @@ import com.freetime.geoweather.data.registerFilePickers
 
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) FreetimeNotifications.requestCheck(this)
+        if (granted) {
+            FreetimeNotifications.requestCheck(this)
+            PersistentWeatherNotification.restoreIfEnabled(this)
+        }
     }
     private val requestLocationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { _ -> }
 
@@ -47,6 +50,12 @@ class MainActivity : ComponentActivity() {
                 appSettings = DependencyManager.getAppSettings()
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Application.onCreate also runs for background workers, where starting an FGS may be forbidden.
+        PersistentWeatherNotification.restoreIfEnabled(this)
     }
 
     private fun installShortcuts() {

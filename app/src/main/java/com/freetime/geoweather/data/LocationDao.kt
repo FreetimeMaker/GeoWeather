@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LocationDao {
-    @Query("SELECT * FROM locations ORDER BY isDefault DESC, sortOrder ASC, name ASC")
+    @Query("SELECT * FROM locations ORDER BY sortOrder ASC, name ASC")
     fun getAllLocationsFlow(): Flow<List<LocationEntity>>
 
     @Query("SELECT * FROM locations ORDER BY name ASC")
@@ -34,11 +34,6 @@ interface LocationDao {
     @Query("UPDATE locations SET selected = 0")
     suspend fun deselectAllLocations()
 
-    @Query("SELECT * FROM locations WHERE isDefault = 1 LIMIT 1")
-    suspend fun getDefaultLocation(): LocationEntity?
-
-    @Query("UPDATE locations SET isDefault = 0")
-    suspend fun clearDefaultLocation()
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertLocation(location: LocationEntity): Long

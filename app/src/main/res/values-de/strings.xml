@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
+    <string
+        name="persistent_notification_permission"
+    >Erlaube Benachrichtigungen und den Kanal für die dauerhafte Wetteranzeige in den Android-Einstellungen.</string>
+    <string
+        name="persistent_notification_start_failed"
+    >Die Wetterbenachrichtigung konnte nicht gestartet werden. Versuche es erneut, während die App geöffnet ist.</string>
+    <string
+        name="persistent_notification_no_location"
+    >Füge einen Ort hinzu, um hier dessen Wetter anzuzeigen.</string>
     <!-- Changelog v4.7.3 -->
     <string
         name="cl_473_freetime"

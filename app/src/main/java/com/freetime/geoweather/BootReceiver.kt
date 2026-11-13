@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.glance.appwidget.updateAll
-import com.freetime.geoweather.data.DependencyManager
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,11 +17,7 @@ class BootReceiver : BroadcastReceiver() {
         val pendingResult = goAsync()
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             try {
-                val appSettings = DependencyManager.getAppSettings()
-                if (appSettings.persistentNotif.value) {
-                    val serviceIntent = Intent(context, WeatherForegroundService::class.java)
-                    context.startForegroundService(serviceIntent)
-                }
+                PersistentWeatherNotification.restoreIfEnabled(context)
 
                 WeatherWidget().updateAll(context)
                 CompactWeatherWidget().updateAll(context)

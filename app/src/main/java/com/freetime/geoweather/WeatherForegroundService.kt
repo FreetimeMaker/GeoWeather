@@ -1,69 +1,97 @@
 package com.freetime.geoweather
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Intent
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.freetime.geoweather.data.DependencyManager
+import com.freetime.geoweather.data.LocationEntity
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 
 class WeatherForegroundService : Service() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var updateJob: Job? = null
+    private var notificationJob: Job? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        createNotificationChannel()
-        // Foreground services must publish their notification immediately after startup.
-        startForeground(
-            NOTIFICATION_ID,
-            createNotification(getString(R.string.widget_loading))
-        )
+        if (!DependencyManager.getAppSettings().persistentNotif.value ||
+            !PersistentWeatherNotification.canPost(this)
+        ) {
+            stopSelf(startId)
+            return START_NOT_STICKY
+        }
+        // Publish immediately; neither cached data nor a network request may delay foreground promotion.
+        startForeground(NOTIFICATION_ID, createNotification(getString(R.string.widget_loading)))
         startUpdateLoop()
-
         return START_STICKY
     }
 
     private fun startUpdateLoop() {
-        updateJob?.cancel()
+        val repository = DependencyManager.getRepository()
+        val settings = DependencyManager.getAppSettings()
+        if (notificationJob?.isActive != true) {
+            notificationJob = serviceScope.launch {
+                combine(repository.getAllLocations(), settings.tempUnit, settings.windUnit) { locations, temp, wind ->
+                    Triple(persistentWeatherLocation(locations), temp, wind)
+                }.collect { (location, tempUnit, windUnit) ->
+                    try {
+                        publishNotification(notificationContent(location, tempUnit, windUnit))
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Failed to render persistent weather notification", e)
+                    }
+                }
+            }
+        }
+        if (updateJob?.isActive == true) return
         updateJob = serviceScope.launch {
             while (isActive) {
-                updateWeatherNotification()
-                delay(30 * 60 * 1000)
+                try {
+                    // A saved location need not have been opened/selected before enabling this feature.
+                    val location = persistentWeatherLocation(repository.getAllLocations().first())
+                    if (location != null) repository.refreshLocationWeather(location.id)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to refresh persistent weather; retaining cached content", e)
+                }
+                delay(30 * 60 * 1000L)
             }
         }
     }
 
-    private suspend fun updateWeatherNotification() {
+    private suspend fun notificationContent(location: LocationEntity?, tempUnit: String, windUnit: String): String {
+        if (location == null) return getString(R.string.persistent_notification_no_location)
+        if (location.weatherData == null) return location.name + " · " + getString(R.string.error_loading_weather)
         val repository = DependencyManager.getRepository()
-        val appSettings = DependencyManager.getAppSettings()
-        val updatedLocation = repository.refreshSelectedLocationWeather()
+        val base = repository.getNotificationContent(location, tempUnit)
+        val hourly = repository.getHourlyForecasts(location)
+        val rain = hourly.take(6).maxOfOrNull { it.precipProbability } ?: 0
+        val gust = hourly.take(6).maxOfOrNull { it.windGusts ?: it.windSpeed ?: 0.0 } ?: 0.0
+        val summary = getString(R.string.persistent_weather_summary, base, rain, formatNotificationWind(gust, windUnit))
+        val nextHour = hourly.firstOrNull() ?: return summary
+        return summary + "\n" + getString(
+            R.string.persistent_next_hour,
+            formatNotificationTemp(nextHour.temp.toDouble(), tempUnit),
+            nextHour.precipProbability
+        )
+    }
 
-        if (updatedLocation != null) {
-            try {
-                val base = repository.getNotificationContent(updatedLocation, appSettings.tempUnit.value)
-                val hourly = repository.getHourlyForecasts(updatedLocation)
-                val rain = hourly.take(6).maxOfOrNull { it.precipProbability } ?: 0
-                val gust = hourly.take(6).maxOfOrNull { it.windGusts ?: it.windSpeed ?: 0.0 } ?: 0.0
-                val windUnit = appSettings.windUnit.value
-                val gustText = formatNotificationWind(gust, windUnit)
-                val summary = getString(R.string.persistent_weather_summary, base, rain, gustText)
-                val nextHour = hourly.firstOrNull()
-                val content = if (nextHour != null) {
-                    summary + "\n" + getString(
-                        R.string.persistent_next_hour,
-                        formatNotificationTemp(nextHour.temp.toDouble(), appSettings.tempUnit.value),
-                        nextHour.precipProbability
-                    )
-                } else summary
-                val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.notify(NOTIFICATION_ID, createNotification(content))
-            } catch (e: Exception) {
-                android.util.Log.e(TAG, "Failed to update persistent weather notification", e)
-            }
+    private fun publishNotification(content: String) {
+        if (PersistentWeatherNotification.canPost(this)) {
+            getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, createNotification(content))
+        } else {
+            stopSelf()
         }
     }
 
@@ -72,10 +100,9 @@ class WeatherForegroundService : Service() {
             this,
             0,
             Intent(this, MainActivity::class.java),
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        return NotificationCompat.Builder(this, PersistentWeatherNotification.CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(content)
             .setStyle(NotificationCompat.BigTextStyle().bigText(content))
@@ -87,20 +114,10 @@ class WeatherForegroundService : Service() {
             .build()
     }
 
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                getString(R.string.persistent_weather_channel_name),
-                NotificationManager.IMPORTANCE_LOW
-            )
-            getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
-        }
-    }
-
     override fun onDestroy() {
-        super.onDestroy()
         serviceScope.cancel()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        super.onDestroy()
     }
 
     private fun formatNotificationTemp(celsius: Double, unit: String): String =
@@ -114,7 +131,6 @@ class WeatherForegroundService : Service() {
     }
 
     companion object {
-        private const val CHANNEL_ID = "persistent_weather"
         private const val NOTIFICATION_ID = 1001
         private const val TAG = "WeatherForegroundSvc"
     }

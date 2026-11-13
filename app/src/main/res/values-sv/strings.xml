@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
+    <string
+        name="persistent_notification_permission"
+    >Tillåt aviseringar och kanalen för beständig vädervisning i Android-inställningarna.</string>
+    <string
+        name="persistent_notification_start_failed"
+    >Väderaviseringen kunde inte startas. Försök igen medan appen är öppen.</string>
+    <string
+        name="persistent_notification_no_location"
+    >Lägg till en plats för att visa dess väder här.</string>
     <string name="app_name">GeoWeather</string>
 
     <string name="freetime_notifications_title">Freetime-aviseringar</string>

@@ -227,11 +227,11 @@ internal fun savedStartScreen(
     locations: List<LocationEntity>,
     lastLocationId: Long
 ): Detail? {
-    if (preference == "overview") return null
-    val favorite = locations.firstOrNull { it.isDefault } ?: locations.firstOrNull()
-    val location = if (preference == "last") {
-        locations.firstOrNull { it.id == lastLocationId } ?: favorite
-    } else favorite
+    val location = when (preference) {
+        "last" -> locations.firstOrNull { it.id == lastLocationId } ?: locations.firstOrNull()
+        "current" -> locations.firstOrNull()
+        else -> return null
+    }
     return location?.let { Detail(locationId = it.id) }
 }
 

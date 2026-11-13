@@ -165,15 +165,6 @@ class WeatherViewModel(
         }
     }
 
-    fun toggleDefaultLocation(location: LocationEntity) {
-        viewModelScope.launch {
-            try {
-                repository.toggleDefaultLocation(location)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 
     suspend fun refreshAllLocations(offlinePacksOnly: Boolean = false) {
         locations.value

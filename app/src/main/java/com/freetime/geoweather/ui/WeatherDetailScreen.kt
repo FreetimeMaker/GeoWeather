@@ -49,6 +49,7 @@ import com.freetime.geoweather.data.DailyForecast
 import com.freetime.geoweather.WeatherCodes
 import com.freetime.geoweather.WeatherIconMapper
 import com.freetime.geoweather.isNetworkAvailable
+import com.freetime.geoweather.upcoming24HourForecasts
 import com.freetime.geoweather.R as Res
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -201,6 +202,9 @@ fun WeatherDetailScreen(
             }
             else -> {
                 val hourly = remember(loc.weatherData) { viewModel.getHourlyForecasts(loc) }
+                val upcomingHourly = remember(hourly, loc.timezoneName, nowMillis) {
+                    upcoming24HourForecasts(hourly, loc.timezoneName, nowMillis)
+                }
                 val daily = remember(loc.weatherData) { viewModel.getDailyForecasts(loc) }
                 val extras = remember(loc.weatherData) { viewModel.getCurrentHourExtras(loc) }
                 val weatherHistory by viewModel.getWeatherHistory(loc.name).collectAsState(initial = emptyList())
@@ -666,13 +670,13 @@ fun WeatherDetailScreen(
                         }
                     }
 
-                    if (hourly.isNotEmpty()) {
+                    if (upcomingHourly.isNotEmpty()) {
                         item {
                             Card(modifier = Modifier.fillMaxWidth()) {
                                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     Text(stringResource(Res.string.weather_timeline_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        items(hourly.take(12)) { hour ->
+                                        items(upcomingHourly.take(12)) { hour ->
                                             Card(
                                                 modifier = Modifier.width(94.dp)
                                             ) {
@@ -771,13 +775,12 @@ fun WeatherDetailScreen(
 
                     }
 
-                    if (detailed && hourly.isNotEmpty() && loc.lastUpdated > 0 && nowMillis - loc.lastUpdated in 0..7_200_000L) {
+                    if (detailed && upcomingHourly.isNotEmpty() && loc.lastUpdated > 0 && nowMillis - loc.lastUpdated in 0..7_200_000L) {
                         item {
-                            val nextRainIndex = hourly.indexOfFirst { it.precipProbability >= 40 || it.code in 51..67 || it.code in 80..82 || it.code in 95..99 }
+                            val nextRainIndex = upcomingHourly.indexOfFirst { it.precipProbability >= 40 || it.code in 51..67 || it.code in 80..82 || it.code in 95..99 }
                             val nextRainText = if (nextRainIndex >= 0) {
-                                val next = hourly[nextRainIndex]
-                                if (nextRainIndex == 0) stringResource(Res.string.rain_possible_now, next.precipProbability)
-                                else stringResource(Res.string.next_rain_around, next.time, next.precipProbability)
+                                val next = upcomingHourly[nextRainIndex]
+                                stringResource(Res.string.next_rain_around, next.time, next.precipProbability)
                             } else stringResource(Res.string.no_rain_24h)
                             Card(
                                 modifier = Modifier.fillMaxWidth()
@@ -790,9 +793,9 @@ fun WeatherDetailScreen(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        items(hourly.size, key = { hourly[it].time }) { index ->
-                                            val hour = hourly[index]
-                                            val previous = hourly.getOrNull(index - 1)
+                                        items(upcomingHourly.size, key = { upcomingHourly[it].time }) { index ->
+                                            val hour = upcomingHourly[index]
+                                            val previous = upcomingHourly.getOrNull(index - 1)
                                             val marksSunset = previous != null &&
                                                 previous.time.takeLast(5) < sunsetTime.toString().take(5) &&
                                                 hour.time.takeLast(5) >= sunsetTime.toString().take(5)
@@ -991,7 +994,7 @@ fun WeatherDetailScreen(
 
                     }
 
-                    if (hourly.isNotEmpty()) {
+                    if (upcomingHourly.isNotEmpty()) {
                         item {
                             Text(
                                 text = stringResource(Res.string.hourly_label),
@@ -1005,10 +1008,10 @@ fun WeatherDetailScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                items(hourly.size, key = { hourly[it].time }) { hourIndex ->
-                                    val hour = hourly[hourIndex]
+                                items(upcomingHourly.size, key = { upcomingHourly[it].time }) { hourIndex ->
+                                    val hour = upcomingHourly[hourIndex]
                                     Card(
-                                        modifier = Modifier.clickable { onHourlyClick(loc.name, hourly, hourIndex) }
+                                        modifier = Modifier.clickable { onHourlyClick(loc.name, upcomingHourly, hourIndex) }
                                             ) {
                                         Column(
                                             modifier = Modifier,

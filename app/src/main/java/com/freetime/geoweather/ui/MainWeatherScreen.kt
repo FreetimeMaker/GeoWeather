@@ -21,7 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
+
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
@@ -134,9 +134,7 @@ fun MainWeatherScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = addLocationAction) {
-                        Icon(Icons.Default.Search, contentDescription = stringResource(Res.string.SearchBTNTXT))
-                    }
+
                     IconButton(
                         onClick = {
                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -165,6 +163,12 @@ fun MainWeatherScreen(
                 }
             )
         },
+        floatingActionButton = {
+            FloatingActionButton(onClick = addLocationAction) {
+                Icon(Icons.Default.Search, contentDescription = stringResource(Res.string.SearchBTNTXT))
+            }
+        },
+        floatingActionButtonPosition = FabPosition.End,
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { scaffoldPadding ->
         Box(Modifier.fillMaxSize().padding(scaffoldPadding)) {
@@ -208,7 +212,7 @@ fun MainWeatherScreen(
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(bottom = 16.dp)
+                            contentPadding = PaddingValues(bottom = 88.dp)
                         ) {
                             items(orderedLocations, key = { "landscape-" + it.id }) { loc ->
                                 Row(
@@ -234,10 +238,7 @@ fun MainWeatherScreen(
                                             style = MaterialTheme.typography.labelSmall
                                         )
                                     }
-                                    IconButton(onClick = {
-                                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            viewModel.toggleDefaultLocation(loc)
-                        }) { Icon(if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder, contentDescription = stringResource(Res.string.favorite_location)) }
+
                                 }
                             }
                         }
@@ -246,7 +247,7 @@ fun MainWeatherScreen(
                         modifier = Modifier.weight(0.58f).fillMaxHeight().padding(end = 12.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        val featured = orderedLocations.firstOrNull { it.isDefault } ?: orderedLocations.firstOrNull()
+                        val featured = orderedLocations.firstOrNull()
                         featured?.let { loc ->
                             Box(
                                 modifier = Modifier
@@ -288,7 +289,7 @@ fun MainWeatherScreen(
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp),
+                contentPadding = PaddingValues(top = 8.dp, bottom = 88.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 if (detailed && locations.size > 1) {
@@ -501,7 +502,7 @@ fun MainWeatherScreen(
                                     Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                             Text(loc.name, style = MaterialTheme.typography.labelLarge, maxLines = 1, modifier = Modifier.weight(1f))
-                                            if (loc.isDefault) Image(imageVector = Icons.Default.Favorite, contentDescription = stringResource(Res.string.favorite_location), modifier = Modifier.size(16.dp))
+
                                         }
                                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                             loc.currentWeatherCode?.let { code ->
@@ -558,10 +559,7 @@ fun MainWeatherScreen(
                                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 notificationLocation = loc
                         }) { Icon(if (loc.notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff, contentDescription = stringResource(Res.string.notification_time_title)) }
-                        IconButton(onClick = {
-                                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                viewModel.toggleDefaultLocation(loc)
-                        }) { Icon(if (loc.isDefault) Icons.Default.Favorite else Icons.Default.FavoriteBorder, contentDescription = stringResource(Res.string.favorite_location)) }
+
                         IconButton(onClick = {
                                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                                 locationToDelete = loc

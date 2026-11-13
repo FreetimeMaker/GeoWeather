@@ -243,15 +243,6 @@ class WeatherRepository(
         syncLocationBackup()
     }
 
-    suspend fun toggleDefaultLocation(location: LocationEntity) {
-        if (location.isDefault) {
-            locationDao.updateLocation(location.copy(isDefault = false))
-        } else {
-            locationDao.clearDefaultLocation()
-            locationDao.updateLocation(location.copy(isDefault = true))
-        }
-        syncLocationBackup()
-    }
 
     suspend fun updateWeather(location: LocationEntity, providerUrl: String) {
         try {

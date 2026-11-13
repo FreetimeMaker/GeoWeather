@@ -26,9 +26,9 @@ class StartPreferencesTest {
         } as Settings
     }
 
-    @Test fun defaultsPreserveExistingBehavior() {
+    @Test fun defaultsStartOnOverview() {
         val settings = AppSettings(store())
-        assertEquals("favorite", settings.startScreen.value)
+        assertEquals("overview", settings.startScreen.value)
         assertEquals("compact", settings.detailLevel.value)
         assertEquals(-1L, settings.lastLocationId.value)
     }
@@ -36,7 +36,7 @@ class StartPreferencesTest {
     @Test fun preferencesUpdateFlowsAndSurviveRecreation() {
         val store = store()
         val settings = AppSettings(store)
-        for (screen in listOf("favorite", "last", "overview", "current")) {
+        for (screen in listOf("last", "overview", "current")) {
             settings.setStartScreen(screen)
             assertEquals(screen, settings.startScreen.value)
             assertEquals(screen, AppSettings(store).startScreen.value)
@@ -64,37 +64,48 @@ class StartPreferencesTest {
         assertEquals(true, restored.reduceMotion.value)
     }
 
+    @Test fun legacyAndUnknownStoredPreferencesNormalizeWithoutRewriting() {
+        for (screen in listOf("favorite", "unknown", "")) {
+            val store = store()
+            store.putString(AppSettings.KEY_START_SCREEN, screen)
+            assertEquals("overview", AppSettings(store).startScreen.value)
+            assertEquals(screen, store.getString(AppSettings.KEY_START_SCREEN, "missing"))
+        }
+    }
+
     @Test fun invalidSelectionsDoNotChangePreferences() {
         val settings = AppSettings(store())
+        assertFailsWith<IllegalArgumentException> { settings.setStartScreen("favorite") }
         assertFailsWith<IllegalArgumentException> { settings.setStartScreen("Favorit") }
         assertFailsWith<IllegalArgumentException> { settings.setDetailLevel("Ausführlich") }
-        assertEquals("favorite", settings.startScreen.value)
+        assertEquals("overview", settings.startScreen.value)
         assertEquals("compact", settings.detailLevel.value)
     }
 
     private val first = LocationEntity(1L, "First", 1.0, 2.0)
-    private val favorite = LocationEntity(2L, "Favorite", 3.0, 4.0, isDefault = true)
+    private val legacyDefault = LocationEntity(2L, "Legacy default", 3.0, 4.0, isDefault = true)
 
-    @Test fun favoriteWinsOverFirstAndFirstIsFallback() {
-        assertEquals(Screen.Detail(2L), savedStartScreen("favorite", listOf(first, favorite), -1L))
-        assertEquals(Screen.Detail(1L), savedStartScreen("favorite", listOf(first), -1L))
+    @Test fun lastUsesSavedIdOrFirstFallbackIgnoringLegacyDefault() {
+        val locations = listOf(first, legacyDefault)
+        assertEquals(Screen.Detail(1L), savedStartScreen("last", locations, 1L))
+        assertEquals(Screen.Detail(2L), savedStartScreen("last", locations, 2L))
+        assertEquals(Screen.Detail(1L), savedStartScreen("last", locations, 99L))
+        assertEquals(Screen.Detail(1L), savedStartScreen("last", locations, -1L))
     }
 
-    @Test fun lastUsesSavedIdOrFavoriteFallback() {
-        assertEquals(Screen.Detail(1L), savedStartScreen("last", listOf(first, favorite), 1L))
-        assertEquals(Screen.Detail(2L), savedStartScreen("last", listOf(first, favorite), 99L))
-        assertEquals(Screen.Detail(1L), savedStartScreen("last", listOf(first), -1L))
+    @Test fun overviewLegacyAndUnknownPreferencesStayOnMain() {
+        for (screen in listOf("overview", "favorite", "unknown", "")) {
+            assertNull(savedStartScreen(screen, listOf(first, legacyDefault), 2L))
+        }
     }
 
-    @Test fun overviewAndEmptyDatabaseStayOnMain() {
-        assertNull(savedStartScreen("overview", listOf(first, favorite), 1L))
-        for (screen in listOf("favorite", "last", "overview", "current")) {
+    @Test fun emptyDatabaseStaysOnMain() {
+        for (screen in listOf("favorite", "last", "overview", "current", "unknown")) {
             assertNull(savedStartScreen(screen, emptyList(), 1L))
         }
     }
 
-    @Test fun currentAndUnknownPreferenceFallBackToFavorite() {
-        assertEquals(Screen.Detail(2L), savedStartScreen("current", listOf(first, favorite), 1L))
-        assertEquals(Screen.Detail(2L), savedStartScreen("unknown", listOf(first, favorite), 1L))
+    @Test fun currentFallsBackToFirstIgnoringLastIdAndLegacyDefault() {
+        assertEquals(Screen.Detail(1L), savedStartScreen("current", listOf(first, legacyDefault), 2L))
     }
 }

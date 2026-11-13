@@ -16,9 +16,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.freetime.geoweather.WeatherForegroundService
+import com.freetime.geoweather.PersistentWeatherNotification
 import com.freetime.geoweather.data.AppSettings
 import com.freetime.geoweather.data.BACKUP_FILE_NAME
 import com.freetime.geoweather.data.BACKUP_MIME_TYPE
@@ -74,6 +80,37 @@ fun SettingsScreen(
     val importSuccess = stringResource(Res.string.import_success)
     val importFailed = stringResource(Res.string.import_failed)
     val context = LocalContext.current
+    val persistentPermissionMessage = stringResource(Res.string.persistent_notification_permission)
+    val persistentStartError = stringResource(Res.string.persistent_notification_start_failed)
+    val notificationSettingsAction = stringResource(Res.string.settings_title)
+
+    fun showNotificationPermissionError() {
+        scope.launch {
+            if (snackbarHostState.showSnackbar(persistentPermissionMessage, notificationSettingsAction) == SnackbarResult.ActionPerformed) {
+                context.startActivity(Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName))
+            }
+        }
+    }
+
+    fun enablePersistentNotification() {
+        if (!PersistentWeatherNotification.canPost(context)) {
+            showNotificationPermissionError()
+            return
+        }
+        appSettings.setPersistentNotif(true)
+        if (!PersistentWeatherNotification.start(context)) {
+            appSettings.setPersistentNotif(false)
+            scope.launch { snackbarHostState.showSnackbar(persistentStartError) }
+        }
+    }
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) enablePersistentNotification() else showNotificationPermissionError()
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -98,7 +135,6 @@ fun SettingsScreen(
                     Text(stringResource(Res.string.start_screen_title), style = MaterialTheme.typography.bodyLarge)
                     UnitRadioRow(
                         options = listOf(
-                            "favorite" to stringResource(Res.string.start_screen_favorite),
                             "last" to stringResource(Res.string.start_screen_last),
                             "overview" to stringResource(Res.string.start_screen_overview),
                             "current" to stringResource(Res.string.start_screen_current)
@@ -209,12 +245,15 @@ fun SettingsScreen(
                 stringResource(Res.string.persistent_notif_subtitle),
                 persistentNotif
             ) { enabled ->
-                appSettings.setPersistentNotif(enabled)
-                val serviceIntent = Intent(context, WeatherForegroundService::class.java)
-                if (enabled) {
-                    ContextCompat.startForegroundService(context, serviceIntent)
+                if (!enabled) {
+                    appSettings.setPersistentNotif(false)
+                    context.stopService(Intent(context, WeatherForegroundService::class.java))
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 } else {
-                    context.stopService(serviceIntent)
+                    enablePersistentNotification()
                 }
             }
             ThresholdField(

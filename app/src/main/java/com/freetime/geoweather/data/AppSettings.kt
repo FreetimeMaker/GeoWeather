@@ -41,10 +41,13 @@ class AppSettings(private val settings: Settings) {
         const val KEY_LAST_LOCATION_ID = "last_location_id"
     }
 
-    private val _startScreen = MutableStateFlow(settings.getString(KEY_START_SCREEN, "favorite"))
+    private val _startScreen = MutableStateFlow(
+        settings.getString(KEY_START_SCREEN, "overview")
+            .takeIf { it in setOf("last", "overview", "current") } ?: "overview"
+    )
     val startScreen: StateFlow<String> = _startScreen.asStateFlow()
     fun setStartScreen(value: String) {
-        require(value in setOf("favorite", "last", "overview", "current"))
+        require(value in setOf("last", "overview", "current"))
         settings[KEY_START_SCREEN] = value
         _startScreen.value = value
     }
