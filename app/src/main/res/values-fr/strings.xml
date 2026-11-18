@@ -14,6 +14,7 @@
     <string name="DelLocConAsk">Are you sure you want to delete %1$s?</string>
     <string name="DelTXT">Delete</string>
     <string name="CancelTXT">Cancel</string>
-    <string name="SearchBTNTXT">Search</string>
+    <string name="SearchBTNTXT">Rechercher</string>
     <string name="WeatherNotificationTXT">Weather in %1$s: %2$s°C, %3$s</string>
+    <string name="persistent_notification_permission">Autorisez les notifications et la chaîne météo permanente dans les paramètres Android pour afficher la notification météo.</string>
 </resources>
