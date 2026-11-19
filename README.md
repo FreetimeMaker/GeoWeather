@@ -113,7 +113,9 @@ You can download the latest version of GeoWeather from the following platforms:
 
 [<img src="media-resources/badge_github_store.png" alt="Get it on GitHub Store" height="70">](https://github-store.org/app?repo=FreetimeMaker/GeoWeather)
 
-[<img src="https://luma.free-time.me/get-it-on-luma-store.svg" alt="Get it on Luma Store" height="80">](https://luma.free-time.me/com.freetime.geoweather)
+  <a href="(https://luma.free-time.me/com.freetime.geoweather)">
+    <img src="https://luma.free-time.me/get-it-on-luma-store.svg" alt="Get it on Luma Store" onerror="this.onerror=null; this.src='https://github.com/FreetimeMaker/Luma-Store-Website/blob/main/public/get-it-on-luma-store.svg';" >
+  </a>
 </div>
 
 ## 📄 License
