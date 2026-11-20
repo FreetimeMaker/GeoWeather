@@ -9,7 +9,11 @@ plugins {
 
 android {
     namespace = "com.freetime.geoweather"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 2
+        }
+    }
 
     defaultConfig {
         applicationId = "com.freetime.geoweather"
