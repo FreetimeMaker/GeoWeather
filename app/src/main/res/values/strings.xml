@@ -1,4 +1,26 @@
 <resources>
+    <!-- Changelog v4.7.4 -->
+    <string
+        name="cl_474_freetime"
+    >Updated all Freetime libraries to 4.0.1 and compile SDK to 37.2 while keeping Android 8.0 and newer supported.</string>
+    <string
+        name="cl_474_navigation"
+    >Adopted the Material 3 Expressive theme template without Liquid Glass. Moved location, donation and settings actions to the top bar and city search to the bottom-right floating button.</string>
+    <string
+        name="cl_474_notifications"
+    >Added separate controls for app updates, release notes and developer messages, checked every 15 minutes subject to Android background scheduling.</string>
+    <string
+        name="cl_474_persistent"
+    >Improved the persistent weather notification with permission handling, immediate cached content, a saved-location fallback and live updates when weather or units change.</string>
+    <string
+        name="cl_474_forecast"
+    >Limited hourly forecasts to the next 24 hours in the location timezone while retaining complete daily details.</string>
+    <string
+        name="cl_474_cleanup"
+    >Removed location favorites, the Quick Settings tile, weather-detail tabs and the full-screen weather background. The default start screen is now the overview.</string>
+    <string
+        name="cl_474_widgets"
+    >Improved weather-widget text contrast, temperature formatting and the empty saved-location screen.</string>
     <string
         name="persistent_notification_permission"
     >Allow notifications and the persistent weather channel in Android settings to show the weather notification.</string>

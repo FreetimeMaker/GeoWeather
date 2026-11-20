@@ -1,4 +1,7 @@
-• Updated all Freetime libraries to 3.0.0 and migrated to the new design APIs
-• Added floating bottom navigation with a separate city search action; larger screens retain the navigation rail
-• Updated cards, buttons, dialogs and top bars to Material 3 styling, with Liquid Glass limited to bottom navigation
-• Connected the saved Liquid Glass preference to the new navigation effect with a Material fallback when disabled
+• Freetime 4.0.1 and Material 3 Expressive without Liquid Glass
+• Search button at bottom right; actions moved to the top bar
+• App updates, release notes and developer messages checked every 15 minutes
+• Fixed persistent weather notification and permission handling
+• Hourly forecast limited to the next 24 hours
+• Removed favorites, Quick Settings tile and weather background
+• Improved widget contrast, temperature formatting and empty states

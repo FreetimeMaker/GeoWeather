@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
+    <!-- Changelog v4.7.4 -->
+    <string
+        name="cl_474_freetime"
+    >Alle Freetime-Bibliotheken auf 4.0.1 und das Compile-SDK auf 37.2 aktualisiert. Android 8.0 und neuer werden weiterhin unterstützt.</string>
+    <string
+        name="cl_474_navigation"
+    >Das Material-3-Expressive-Theme ohne Liquid Glass übernommen. Standort, Spenden und Einstellungen befinden sich in der oberen Leiste, die Stadtsuche als schwebender Button unten rechts.</string>
+    <string
+        name="cl_474_notifications"
+    >Separate Schalter für App-Updates, Versionshinweise und Entwicklernachrichten ergänzt. Prüfung alle 15 Minuten, abhängig von der Android-Hintergrundplanung.</string>
+    <string
+        name="cl_474_persistent"
+    >Dauerhafte Wetterbenachrichtigung mit Berechtigungsprüfung, sofortiger Anzeige gespeicherter Daten, Ortsrückfall und direkten Aktualisierungen bei Wetter- oder Einheitenänderungen verbessert.</string>
+    <string
+        name="cl_474_forecast"
+    >Die stündliche Vorhersage auf die kommenden 24 Stunden in der Zeitzone des Ortes begrenzt. Tagesdetails bleiben vollständig erhalten.</string>
+    <string
+        name="cl_474_cleanup"
+    >Ortsfavoriten, Schnelleinstellungskachel, Tabs in den Wetterdetails und den bildschirmfüllenden Wetterhintergrund entfernt. Standard-Startbildschirm ist jetzt die Übersicht.</string>
+    <string
+        name="cl_474_widgets"
+    >Textkontrast der Wetter-Widgets, Temperaturformatierung und die Anzeige bei fehlenden gespeicherten Orten verbessert.</string>
     <string
         name="persistent_notification_permission"
     >Erlaube Benachrichtigungen und den Kanal für die dauerhafte Wetteranzeige in den Android-Einstellungen.</string>

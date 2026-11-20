@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
+    <!-- Changelog v4.7.4 -->
+    <string
+        name="cl_474_freetime"
+    >Alla Freetime-bibliotek har uppdaterats till 4.0.1 och compile SDK till 37.2. Android 8.0 och senare stöds fortfarande.</string>
+    <string
+        name="cl_474_navigation"
+    >Infört temat Material 3 Expressive utan Liquid Glass. Plats, donationer och inställningar finns i toppfältet och stadssökningen på en flytande knapp nere till höger.</string>
+    <string
+        name="cl_474_notifications"
+    >Lagt till separata reglage för appuppdateringar, versionsinformation och utvecklarmeddelanden. Kontroll var 15:e minut, beroende på Androids bakgrundsschemaläggning.</string>
+    <string
+        name="cl_474_persistent"
+    >Förbättrat den beständiga väderaviseringen med behörighetskontroll, direkt visning av sparade data, reservval av sparad plats och uppdateringar när väder eller enheter ändras.</string>
+    <string
+        name="cl_474_forecast"
+    >Timprognosen är begränsad till de kommande 24 timmarna i platsens tidszon. Fullständiga dagsdetaljer finns kvar.</string>
+    <string
+        name="cl_474_cleanup"
+    >Tagit bort favoritplatser, snabbinställningspanelen, flikarna i väderdetaljer och väderbakgrunden i helskärm. Översikten är nu standardstartskärm.</string>
+    <string
+        name="cl_474_widgets"
+    >Förbättrat textkontrasten i väderwidgetar, temperaturformateringen och vyn utan sparade platser.</string>
     <string
         name="persistent_notification_permission"
     >Tillåt aviseringar och kanalen för beständig vädervisning i Android-inställningarna.</string>
