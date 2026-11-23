@@ -82,7 +82,9 @@ run_as_builder() {
         "$@"
 }
 
+# Local clones validate the source git directory separately from its working tree.
 run_as_builder git config --global --add safe.directory /checkout
+run_as_builder git config --global --add safe.directory /checkout/.git
 run_as_builder /usr/bin/python3 "$fdroidserver/fdroid" \
     scanner --verbose --refresh --exit-code com.freetime.geoweather
 run_as_builder /usr/bin/python3 "$fdroidserver/fdroid" \
