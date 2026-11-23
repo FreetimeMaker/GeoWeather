@@ -102,7 +102,20 @@ import apksigcopier
 apks = list(Path('tmp').glob('com.freetime.geoweather_*.apk'))
 if len(apks) != 1:
     raise SystemExit(f'Expected one F-Droid test APK, found: {apks}')
+import subprocess
+import shutil
+
+# Preserve the exact reference and compare both before and after signature copying.
+shutil.copyfile('/reference.apk', '/output/reference.apk')
+subprocess.run([
+    '/usr/bin/python3', '/checkout/.github/scripts/compare-apks.py',
+    '/reference.apk', str(apks[0]), '/output/unsigned-comparison.json',
+], check=True)
 apksigcopier.do_copy('/reference.apk', str(apks[0]), 'tmp/reproduced.apk')
+subprocess.run([
+    '/usr/bin/python3', '/checkout/.github/scripts/compare-apks.py',
+    '/reference.apk', 'tmp/reproduced.apk', '/output/reproduced-comparison.json',
+], check=True)
 PY
 
 APKSIGNER="$ANDROID_HOME/build-tools/35.0.0/apksigner"
