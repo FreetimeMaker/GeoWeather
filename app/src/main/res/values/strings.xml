@@ -1,4 +1,12 @@
 <resources>
+    <!-- Changelog v4.7.5 -->
+    <string
+        name="cl_475_dependencies"
+    >Switched Freetime dependencies to JitPack to avoid relying on a custom Maven repository not recognized by the F-Droid scanner.</string>
+    <string
+        name="cl_475_fdroid"
+    >Added F-Droid source scanning, an unsigned build and APK binary scanning to release CI after signing and verification. Failed checks block release publication.</string>
+
     <!-- Changelog v4.7.4 -->
     <string
         name="cl_474_freetime"

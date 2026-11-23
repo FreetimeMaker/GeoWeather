@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
+    <!-- Changelog v4.7.5 -->
+    <string
+        name="cl_475_dependencies"
+    >Freetime-Abhängigkeiten auf JitPack umgestellt, um das vom F-Droid-Scanner nicht anerkannte eigene Maven-Repository zu ersetzen.</string>
+    <string
+        name="cl_475_fdroid"
+    >F-Droid-Quellcodeprüfung, unsignierten Build und APK-Binärprüfung nach dem Signieren und Verifizieren in die Release-CI integriert. Fehlgeschlagene Prüfungen verhindern die Veröffentlichung.</string>
+
     <!-- Changelog v4.7.4 -->
     <string
         name="cl_474_freetime"

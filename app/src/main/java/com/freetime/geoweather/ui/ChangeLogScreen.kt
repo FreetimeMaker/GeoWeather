@@ -26,6 +26,10 @@ import com.freetime.geoweather.R as Res
 @Composable
 fun ChangeLogScreen(onBack: () -> Unit) {
     val releases = listOf(
+        "v4.7.5" to listOf(
+            stringResource(Res.string.cl_475_dependencies),
+            stringResource(Res.string.cl_475_fdroid)
+        ),
         "v4.7.4" to listOf(
             stringResource(Res.string.cl_474_freetime),
             stringResource(Res.string.cl_474_navigation),
