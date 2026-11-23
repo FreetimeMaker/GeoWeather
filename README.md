@@ -117,6 +117,32 @@ You can download the latest version of GeoWeather from the following platforms:
 [<img src="media-resources/luma-store-badge.svg" alt="Get it on Luma Store" height="80">](https://luma.free-time.me/com.freetime.geoweather)
 </div>
 
+## F-Droid build compatibility
+
+Freetime dependencies use JitPack coordinates from
+`com.github.FreetimeMaker.Freetime-Core`. The repository is restricted to that
+group; other dependencies continue to resolve from Google Maven and Maven Central.
+This avoids relying on a custom Maven host that is not in the F-Droid scanner's
+allowed repository list.
+
+The existing `Build, Sign and Release Android App` workflow runs the F-Droid
+check after signing and verifying the APK, before creating the release tag or
+publishing the release. It runs on pushes and manual dispatch. The check uses
+the official F-Droid `buildserver-trixie` container and a pinned fdroidserver
+revision to scan the source and build an unsigned APK with binary scanning
+enabled. A clean source clone of the exact checked-out commit is mounted instead
+of the signing workspace, keeping the keystore and checkout credentials out of
+the container. The temporary recipe reads the app version from Gradle.
+Scanner/build failures prevent release publication. Logs, the image digest,
+the generated recipe and any resulting APK are uploaded as `fdroid-build-results`.
+
+This is a disposable-container compatibility test, not the production F-Droid VM,
+an approval of dependencies, or a reproducibility check against a released APK.
+The buildserver image and scanner signatures are refreshed on each run to catch
+current compatibility problems. The published fdroiddata recipe still needs to
+be maintained separately. Do not run `.github/scripts/fdroid-build.sh` on your
+host: its `--on-server` mode modifies the disposable container's system packages.
+
 ## 📄 License
 
 This project is licensed under the [Apache-2.0 License](LICENSE).

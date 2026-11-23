@@ -13,6 +13,7 @@ permissions:
 jobs:
   build_sign_and_release_android_app:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
 
     steps:
       - name: Checkout
@@ -150,6 +151,34 @@ jobs:
           path: GeoWeather-v${{ steps.versioncheck.outputs.version }}.apk
           if-no-files-found: error
           retention-days: 90
+
+      - name: Test in official F-Droid buildserver image
+        id: fdroid_check
+        shell: bash
+        env:
+          BUILD_IMAGE: registry.gitlab.com/fdroid/fdroidserver:buildserver-trixie
+        run: |
+          set -euo pipefail
+          mkdir -p fdroid-results
+          # Only expose a clean source clone, never the signing keystore or checkout credentials.
+          git clone --no-local "$GITHUB_WORKSPACE" "$RUNNER_TEMP/fdroid-source"
+          git -C "$RUNNER_TEMP/fdroid-source" checkout --detach "$GITHUB_SHA"
+          docker pull "$BUILD_IMAGE"
+          docker image inspect "$BUILD_IMAGE" --format '{{json .RepoDigests}}' > fdroid-results/image-digest.json
+          docker run --rm \
+            --mount "type=bind,source=$RUNNER_TEMP/fdroid-source,target=/checkout,readonly" \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/fdroid-results,target=/output" \
+            --entrypoint /bin/bash \
+            "$BUILD_IMAGE" /checkout/.github/scripts/fdroid-build.sh
+
+      - name: Upload F-Droid logs and unsigned APK
+        if: ${{ !cancelled() && steps.fdroid_check.outcome != 'skipped' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: fdroid-build-results
+          path: fdroid-results/
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Create and push tag
         if: steps.versioncheck.outputs.create_tag == 'true'

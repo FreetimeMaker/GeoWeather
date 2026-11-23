@@ -1,5 +1,5 @@
 [versions]
-agp = "9.5.1"
+agp = "9.5.2"
 kotlin = "2.4.21"
 room = "2.8.5"
 sqlite = "2.7.1"
@@ -57,12 +57,12 @@ androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
 osmdroid = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroid" }
 
-freetime-core = { module = "com.freetime:Core", version.ref = "freetime" }
-freetime-design = { module = "com.freetime:Design", version.ref = "freetime" }
-freetime-browser = { module = "com.freetime:Browser", version.ref = "freetime" }
-freetime-donations = { module = "com.freetime:Donations", version.ref = "freetime" }
-freetime-warn = { module = "com.freetime:FreetimeWarn", version.ref = "freetime" }
-freetime-notifications = { module = "com.freetime:Notifications", version.ref = "freetime" }
+freetime-core = { module = "com.github.FreetimeMaker.Freetime-Core:Core", version.ref = "freetime" }
+freetime-design = { module = "com.github.FreetimeMaker.Freetime-Core:Design", version.ref = "freetime" }
+freetime-browser = { module = "com.github.FreetimeMaker.Freetime-Core:Browser", version.ref = "freetime" }
+freetime-donations = { module = "com.github.FreetimeMaker.Freetime-Core:Donations", version.ref = "freetime" }
+freetime-warn = { module = "com.github.FreetimeMaker.Freetime-Core:FreetimeWarn", version.ref = "freetime" }
+freetime-notifications = { module = "com.github.FreetimeMaker.Freetime-Core:Notifications", version.ref = "freetime" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
