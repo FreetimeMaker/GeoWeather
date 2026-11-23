@@ -68,10 +68,23 @@ collect_results() {
 trap collect_results EXIT
 
 chown -R vagrant:vagrant /work "$fdroidserver"
-sudo --preserve-env --user vagrant env HOME=/home/vagrant \
-    git config --global --add safe.directory /checkout
-sudo --preserve-env --user vagrant env HOME=/home/vagrant \
-    fdroid scanner --verbose --refresh --exit-code com.freetime.geoweather
-sudo --preserve-env --user vagrant env HOME=/home/vagrant \
-    fdroid build --verbose --on-server --stop --test --refresh-scanner --scan-binary --no-tarball \
+run_as_builder() {
+    # sudo's secure_path overrides PATH even with --preserve-env.
+    sudo --user vagrant env \
+        HOME=/home/vagrant \
+        PATH="$PATH" \
+        PYTHONPATH="$PYTHONPATH" \
+        PYTHONUNBUFFERED="$PYTHONUNBUFFERED" \
+        JAVA_HOME="$JAVA_HOME" \
+        ANDROID_HOME="$ANDROID_HOME" \
+        ANDROID_SDK_ROOT="$ANDROID_HOME" \
+        GRADLE_USER_HOME="$GRADLE_USER_HOME" \
+        "$@"
+}
+
+run_as_builder git config --global --add safe.directory /checkout
+run_as_builder /usr/bin/python3 "$fdroidserver/fdroid" \
+    scanner --verbose --refresh --exit-code com.freetime.geoweather
+run_as_builder /usr/bin/python3 "$fdroidserver/fdroid" \
+    build --verbose --on-server --stop --test --refresh-scanner --scan-binary --no-tarball \
     com.freetime.geoweather
