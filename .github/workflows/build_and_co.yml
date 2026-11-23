@@ -115,8 +115,10 @@ jobs:
           SIGNED_APK="GeoWeather-v${{ steps.versioncheck.outputs.version }}.apk"
           KEYSTORE_PATH="./keystore/GeoWeather-KeyStore.jks"
 
+          # Preserve Gradle ZIP padding; default apksigner realignment changes local headers.
           echo "==> Signiere APK: $SIGNED_APK"
           "${{ steps.android_tools.outputs.apksigner }}" sign \
+            --alignment-preserved true \
             --ks "$KEYSTORE_PATH" \
             --ks-key-alias alle \
             --ks-pass env:KEYSTORE_PASSWORD \
