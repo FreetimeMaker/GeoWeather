@@ -19,7 +19,9 @@ export ANDROID_HOME=/opt/android-sdk
 export GRADLE_USER_HOME=/home/vagrant/.gradle
 
 apt-get update
-apt-get install -y --no-install-recommends openjdk-21-jdk-headless
+apt-get install -y --no-install-recommends openjdk-21-jdk-headless apksigcopier
+# The comparison runs with system Python; verify its dependency before the expensive build.
+/usr/bin/python3 -c 'import apksigcopier'
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 export PATH="$JAVA_HOME/bin:$PATH"
 sdkmanager "platform-tools" "build-tools;35.0.0"
@@ -91,7 +93,7 @@ run_as_builder /usr/bin/python3 "$fdroidserver/fdroid" \
     build --verbose --on-server --stop --test --refresh-scanner --scan-binary --no-tarball \
     com.freetime.geoweather
 
-# Use F-Droid's installed signature copier, not a second independently resolved version.
+# Use the signature copier installed for system Python above.
 # Keep the reconstructed APK in tmp so failed verification is included in the artifacts.
 /usr/bin/python3 - <<'PY'
 from pathlib import Path
