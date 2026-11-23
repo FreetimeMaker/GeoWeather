@@ -89,32 +89,26 @@ jobs:
           echo "apksigner=$APKSIGNER" >> "$GITHUB_OUTPUT"
           echo "zipalign=$ZIPALIGN" >> "$GITHUB_OUTPUT"
 
-      - name: Align Android APK
+      - name: Check Gradle APK alignment
         id: align_apk
         shell: bash
         run: |
           set -euo pipefail
           UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
-          ALIGNED_APK="app/build/outputs/apk/release/app-release-aligned.apk"
-
-          "${{ steps.android_tools.outputs.zipalign }}" \
-            -f \
-            -P 16 \
-            4 \
-            "$UNSIGNED_APK" \
-            "$ALIGNED_APK"
-
+          # Do not rewrite ZIP headers: F-Droid compares the APK produced by Gradle.
           "${{ steps.android_tools.outputs.zipalign }}" \
             -c \
             -P 16 \
             4 \
-            "$ALIGNED_APK"
+            "$UNSIGNED_APK"
 
-          echo "aligned_apk=$ALIGNED_APK" >> "$GITHUB_OUTPUT"
+          echo "aligned_apk=$UNSIGNED_APK" >> "$GITHUB_OUTPUT"
 
       - name: Sign Android
         id: sign_apk
         shell: bash
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
           set -euo pipefail
           ALIGNED_APK="${{ steps.align_apk.outputs.aligned_apk }}"
@@ -125,8 +119,8 @@ jobs:
           "${{ steps.android_tools.outputs.apksigner }}" sign \
             --ks "$KEYSTORE_PATH" \
             --ks-key-alias alle \
-            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
-            --key-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --ks-pass env:KEYSTORE_PASSWORD \
+            --key-pass env:KEYSTORE_PASSWORD \
             --out "$SIGNED_APK" \
             "$ALIGNED_APK"
 
@@ -167,6 +161,7 @@ jobs:
           docker image inspect "$BUILD_IMAGE" --format '{{json .RepoDigests}}' > fdroid-results/image-digest.json
           docker run --rm \
             --mount "type=bind,source=$RUNNER_TEMP/fdroid-source,target=/checkout,readonly" \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/${{ steps.sign_apk.outputs.signed_apk }},target=/reference.apk,readonly" \
             --mount "type=bind,source=$GITHUB_WORKSPACE/fdroid-results,target=/output" \
             --entrypoint /bin/bash \
             "$BUILD_IMAGE" /checkout/.github/scripts/fdroid-build.sh

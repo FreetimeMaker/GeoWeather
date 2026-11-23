@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
+    <!-- Changelog v4.7.6 -->
+    <string
+        name="cl_476_packaging"
+    >Zusätzliches Umschreiben der APK-Ausrichtung vor dem Signieren entfernt. Die Prüfung der 16-KB-Ausrichtung bleibt aktiv.</string>
+    <string
+        name="cl_476_verification"
+    >Die Release-CI überträgt jetzt die Release-Signatur auf den F-Droid-Build und prüft sie vor der Veröffentlichung.</string>
     <!-- Changelog v4.7.5 -->
     <string
         name="cl_475_dependencies"

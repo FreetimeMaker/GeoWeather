@@ -1,4 +1,11 @@
 <resources>
+    <!-- Changelog v4.7.6 -->
+    <string
+        name="cl_476_packaging"
+    >Removed the extra APK alignment rewrite before signing while retaining the 16 KB alignment check.</string>
+    <string
+        name="cl_476_verification"
+    >Release CI now copies the release signature onto the F-Droid build and verifies it before publishing.</string>
     <!-- Changelog v4.7.5 -->
     <string
         name="cl_475_dependencies"

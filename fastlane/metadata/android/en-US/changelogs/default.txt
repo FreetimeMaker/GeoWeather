@@ -1,3 +1,2 @@
-• Switched Freetime dependencies to JitPack for F-Droid build compatibility
-• Added F-Droid source scanning, an unsigned build and APK binary scanning after signing and verification in release CI
-• Failed F-Droid checks now block release publication
+• Removed the extra APK alignment rewrite before signing; the 16 KB alignment check remains active
+• Added release-signature reproduction verification against the F-Droid build before publication

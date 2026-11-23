@@ -28,7 +28,7 @@ mkdir -p /work/metadata /work/build /work/logs /work/repo /work/tmp /work/unsign
 cd /work
 
 # Test the checked-out commit (including PR merge commits), not the latest published release.
-# No Binaries field: pre-release CI cannot compare against an already published APK.
+# Compare against /reference.apk after building; no published Binaries URL is needed.
 python3 - <<'PY'
 import json
 from pathlib import Path
@@ -59,7 +59,7 @@ PY
 
 # Preserve diagnostics even if the source scanner or build rejects this commit.
 collect_results() {
-    for path in metadata logs repo/status tmp; do
+    for path in metadata logs repo/status tmp unsigned; do
         if [ -e "/work/$path" ]; then
             cp -r "/work/$path" /output/
         fi
@@ -90,3 +90,20 @@ run_as_builder /usr/bin/python3 "$fdroidserver/fdroid" \
 run_as_builder /usr/bin/python3 "$fdroidserver/fdroid" \
     build --verbose --on-server --stop --test --refresh-scanner --scan-binary --no-tarball \
     com.freetime.geoweather
+
+# Use F-Droid's installed signature copier, not a second independently resolved version.
+# Keep the reconstructed APK in tmp so failed verification is included in the artifacts.
+/usr/bin/python3 - <<'PY'
+from pathlib import Path
+import apksigcopier
+
+apks = list(Path('tmp').glob('com.freetime.geoweather_*.apk'))
+if len(apks) != 1:
+    raise SystemExit(f'Expected one F-Droid test APK, found: {apks}')
+apksigcopier.do_copy('/reference.apk', str(apks[0]), 'tmp/reproduced.apk')
+PY
+
+APKSIGNER="$ANDROID_HOME/build-tools/35.0.0/apksigner"
+"$APKSIGNER" verify --verbose --print-certs /reference.apk
+"$APKSIGNER" verify --verbose --print-certs tmp/reproduced.apk
+echo 'F-Droid signature reproduction passed.'
