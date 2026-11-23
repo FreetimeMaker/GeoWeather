@@ -125,6 +125,13 @@ group; other dependencies continue to resolve from Google Maven and Maven Centra
 This avoids relying on a custom Maven host that is not in the F-Droid scanner's
 allowed repository list.
 
+JitPack's Freetime `4.0.1` module metadata references unclassified Android AARs,
+but the published files use the `-android` classifier. `settings.gradle.kts`
+corrects only the Android API/runtime file references for those six modules and
+that version, preserving their transitive dependencies. Remove this workaround
+when upgrading to a release with consistent module metadata; do not disable
+Gradle Module Metadata or replace the libraries with non-transitive AAR files.
+
 The existing `Build, Sign and Release Android App` workflow runs the F-Droid
 check after signing and verifying the APK, before creating the release tag or
 publishing the release. It runs on pushes and manual dispatch. The check uses
