@@ -18,7 +18,7 @@ dependencyResolutionManagement {
         // Remove this version-scoped correction once upstream publishes consistent metadata.
         listOf("Core", "Design", "Browser", "Donations", "FreetimeWarn", "Notifications").forEach { module ->
             withModule("com.github.FreetimeMaker.Freetime-Core:$module") {
-                if (id.version == "4.0.1") {
+                if (id.version == "4.0.2") {
                     listOf("androidApiElements-published", "androidRuntimeElements-published").forEach { variant ->
                         withVariant(variant) {
                             withFiles {
